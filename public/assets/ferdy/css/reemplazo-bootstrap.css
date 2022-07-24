@@ -1,0 +1,11 @@
+.modal-content-fer  {
+    -webkit-border-radius: 40px 40px  80px 80px !important;
+    -moz-border-radius: 40px 40px  80px 80px !important;
+    border-radius: 40px 40px  80px 80px !important; 
+}
+
+.modal-header-fer{
+    -webkit-border-radius: 40px 40px 0px 0px  !important;
+    -moz-border-radius: 40px 40px 0px 0px  !important;
+    border-radius: 40px 40px 0px 0px !important; 
+}

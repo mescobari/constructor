@@ -1,0 +1,87 @@
+.ferdy-background-Primary{
+    background:	#007bff;
+    color: #FFFFFF;
+}.ferdy-background-Primary-blak{
+    background:	#25578b;
+    color: #FFFFFF;
+}
+.ferdy-background-Secondary{
+    background:	#6c757d;
+    color: #FFFFFF;
+}
+.ferdy-background-Success{
+    background:	#28a745;
+    color: #FFFFFF;
+}
+.ferdy-background-Info{
+    background:	#17a2b8;
+    color: #FFFFFF;
+}
+.ferdy-background-Warning{
+    background:	#ffc107;
+    color: #000000;
+}
+.ferdy-background-Danger{
+    background:	#dc3545;
+    color: #FFFFFF;
+}
+.ferdy-background-Light{
+    background:	#f8f9fa;
+    color: #000000;
+}
+.ferdy-background-Dark{
+    background:	#343a40;
+    color: #FFFFFF;
+}
+.ferdy-background-White{
+    background:	#FFFFFF;
+    color: #000000;
+}
+.ferdy-background-Black{
+    background:	#000000;
+    color: #FFFFFF;
+}
+.ferdy-background-Blue{
+    background:	#007bff;
+    color: #FFFFFF;
+}
+.ferdy-background-Indigo{
+    background:	#6610f2;
+    color: #FFFFFF;
+}
+.ferdy-background-Purple{
+    background:	#6f42c1;
+    color: #FFFFFF;
+}
+.ferdy-background-Pink{
+    background:	#e83e8c;
+    color: #FFFFFF;
+}
+.ferdy-background-Red{
+    background:	#dc3545;
+    color: #FFFFFF;
+}
+.ferdy-background-Orange{
+    background:	#fd7e14;
+    color: #000000;
+}
+.ferdy-background-Yellow{
+    background:	#ffc107;
+    color: #000000;
+}
+.ferdy-background-Green{
+    background:	#28a745;
+    color: #FFFFFF;
+}
+.ferdy-background-Teal{
+    background:	#20c997;
+    color: #000000;
+}
+.ferdy-background-Cyan{
+    background:	#17a2b8;
+    color: #FFFFFF;
+}
+.ferdy-background-form{
+    background:	#ECECEC;
+    color: #000000;    
+}
