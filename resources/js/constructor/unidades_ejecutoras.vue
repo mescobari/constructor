@@ -1,10 +1,10 @@
 <template>
     <div class="card">
         <div class="card-header ferdy-background-Primary-blak">
-            <h3 class="card-title">Contratos Principales</h3>
+            <h3 class="card-title">Unidades Ejecutoras</h3>
             <div class="card-tools">
-                <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#intervencion" @click="ModalCrear();">
-                    Crear Intervención
+                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#intervencion" @click="ModalCrear();">
+                    Crear Unidad Ejecutora
                 </button>
             </div>
         </div>

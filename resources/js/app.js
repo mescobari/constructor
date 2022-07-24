@@ -22,6 +22,9 @@ Vue.config.productionTip = false;//quitar mensaje molesto hecho por ferdy fercho
 
 //pruebas
 Vue.component('netstable', require('./components/Netstable.vue').default);
+//constructor
+Vue.component('unidad-ejecutora', require('./constructor/unidades_ejecutoras.vue').default);
+
 //componentes
 Vue.component('alert', require('./components/Alerta.vue').default);
 Vue.component('alert-confirmacion', require('./components/AlertaConfirmacion.vue').default);

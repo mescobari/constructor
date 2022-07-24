@@ -22,8 +22,8 @@
 		@endif
         <br><br><br><br><br><br>
 		<div class="d-flex justify-content-left">
-			<div class="user_card {{$sistemas_ferchos_color_fondo_formulario}} p-3 rounded-lg  bg-light" style="box-shadow: 2px 2px 10px rgb(46, 26, 139);">
-				<div class="d-flex justify-content-center p-3 rounded-lg bg-success" style="margin-top: -35%; box-shadow: 2px 2px 10px rgb(46, 26, 139); 
+			<div class="user_card {{$sistemas_ferchos_color_fondo_formulario}} p-3 rounded-lg  bg-light" style="box-shadow: 2px 2px 10px rgb(224, 175, 21);">
+				<div class="d-flex justify-content-center p-3 rounded-lg bg-success" style="margin-top: -35%; box-shadow: 2px 2px 10px rgb(224, 175, 21); 
 				background: url({{asset('img/sistema-front-end/background-login.jpeg')}}) no-repeat fixed center;
 				-webkit-background-size: cover;
 				-moz-background-size: cover;

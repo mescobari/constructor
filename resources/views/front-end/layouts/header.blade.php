@@ -3,6 +3,7 @@ use Carbon\Carbon;
 @endphp
 
 <nav class="navbar navbar-expand navbar-white navbar-light border-bottom">
+    EMPRESA BOLIVIANA DE CONSTRUCCION
     <ul class="navbar-nav ml-auto">
         <!-- Messages Dropdown Menu -->
         <!-- Notifications Dropdown Menu -->
@@ -22,10 +23,11 @@ use Carbon\Carbon;
                         {{auth()->user()->userName}} - {{auth()->user()->email}}       
                 </a>                         
             @else
+             <!-- 
                 <a class="nav-link" href="{{route('login')}}">
                     <i class="far fa-user"></i>&nbsp;&nbsp; 
                     Invitado con Restricciones de Accesos 
-                </a>                                  
+                </a>    -->                              
             @endisset
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 @guest
@@ -48,12 +50,13 @@ use Carbon\Carbon;
             </div>
         </li>
         @guest
+        <!-- 
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="fas fa-user-lock"></i>&nbsp;&nbsp; 
                     Regitrarse                    
                 </a>
-            </li>
+            </li> -->
         @endguest
     </ul>
 </nav>
