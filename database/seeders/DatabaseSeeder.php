@@ -46,6 +46,9 @@ class DatabaseSeeder extends Seeder
            // 30-11-2021
            CotizacionDolarSeeder::class,
 
+           // constructor seeders
+           UnidadEjecutoraSeederphp::class,
+
         ]);
     }
 }

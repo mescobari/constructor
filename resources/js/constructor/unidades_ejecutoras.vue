@@ -86,56 +86,30 @@
                                         </v-select>
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
-                                    <div class="form-group">
-                                        <label for="descripcion">Descripción:</label>
-                                        <vue-editor 
-                                            v-model="jsonData.descripcion"
-                                            :editor-toolbar="configToolBarEditText"
-                                        ></vue-editor>
-                                        <!-- <input type="text" class="form-control" name="descripcion" id="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
-                                    </div>
-                                </div>
+                               
                             </div>
 
-                            <div class="col-md-4">   
-                                <div class="col-md-12">          
-                                    <div class="form-group">
-                                        <label for="tipo_intervencion">Tipo de Intervención:</label>
-                                        <v-select label="nombre" :options="tipo_intervenciones" v-model="jsonData.tipo_intervencion" placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>                             
+                            <div class="col-md-8">   
+                                                            
                                 <div class="col-md-12">          
                                     <div class="form-group">
                                         <label for="nombre">Nombre:</label>
                                         <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingresar Nombre" v-model="jsonData.nombre">
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                            </div>           
+                        </div> 
+                         <div class="row">  
+                             <div class="col-md-4"></div>
+                                <div class="col-md-4">          
                                     <div class="form-group">
-                                        <label for="codsisin">Codsisin:</label>
-                                        <input type="text" class="form-control" name="codsisin" id="codsisin" placeholder="Ingresar codsisin" v-model="jsonData.codsisin">
-                                    </div>
-                                </div>
-                                <div class="col-md-12">          
-                                    <div class="form-group">
-                                        <label for="sectorial">Sectorial:</label>
-                                        <v-select label="denominacion" :options="sectoriales" v-model="jsonData.sectorial" placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">          
-                                    <div class="form-group">
-                                        <label for="fecha_aprobacion">Fecha Aprobación:</label>
+                                        <label for="fecha_aprobacion">Fecha Inicial:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_aprobacion" id="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                         <datepicker             
                                             :language="configFechas.es"
                                             :placeholder="configFechas.placeholder"
 
-                                            v-model="jsonData.fecha_aprobacion"
+                                            v-model="jsonData.fecha_inicial"
 
                                             :calendar-class="configFechas.nombreClaseParaModal"
                                             :input-class="configFechas.nombreClaseParaInput"
@@ -156,9 +130,9 @@
                                         </datepicker>
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                                <div class="col-md-4">          
                                     <div class="form-group">
-                                        <label for="fecha_inicial_programada">Fecha Inicial Programada:</label>
+                                        <label for="fecha_inicial_programada">Fecha Final:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_inicial_programada" id="fecha_inicial_programada" v-model="jsonData.fecha_inicial_programada"> -->
                                         <datepicker             
                                             :language="configFechas.es"
@@ -177,70 +151,14 @@
                                             :disabled-dates="configFechas.disabledDates"
                                             :typeable="configFechas.typeable"
 
-                                            v-model="jsonData.fecha_inicial_programada"
-                                            @closed="calcula_dias()"
-                                        >
+                                            v-model="jsonData.fecha_final"
+                                                                                   >
                                         </datepicker>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4"> 
-                                <div class="col-md-12">          
-                                    <div class="form-group">
-                                        <label for="duracion_dias">Duración de Días:</label>
-                                        <input type="number" class="form-control" name="duracion_dias" id="duracion_dias" v-model="jsonData.duracion_dias">
-                                    </div>
-                                </div>
-                                <div class="col-md-12">          
-                                    <div class="form-group">
-                                        <label for="fecha_inicial_real">Fecha Inicial Real:</label>
-                                        <!-- <input type="date" class="form-control" name="fecha_inicial_real" id="fecha_inicial_real" v-model="jsonData.fecha_inicial_real" readonly> -->
-                                        <datepicker             
-                                            :language="configFechas.es"
-                                            :placeholder="configFechas.placeholderDisbled"
-                                            :calendar-class="configFechas.nombreClaseParaModal"
-                                            :input-class="configFechas.nombreClaseParaInput"
-                                            :monday-first="true"
-                                            :clear-button="true"
-                                            :clear-button-icon="configFechas.IconoBotonBorrar"
-                                            :calendar-button="true"                                            
-                                            :calendar-button-icon="configFechas.IconoBotonAbrir"
-                                            calendar-button-icon-content=""
-                                            :format="configFechas.DatePickerFormat"
-                                            :full-month-name="true"                                    
-                                            :bootstrap-styling="true"
-                                            :disabled-dates="configFechas.disablesFullDate"
-                                            :typeable="configFechas.typeable"
-
-                                            v-model="jsonData.fecha_inicial_real"
-                                            diabled
-                                        >
-                                        </datepicker>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">     
-                                    <div class="form-group">
-                                        <label for="monto_aprobado_bs">Monto Aprobado en Bolivianos:</label>
-                                        <input type="number" class="form-control" name="monto_aprobado_bs" id="monto_aprobado_bs" v-model="jsonData.monto_aprobado_bs" @blur="calcular_moneda('BS')">
-                                    </div>
-                                </div>
-                                <div class="col-md-12">          
-                                    <div class="form-group">
-                                        <label for="monto_aprobado_dolares">Monto Aprobado en Dolares:</label>
-                                        <input type="number" class="form-control" name="monto_aprobado_dolares" id="monto_aprobado_dolares" v-model="jsonData.monto_aprobado_dolares" @blur="calcular_moneda('SUS')">
-                                    </div>
-                                </div>
-                                <div class="col-md-12">          
-                                    <label for="codsisin">Documento de Respaldo:</label>                   
-                                    <label for="documento_res_aprobacion" id="label_documento_res_aprobacion" class="bg-primary" 
-                                    style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
-                                        <span id="contenido_documento_res_aprobacion"><i class="fas fa-download fa-1x"></i><br> <span> {{configFile.contenidoDefault}}</span></span>
-                                        <button type="button" class="close" v-if="configFile.cerrar" @click="borrar_file();"> <span>&times;</span> </button>
-                                    </label>
-                                    <input type="file" class="form-control" id="documento_res_aprobacion" @change="cargar_file" style="display:none">
-                                </div>
-                            </div>                             
-                        </div>           
+                         </div>
+                                                       
+                                  
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar</button>
@@ -351,6 +269,7 @@ export default {
                 sort: true,
                 uniqueId: true,
             },
+
              {
                 label: "Nombre",
                 name: "nombre",
@@ -361,41 +280,33 @@ export default {
                 sort: true,
             },
              {
-                label: "Sector",
-                name: "sectorial.denominacion",
+                label: "Fecha Inicial",
+                name: "fecha_inicial",
                 filter: {
                     type: "simple",
-                    placeholder: "Sector"
+                    placeholder: "fecha_inicial"
                 },
                 sort: true,
             },
             {
-                label: "Descripción",
-                name: "descripcion",
+                label: "Fecha Final",
+                name: "fecha_final",
                 filter: {
                     type: "simple",
-                    placeholder: "Descripción"
+                    placeholder: "fecha_final"
                 },
                 sort: true,
             },
             {
-                label: "Fecha Aprobación",
-                name: "fecha_aprobacion",
+                label: "Estado",
+                name: "estado",
                 filter: {
                     type: "simple",
-                    placeholder: "Fecha Aprobación"
+                    placeholder: "Estado"
                 },
                 sort: true,
             },
-            {
-                label: "Duración Días",
-                name: "duracion_dias",
-                filter: {
-                    type: "simple",
-                    placeholder: "Duración Días"
-                },
-                sort: true,
-            },
+            
             {
                 label: "Acciones",
                 name: "acciones",
@@ -511,18 +422,28 @@ export default {
             console.log("selecciono una fecha" + this.jsonData.fecha);//v-on:selected
         },
         async listar(){
-            var respuesta = await axios.get('intervenciones_usuario');
-            // console.log("listar");
+            var respuesta = await axios.get('listar_unidades_ejecutoras');
+           
             console.log(respuesta.data);            
             this.intervenciones = respuesta.data;
             this.rows = respuesta.data;
         },
+        async institucionesActivas(){
+             console.log('institucionesActivas');
+            var respuesta = await axios.get('institucions_intervencion');
+            // console.log(respuesta.data);
+            this.instituciones = respuesta.data;
+            // this.jsonData.institucion = respuesta.data;
+        },
         async guardar(){
-            console.log(this.jsonData);
+           
             let datos_jsonData = new FormData();
             for(let key in this.jsonData){
                 datos_jsonData.append(key, this.jsonData[key]);
             }
+
+             console.log(this.jsonData);
+             
             var fecha_aprobacion = new Date(this.jsonData.fecha_aprobacion);
             datos_jsonData.append('fecha_aprobacion_dat', fecha_aprobacion.getFullYear() + "-" + (fecha_aprobacion.getMonth() + 1) + "-" + fecha_aprobacion.getDate());
             var fecha_inicial_programada = new Date(this.jsonData.fecha_inicial_programada);
@@ -558,33 +479,18 @@ export default {
             var respuesta = await axios.delete('intervenciones/' + id);
             this.listar();
         },
-        async institucionesActivas(){
-            var respuesta = await axios.get('institucions_intervencion');
-            // console.log(respuesta.data);
-            this.instituciones = respuesta.data;
-            // this.jsonData.institucion = respuesta.data;
-        },
-        async intervencionesTipoActivas(){
-            var respuesta = await axios.get('intervencions_tipo');
-            // console.log("intervencion");
-            // console.log(respuesta.data);
-            this.tipo_intervenciones = respuesta.data;
-            this.optionsSelect = respuesta.data;
-        },
-        async sectorialesActivos(){
-            var respuesta = await axios.get('sectorials');
-            // console.log(respuesta.data);
-            this.sectoriales = respuesta.data;
-        },
+        
+        
+        
         ModalCrear(){
             this.modificar_bottom=false;
             this.guardar_bottom=true;
-            this.tituloIntervencionModal = "Formulario de Creación de Intervenciones";
+            this.tituloIntervencionModal = "Formulario de Creación de Unidades Ejecutoras";
         },
         ModalModificar(data={}){            
             this.modificar_bottom=true;
             this.guardar_bottom=false;
-            this.tituloIntervencionModal = "Formulario de Modificaciones de Intervenciones";
+            this.tituloIntervencionModal = "Formulario de Modificaciones de  Unidades Ejecutoras";
             // this.jsonData.id = data.id;
             // // console.log(data.institucion);
             // this.jsonData.institucion = data.institucion;
@@ -689,8 +595,8 @@ export default {
     created() {
         this.listar();
         this.institucionesActivas();
-        this.intervencionesTipoActivas();
-        this.sectorialesActivos();
+        //this.intervencionesTipoActivas();
+        //this.sectorialesActivos();
     },
     watch: {
         props: function(val, oldVal) {

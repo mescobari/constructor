@@ -19,6 +19,8 @@ class InstitucionesController extends Controller
         return $data;
     }
     public function institucionesIntervencion(){
+        $institucion_id=auth()->user()->funcionario_user_auth()->institucion_id;
+       
         $data = ClaInstitucional::where('id', auth()->user()->funcionario_user_auth()->institucion_id)->get();
         return $data;
     }

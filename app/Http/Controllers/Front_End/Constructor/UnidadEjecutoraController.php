@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
+use App\Models\Constructor\UnidadEjecutora;
+use App\Models\FrontEnd\intervenciones\ClaInstitucional;
+
 use App\Models\FrontEnd\intervenciones\Intervencion;
 use App\Models\FrontEnd\intervenciones\ClaSectorial;
 use App\Models\FrontEnd\marco_logico\Objetivo;
@@ -15,34 +19,16 @@ class UnidadEjecutoraController extends Controller
         return view('front-end.constructor.IndexUnidadEjecutora');
     }    
 
-    public function intervencionesUsuario(Request $request){
-        $data = Intervencion::where('institucion_id', auth()->user()->funcionario_user_auth()->institucion_id)->with('institucion', 'tipo_intervencion', 'sectorial')->get();        
-        foreach($data as $dat){
-            $dat['filePathFull'] = $request->getSchemeAndHttpHost() . '/' . $dat->path_proyecto;
-        }
+    public function listarUnidadesEjecutoras(Request $request){
+       $institucion_id=auth()->user()->funcionario_user_auth()->institucion_id;
+      // dd($institucion_id);
+       // $data = UnidadEjecutora::where('institucion_id', '=', $institucion_id)->get(); 
+       $data = UnidadEjecutora::all();
+       
+        
         return($data);
-        $sectores = ClaSectorial::all();
-        foreach($data as $dat){
-            $dat->fecha_aprobacion = date('d-m-Y', strtotime($dat->fecha_aprobacion));
-            $sectorial = [];
-            foreach($sectores as $sectore){
-                if($sectore->id == $dat->sectorial_id){
-                    $sectorial = $sectore;
-                }
-            }
-            $sector = [];
-            foreach($sectores as $sectore){
-                if($sectore->id == $sectorial->sector){
-                    $sector = $sectore;
-                }
-            }
-            if(isset($sector)){
-                $dat->sectorial_literal = $sector->denominacion;
-            }else{
-                $dat->sectorial_literal = "";
-            }
-        }
-        return $data;
+
+        
     }
 
     public function index(Request $request)
