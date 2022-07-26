@@ -242,20 +242,9 @@ export default {
             jsonData:{
                 id: 0,
                 institucion: null,
-                inteventiontype:{id:0, nombre:"Seleccione por favor...", created_at:null, updated_at: null},
-                tipo_intervencion: null,
-                nombre: '',
-                codsisin: '',
-                sectorial: null,
-                fecha_aprobacion: '',
-                fecha_inicial_programada: null,
-                duracion_dias: '',
-                fecha_inicial_real: '',
-                descripcion: '',
-                monto_aprobado_bs: '',
-                monto_aprobado_dolares: '',
-                fecha:'',
-                files:null,
+                nombre: '',               
+                fecha_inicial: '',
+                fecha_final: null,
             },            
             rows: [],
             columns: [
@@ -436,13 +425,15 @@ export default {
             // this.jsonData.institucion = respuesta.data;
         },
         async guardar(){
-           
+           alert('guardar estamos aqui');
+
             let datos_jsonData = new FormData();
             for(let key in this.jsonData){
                 datos_jsonData.append(key, this.jsonData[key]);
             }
 
              console.log(this.jsonData);
+             console.log(datos_jsonData);
              
             var fecha_aprobacion = new Date(this.jsonData.fecha_aprobacion);
             datos_jsonData.append('fecha_aprobacion_dat', fecha_aprobacion.getFullYear() + "-" + (fecha_aprobacion.getMonth() + 1) + "-" + fecha_aprobacion.getDate());
