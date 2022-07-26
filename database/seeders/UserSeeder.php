@@ -18,14 +18,14 @@ class UserSeeder extends Seeder
     {
         //registro de ususarios base del sistema
         DB::table('users')->insert([
-            'userName' => 'ferdy',
-            'email' => 'fernandoquispecastro@gmail.com',
+            'userName' => 'gabriel',
+            'email' => 'gmaeq1966@gmail.com',
             'password' => Hash::make('12345'),
             'estado' => 'ACT',
         ]);
         DB::table('users')->insert([
             'userName' => 'max',
-            'email' => 'max@gmail.com',
+            'email' => 'maxescob@hotmail.com',
             'password' => Hash::make('12345'),
             'estado' => 'ACT',
         ]);

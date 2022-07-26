@@ -425,28 +425,27 @@ export default {
             // this.jsonData.institucion = respuesta.data;
         },
         async guardar(){
-           alert('guardar estamos aqui');
-
             let datos_jsonData = new FormData();
             for(let key in this.jsonData){
                 datos_jsonData.append(key, this.jsonData[key]);
             }
 
-             console.log(this.jsonData);
-             console.log(datos_jsonData);
-             
-            var fecha_aprobacion = new Date(this.jsonData.fecha_aprobacion);
-            datos_jsonData.append('fecha_aprobacion_dat', fecha_aprobacion.getFullYear() + "-" + (fecha_aprobacion.getMonth() + 1) + "-" + fecha_aprobacion.getDate());
-            var fecha_inicial_programada = new Date(this.jsonData.fecha_inicial_programada);
-            datos_jsonData.append('fecha_inicial_programada_dat', fecha_inicial_programada.getFullYear() + "-" + (fecha_inicial_programada.getMonth() + 1) + "-" + fecha_inicial_programada.getDate());
+            var fecha_inicial = new Date(this.jsonData.fecha_inicial);
+            console.log( 'fecha_inicial ' + fecha_inicial);
+            datos_jsonData.append('fecha_inicial_dat', fecha_inicial.getFullYear() + "-" + (fecha_inicial.getMonth() + 1) + "-" + fecha_inicial.getDate());
+            var fecha_final = new Date(this.jsonData.fecha_final);
+            datos_jsonData.append('fecha_final_dat', fecha_final.getFullYear() + "-" + (fecha_final.getMonth() + 1) + "-" + fecha_final.getDate());
+           
             datos_jsonData.append('institucion_id', this.jsonData.institucion.id);
-            datos_jsonData.append('sectorial_id', this.jsonData.sectorial.id);
-            datos_jsonData.append('tipo_intervencion_id', this.jsonData.tipo_intervencion.id);
-            var respuesta = await axios.post('intervenciones', datos_jsonData);
+            console.log(datos_jsonData);
+
+            var respuesta = await axios.post('unidades_ejecutoras', datos_jsonData);
+
             console.log(respuesta.data);
             document.getElementById("cerrarModal").click();
             this.listar();
         },
+
         async modificar(){
             // console.log(this.jsonData);
             let datos_jsonData = new FormData();
@@ -496,8 +495,13 @@ export default {
             // this.jsonData.descripcion = data.descripcion;
             // this.jsonData.monto_aprobado_bs = data.monto_aprobado_bs;
             // this.jsonData.monto_aprobado_dolares = data.monto_aprobado_dolares;
+            console.log( this.jsonData);
             this.jsonData = data;
+             console.log('this.jsonData = data');
+                 
+             console.log(data);
         },
+        
         mostrar(){
             console.log(this.jsonData.inteventiontype);
             console.log(this.jsonData.inteventiontype.id);

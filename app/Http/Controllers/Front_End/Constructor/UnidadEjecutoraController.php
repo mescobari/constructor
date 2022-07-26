@@ -69,80 +69,20 @@ class UnidadEjecutoraController extends Controller
 
     public function store(Request $request)
     {
-        // return "fer";  
-        // return $request;
-        // $datos = [
-        //     $request->institucion['id'],
-        //     $request->tipo_intervencion['id'],
-        //     $request->nombre,
-        //     $request->codsisin,
-        //     $request->sectorial['id'],
-        //     $request->fecha_aprobacion,
-        //     $request->fecha_inicial_programada,
-        //     $request->duracion_dias,
-        //     $request->fecha_inicial_real,
-        //     $request->descripcion,
-        //     $request->monto_aprobado_bs,
-        //     $request->monto_aprobado_dolares,
-        // ];
-        // return $datos;
-        // return $request->tipo_intervencion_id;
-        // $intervencion = new Intervencion;
-        // return $intervencion;
-        $maximoPeso = (int)ini_get('upload_max_filesize') * 10240;
-        $nombre_carpeta = $request->institucion_id . "/" . $request->tipo_intervencion_id . "/intervenciones";
-        $files = "";
-        if($request->hasFile('files')){
-            // $files = $request->file('files')->store('cofinanciadores/' . $nombre_carpeta);//nombre por default del sistema
-            // $nombre_archivo = $request->file('files')->getClientOriginalName();//nombre original del archivo       
-            $extencion = $request->file('files')->getClientOriginalExtension();   
-            $datoBuscar = " ";
-            $datoReemplazar = "_";
-            $cadenaProcesar = $request->nombre;              
-            $titulo = str_replace($datoBuscar, $datoReemplazar, $cadenaProcesar);
-
-            $nombre_archivo = $request->tipo_intervencion_id . '_' . trim($titulo) . '.' . $extencion;
-            $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
-        }
-        $resultado = Intervencion::create([
+        $dir_admin_id=1;
+        $estado='APROBADO';
+        $resultado = UnidadEjecutora::create([
                 'institucion_id' => $request->institucion_id,
-                'inteventiontype_id' => $request->tipo_intervencion_id,
                 'nombre' => $request->nombre,
-                'codsisin' => $request->codsisin,
-                'sectorial_id' => $request->sectorial_id,
-                'fecha_aprobacion' => date('Y-m-d', strtotime($request->fecha_aprobacion_dat)),
-                'fecha_inicial_programada' => date('Y-m-d', strtotime($request->fecha_inicial_programada_dat)),
-                'duracion_dias' => $request->duracion_dias,
-                // 'fecha_inicial_real' => date('Y-m-d', strtotime($request->fecha_inicial_real)),
-                'descripcion' => $request->descripcion,
-                'monto_aprobado_bs' => $request->monto_aprobado_bs,
-                'monto_aprobado_dolares' => $request->monto_aprobado_dolares,  
-                'path_proyecto' => $files,                          
-        ]);        
-        $resultadoObjetivo = Objetivo::create([
-            'intervenciones_id' => $resultado->id,
-            'objetivetype_id' => 1,
-            'padre' => 0,
-            'desc_corta' => "fin " . $resultado->nombre ,
-            'fecha_inicial_programada' => $resultado->fecha_aprobacion,
-            'fecha_final_programada' => $resultado->fecha_inicial_programada,
-            'descripcion' => "descripción fin " . $resultado->nombre,
-            'duracion_dias' => $resultado->duracion_dias,
-            'monto' => $resultado->monto_aprobado_bs,
-            'tipo_ejecucion' => true,
-        ]);         
-        $resultadoObjetivo2 = Objetivo::create([
-            'intervenciones_id' => $resultado->id,
-            'objetivetype_id' => 2,
-            'padre' => $resultadoObjetivo->id,
-            'desc_corta' => "proposito " . $resultado->nombre ,
-            'fecha_inicial_programada' => $resultado->fecha_aprobacion,
-            'fecha_final_programada' => $resultado->fecha_inicial_programada,
-            'descripcion' => "descripción proposito " . $resultado->nombre,
-            'duracion_dias' => $resultado->duracion_dias,
-            'monto' => $resultado->monto_aprobado_bs,
-            'tipo_ejecucion' => true,
+                'fecha_inicial' => date('Y-m-d', strtotime($request->fecha_inicial_dat)),
+                'fecha_final' => date('Y-m-d', strtotime($request->fecha_final_dat)),
+                'unidad_ejecutora' => $request->institucion_id,
+                'dir_admin_id' => $dir_admin_id,
+                'estado' => $estado,
+
         ]); 
+       
+
         return $resultado;
     }
 

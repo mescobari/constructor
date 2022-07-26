@@ -16,18 +16,18 @@ class PersonaSeeder extends Seeder
     {
         //registro de persona base para el sistema
         $persona = Persona::create([
-            'ci'=>'7009692',
+            'ci'=>'2538022',
             'complemento'=>null,
             'expedido'=>7,
-            'nombres'=>'Fernando',
-            'paterno'=>'Quispe',
-            'materno'=>'Castro',
-            'direccion'=>'Calle tiahuanacu 1025',
+            'nombres'=>'Max',
+            'paterno'=>'Escobari',
+            'materno'=>'Quiroga',
+            'direccion'=>'Av. Muñoz Reyes #2000',
             'telefono'=>null,
-            'celular'=>79673216,
+            'celular'=>77777607,
             'sexo'=>15,
-            'fecha_nacimiento'=>'2021-05-25',
-            'codigo_persona'=>'FQC',
+            'fecha_nacimiento'=>'1966-03-24',
+            'codigo_persona'=>'MEQ',
         ]);
     }
 }
