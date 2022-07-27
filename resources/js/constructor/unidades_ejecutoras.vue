@@ -103,7 +103,7 @@
                              <div class="col-md-4"></div>
                                 <div class="col-md-4">          
                                     <div class="form-group">
-                                        <label for="fecha_aprobacion">Fecha Inicial:</label>
+                                        <label for="fecha_inicial">Fecha Inicial:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_aprobacion" id="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                         <datepicker             
                                             :language="configFechas.es"
@@ -132,7 +132,7 @@
                                 </div>
                                 <div class="col-md-4">          
                                     <div class="form-group">
-                                        <label for="fecha_inicial_programada">Fecha Final:</label>
+                                        <label for="fecha_final">Fecha Final:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_inicial_programada" id="fecha_inicial_programada" v-model="jsonData.fecha_inicial_programada"> -->
                                         <datepicker             
                                             :language="configFechas.es"
@@ -418,7 +418,7 @@ export default {
             this.rows = respuesta.data;
         },
         async institucionesActivas(){
-             console.log('institucionesActivas');
+            //  console.log('institucionesActivas');
             var respuesta = await axios.get('institucions_intervencion');
             // console.log(respuesta.data);
             this.instituciones = respuesta.data;
@@ -495,11 +495,13 @@ export default {
             // this.jsonData.descripcion = data.descripcion;
             // this.jsonData.monto_aprobado_bs = data.monto_aprobado_bs;
             // this.jsonData.monto_aprobado_dolares = data.monto_aprobado_dolares;
-            console.log( this.jsonData);
+            data.fecha_inicial = data.fecha_inicial.split('-').reverse().join('-');
+            data.fecha_final = data.fecha_final.split('-').reverse().join('-');
+            data.institucion = this.instituciones[0].nombre;
+
             this.jsonData = data;
-             console.log('this.jsonData = data');
-                 
-             console.log(data);
+            //  console.log('this.jsonData = data');
+            //  console.log(data);
         },
         
         mostrar(){
