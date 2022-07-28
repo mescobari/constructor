@@ -14,5 +14,6 @@
 <script src="{{asset("assets/ferdy/dataTables/vfs_fonts.js")}}" type="text/javascript"></script> --}}
 @endsection
 @section('content')
+
 <contrato-principal></contrato-principal>
 @endsection
