@@ -7,6 +7,9 @@
       
         Route::apiResource('unidades_ejecutoras', UnidadEjecutoraController::class);
 
+        Route::get('documents_ini', 'DocumentController@inicio')->name('documents_ini');  
+        Route::apiResource('documents', DocumentController::class);
+
         /*Route::apiResource('intervenciones', IntervencionesController::class);
         Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
         Route::get('proyectos', 'IntervencionesController@proyectos')->name('proyectos');

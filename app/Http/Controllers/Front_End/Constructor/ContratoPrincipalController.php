@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use App\Models\FrontEnd\intervenciones\Intervencion;
 use App\Models\FrontEnd\intervenciones\ClaSectorial;
 use App\Models\FrontEnd\marco_logico\Objetivo;
+
 class ContratoPrincipalController extends Controller
 {
     

@@ -2,7 +2,7 @@
 namespace Database\Seeders;
 
 use App\Models\BackEnd\intervenciones\ClaSectorial;
-use App\Models\Cosntructor\UnidadEjecutora;
+use App\Models\Constructor\UnidadEjecutora;
 use Illuminate\Database\Seeder;
 
 class UnidadEjecutoraSeeder extends Seeder
