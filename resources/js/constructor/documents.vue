@@ -97,8 +97,8 @@
                                         <!--                                        Doc Type Spinner-->
                                         <!--                                        change var v-model below-->
                                         <label for="document_type">Tipo de Documento:</label>
-                                        <v-select label="nombre" :options="document_types"
-                                                  v-model="jsonData.document_type"
+                                        <v-select label="nombre" :options="combo_tipos_documentos"
+                                                  v-model="jsonData.tipos_documento"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
@@ -114,8 +114,8 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="descripcion">Contratante:</label>
-                                        <v-select label="nombre" :options="document_types"
-                                                  v-model="jsonData.document_type"
+                                        <v-select label="nombre" :options="combo_tipos_documentos"
+                                                  v-model="jsonData.tipos_documento"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
@@ -334,14 +334,14 @@ export default {
             intervenciones: [],
             tituloIntervencionModal: '',
             //change var below
-            document_types: [],
+            combo_tipos_documentos: [],
             tipo_intervenciones: [],
             sectoriales: [],
             id_eliminacion: null,
             jsonData: {
                 id: 0,
                 //change var below
-                document_type: null,
+                tipos_documento: {},
                 inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
                 tipo_intervencion: null,
                 nombre: '',
@@ -380,7 +380,7 @@ export default {
                 },
                 {
                     label: "Tipo de Documento",
-                    name: "document_type",
+                    name: "tipos_documento",
                     filter: {
                         type: "simple",
                         placeholder: "Tipo de Documento",
@@ -615,12 +615,9 @@ export default {
             this.listar();
         },
         //Change object to get
-        async tiposDocumentos() {
-            const respuesta = await axios.get('document_types');
-            // console.log(respuesta.data);
-            this.document_types = respuesta.data;
-            console.log(respuesta.data);
-            // this.jsonData.institucion = respuesta.data;
+        async tipos_documentos() {
+            var respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
+            this.combo_tipos_documentos = respuesta.data;
         },
         async intervencionesTipoActivas() {
             var respuesta = await axios.get('intervencions_tipo');
@@ -630,7 +627,7 @@ export default {
             this.optionsSelect = respuesta.data;
         },
         //get data from?
-        async sectorialesActivos() {
+        async sectorialesActivos(){
             var respuesta = await axios.get('sectorials');
             // console.log(respuesta.data);
             this.sectoriales = respuesta.data;
@@ -747,7 +744,7 @@ export default {
     },
     created() {
         this.listar();
-        this.tiposDocumentos();
+        this.tipos_documentos();
         this.intervencionesTipoActivas();
         this.sectorialesActivos();
     },
