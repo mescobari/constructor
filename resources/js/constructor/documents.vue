@@ -342,6 +342,7 @@ export default {
                 id: 0,
                 //change var below
                 tipos_documento: '',
+                document_types_id: '',
                 inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
                 tipo_intervencion: null,
                 nombre: '',
@@ -380,41 +381,13 @@ export default {
                 },
                 {
                     label: "Tipo de Documento",
-                    name: "tipos_documento",
+                    name: "document_types_id",
                     filter: {
                         type: "simple",
                         placeholder: "Tipo de Documento",
                     },
                     sort: true,
                 },
-                // {
-                //     label: "Codigo",
-                //     name: "codigo",
-                //     filter: {
-                //         type: "simple",
-                //         placeholder: "fecha_inicial"
-                //     },
-                //     sort: true,
-                // },
-                // {
-                //     label: "ID contratante",
-                //     name: "contratante_id",
-                //     filter: {
-                //         type: "simple",
-                //         placeholder: "fecha_final"
-                //     },
-                //     sort: true,
-                // },
-                // {
-                //     label: "ID Contratado",
-                //     name: "contratado_id",
-                //     filter: {
-                //         type: "simple",
-                //         placeholder: "Estado"
-                //     },
-                //     sort: true,
-                // },
-
                 {
                     label: "Fecha de Firma",
                     name: "fecha_firma",
