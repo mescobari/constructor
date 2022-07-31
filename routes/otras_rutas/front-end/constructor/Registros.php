@@ -9,6 +9,12 @@
 
         Route::get('documents_ini', 'DocumentController@inicio')->name('documents_ini');  
         Route::apiResource('documents', DocumentController::class);
+       
+        Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');  
+        Route::apiResource('planillas', PlanillaController::class);
+
+
+
 
         /*Route::apiResource('intervenciones', IntervencionesController::class);
         Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
