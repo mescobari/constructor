@@ -91,7 +91,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <!--                                        Doc Type Spinner-->
@@ -163,7 +163,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="tipo_intervencion">Documento Padre:</label>
@@ -341,7 +341,7 @@ export default {
             jsonData: {
                 id: 0,
                 //change var below
-                tipos_documento: {},
+                tipos_documento: '',
                 inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
                 tipo_intervencion: null,
                 nombre: '',
