@@ -9,7 +9,7 @@
             </div>
         </div>
         <br>
-        <div class="card-body"> 
+        <div class="card-body">
             <div class="table-responsive">
                 <vue-bootstrap4-table :rows="rows" :columns="columns" :config="config" @on-download="mostrar" :classes="classes">
                     <template slot="simple-filter-clear-icon">
@@ -60,7 +60,7 @@
                         <div class="btn-group">
                             <a :href="props.row.filePathFull" target="_blank" rel="noopener noreferrer"><button type="button" class="btn btn-outline-success"><span><i class="far fa-file-pdf"></i> </span></button></a>
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal" data-target="#intervencion" @click="ModalModificar(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
-                            <button type="button" class="btn btn-outline-danger ml-1" @click="preguntarModalAlertaConfirmacion(props.row.id);"><span><i class="fa fa-trash-alt"></i></span></button>                
+                            <button type="button" class="btn btn-outline-danger ml-1" @click="preguntarModalAlertaConfirmacion(props.row.id);"><span><i class="fa fa-trash-alt"></i></span></button>
                         </div>
                     </template>
                 </vue-bootstrap4-table>
@@ -75,10 +75,10 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">   
+                    <div class="modal-body">
                         <div class="row">
                             <div class="col-md-4">
-                                <div class="col-md-12">          
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="institucion">Institución:</label>
                                         <v-select label="nombre" :options="instituciones" v-model="jsonData.institucion" placeholder="Selecione una opción">
@@ -86,10 +86,10 @@
                                         </v-select>
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="descripcion">Descripción:</label>
-                                        <vue-editor 
+                                        <vue-editor
                                             v-model="jsonData.descripcion"
                                             :editor-toolbar="configToolBarEditText"
                                         ></vue-editor>
@@ -97,29 +97,28 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-md-4">   
-                                <div class="col-md-12">          
+                            <div class="col-md-4">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="tipo_intervencion">Tipo de Intervención:</label>
                                         <v-select label="nombre" :options="tipo_intervenciones" v-model="jsonData.tipo_intervencion" placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
-                                </div>                             
-                                <div class="col-md-12">          
+                                </div>
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="nombre">Nombre:</label>
                                         <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingresar Nombre" v-model="jsonData.nombre">
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="codsisin">Codsisin:</label>
                                         <input type="text" class="form-control" name="codsisin" id="codsisin" placeholder="Ingresar codsisin" v-model="jsonData.codsisin">
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="sectorial">Sectorial:</label>
                                         <v-select label="denominacion" :options="sectoriales" v-model="jsonData.sectorial" placeholder="Selecione una opción">
@@ -127,11 +126,11 @@
                                         </v-select>
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="fecha_aprobacion">Fecha Aprobación:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_aprobacion" id="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
-                                        <datepicker             
+                                        <datepicker
                                             :language="configFechas.es"
                                             :placeholder="configFechas.placeholder"
 
@@ -143,12 +142,12 @@
                                             :clear-button="true"
                                             :clear-button-icon="configFechas.IconoBotonBorrar"
                                             :calendar-button="true"
-                                            
+
                                             :calendar-button-icon="configFechas.IconoBotonAbrir"
                                             calendar-button-icon-content=""
                                             :format="configFechas.DatePickerFormat"
                                             :full-month-name="true"
-                                            
+
                                             :bootstrap-styling="true"
                                             :disabled-dates="configFechas.disabledDates"
                                             :typeable="configFechas.typeable"
@@ -156,11 +155,11 @@
                                         </datepicker>
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="fecha_inicial_programada">Fecha Inicial Programada:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_inicial_programada" id="fecha_inicial_programada" v-model="jsonData.fecha_inicial_programada"> -->
-                                        <datepicker             
+                                        <datepicker
                                             :language="configFechas.es"
                                             :placeholder="configFechas.placeholder"
                                             :calendar-class="configFechas.nombreClaseParaModal"
@@ -168,11 +167,11 @@
                                             :monday-first="true"
                                             :clear-button="true"
                                             :clear-button-icon="configFechas.IconoBotonBorrar"
-                                            :calendar-button="true"                                            
+                                            :calendar-button="true"
                                             :calendar-button-icon="configFechas.IconoBotonAbrir"
                                             calendar-button-icon-content=""
                                             :format="configFechas.DatePickerFormat"
-                                            :full-month-name="true"                                    
+                                            :full-month-name="true"
                                             :bootstrap-styling="true"
                                             :disabled-dates="configFechas.disabledDates"
                                             :typeable="configFechas.typeable"
@@ -184,18 +183,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4"> 
-                                <div class="col-md-12">          
+                            <div class="col-md-4">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="duracion_dias">Duración de Días:</label>
                                         <input type="number" class="form-control" name="duracion_dias" id="duracion_dias" v-model="jsonData.duracion_dias">
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="fecha_inicial_real">Fecha Inicial Real:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_inicial_real" id="fecha_inicial_real" v-model="jsonData.fecha_inicial_real" readonly> -->
-                                        <datepicker             
+                                        <datepicker
                                             :language="configFechas.es"
                                             :placeholder="configFechas.placeholderDisbled"
                                             :calendar-class="configFechas.nombreClaseParaModal"
@@ -203,11 +202,11 @@
                                             :monday-first="true"
                                             :clear-button="true"
                                             :clear-button-icon="configFechas.IconoBotonBorrar"
-                                            :calendar-button="true"                                            
+                                            :calendar-button="true"
                                             :calendar-button-icon="configFechas.IconoBotonAbrir"
                                             calendar-button-icon-content=""
                                             :format="configFechas.DatePickerFormat"
-                                            :full-month-name="true"                                    
+                                            :full-month-name="true"
                                             :bootstrap-styling="true"
                                             :disabled-dates="configFechas.disablesFullDate"
                                             :typeable="configFechas.typeable"
@@ -218,29 +217,29 @@
                                         </datepicker>
                                     </div>
                                 </div>
-                                <div class="col-md-12">     
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="monto_aprobado_bs">Monto Aprobado en Bolivianos:</label>
                                         <input type="number" class="form-control" name="monto_aprobado_bs" id="monto_aprobado_bs" v-model="jsonData.monto_aprobado_bs" @blur="calcular_moneda('BS')">
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="monto_aprobado_dolares">Monto Aprobado en Dolares:</label>
                                         <input type="number" class="form-control" name="monto_aprobado_dolares" id="monto_aprobado_dolares" v-model="jsonData.monto_aprobado_dolares" @blur="calcular_moneda('SUS')">
                                     </div>
                                 </div>
-                                <div class="col-md-12">          
-                                    <label for="codsisin">Documento de Respaldo:</label>                   
-                                    <label for="documento_res_aprobacion" id="label_documento_res_aprobacion" class="bg-primary" 
+                                <div class="col-md-12">
+                                    <label for="codsisin">Documento de Respaldo:</label>
+                                    <label for="documento_res_aprobacion" id="label_documento_res_aprobacion" class="bg-primary"
                                     style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
                                         <span id="contenido_documento_res_aprobacion"><i class="fas fa-download fa-1x"></i><br> <span> {{configFile.contenidoDefault}}</span></span>
                                         <button type="button" class="close" v-if="configFile.cerrar" @click="borrar_file();"> <span>&times;</span> </button>
                                     </label>
                                     <input type="file" class="form-control" id="documento_res_aprobacion" @change="cargar_file" style="display:none">
                                 </div>
-                            </div>                             
-                        </div>           
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar</button>
@@ -249,8 +248,8 @@
                     </div>
                 </div>
             </div>
-        </div>        
-        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion" ref="abrirAlerta"></alert-confirmacion>       
+        </div>
+        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion" ref="abrirAlerta"></alert-confirmacion>
     </div>
 </template>
 
@@ -271,7 +270,7 @@ export default {
         return{
             configFile:{
                 cerrar:false,
-                contenidoDefault:" DOCUMENTOS",              
+                contenidoDefault:" DOCUMENTOS",
             },
             mandarMensajesAlerta:{},
             configToolBarEditText: [
@@ -312,13 +311,13 @@ export default {
                 typeable:false,//bloquear edicion por teclado
                 disabledDates:{},
             },
-            optionsSelect:[{label:'Favor de Seleccionar su opción', code:"fer"}],            
+            optionsSelect:[{label:'Favor de Seleccionar su opción', code:"fer"}],
             guardar_bottom: false,
             modificar_bottom: false,
             intervenciones: [],
             tituloIntervencionModal: '',
-            instituciones: [],            
-            tipo_intervenciones: [],   
+            instituciones: [],
+            tipo_intervenciones: [],
             sectoriales: [],
             id_eliminacion:null,
             jsonData:{
@@ -338,7 +337,7 @@ export default {
                 monto_aprobado_dolares: '',
                 fecha:'',
                 files:null,
-            },            
+            },
             rows: [],
             columns: [
             {
@@ -445,7 +444,7 @@ export default {
                 },
                 show_refresh_button:  false,
                 show_reset_button:  false,
-                
+
                 pagination: true, // default true
                 pagination_info: true, // default true
                 num_of_visibile_pagination_buttons: 7, // default 5
@@ -455,7 +454,7 @@ export default {
         }
     },
     methods: {
-        async calcular_moneda(tipo_local){//tipo_cambio_bs_sus        
+        async calcular_moneda(tipo_local){//tipo_cambio_bs_sus
             var respuesta = await axios.get('tipo_cambio_bs_sus');
             console.log(respuesta.data);
             if(respuesta.data == ""){
@@ -472,11 +471,11 @@ export default {
                     var valor = this.jsonData.monto_aprobado_dolares * respuesta.data.valor_venta;
                     valor = valor.toFixed(2);
                     this.jsonData.monto_aprobado_bs = valor;
-                    
+
                 }
             }
-        }, 
-        calcula_dias(){            
+        },
+        calcula_dias(){
             var fecha_ini = moment(this.jsonData.fecha_aprobacion);
             var fecha_fin = moment(this.jsonData.fecha_inicial_programada);
             console.log(fecha_fin.diff(fecha_ini, 'days'), ' dias de diferencia');
@@ -513,7 +512,7 @@ export default {
         async listar(){
             var respuesta = await axios.get('intervenciones_usuario');
             // console.log("listar");
-            console.log(respuesta.data);            
+            console.log(respuesta.data);
             this.intervenciones = respuesta.data;
             this.rows = respuesta.data;
         },
@@ -553,8 +552,8 @@ export default {
             document.getElementById("cerrarModal").click();
             this.listar();
         },
-        async eliminar(id){  
-            this.id_eliminacion = null;          
+        async eliminar(id){
+            this.id_eliminacion = null;
             var respuesta = await axios.delete('intervenciones/' + id);
             this.listar();
         },
@@ -581,7 +580,7 @@ export default {
             this.guardar_bottom=true;
             this.tituloIntervencionModal = "Formulario de Creación de Intervenciones";
         },
-        ModalModificar(data={}){            
+        ModalModificar(data={}){
             this.modificar_bottom=true;
             this.guardar_bottom=false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Intervenciones";
@@ -638,7 +637,7 @@ export default {
         },
         /////////////////*****************funciones de configuraciones********************* */
 
-        borrar_file(){            
+        borrar_file(){
             var nombre_file = "<i class='fas fa-download fa-1x'></i><br><span> " + this.configFile.contenidoDefault + "</span>";
             $('#documento_res_aprobacion').val("");
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-primary'], '#contenido_documento_res_aprobacion',[nombre_file]);
@@ -682,7 +681,7 @@ export default {
                 // }
             }
             this.configFile.cerrar = true;
-            nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>'; 
+            nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion',[nombre_file]);
         },
     },
@@ -709,7 +708,7 @@ export default {
         VueEditor,
     }
 };
-    
+
 </script>
 <style>
 
