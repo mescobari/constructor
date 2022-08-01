@@ -2,15 +2,24 @@
     <div>
         <div class="card">
             <div class="card-header ferdy-background-Primary-blak">
-                <h3 class="card-title">DOCUMENTOS LEGALES</h3>
+                <h3 class="card-title">REGISTRO DE PLANILLAS Y MOVIMIENTOS</h3>
                 <div class="card-tools">
-                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#doc_legales" @click="ModalCrear();">
-                        Add. Documento
+                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales" @click="ModalCrear();">
+                        Adicionar Planilla
                     </button>
                 </div>
             </div>
             <br>
-            <div class="card-body"> 
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <center>
+                             <h3>  {{ jsonData.proyectos.nombre }}</h3>
+                        </center>
+                    </div>
+                </div>
+  
+                 <!--                       
                 <div class="row">
                     <div class="col-md-4">          
                         <div class="form-group">
@@ -24,16 +33,8 @@
                             <input type="text" class="form-control" v-model="jsonData.proyectos.nombre" readonly>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <center>
-                            <!-- <a :href="'reporte_documentos_legales/' + jsonData.proyectos.id" target="_blank" rel="">
-                                <button class="btn btn-success"><span><i class="fas fa-print"></i> Imprimir <br> Reporte</span></button>
-                            </a> -->
-                        </center>
-                    </div>
-                </div>
+                </div>-->
+                
                 <div class="row">  
 
                     <div class="table-responsive">
@@ -118,12 +119,12 @@
                         </div>           
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="buscar_doc_legales();">Seleccionar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="ver_planilla();">Seleccionar</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="doc_legales" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="doc_legalesTitle" aria-hidden="true">
+         <div class="modal fade" id="doc_legales" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="doc_legalesTitle" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header ferdy-background-Primary-blak">
@@ -408,16 +409,19 @@ export default {
             },
             rows:[],
             columns:[
-                { label: "#",               name: "id",         filter: { type: "simple", placeholder: "#", },                sort: true, uniqueId: true, },
-                { label: "Nombre Doc.",     name: "titulo",    filter: { type: "simple", placeholder: "Nombre Doc.", },           sort: true, },
-                { label: "Institución",     name: "institucion.institucion.nombre",    filter: { type: "simple", placeholder: "Institución" },            sort: true, },
-                { label: "Doc. padre",      name: "padre.titulo",    filter: { type: "simple", placeholder: "Doc. padre" },       sort: true, },
-                { label: "F. Inicial",      name: "fecha_firma",    filter: { type: "simple", placeholder: "F. Inicial" },  sort: true, },
-                { label: "F. Final",        name: "fecha_vencimiento",    filter: { type: "simple", placeholder: "F. Final" },     sort: true, },
-                { label: "Duración días",   name: "duracion_dias",    filter: { type: "simple", placeholder: "Duración días" },     sort: true, },
-                { label: "Monto",           name: "monto_bs",    filter: { type: "simple", placeholder: "Monto" },     sort: true, },
-                { label: "Modifica",        name: "modifica",    filter: { type: "simple", placeholder: "Modifica" },     sort: true, },
-                { label: "Acciones",        name: "acciones",   sort: false, },
+                { label: "Codigo",          name: "codigo",              filter: { type: "simple", placeholder: "codigo", },  },
+                { label: "Descripcion",     name: "descripcion",         filter: { type: "simple", placeholder: "descripcion", },   },
+                { label: "Unidad",          name: "unidad",              filter: { type: "simple", placeholder: "Unidad" },      },
+                { label: "Cant.Vigente",    name: "cantidad",        filter: { type: "simple", placeholder: "Cant.Vigente" },         },
+                { label: "P.U. Vigente",    name: "precio_unitario",         filter: { type: "simple", placeholder: "P.U. Vigente" },    },
+                { label: "Total Vigente",   name: "fecha_vencimiento",   filter: { type: "simple", placeholder: "Total Vigente" },       },
+                { label: "Cant. Avance",    name: "duracion_dias",       filter: { type: "simple", placeholder: "Cant. Avance" },       },
+                { label: "P.U. Avance",     name: "monto_bs",            filter: { type: "simple", placeholder: "P.U. Avance" },       },
+                { label: "Total Avance",    name: "modifica",            filter: { type: "simple", placeholder: "Total Avance" },       },
+                { label: "Cant. Saldo",     name: "duracion_dias",       filter: { type: "simple", placeholder: "Cant. Saldo" },       },
+                { label: "P.U. Saldo",      name: "monto_bs",            filter: { type: "simple", placeholder: "P.U. Saldo" },       },
+                { label: "Total Saldo",     name: "modifica",            filter: { type: "simple", placeholder: "Total Saldo" },       },
+                
             ],
             
             configFile:{
@@ -609,7 +613,18 @@ export default {
             const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
             this.proyectos = principales;
             $("#seleccion_proyecto_doc_legales").modal("show");
+            
         },
+        
+         async ver_planilla(){
+            const vp = this.jsonData.proyectos.id;
+            console.log('vplan--> '+ vp);
+            var respuesta = await axios.get('planillas/'+vp);
+            console.log('voviendo del backend');
+            console.log(respuesta.data);
+            this.rows = respuesta.data;
+         },
+
         async buscar_doc_legales(){
             var data = {
                 'intervencion':this.jsonData.proyectos,
@@ -748,6 +763,8 @@ export default {
         // this.tipoDocumento();
         this.funcionRecuperaConfig();
         this.seleccionar_cont_primario();
+        
+
     },
     created(){
 
