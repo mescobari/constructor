@@ -95,7 +95,6 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <!--                                        Doc Type Spinner-->
-                                        <!--                                        change var v-model below-->
                                         <label for="document_type">Tipo de Documento:</label>
                                         <v-select label="nombre" :options="combo_tipos_documentos"
                                                   v-model="jsonData.tipos_documento"
@@ -115,7 +114,7 @@
                                     <div class="form-group">
                                         <label for="descripcion">Contratante:</label>
                                         <v-select label="nombre" :options="cla_institucional"
-                                                  v-model="jsonData.contratante"
+                                                  v-model="jsonData.contratante_id"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
@@ -183,8 +182,8 @@
                                 <div class="row">
                                     <div class="form-group col-md-6">
                                         <label for="codsisin">Contratado:</label>
-                                        <v-select label="nombre" :options="tipo_intervenciones"
-                                                  v-model="jsonData.tipo_intervencion"
+                                        <v-select label="nombre" :options="cla_institucional"
+                                                  v-model="jsonData.contratado_id"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
@@ -344,11 +343,12 @@ export default {
             jsonData: {
                 id: 0,
                 //change var below
-                tipos_documento: '',
+                tipo_documento: '',
                 document_types_id: '',
                 inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
                 tipo_intervencion: null,
-                contratante: '',
+                contratante_id: '',
+                contratado_id: '',
                 nombre: '',
                 codsisin: '',
                 sectorial: null,
@@ -385,7 +385,7 @@ export default {
                 },
                 {
                     label: "Tipo de Documento",
-                    name: "type_name",
+                    name: "tipo_documento",
                     filter: {
                         type: "simple",
                         placeholder: "Tipo de Documento",
@@ -543,10 +543,10 @@ export default {
         seleccionoAntesdeCargarFecha() {
             console.log("selecciono una fecha" + this.jsonData.fecha);//v-on:selected
         },
-        async listar(){
-            var respuesta = await axios.get('documents');
+        async listar() {
+            const respuesta = await axios.get('documents');
             // console.log("listar");
-
+            this.intervenciones = respuesta.data;
             const contratos =
                 [
                     {
@@ -567,13 +567,11 @@ export default {
 
             const contratosObjeto = {};
 
-            contratos.forEach(contrato =>
-            {
+            contratos.forEach(contrato => {
                 contratosObjeto[contrato.id] = contrato.nombre;
             });
 
-            const documentos = respuesta.data.map(documento =>
-            {
+            const documentos = respuesta.data.map(documento => {
                 documento.tipo_documento = contratosObjeto[documento.document_types_id];
 
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
@@ -582,7 +580,7 @@ export default {
             });
 
             console.log('documentos', documentos)
-            this.intervenciones = respuesta.data;
+
             this.rows = documentos;
         },
         async guardar() {
@@ -638,8 +636,8 @@ export default {
             this.tipo_intervenciones = respuesta.data;
             this.optionsSelect = respuesta.data;
         },
-        async institucionesActivas(){
-            var respuesta = await axios.post('cla_institucional');
+        async institucionesGetAll() {
+            const respuesta = await axios.get('instituciones');
             // console.log(respuesta.data);
             this.cla_institucional = respuesta.data;
             // this.jsonData.institucion = respuesta.data;
@@ -765,6 +763,7 @@ export default {
         this.tipos_documentos();
         this.intervencionesTipoActivas();
         this.sectorialesActivos();
+        this.institucionesGetAll()
     },
     watch: {
         props: function (val, oldVal) {
