@@ -114,8 +114,8 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="descripcion">Contratante:</label>
-                                        <v-select label="nombre" :options="combo_tipos_documentos"
-                                                  v-model="jsonData.tipos_documento"
+                                        <v-select label="nombre" :options="cla_institucional"
+                                                  v-model="jsonData.contratante"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
@@ -154,8 +154,7 @@
                                             :bootstrap-styling="true"
                                             :disabled-dates="configFechas.disabledDates"
                                             :typeable="configFechas.typeable"
-
-                                            v-model="jsonData.fecha_inicial_programada"
+                                            v-model="jsonData.fecha_inicial_real"
                                             @closed="calcula_dias()"
                                         >
                                         </datepicker>
@@ -182,17 +181,16 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <!--                                    <div class="col-md-12">-->
                                     <div class="form-group col-md-6">
                                         <label for="codsisin">Contratado:</label>
                                         <v-select label="nombre" :options="tipo_intervenciones"
-                                                   v-model="jsonData.tipo_intervencion"
-                                                   placeholder="Selecione una opción">
-                                        <span slot="no-options">No hay data para cargar</span>
-                                    </v-select>
+                                                  v-model="jsonData.tipo_intervencion"
+                                                  placeholder="Selecione una opción">
+                                            <span slot="no-options">No hay data para cargar</span>
+                                        </v-select>
                                     </div>
                                     <div class="form-group col-md-6">
-                                            <label for="codsisin">Que Modifica:</label>
+                                        <label for="codsisin">Que Modifica:</label>
                                         <div class="row">
                                             <div class="custom-control custom-checkbox col-md-4">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck1">
@@ -240,7 +238,9 @@
                                            class="bg-primary"
                                            style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
                                         <span id="contenido_documento_res_aprobacion"><i
-                                            class="fas fa-download fa-1x"></i><br> <span> {{ configFile.contenidoDefault }}</span></span>
+                                            class="fas fa-download fa-1x"></i><br> <span> {{
+                                                configFile.contenidoDefault
+                                            }}</span></span>
                                         <button type="button" class="close" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
@@ -280,6 +280,7 @@ import {VueEditor} from "vue2-editor";
 
 Vue.component("v-select", vSelect);
 import moment from 'moment';
+import documents from "./documents";
 
 export default {
     props: ['url', 'csrf', 'ast', 'operations', 'user'],
@@ -335,9 +336,11 @@ export default {
             tituloIntervencionModal: '',
             //change var below
             combo_tipos_documentos: [],
+            cla_institucional: [],
             tipo_intervenciones: [],
             sectoriales: [],
             id_eliminacion: null,
+            type_name: [],
             jsonData: {
                 id: 0,
                 //change var below
@@ -345,6 +348,7 @@ export default {
                 document_types_id: '',
                 inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
                 tipo_intervencion: null,
+                contratante: '',
                 nombre: '',
                 codsisin: '',
                 sectorial: null,
@@ -381,7 +385,7 @@ export default {
                 },
                 {
                     label: "Tipo de Documento",
-                    name: "document_types_id",
+                    name: "type_name",
                     filter: {
                         type: "simple",
                         placeholder: "Tipo de Documento",
@@ -539,12 +543,47 @@ export default {
         seleccionoAntesdeCargarFecha() {
             console.log("selecciono una fecha" + this.jsonData.fecha);//v-on:selected
         },
-        async listar() {
+        async listar(){
             var respuesta = await axios.get('documents');
             // console.log("listar");
-            console.log(respuesta.data);
+
+            const contratos =
+                [
+                    {
+                        id: 1,
+                        nombre: "Contrato Principal"
+                    },
+                    {
+                        id: 2,
+                        nombre: "Sub Contrato"
+                    },
+                    {
+                        id: 5,
+                        nombre: "Contrato Modificatorio"
+                    }
+                ];
+
+            // console.log(respuesta.data);
+
+            const contratosObjeto = {};
+
+            contratos.forEach(contrato =>
+            {
+                contratosObjeto[contrato.id] = contrato.nombre;
+            });
+
+            const documentos = respuesta.data.map(documento =>
+            {
+                documento.tipo_documento = contratosObjeto[documento.document_types_id];
+
+                //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
+
+                return documento;
+            });
+
+            console.log('documentos', documentos)
             this.intervenciones = respuesta.data;
-            this.rows = respuesta.data;
+            this.rows = documentos;
         },
         async guardar() {
             console.log(this.jsonData);
@@ -556,7 +595,7 @@ export default {
             datos_jsonData.append('fecha_aprobacion_dat', fecha_aprobacion.getFullYear() + "-" + (fecha_aprobacion.getMonth() + 1) + "-" + fecha_aprobacion.getDate());
             var fecha_inicial_programada = new Date(this.jsonData.fecha_inicial_programada);
             datos_jsonData.append('fecha_inicial_programada_dat', fecha_inicial_programada.getFullYear() + "-" + (fecha_inicial_programada.getMonth() + 1) + "-" + fecha_inicial_programada.getDate());
-            datos_jsonData.append('document_type_id', this.jsonData.document_type.id);
+            datos_jsonData.append('document_type_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('sectorial_id', this.jsonData.sectorial.id);
             datos_jsonData.append('tipo_intervencion_id', this.jsonData.tipo_intervencion.id);
             var respuesta = await axios.post('intervenciones', datos_jsonData);
@@ -599,8 +638,14 @@ export default {
             this.tipo_intervenciones = respuesta.data;
             this.optionsSelect = respuesta.data;
         },
+        async institucionesActivas(){
+            var respuesta = await axios.post('cla_institucional');
+            // console.log(respuesta.data);
+            this.cla_institucional = respuesta.data;
+            // this.jsonData.institucion = respuesta.data;
+        },
         //get data from?
-        async sectorialesActivos(){
+        async sectorialesActivos() {
             var respuesta = await axios.get('sectorials');
             // console.log(respuesta.data);
             this.sectoriales = respuesta.data;

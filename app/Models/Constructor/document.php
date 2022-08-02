@@ -22,4 +22,8 @@ class document extends Model
     'objeto',
     'modifica',
     ];
+
+    public function doc_type(){
+        return $this->belongsTo(document_types::class, 'document_type_id', 'id');
+    }
 }
