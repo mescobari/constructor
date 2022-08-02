@@ -544,7 +544,7 @@ export default {
             {
                 documento.tipo_documento = contratosObjeto[documento.document_types_id];
 
-                // documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
+                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
 
                 return documento;
             });
