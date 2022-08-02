@@ -361,8 +361,8 @@ export default {
                 sort: true,
             },
              {
-                label: "Sector",
-                name: "sectorial.denominacion",
+                label: "Tipo documento",
+                name: "tipo_documento",
                 filter: {
                     type: "simple",
                     placeholder: "Sector"
@@ -513,9 +513,45 @@ export default {
         async listar(){
             var respuesta = await axios.get('documents');
             // console.log("listar");
-            console.log(respuesta.data);            
+
+            const contratos =
+            [
+                {
+                    id: 1,
+                    nombre: "Contrato Principal"
+                },
+                {
+                    id: 2,
+                    nombre: "Sub Contrato"
+                },
+                {
+                    id: 5,
+                    nombre: "Contrato Modificatorio"
+                }
+            ];
+
+            // console.log(respuesta.data);            
             this.intervenciones = respuesta.data;
-            this.rows = respuesta.data;
+
+            const contratosObjeto = {};
+
+            contratos.forEach(contrato =>
+            {
+               contratosObjeto[contrato.id] = contrato.nombre;
+            });
+
+            const documentos = respuesta.data.map(documento =>
+            {
+                documento.tipo_documento = contratosObjeto[documento.document_types_id];
+
+                // documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
+
+                return documento;
+            });
+
+            console.log('documentos', documentos)
+
+            this.rows = documentos;
         },
         async guardar(){
             console.log(this.jsonData);
@@ -560,7 +596,7 @@ export default {
         },
         async institucionesActivas(){
             var respuesta = await axios.get('institucions_intervencion');
-            // console.log(respuesta.data);
+             console.log(respuesta.data);
             this.instituciones = respuesta.data;
             // this.jsonData.institucion = respuesta.data;
         },
@@ -573,7 +609,7 @@ export default {
         },
         async sectorialesActivos(){
             var respuesta = await axios.get('sectorials');
-            // console.log(respuesta.data);
+            //  console.log(respuesta.data);
             this.sectoriales = respuesta.data;
         },
         ModalCrear(){
