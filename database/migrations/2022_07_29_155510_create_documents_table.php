@@ -17,6 +17,7 @@ class CreateDocumentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('document_types_id');
             $table->unsignedBigInteger('unidad_ejecutora_id');
+            $table->unsignedBigInteger('padre')->nullable();
             $table->string('nombre');
             $table->string('codigo');
             $table->unsignedBigInteger('contratante_id');
@@ -26,9 +27,10 @@ class CreateDocumentsTable extends Migration
             $table->float('monto_bs',12,2);
             $table->text('objeto');
             $table->text('modifica');
+            $table->string('path_contrato')->nullable();
             $table->timestamps();
 
-            $table->foreign('document_types_id')->references('id')->on('cla_institucional');
+            $table->foreign('document_types_id')->references('id')->on('document_types');
             $table->foreign('unidad_ejecutora_id')->references('id')->on('unidades_ejecutoras');
             $table->foreign('contratante_id')->references('id')->on('cla_institucional');
             $table->foreign('contratado_id')->references('id')->on('cla_institucional');

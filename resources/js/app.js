@@ -26,6 +26,7 @@ Vue.component('netstable', require('./components/Netstable.vue').default);
 Vue.component('unidad-ejecutora', require('./constructor/unidades_ejecutoras.vue').default);
 Vue.component('contrato-principal', require('./constructor/contrato_principal.vue').default);
 Vue.component('documents', require('./constructor/documents.vue').default);
+Vue.component('planillas', require('./constructor/planillas.vue').default);
 
 
 //componentes
