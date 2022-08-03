@@ -20,15 +20,17 @@ class InstitucionesController extends Controller
     }
     public function institucionesIntervencion(){
         $institucion_id=auth()->user()->funcionario_user_auth()->institucion_id;
-
+       
         $data = ClaInstitucional::where('id', auth()->user()->funcionario_user_auth()->institucion_id)->get();
         return $data;
     }
 
+
     public function index()
     {
+        //
         $data = ClaInstitucional::all();
-                return $data;
+        return $data;
     }
     public function store(Request $request)
     {
@@ -36,7 +38,7 @@ class InstitucionesController extends Controller
     }
     public function show(ClaInstitucional $instituciones)
     {
-        //
+        
     }
     public function update(Request $request, ClaInstitucional $instituciones)
     {
@@ -45,7 +47,7 @@ class InstitucionesController extends Controller
     public function destroy($id)
     {
         //
-    }
+    }    
 
     public function proyectos_de_institucion(){
         $respuestaUser = User::where('id', auth()->user()->id)->with('datos')->get();//me va dar el id de institucion
@@ -54,8 +56,8 @@ class InstitucionesController extends Controller
         $cont = 0;
         foreach($respuestaInstitucion as $val){
             $cont++;
-        }
-        $respuesta = ['proyectos'=>$respuestaInstitucion, 'cantidad'=>$cont, 'institucion' => $respuestaDatosInstitucion];
+        }    
+        $respuesta = ['proyectos'=>$respuestaInstitucion, 'cantidad'=>$cont, 'institucion' => $respuestaDatosInstitucion];    
         return $respuesta;
     }
 }

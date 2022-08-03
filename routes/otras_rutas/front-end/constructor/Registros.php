@@ -8,7 +8,7 @@
         Route::apiResource('unidades_ejecutoras', UnidadEjecutoraController::class);
 
         Route::get('documents_ini', 'DocumentController@inicio')->name('documents_ini');
-        Route::apiResource('documents', DocumentController::class)
+        Route::apiResource('documents', DocumentController::class);
 
         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');
        
