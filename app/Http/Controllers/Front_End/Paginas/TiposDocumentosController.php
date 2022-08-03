@@ -14,7 +14,7 @@ class TiposDocumentosController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function TiposDocumentos(){
+    public function tiposDocumentos(){
         $data = TipoDocumento::all();
         return $data;
     }
@@ -22,6 +22,8 @@ class TiposDocumentosController extends Controller
     public function index()
     {
         //
+        $data = TipoDocumento::all();
+                return $data;
     }
 
     /**
