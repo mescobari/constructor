@@ -107,7 +107,8 @@
                                     <div class="form-group">
                                         <label for="descripcion">Codigo de Documento:</label>
                                         <input type="text" class="form-control" name="duracion_dias"
-                                               id="duracion_dias" v-model="jsonData.document_code">
+                                               id="duracion_dias" v-model="jsonData.codigo"
+                                               placeholder="Introduzca el codigo del documento">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -118,24 +119,11 @@
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
-                                        <!--                                        <vue-editor-->
-                                        <!--                                            v-model="jsonData.descripcion"-->
-                                        <!--                                            :editor-toolbar="configToolBarEditText"-->
-                                        <!--                                        ></vue-editor>-->
-                                        <!-- <input type="text" class="form-control" name="descripcion" id="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                     </div>
-                                    <!--                                    <div class="col-md-12">-->
-                                    <!--                                        <div class="form-group">-->
-                                    <!--                                            <label for="descripcion">Objeto:</label>-->
-                                    <!--                                            <vue-editor-->
-                                    <!--                                                v-model="jsonData.descripcion"-->
-                                    <!--                                                :editor-toolbar="configToolBarEditText"-->
-                                    <!--                                            ></vue-editor>-->
-                                    <!--                                        </div>-->
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="fecha_inicial_programada">Fecha de Firma:</label>
+                                        <label for="date_firma">Fecha de Firma:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_inicial_programada" id="fecha_inicial_programada" v-model="jsonData.fecha_inicial_programada"> -->
                                         <datepicker
                                             :language="configFechas.es"
@@ -153,8 +141,7 @@
                                             :bootstrap-styling="true"
                                             :disabled-dates="configFechas.disabledDates"
                                             :typeable="configFechas.typeable"
-                                            v-model="jsonData.fecha_inicial_real"
-                                            @closed="calcula_dias()"
+                                            v-model="jsonData.date_firma"
                                         >
                                         </datepicker>
                                     </div>
@@ -193,15 +180,15 @@
                                         <div class="row">
                                             <div class="custom-control custom-checkbox col-md-4">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1">Plazo</label>
+                                                <label class="custom-control-label" for="customCheck1" v-model="jsonData._plazo">Plazo</label>
                                             </div>
                                             <div class="custom-control custom-checkbox col-md-4">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1">Monto</label>
+                                                <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                                <label class="custom-control-label" for="customCheck2" v-model="jsonData._monto">Monto</label>
                                             </div>
                                             <div class="custom-control custom-checkbox col-md-4">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1">Otro</label>
+                                                <input type="checkbox" class="custom-control-input" id="customCheck3">
+                                                <label class="custom-control-label" for="customCheck3" v-model="jsonData._otro">Otro</label>
                                             </div>
                                         </div>
                                     </div>
@@ -210,12 +197,12 @@
                                     <div class="form-group col-md-6">
                                         <label for="codsisin">Duracion de Dias:</label>
                                         <input type="number" class="form-control" name="codsisin" id="codsisin"
-                                               placeholder="Ingresar Dias" v-model="jsonData.codsisin">
+                                               placeholder="Ingresar Dias" v-model="jsonData.duracion_dias">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="codsisin">Monto Aprobado en Bolivianos:</label>
                                         <input type="text" class="form-control" name="codsisin" id="codsisin"
-                                               placeholder="Ingresar Monto" v-model="jsonData.codsisin">
+                                               placeholder="Ingresar Monto" v-model="jsonData.monto_bs">
                                     </div>
                                 </div>
 
@@ -252,7 +239,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" @click="guardar();" class="btn btn-success" v-if="guardar_bottom==true">
+                        <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal" v-if="guardar_bottom==true">
                             Guardar
                         </button>
                         <button type="submit" @click="modificar();" class="btn btn-success"
@@ -341,15 +328,26 @@ export default {
             id_eliminacion: null,
             type_name: [],
             jsonData: {
+                //required to CRUD
                 id: 0,
-                //change var below
-                tipo_documento: '',
                 document_types_id: '',
-                inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
-                tipo_intervencion: null,
+                unidad_ejecutora_id: '',
+                padre: '',
+                nombre: '',
+                codigo: '',
                 contratante_id: '',
                 contratado_id: '',
-                nombre: '',
+                fecha_firma: null,
+                duracion_dias: '',
+                monto_bs: '',
+                objeto: '',
+                modifica: '',
+                path_contrato: '',
+                files: null,
+                //Showed in the table
+                tipo_documento: '',
+                inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
+                tipo_intervencion: null,
                 codsisin: '',
                 sectorial: null,
                 fecha_aprobacion: '',
@@ -357,10 +355,8 @@ export default {
                 document_code: '',
                 fecha_inicial_real: '',
                 descripcion: '',
-                monto_aprobado_bs: '',
                 monto_aprobado_dolares: '',
                 fecha: '',
-                files: null,
             },
             rows: [],
             columns: [
@@ -573,9 +569,7 @@ export default {
 
             const documentos = respuesta.data.map(documento => {
                 documento.tipo_documento = contratosObjeto[documento.document_types_id];
-
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
-
                 return documento;
             });
 
@@ -589,14 +583,23 @@ export default {
             for (let key in this.jsonData) {
                 datos_jsonData.append(key, this.jsonData[key]);
             }
-            var fecha_aprobacion = new Date(this.jsonData.fecha_aprobacion);
-            datos_jsonData.append('fecha_aprobacion_dat', fecha_aprobacion.getFullYear() + "-" + (fecha_aprobacion.getMonth() + 1) + "-" + fecha_aprobacion.getDate());
-            var fecha_inicial_programada = new Date(this.jsonData.fecha_inicial_programada);
-            datos_jsonData.append('fecha_inicial_programada_dat', fecha_inicial_programada.getFullYear() + "-" + (fecha_inicial_programada.getMonth() + 1) + "-" + fecha_inicial_programada.getDate());
             datos_jsonData.append('document_type_id', this.jsonData.document_types_id.id);
-            datos_jsonData.append('sectorial_id', this.jsonData.sectorial.id);
-            datos_jsonData.append('tipo_intervencion_id', this.jsonData.tipo_intervencion.id);
-            var respuesta = await axios.post('intervenciones', datos_jsonData);
+            datos_jsonData.append('unidad_ejecutora_id', '20');
+            datos_jsonData.append('padre', '0');
+            // datos_jsonData.append('padre', this.jsonData.tipo_intervencion.id);
+            datos_jsonData.append('nombre', this.jsonData.nombre);
+            datos_jsonData.append('codigo', this.jsonData.codigo);
+            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
+            let fecha_firma = new Date(this.jsonData.fecha_firma);
+            datos_jsonData.append('fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate());
+            datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
+            datos_jsonData.append('objeto', this.jsonData.objeto);
+            datos_jsonData.append('modifica', this.jsonData.modifica);
+            datos_jsonData.append('path_contrato', ' ');
+
+            const respuesta = await axios.post('documents', datos_jsonData);
             console.log(respuesta.data);
             document.getElementById("cerrarModal").click();
             this.listar();
@@ -607,21 +610,30 @@ export default {
             for (let key in this.jsonData) {
                 datos_jsonData.append(key, this.jsonData[key]);
             }
-            var fecha_aprobacion = new Date(this.jsonData.fecha_aprobacion);
-            datos_jsonData.append('fecha_aprobacion_dat', fecha_aprobacion.getFullYear() + "-" + (fecha_aprobacion.getMonth() + 1) + "-" + fecha_aprobacion.getDate());
-            var fecha_inicial_programada = new Date(this.jsonData.fecha_inicial_programada);
-            datos_jsonData.append('fecha_inicial_programada_dat', fecha_inicial_programada.getFullYear() + "-" + (fecha_inicial_programada.getMonth() + 1) + "-" + fecha_inicial_programada.getDate());
-            datos_jsonData.append('document_type_id', this.jsonData.document_type.id);
-            datos_jsonData.append('sectorial_id', this.jsonData.sectorial.id);
-            datos_jsonData.append('tipo_intervencion_id', this.jsonData.tipo_intervencion.id);
-            var respuesta = await axios.post('intervenciones_mod', datos_jsonData);
+            datos_jsonData.append('document_type_id', this.jsonData.document_types_id.id);
+            datos_jsonData.append('unidad_ejecutora_id', '20');
+            datos_jsonData.append('padre', '0');
+            // datos_jsonData.append('documento_padre_id', this.jsonData.tipo_intervencion.id);
+            datos_jsonData.append('nombre', this.jsonData.nombre);
+            datos_jsonData.append('codigo', this.jsonData.codigo);
+            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
+            let fecha_firma = new Date(this.jsonData.fecha_firma);
+            datos_jsonData.append('fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate());
+            datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
+            datos_jsonData.append('objeto', this.jsonData.objeto);
+            datos_jsonData.append('modifica', this.jsonData.modifica);
+            datos_jsonData.append('path_contrato', ' ');
+            const respuesta = await axios.post('documents.update', datos_jsonData);
             console.log(respuesta.data);
             document.getElementById("cerrarModal").click();
             this.listar();
         },
         async eliminar(id) {
+            const respuesta = await axios.delete('intervenciones/' + id);
             this.id_eliminacion = null;
-            var respuesta = await axios.delete('intervenciones/' + id);
+            console.log(respuesta.data);
             this.listar();
         },
         //Change object to get
@@ -760,6 +772,7 @@ export default {
     },
     created() {
         this.listar();
+        this.guardar();
         this.tipos_documentos();
         this.intervencionesTipoActivas();
         this.sectorialesActivos();
