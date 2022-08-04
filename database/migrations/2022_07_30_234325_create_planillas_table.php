@@ -15,17 +15,28 @@ class CreatePlanillasTable extends Migration
     {
         Schema::create('planillas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('documents_id');
-            $table->string('tipo'); //G gupo, I item, c costo
-            $table->unsignedBigInteger('padre')->nullable();
-            $table->string('codigo'); //item codificacion 1.1.
-            $table->string('descripcion');
-            $table->string('unidad')->nullable();
-            $table->float('cantidad',12,2)->nullable();
-            $table->float('precio_unitario',12,2)->nullable();
+            $table->unsignedBigInteger('contrato_id');//es un contrato principal o subcontrato
+            $table->unsignedBigInteger('tipo_planilla_id');//1.- inicial/principal, 2. modificacion, 3. avance
+            $table->date('fecha_planilla');
+            $table->integer('numero_planilla');
+            $table->string('nuri_planilla')->nullable();
+            $table->text('referencia');
+            $table->string('path_planilla')->nullable();
+            //valores de la planillla
+            $table->float('total_planilla',12,2)->nullable();
+            $table->float('anticipo_planilla',12,2)->nullable();// Anticipo 20% del anticipo solo en avance
+            $table->float('retencion_planilla',12,2)->nullable();// retencion 7% del anticipo solo en avance
+            // este registro debe estar asociado a un documento si es que es planil principal o modificacion.
+
+
+
+           
+           
+            
+            
             $table->timestamps();
 
-            $table->foreign('documents_id')->references('id')->on('documents');
+            $table->foreign('contrato_id')->references('id')->on('documents');
 
         });
     }
