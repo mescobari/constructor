@@ -149,14 +149,26 @@
                             </div>
 
                             <div class="col-md-8">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="tipo_intervencion">Documento Padre:</label>
-                                        <v-select label="nombre" :options="tipo_intervenciones"
-                                                  v-model="jsonData.padre"
-                                                  placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="tipo_intervencion">Documento Padre:</label>
+                                            <v-select label="nombre" :options="tipo_intervenciones"
+                                                      v-model="jsonData.padre"
+                                                      placeholder="Selecione una opción">
+                                                <span slot="no-options">No hay data para cargar</span>
+                                            </v-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="tipo_intervencion">Unidad Ejecutora:</label>
+                                            <v-select label="id" :options="unidades_ejecutoras"
+                                                      v-model="jsonData.padre"
+                                                      placeholder="Selecione una opción">
+                                                <span slot="no-options">No hay data para cargar</span>
+                                            </v-select>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -308,7 +320,7 @@ export default {
                 nombreClaseParaInput: "clase-input-datepicker",
                 en: en,
                 es: es,
-                DatePickerFormat: 'dd/MMMM/yyyy',
+                DatePickerFormat: 'dd/MM/yyyy',
                 disablesFullDate: {
                     to: new Date(1987, 5, 25), //ojo los meses menos uno //fecha desde
                     from: new Date(1987, 5, 25), //fecha hasta
@@ -327,7 +339,7 @@ export default {
             modificar_bottom: false,
             intervenciones: [],
             tituloIntervencionModal: '',
-            //change var below
+            unidades_ejecutoras: [],
             combo_tipos_documentos: [],
             cla_institucional: [],
             tipo_intervenciones: [],
@@ -587,22 +599,19 @@ export default {
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('unidad_ejecutora_id', '20');
             datos_jsonData.append('padre', '0');
-            // datos_jsonData.append('padre', this.jsonData.tipo_intervencion.id);
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
             datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
             datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
-            // datos_jsonData.append('fecha_firma',    fecha_firma.getDate() + "-" + (fecha_firma.getMonth()) + "-" + fecha_firma.getFullYear());
-            datos_jsonData.append('fecha_firma', '2022/08/01');
+            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + fecha_firma.getMonth() + "-" + fecha_firma.getDate()));
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            datos_jsonData.append('path_contrato', '\\\\100.100.100.20\\compartido ebc\\14.- SISTEMAS\\max.escobari\\02_planTrabajo (1).pdf');
-            // datos_jsonData.append('path_contrato', ' ');
+            datos_jsonData.append('path_contrato', this.jsonData.path_contrato);
             let respuesta = await axios.post('documents', datos_jsonData);
-            console.log("SAVE",respuesta.data);
+            console.log("SAVE", respuesta.data);
             document.getElementById("cerrarModal").click();
             this.listar();
         },
@@ -655,6 +664,10 @@ export default {
             // console.log(respuesta.data);
             this.cla_institucional = respuesta.data;
             // this.jsonData.institucion = respuesta.data;
+        },
+        async unidadesEjecutorasGetAll() {
+            const respuesta = await axios.post('get_unidades_ejecutoras');
+            this.unidades_ejecutoras = respuesta.data;
         },
         //get data from?
         async sectorialesActivos() {
@@ -774,7 +787,7 @@ export default {
     },
     created() {
         this.listar();
-        // this.guardar();
+        this.unidadesEjecutorasGetAll()
         this.tipos_documentos();
         this.intervencionesTipoActivas();
         this.sectorialesActivos();

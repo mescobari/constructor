@@ -4,7 +4,7 @@
         Route::get('contrato_prin', 'ContratoPrincipalController@inicio')->name('contrato_prin');  //menu
 
         Route::get('listar_unidades_ejecutoras', 'UnidadEjecutoraController@listarUnidadesEjecutoras')->name('listar_unidades_ejecutoras');
-
+        Route::get('get_unidades_ejecutoras', 'UnidadEjecutoraController@getUnidadesEjecutoras')->name('get_unidades_ejecutoras');
         Route::apiResource('unidades_ejecutoras', UnidadEjecutoraController::class);
 
         Route::get('documents_ini', 'DocumentController@inicio')->name('documents_ini');

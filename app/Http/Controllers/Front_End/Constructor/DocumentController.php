@@ -15,42 +15,26 @@ class DocumentController extends Controller
     {
         return view('front-end.constructor.IndexDocuments');
     }
-    public function documentSave(Request $request){
-//          $document = new document();
+//     public function documentSave(Request $request){
 //
-//                     $document->document_type_id = $request->document_type_id;
-//                     $document->unidad_ejecutora_id = $request->unidad_ejecutora_id;
-//                     $document->padre = $request->padre;
-//                     $document->nombre = $request->nombre;
-//                     $document->codigo = $request->codigo;
-//                     $document->contratante_id = $request->contratante_id;
-//                     $document->contratado_id = $request->contratado_id;
-//                     $document->duracion_dias = $request->duracion_dias;
-//                     $document->fecha_firma = date('Y-m-d', strtotime($request->date_firma));
-//                     $document->monto_bs = $request->monto_bs.to_string();
-//                     $document->objeto = $request->objeto;
-//                     $document->modifica = $request->modifica;
-//                     $document->path_contrato = $request->path_contrato;
-//
-//                     return $document -> save();
-        $d = document::create([
-                    'document_types_id' => $request->document_types_id,
-                    'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
-                    'padre' => $request->padre,
-                    'nombre' => $request->nombre,
-                    'codigo' => $request->codigo,
-                    'contratante_id' => $request->contratante_id,
-                    'contratado_id' => $request->contratado_id,
-                    'duracion_dias' => $request->duracion_dias,
-//                      'fecha_firma' => date('d-m-Y', strtotime($request->fecha_firma)),
-                    'fecha_firma' => $request->fecha_firma,
-                    'monto_bs' => $request->monto_bs,
-                    'objeto' => $request->objeto,
-                    'modifica' => $request->modifica,
-                    'path_contrato' => $request->path_contrato,
-            ]);
-            return $d;
-    }
+//         $d = document::create([
+//                     'document_types_id' => $request->document_types_id,
+//                     'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
+//                     'padre' => $request->padre,
+//                     'nombre' => $request->nombre,
+//                     'codigo' => $request->codigo,
+//                     'contratante_id' => $request->contratante_id,
+//                     'contratado_id' => $request->contratado_id,
+//                     'duracion_dias' => $request->duracion_dias,
+// //                      'fecha_firma' => date('d-m-Y', strtotime($request->fecha_firma)),
+//                     'fecha_firma' => $request->fecha_firma,
+//                     'monto_bs' => $request->monto_bs,
+//                     'objeto' => $request->objeto,
+//                     'modifica' => $request->modifica,
+//                     'path_contrato' => $request->path_contrato,
+//             ]);
+//             return $d;
+//     }
     /**
      * Display a listing of the resource.
      *
