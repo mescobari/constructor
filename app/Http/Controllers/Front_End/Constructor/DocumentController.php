@@ -34,7 +34,7 @@ class DocumentController extends Controller
 //
 //                     return $document -> save();
         $d = document::create([
-                    'document_type_id' => $request->document_type_id,
+                    'document_types_id' => $request->document_types_id,
                     'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
                     'padre' => $request->padre,
                     'nombre' => $request->nombre,
@@ -42,7 +42,8 @@ class DocumentController extends Controller
                     'contratante_id' => $request->contratante_id,
                     'contratado_id' => $request->contratado_id,
                     'duracion_dias' => $request->duracion_dias,
-                    'fecha_firma' => date('Y-m-d', strtotime($request->fecha_firma)),
+//                      'fecha_firma' => date('d-m-Y', strtotime($request->fecha_firma)),
+                    'fecha_firma' => $request->fecha_firma,
                     'monto_bs' => $request->monto_bs,
                     'objeto' => $request->objeto,
                     'modifica' => $request->modifica,
@@ -85,7 +86,7 @@ class DocumentController extends Controller
     {
                 $d = new document();
 
-                $d->document_type_id = $request->document_type_id;
+                $d->document_types_id = $request->document_types_id;
                 $d->unidad_ejecutora_id = $request->unidad_ejecutora_id;
                 $d->padre = $request->padre;
                 $d->nombre = $request->nombre;
@@ -93,7 +94,8 @@ class DocumentController extends Controller
                 $d->contratante_id = $request->contratante_id;
                 $d->contratado_id = $request->contratado_id;
                 $d->duracion_dias = $request->duracion_dias;
-                $d->fecha_firma = date('Y-m-d', strtotime($request->date_firma));
+//                 $d->fecha_firma = date('Y-m-d', strtotime($request->fecha_firma));
+                $d->fecha_firma = $request->fecha_firma;
                 $d->monto_bs = $request->monto_bs;
                 $d->objeto = $request->objeto;
                 $d->modifica = $request->modifica;

@@ -8,11 +8,12 @@
         Route::apiResource('unidades_ejecutoras', UnidadEjecutoraController::class);
 
         Route::get('documents_ini', 'DocumentController@inicio')->name('documents_ini');
-        Route::apiResource('documents', DocumentController::class)
+        Route::apiResource('documents', DocumentController::class);
 
         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');
-       
-        Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');  
+        Route::apiResource('cla_instituciones', InstitucionesController::class);
+        Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');
+        Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');
         Route::apiResource('planillas', PlanillaController::class);
 
 
@@ -30,5 +31,5 @@
 
          */
     });
-
+Route::apiResource('cla_instituciones', 'Paginas\InstitucionesController'::class);
 ?>
