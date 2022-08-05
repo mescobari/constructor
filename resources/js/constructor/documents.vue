@@ -247,7 +247,7 @@
                                         <button type="button" class="close" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
-                                    <input type="file" class="form-control" id="documento_res_aprobacion"
+                                    <input type="file" class="form-control" id="doc_upload_contrato"
                                            @change="cargar_file" style="display:none">
                                 </div>
                             </div>
@@ -594,6 +594,8 @@ export default {
             for (let key in this.jsonData) {
                 datos_jsonData.append(key, this.jsonData[key]);
             }
+            //pass document file
+
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora.id);
             datos_jsonData.append('padre', '0');
@@ -619,8 +621,8 @@ export default {
             for (let key in this.jsonData) {
                 datos_jsonData.append(key, this.jsonData[key]);
             }
-            datos_jsonData.append('document_type_id', this.jsonData.document_types_id);
-            datos_jsonData.append('unidad_ejecutora_id', '20');
+            datos_jsonData.append('document_type_id', this.jsonData.document_types_id.id);
+            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora.id);
             datos_jsonData.append('padre', '0');
             // datos_jsonData.append('documento_padre_id', this.jsonData.tipo_intervencion.id);
             datos_jsonData.append('nombre', this.jsonData.nombre);
@@ -766,22 +768,21 @@ export default {
             }
         },
         cargar_file(event) {
-            var nombre_file = "";
+            let nombre_file = `${this.jsonData.unidad_ejecutora.id}${this.jsonData.nombre}` ;
             this.jsonData.files = event.target.files[0];
-            for (let key in event.target.files) {//cargamos datos
+
+            this.jsonData.path_contrato = 'C:\\Users\\Raikonif\\OneDrive\\Desktop\\newMediaPhpVue\\docs-constructor\\' + nombre_file;
+            nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
+            this.jsonData.files = event.target.files[0];
+            for(let key in event.target.files) {//cargamos datos
                 var boucle = event.target.files[key];
                 if (boucle.name != null && boucle.name != 'undefined' && boucle.name != "item") {
                     // console.log(boucle.name);
                     nombre_file = boucle.name;
                 }
-                // for(let key2 in boucle){
-                //     console.log(key2);
-                //     console.log(boucle[key2]);
-                // }
             }
             this.configFile.cerrar = true;
-            nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
-            this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
+            // this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
         },
     },
     created() {

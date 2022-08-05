@@ -579,10 +579,6 @@ export default {
                     // console.log(boucle.name);
                     nombre_file = boucle.name;
                 }
-                // for(let key2 in boucle){
-                //     console.log(key2);
-                //     console.log(boucle[key2]);
-                // }
             }
             this.configFile.cerrar = true;
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
