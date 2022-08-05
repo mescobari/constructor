@@ -20,7 +20,7 @@ class UnidadEjecutoraController extends Controller
     }
     public function getUnidadesEjecutoras(){
         $data = UnidadEjecutora::all();
-        return($data);
+        return $data;
     }
 
     public function listarUnidadesEjecutoras(Request $request){

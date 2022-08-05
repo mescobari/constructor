@@ -162,9 +162,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="tipo_intervencion">Unidad Ejecutora:</label>
-                                            <v-select label="id" :options="unidades_ejecutoras"
-                                                      v-model="jsonData.padre"
+                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>
+                                            <v-select label="nombre" :options="unidades_ejecutoras"
+                                                      v-model="jsonData.unidad_ejecutora"
                                                       placeholder="Selecione una opción">
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
@@ -192,21 +192,21 @@
                                         <div class="row">
                                             <div class="custom-control custom-checkbox col-md-4">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck1"
-                                                       value="1">
+                                                       value="1" v-model="jsonData.modifica">
                                                 <label class="custom-control-label" for="customCheck1"
-                                                       v-model="jsonData._plazo">Plazo</label>
+                                                >Plazo</label>
                                             </div>
                                             <div class="custom-control custom-checkbox col-md-4">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck2"
-                                                       value="2">
+                                                       value="2" v-model="jsonData.modifica">
                                                 <label class="custom-control-label" for="customCheck2"
-                                                       v-model="jsonData._monto">Monto</label>
+                                                >Monto</label>
                                             </div>
                                             <div class="custom-control custom-checkbox col-md-4">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck3"
-                                                       value="3">
+                                                       value="3" v-model="jsonData.modifica">
                                                 <label class="custom-control-label" for="customCheck3"
-                                                       v-model="jsonData._otro">Otro</label>
+                                                >Otro</label>
                                             </div>
                                         </div>
                                     </div>
@@ -233,7 +233,6 @@
                                             v-model="jsonData.objeto"
                                             :editor-toolbar="configToolBarEditText"
                                         ></vue-editor>
-                                        <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -337,20 +336,20 @@ export default {
             optionsSelect: [{label: 'Favor de Seleccionar su opción', code: "fer"}],
             guardar_bottom: false,
             modificar_bottom: false,
-            intervenciones: [],
             tituloIntervencionModal: '',
             unidades_ejecutoras: [],
             combo_tipos_documentos: [],
             cla_institucional: [],
-            tipo_intervenciones: [],
-            sectoriales: [],
             id_eliminacion: null,
             type_name: [],
+            sectoriales: [],
+            tipo_intervenciones: [],
+            intervenciones: [],
             jsonData: {
                 //required to CRUD
                 id: 0,
                 document_types_id: null,
-                unidad_ejecutora_id: null,
+                unidad_ejecutora: null,
                 padre: null,
                 nombre: null,
                 codigo: null,
@@ -360,7 +359,7 @@ export default {
                 duracion_dias: null,
                 monto_bs: null,
                 objeto: null,
-                modifica: null,
+                modifica: [],
                 path_contrato: null,
                 files: null,
                 //Showed in the table
@@ -592,12 +591,11 @@ export default {
         async guardar() {
             console.log(this.jsonData);
             let datos_jsonData = new FormData();
-            this.jsonData.modifica = '1,2'
             for (let key in this.jsonData) {
                 datos_jsonData.append(key, this.jsonData[key]);
             }
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
-            datos_jsonData.append('unidad_ejecutora_id', '20');
+            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora.id);
             datos_jsonData.append('padre', '0');
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
@@ -666,8 +664,9 @@ export default {
             // this.jsonData.institucion = respuesta.data;
         },
         async unidadesEjecutorasGetAll() {
-            const respuesta = await axios.post('get_unidades_ejecutoras');
+            const respuesta = await axios.get('get_unidades_ejecutoras');
             this.unidades_ejecutoras = respuesta.data;
+            console.log(respuesta.data);
         },
         //get data from?
         async sectorialesActivos() {
