@@ -12,7 +12,8 @@
 
         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');
        
-        Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');  
+        Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');
+          
         Route::apiResource('planillas', PlanillaController::class);
 
 

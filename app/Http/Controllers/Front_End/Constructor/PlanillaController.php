@@ -55,18 +55,9 @@ class PlanillaController extends Controller
      */
     public function show($id)
     {
-        //$planilla es el id de un contrato principal o de un subcontrato
-        // verificamos
-        $documentosHijos = document::where('padre',$id)->get();
-// se debe sumar planilladel contrato principal con los modificatorios mas ordenes de cambio, etc para sacar el vigente
-// de debe sumar todas las planillas de avance para sacar el avance total y posterior calculara el saldo.
+        
 
-        foreach ($documentosHijos as $key => $doc) {
-          // $documentosHijos es una Instancia de la clase documents
-        }
-
-
-        $data = Planilla::where('documents_id',$id)->get();;
+        $data = Planilla::where('contrato_id',$id)->get();
         return $data;
         
     }

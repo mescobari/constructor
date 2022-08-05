@@ -34,9 +34,7 @@
                         </div>
                     </div>
                 </div>-->
-               
-               
-    <!--  row para la tabla mostrar detalles del modelo y acciones //////////-->
+                
                 <div class="row">  
 
                     <div class="table-responsive">
@@ -92,14 +90,11 @@
                             </template>
                         </vue-bootstrap4-table>
                     </div>                    
-                </div> 
-                
-    <!-- ////////////  FIN row de la tabla mostrar detalles del modelo y acciones -->  
-
+                </div>                    
             </div>
         </div>
 
-    <!--  modal para la seleccion de contratos //////////--> 
+        
         <div class="modal fade" id="seleccion_proyecto_doc_legales" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="seleccion_proyecto_doc_legalesTitle" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -129,11 +124,6 @@
                 </div>
             </div>
         </div>
-    <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
-
-
-
-<!-- ///////////   modal para crear y modificar planillas //////////-->
          <div class="modal fade" id="doc_legales" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="doc_legalesTitle" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -368,10 +358,8 @@
                     </div>
                 </div>
             </div>
-        </div> 
-<!-- ///////////   FIN modal para crear y modificar planillas //////////-->  
-       
-       <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion" @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>        
+        </div>   
+        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion" @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>        
     </div>
 </template>
 
@@ -421,18 +409,19 @@ export default {
             },
             rows:[],
             columns:[
-                { label: "Tipo Pla.",  name: "tipo",              filter: { type: "simple", placeholder: "Tipo Pla.", }, sort: true, },
-                { label: "Fecha",      name: "fecha_planilla",         filter: { type: "simple", placeholder: "Fecha", }, sort: true,  },
-                { label: "Numero",     name: "numero_planilla",              filter: { type: "simple", placeholder: "Numero" }, sort: true,     },
-                { label: "Nuri",       name: "nuri_planilla",            filter: { type: "simple", placeholder: "Nuri" },         },
-                { label: "Referencia", name: "referencia",       filter: { type: "simple", placeholder: "Referencia" },    },
-                { label: "Respaldo",   name: "path_planilla",    filter: { type: "simple", placeholder: "Respaldo" },       },
-                { label: "Total BS.",  name: "total_planilla",       filter: { type: "simple", placeholder: "Total BS." }, sort: true,      },
-                {
-                    label: "Acciones",
-                    name: "acciones",
-                    sort: false,
-                },
+                { label: "Codigo",          name: "codigo",              filter: { type: "simple", placeholder: "codigo", },  },
+                { label: "Descripcion",     name: "descripcion",         filter: { type: "simple", placeholder: "descripcion", },   },
+                { label: "Unidad",          name: "unidad",              filter: { type: "simple", placeholder: "Unidad" },      },
+                { label: "Cant.Vigente",    name: "cantidad",        filter: { type: "simple", placeholder: "Cant.Vigente" },         },
+                { label: "P.U. Vigente",    name: "precio_unitario",         filter: { type: "simple", placeholder: "P.U. Vigente" },    },
+                { label: "Total Vigente",   name: "fecha_vencimiento",   filter: { type: "simple", placeholder: "Total Vigente" },       },
+                { label: "Cant. Avance",    name: "duracion_dias",       filter: { type: "simple", placeholder: "Cant. Avance" },       },
+                { label: "P.U. Avance",     name: "monto_bs",            filter: { type: "simple", placeholder: "P.U. Avance" },       },
+                { label: "Total Avance",    name: "modifica",            filter: { type: "simple", placeholder: "Total Avance" },       },
+                { label: "Cant. Saldo",     name: "duracion_dias",       filter: { type: "simple", placeholder: "Cant. Saldo" },       },
+                { label: "P.U. Saldo",      name: "monto_bs",            filter: { type: "simple", placeholder: "P.U. Saldo" },       },
+                { label: "Total Saldo",     name: "modifica",            filter: { type: "simple", placeholder: "Total Saldo" },       },
+                
             ],
             
             configFile:{
@@ -633,24 +622,7 @@ export default {
             var respuesta = await axios.get('planillas/'+vp);
             console.log('voviendo del backend');
             console.log(respuesta.data);
-
-            const planillas = respuesta.data.map(planilla => {
-                if (planilla.tipo_planilla_id===1) {
-                    planilla.tipo='Inicial (#'+ planilla.numero_planilla+')';
-                } else if (planilla.tipo_planilla_id===2) {
-                    planilla.tipo='Modificacion (#'+ planilla.numero_planilla+')';
-                } else {
-                    planilla.tipo='Avance (#'+ planilla.numero_planilla+')';
-                }
-
-                planilla.fecha_planilla = planilla.fecha_planilla.split('-').reverse().join('-');
-                
-                //documento.tipo_documento = contratosObjeto[documento.document_types_id];
-                //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
-                return planilla;
-            });
-
-            this.rows = planillas;
+            this.rows = respuesta.data;
          },
 
         async buscar_doc_legales(){

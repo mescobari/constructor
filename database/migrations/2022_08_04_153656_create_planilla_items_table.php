@@ -20,12 +20,14 @@ class CreatePlanillaItemsTable extends Migration
             $table->string('tipo'); //G gupo, I item, c costo
             $table->string('item_codigo')->nullable();
             $table->string('item_descripcion');
+            $table->unsignedBigInteger('unidad_id');
             $table->unsignedBigInteger('padre')->nullable();
 
 
             $table->timestamps();
             $table->foreign('planilla_id')->references('id')->on('planillas');
             $table->foreign('contrato_id')->references('id')->on('documents');
+            $table->foreign('unidad_id')->references('id')->on('unidades');
         });
     }
 

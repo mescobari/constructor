@@ -21,7 +21,7 @@ class CreatePlanillaDocumentsTable extends Migration
             $table->timestamps();
             $table->foreign('planilla_id')->references('id')->on('planillas');
             $table->foreign('document_id')->references('id')->on('documents');
-            
+           
         });
     }
 
