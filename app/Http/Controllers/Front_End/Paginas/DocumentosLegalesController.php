@@ -30,7 +30,8 @@ class DocumentosLegalesController extends Controller
     {              
         $maximoPeso = (int)ini_get('upload_max_filesize') * 10240;
         $institucion_id = User::where('id', auth()->user()->id)->with('datos')->first();
-        $nombre_carpeta = $institucion_id->datos->institucion_id . "/" . $request->id_proyecto . "/cofinanciadores";
+        //$nombre_carpeta = $institucion_id->datos->institucion_id . "/" . $request->id_proyecto . "/constructor";
+        $nombre_carpeta = "/constructor";
         $files = "";
         if($request->hasFile('files')){
             // $files = $request->file('files')->store('cofinanciadores/' . $nombre_carpeta);//nombre por default del sistema
@@ -40,8 +41,9 @@ class DocumentosLegalesController extends Controller
             $datoReemplazar = "_";
             $cadenaProcesar = $request->titulo;              
             $titulo = str_replace($datoBuscar, $datoReemplazar, $cadenaProcesar);
-
-            $nombre_archivo = $request->id_proyecto . '_' . $request->id_tipo_documento . '_' . trim($titulo) . '.' . $extencion;
+            $name = $request->file('file')->getClientOriginalName();
+            //$nombre_archivo = $request->id_proyecto . '_' . $request->id_tipo_documento . '_' . trim($titulo) . '.' . $extencion;
+            $nombre_archivo =  $name . '.' . $extencion;;
             $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
         }                
         //cofinanciador

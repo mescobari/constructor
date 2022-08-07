@@ -19,21 +19,7 @@
                     </div>
                 </div>
   
-                 <!--                       
-                <div class="row">
-                    <div class="col-md-4">          
-                        <div class="form-group">
-                            <label for="codsisin">Codsisin:</label>
-                            <input type="text" class="form-control" v-model="jsonData.proyectos.codsisin" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-8">          
-                        <div class="form-group">
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" class="form-control" v-model="jsonData.proyectos.nombre" readonly>
-                        </div>
-                    </div>
-                </div>-->
+                
                
                
     <!--  row para la tabla mostrar detalles del modelo y acciones //////////-->
@@ -143,188 +129,89 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">   
+                    <div class="modal-body">  
                         <div class="row">
-                            <div class="col-md-4">          
+                            <div class="col-md-12">
+                                <center>
+                                    <h3>  {{ jsonData.proyectos.nombre }}</h3>
+                                </center>
+                            </div>
+                        </div> 
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-3">          
                                 <div class="form-group">
-                                    <label for="codsisin">Codsisin:</label>
-                                    <input type="text" class="form-control" v-model="jsonData.proyectos.codsisin" readonly>
+                                    <label for="nombre">Tipo de Planilla:</label>
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input" type="radio" id="customRadio1" value="1" v-model="jsonData.tipo_planilla_id">
+                                        <label for="customRadio1" class="custom-control-label">Planilla Inicial</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input" type="radio" id="customRadio2" value="2" v-model="jsonData.tipo_planilla_id">
+                                        <label for="customRadio2" class="custom-control-label">Planilla de Modificacion</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input" type="radio" id="customRadio3" value="3" v-model="jsonData.tipo_planilla_id" checked>
+                                        <label for="customRadio3" class="custom-control-label">Planilla de Avance</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-8">          
+
+                            <div class="col-md-3">          
                                 <div class="form-group">
-                                    <label for="nombre">Nombre:</label>
-                                    <input type="text" class="form-control" v-model="jsonData.proyectos.nombre" readonly>
+                                    <label for="nombre">Correlativo Planilla:</label>
+                                    <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.numero_planilla">
+                                </div>
+                            </div>
+                            <div class="col-md-3">          
+                                <div class="form-group">
+                                    <label for="fecha_aprobacion">Fecha de Planilla:</label>
+                                    <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
+                                    <datepicker             
+                                        :language="configFechas.es"
+                                        :placeholder="configFechas.placeholder"
+
+                                        v-model="jsonData.fecha_planilla"
+                                        :value="jsonData.fecha_planilla"
+
+                                        :calendar-class="configFechas.nombreClaseParaModal"
+                                        :input-class="configFechas.nombreClaseParaInput"
+                                        :monday-first="true"
+                                        :clear-button="true"
+                                        :clear-button-icon="configFechas.IconoBotonBorrar"
+                                        :calendar-button="true"
+                                        
+                                        :calendar-button-icon="configFechas.IconoBotonAbrir"
+                                        calendar-button-icon-content=""
+                                        :format="configFechas.DatePickerFormat"
+                                        :full-month-name="true"
+                                        
+                                        :bootstrap-styling="true"
+                                        :disabled-dates="configFechas.disabledDates"
+                                        :typeable="configFechas.typeable"
+                                    >
+                                    </datepicker>
+                                </div>
+                            </div>
+                            <div class="col-md-3">          
+                                <div class="form-group">
+                                    <label for="nombre">NURI Correspondencia:</label>
+                                    <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.nuri_planilla">
                                 </div>
                             </div>
                         </div>
+                        <hr>
+
                         <div class="card" style="padding:5px;">                            
-                            <h4 class="card-title">DOCUMENTOS</h4>
+                           
                             <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="institucion">Tipo de Documento:</label>
-                                        <v-select label="nombre" :options="combo_tipos_documentos" v-model="jsonData.tipos_documento" placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group" id="modifica">
-                                        <label for="nombre">Que Modifica?</label><br>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="modifica1" value="1">
-                                            <label class="form-check-label" for="inlineCheckbox1"> Plazo</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="modifica2" value="2">
-                                            <label class="form-check-label" for="inlineCheckbox2"> Monto</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="modifica3" value="3">
-                                            <label class="form-check-label" for="inlineCheckbox3"> Otros</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">          
-                                    <div class="form-group">
-                                        <label for="institucion">Institución:</label>
-                                        <v-select label="nombre" :options="combo_instituciones" v-model="jsonData.institucion" placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">          
-                                    <div class="form-group">
-                                        <label for="institucion">Organismo Financiador:</label>
-                                        <v-select label="nombre" :options="combo_cofinanciadores" v-model="jsonData.cofinanciador" placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">          
-                                    <div class="form-group">
-                                        <label for="nombre">Nombre del Documento:</label>
-                                        <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.titulo">
-                                    </div>
-                                </div>
-                                <div class="col-md-3">          
-                                    <div class="form-group">
-                                        <label for="institucion">Documento Padre:</label>
-                                        <v-select label="titulo" :options="combo_documentos_legales" v-model="jsonData.doc_legal" placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">          
-                                    <div class="form-group">
-                                        <label for="institucion">Componente/Actividad:</label>
-                                        <v-select label="desc_corta" :options="combo_objetivos" v-model="jsonData.objetivo" placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">          
-                                    <div class="form-group">
-                                        <label for="fecha_aprobacion">Fecha de Firma:</label>
-                                        <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
-                                        <datepicker             
-                                            :language="configFechas.es"
-                                            :placeholder="configFechas.placeholder"
-
-                                            v-model="jsonData.fecha_firma"
-                                            :value="jsonData.fecha_firma"
-
-                                            :calendar-class="configFechas.nombreClaseParaModal"
-                                            :input-class="configFechas.nombreClaseParaInput"
-                                            :monday-first="true"
-                                            :clear-button="true"
-                                            :clear-button-icon="configFechas.IconoBotonBorrar"
-                                            :calendar-button="true"
-                                            
-                                            :calendar-button-icon="configFechas.IconoBotonAbrir"
-                                            calendar-button-icon-content=""
-                                            :format="configFechas.DatePickerFormat"
-                                            :full-month-name="true"
-                                            
-                                            :bootstrap-styling="true"
-                                            :disabled-dates="configFechas.disabledDates"
-                                            :typeable="configFechas.typeable"
-                                        >
-                                        </datepicker>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">          
-                                    <div class="form-group">
-                                        <label for="fecha_aprobacion">Fecha Inicial:</label>
-                                        <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
-                                        <datepicker             
-                                            :language="configFechas.es"
-                                            :placeholder="configFechas.placeholder"
-
-                                            v-model="jsonData.fecha_inicio"
-                                            :value="jsonData.fecha_inicio"
-
-                                            :calendar-class="configFechas.nombreClaseParaModal"
-                                            :input-class="configFechas.nombreClaseParaInput"
-                                            :monday-first="true"
-                                            :clear-button="true"
-                                            :clear-button-icon="configFechas.IconoBotonBorrar"
-                                            :calendar-button="true"
-                                            
-                                            :calendar-button-icon="configFechas.IconoBotonAbrir"
-                                            calendar-button-icon-content=""
-                                            :format="configFechas.DatePickerFormat"
-                                            :full-month-name="true"
-                                            
-                                            :bootstrap-styling="true"
-                                            :disabled-dates="configFechas.disabledDates"
-                                            :typeable="configFechas.typeable"
-                                        >
-                                        </datepicker>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">          
-                                    <div class="form-group">
-                                        <label for="fecha_aprobacion">Fecha de Vencimiento:</label>
-                                        <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
-                                        <datepicker             
-                                            :language="configFechas.es"
-                                            :placeholder="configFechas.placeholder"
-
-                                            v-model="jsonData.fecha_vencimiento"
-                                            :value="jsonData.fecha_vencimiento"
-
-                                            :calendar-class="configFechas.nombreClaseParaModal"
-                                            :input-class="configFechas.nombreClaseParaInput"
-                                            :monday-first="true"
-                                            :clear-button="true"
-                                            :clear-button-icon="configFechas.IconoBotonBorrar"
-                                            :calendar-button="true"
-                                            
-                                            :calendar-button-icon="configFechas.IconoBotonAbrir"
-                                            calendar-button-icon-content=""
-                                            :format="configFechas.DatePickerFormat"
-                                            :full-month-name="true"
-                                            
-                                            :bootstrap-styling="true"
-                                            :disabled-dates="configFechas.disabledDates"
-                                            :typeable="configFechas.typeable"
-                                        >
-                                        </datepicker>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">          
-                                    <div class="form-group">
-                                        <label for="nombre">Funcionario / Cargo:</label>
-                                        <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.funcionario">
-                                    </div>
-                                </div>
+                                
+                                
                                 <div class="col-md-8">          
                                     <div class="form-group">
-                                        <label for="descripcion">Objeto:</label>
+                                        <label for="descripcion">Referencia:</label>
                                         <vue-editor 
-                                            v-model="jsonData.objeto"
+                                            v-model="jsonData.referencia"
                                             :editor-toolbar="configToolBarEditText"
                                         ></vue-editor>
                                         <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
@@ -333,20 +220,20 @@
                                 <div class="col-md-4">
                                     <div class="col-md-12">          
                                         <div class="form-group">
-                                            <label for="nombre">Monto Financiado en Bolivianos:</label>
-                                            <input type="number" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.monto_bs" @blur="calcular_moneda('BS')">
+                                            <label for="nombre">Monto Total Planilla Bs.:</label>
+                                            <input type="number" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.total_planilla" >
                                         </div>
                                     </div>
                                     <div class="col-md-12">          
                                         <div class="form-group">
-                                            <label for="nombre">Monto Financiado en Dolares:</label>
-                                            <input type="number" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.monto_Sus" @blur="calcular_moneda('SUS')">
+                                            <label for="nombre">Descuento anticipo_planilla Bs.:</label>
+                                            <input type="number" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.anticipo_planilla" >
                                         </div>
                                     </div>
                                     <div class="col-md-12">          
                                         <div class="form-group">
-                                            <label for="nombre">Vigencia en Días:</label>
-                                            <input type="number" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.duracion_dias">
+                                            <label for="nombre">7% de retencion:</label>
+                                            <input type="number" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.retencion_planilla">
                                         </div>
                                     </div>                                    
                                     <div class="col-md-12">                         
@@ -361,6 +248,7 @@
                             </div>
                         </div>           
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar</button>
                         <button type="submit" @click="guardar();" class="btn btn-success" v-if="guardar_bottom==true">Guardar</button>
@@ -409,19 +297,24 @@ export default {
                 titulo:'',
                 doc_legal:{},
                 objetivo:{},
-                fecha_firma:'',
-                fecha_inicio:'',
-                fecha_vencimiento:'',
-                funcionario:'',
-                objeto:'',
-                monto_bs:'',
-                monto_Sus:'',
-                duracion_dias:'',
+                tipo_planilla_id:3,
+                contrato_id:'',
+                numero_planilla:1,
+                nuri_planilla:'',
+                fecha_planilla:'',
+                total_planilla:'',        
+                anticipo_planilla:'',
+                retencion_planilla:'',                
+                funcionario:'',                
                 files:null,
             },
             rows:[],
             columns:[
-                { label: "Tipo Pla.",  name: "tipo",              filter: { type: "simple", placeholder: "Tipo Pla.", }, sort: true, },
+                {
+                    label: "Tipo Pla.",
+                    name: "tipo",
+                    filter: { type: "simple", placeholder: "Tipo Pla.", }, sort: true,
+                },
                 { label: "Fecha",      name: "fecha_planilla",         filter: { type: "simple", placeholder: "Fecha", }, sort: true,  },
                 { label: "Numero",     name: "numero_planilla",              filter: { type: "simple", placeholder: "Numero" }, sort: true,     },
                 { label: "Nuri",       name: "nuri_planilla",            filter: { type: "simple", placeholder: "Nuri" },         },
@@ -449,70 +342,50 @@ export default {
     },
     methods:{
         
-        async calcular_moneda(tipo_local){//tipo_cambio_bs_sus        
-            var respuesta = await axios.get('tipo_cambio_bs_sus');
-            console.log(respuesta.data);
-            if(respuesta.data == ""){
-                alert("No se tiene registrado el tipo de cambio para hoy");
-            }else{
-                if(tipo_local == 'BS'){//como guarda en bs cargamos al de dolar
-                    var valor = "";
-                    console.log("aqui");
-                    var valor = this.jsonData.monto_bs / respuesta.data.valor_compra;
-                    valor = valor.toFixed(2);
-                    this.jsonData.monto_Sus = valor;
-                }else{//como guarda en dolar cargamos al de bs
-                    var valor = "";
-                    var valor = this.jsonData.monto_Sus * respuesta.data.valor_venta;
-                    valor = valor.toFixed(2);
-                    this.jsonData.monto_bs = valor;
-                    
-                }
-            }
-        }, 
+       
         async guardar(){
-            var modifica = "";
-            if ($('#modifica1').prop('checked') ) {modifica = "1";}
-            if ($('#modifica2').prop('checked') ) {if(modifica != ""){modifica = modifica + ",";}modifica = modifica + "2";}
-            if ($('#modifica3').prop('checked') ) {if(modifica != ""){modifica = modifica + ",";}modifica = modifica + "3";}
-            var id_padre = 0;
-            if(this.jsonData.doc_legal != 'undefined' && this.jsonData.doc_legal != null && this.jsonData.doc_legal != undefined ){
-                if(this.jsonData.doc_legal.id != 'undefined' && this.jsonData.doc_legal.id != null && this.jsonData.doc_legal.id != undefined ){
-                    id_padre = this.jsonData.doc_legal.id;
-                }
-            }
-            // console.log(id_padre);
-            // // return;
-            // console.log(modifica);
-            // console.log(this.jsonData);
+            console.log('estamos en guardar contrato_id');
+            this.jsonData.contrato_id = this.jsonData.proyectos.id;
+            console.log(this.jsonData.tipo_planilla_id);
+            
+           
             let datos_jsonData = new FormData();
+
+            console.log(datos_jsonData);
+            console.log('===================');
             for(let key in this.jsonData){                
                 datos_jsonData.append(key, this.jsonData[key]);
+                console.log(key, this.jsonData[key]);
             }
-            console.log(this.jsonData.proyectos);
-
-            datos_jsonData.append('id_proyecto', this.jsonData.proyectos.id);
-            datos_jsonData.append('id_intitucion', this.jsonData.institucion.id);
-            datos_jsonData.append('id_tipo_documento', this.jsonData.tipos_documento.id);
-            datos_jsonData.append('id_organismo', this.jsonData.cofinanciador.id);//organismo financiador
-            datos_jsonData.append('id_objetivo', this.jsonData.objetivo.id);
-            datos_jsonData.append('id_padre', id_padre);
-            datos_jsonData.append('modifica', modifica);
-            // datos_jsonData.append('fecha_firma_1', JSON.stringify(this.jsonData.fecha_firma));
-            var fecha_firma = new Date(this.jsonData.fecha_firma);
-            var fecha_inicio = new Date(this.jsonData.fecha_inicio);
-            var fecha_vencimiento = new Date(this.jsonData.fecha_vencimiento);
-            var dia1 = fecha_firma.getDate() + "";
-            var dia1 = fecha_inicio.getDate() + "";
-            var dia2 = fecha_vencimiento.getDate() + "";
-            if(dia1.length == 1){ dia1 = "0" + fecha_firma.getDate(); }else{ dia1 = "" + fecha_firma.getDate(); }
-            if(dia1.length == 1){ dia1 = "0" + fecha_inicio.getDate(); }else{ dia1 = "" + fecha_inicio.getDate(); }
-            if(dia2.length == 1){ dia2 = "0" + fecha_vencimiento.getDate(); }else{ dia2 = "" + fecha_vencimiento.getDate(); }
-
-            datos_jsonData.append('id_fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + dia1);
-            datos_jsonData.append('id_fecha_inicio', fecha_inicio.getFullYear() + "-" + (fecha_inicio.getMonth() + 1) + "-" + dia1);
-            datos_jsonData.append('id_fecha_vencimiento', fecha_vencimiento.getFullYear() + "-" + (fecha_vencimiento.getMonth() + 1) + "-" + dia2);
             
+            console.log('===================');
+            
+            // datos_jsonData.append('id_proyecto', this.jsonData.proyectos.id);
+            // datos_jsonData.append('id_intitucion', this.jsonData.institucion.id);
+            // datos_jsonData.append('id_tipo_documento', this.jsonData.tipos_documento.id);
+            // datos_jsonData.append('id_organismo', this.jsonData.cofinanciador.id);//organismo financiador
+            // datos_jsonData.append('id_objetivo', this.jsonData.objetivo.id);
+            // datos_jsonData.append('id_padre', id_padre);
+            // datos_jsonData.append('modifica', modifica);
+            // datos_jsonData.append('files', this.jsonData.files);
+
+            // datos_jsonData.append('fecha_firma_1', JSON.stringify(this.jsonData.fecha_firma));
+            // var fecha_firma = new Date(this.jsonData.fecha_firma);
+            // var fecha_inicio = new Date(this.jsonData.fecha_inicio);
+            // var fecha_vencimiento = new Date(this.jsonData.fecha_vencimiento);
+            // var dia1 = fecha_firma.getDate() + "";
+            // var dia1 = fecha_inicio.getDate() + "";
+            // var dia2 = fecha_vencimiento.getDate() + "";
+            // if(dia1.length == 1){ dia1 = "0" + fecha_firma.getDate(); }else{ dia1 = "" + fecha_firma.getDate(); }
+            // if(dia1.length == 1){ dia1 = "0" + fecha_inicio.getDate(); }else{ dia1 = "" + fecha_inicio.getDate(); }
+            // if(dia2.length == 1){ dia2 = "0" + fecha_vencimiento.getDate(); }else{ dia2 = "" + fecha_vencimiento.getDate(); }
+
+            // datos_jsonData.append('id_fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + dia1);
+            // datos_jsonData.append('id_fecha_inicio', fecha_inicio.getFullYear() + "-" + (fecha_inicio.getMonth() + 1) + "-" + dia1);
+            // datos_jsonData.append('id_fecha_vencimiento', fecha_vencimiento.getFullYear() + "-" + (fecha_vencimiento.getMonth() + 1) + "-" + dia2);
+            console.log('******************');            
+            console.log(datos_jsonData);
+             console.log('******************');  
             var respuesta = await axios.post('documentos_legaleses', datos_jsonData);
             console.log(respuesta.data);
             this.buscar_doc_legales();
@@ -568,7 +441,7 @@ export default {
 
             this.modificar_bottom=true;
             this.guardar_bottom=false;
-            this.tituloDocLegalesModal = "Formulario de Modificaciones de Documentos Legales";
+            this.tituloDocLegalesModal = "Formulario de Modificaciones de Planillas";
             // this.jsonData = data;
             $('#doc_legales').modal('show');
         },
@@ -693,7 +566,7 @@ export default {
         ModalCrear(){
             this.modificar_bottom=false;
             this.guardar_bottom=true;
-            this.tituloDocLegalesModal = "Formulario de Creación de Intervenciones";
+            this.tituloDocLegalesModal = "Formulario de Creación de Planillas";
         },
         limpiar_formulario(){
             $('#modifica1').removeAttr('checked');
