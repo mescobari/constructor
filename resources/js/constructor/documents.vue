@@ -360,7 +360,6 @@ export default {
                 monto_bs: null,
                 objeto: null,
                 modifica: [],
-                path_contrato: null,
                 files: null,
                 //Showed in the table
                 // _plazo: '',
@@ -608,7 +607,7 @@ export default {
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
             // this.jsonData.path_contrato = "CONTRATO-" + this.jsonData.nombre + "-" + this.jsonData.unidad_ejecutora + ".pdf";
-            datos_jsonData.append('path_contrato', this.jsonData.path_contrato);
+            // datos_jsonData.append('path_contrato', this.jsonData.path_contrato);
             let respuesta = await axios.post('documents', datos_jsonData);
             console.log("SAVE", respuesta.data);
             document.getElementById("cerrarModal").click();
