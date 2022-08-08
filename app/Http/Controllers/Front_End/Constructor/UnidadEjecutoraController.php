@@ -13,22 +13,26 @@ use App\Models\FrontEnd\intervenciones\ClaSectorial;
 use App\Models\FrontEnd\marco_logico\Objetivo;
 class UnidadEjecutoraController extends Controller
 {
-    
+
     public function inicio()
     {
         return view('front-end.constructor.IndexUnidadEjecutora');
-    }    
+    }
 
     public function listarUnidadesEjecutoras(Request $request){
        $institucion_id=auth()->user()->funcionario_user_auth()->institucion_id;
       // dd($institucion_id);
-       // $data = UnidadEjecutora::where('institucion_id', '=', $institucion_id)->get(); 
+       // $data = UnidadEjecutora::where('institucion_id', '=', $institucion_id)->get();
        $data = UnidadEjecutora::all();
-       
-        
+
+
         return($data);
 
-        
+
+    }
+    public function getUnidadesEjecutoras(){
+        $data = UnidadEjecutora::all();
+        return($data);
     }
 
     public function index(Request $request)
@@ -80,8 +84,8 @@ class UnidadEjecutoraController extends Controller
                 'dir_admin_id' => $dir_admin_id,
                 'estado' => $estado,
 
-        ]); 
-       
+        ]);
+
 
         return $resultado;
     }
@@ -99,11 +103,11 @@ class UnidadEjecutoraController extends Controller
         $files = "";
         if($request->hasFile('files')){
             // $files = $request->file('files')->store('cofinanciadores/' . $nombre_carpeta);//nombre por default del sistema
-            // $nombre_archivo = $request->file('files')->getClientOriginalName();//nombre original del archivo       
-            $extencion = $request->file('files')->getClientOriginalExtension();   
+            // $nombre_archivo = $request->file('files')->getClientOriginalName();//nombre original del archivo
+            $extencion = $request->file('files')->getClientOriginalExtension();
             $datoBuscar = " ";
             $datoReemplazar = "_";
-            $cadenaProcesar = $request->nombre;              
+            $cadenaProcesar = $request->nombre;
             $titulo = str_replace($datoBuscar, $datoReemplazar, $cadenaProcesar);
 
             $nombre_archivo = $request->tipo_intervencion_id . '_' . trim($titulo) . '.' . $extencion;
@@ -127,9 +131,9 @@ class UnidadEjecutoraController extends Controller
             // 'fecha_inicial_real' => date('Y-m-d', strtotime($request->fecha_inicial_real)),
             'descripcion' => $request->descripcion,
             'monto_aprobado_bs' => $request->monto_aprobado_bs,
-            'monto_aprobado_dolares' => $request->monto_aprobado_dolares,  
-            'path_proyecto' => $files,   
-        ]);     
+            'monto_aprobado_dolares' => $request->monto_aprobado_dolares,
+            'path_proyecto' => $files,
+        ]);
 
         // return $request;
         // $respuesta = $intervencion->update($request->all());

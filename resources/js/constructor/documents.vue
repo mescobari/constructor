@@ -97,7 +97,7 @@
                                         <!--                                        Doc Type Spinner-->
                                         <label for="document_type">Tipo de Documento:</label>
                                         <v-select label="nombre" :options="combo_tipos_documentos"
-                                                  v-model="jsonData.tipos_documento"
+                                                  v-model="jsonData.document_types_id"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
@@ -123,7 +123,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="date_firma">Fecha de Firma:</label>
+                                        <label for="fecha-firma">Fecha de Firma:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_inicial_programada" id="fecha_inicial_programada" v-model="jsonData.fecha_inicial_programada"> -->
                                         <datepicker
                                             :language="configFechas.es"
@@ -141,7 +141,7 @@
                                             :bootstrap-styling="true"
                                             :disabled-dates="configFechas.disabledDates"
                                             :typeable="configFechas.typeable"
-                                            v-model="jsonData.date_firma"
+                                            v-model="jsonData.fecha_firma"
                                         >
                                         </datepicker>
                                     </div>
@@ -149,14 +149,26 @@
                             </div>
 
                             <div class="col-md-8">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="tipo_intervencion">Documento Padre:</label>
-                                        <v-select label="nombre" :options="tipo_intervenciones"
-                                                  v-model="jsonData.tipo_intervencion"
-                                                  placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="tipo_intervencion">Documento Padre:</label>
+                                            <v-select label="nombre" :options="tipo_intervenciones"
+                                                      v-model="jsonData.padre"
+                                                      placeholder="Selecione una opción">
+                                                <span slot="no-options">No hay data para cargar</span>
+                                            </v-select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>
+                                            <v-select label="nombre" :options="unidades_ejecutoras"
+                                                      v-model="jsonData.unidad_ejecutora"
+                                                      placeholder="Selecione una opción">
+                                                <span slot="no-options">No hay data para cargar</span>
+                                            </v-select>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -168,7 +180,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-6">
-                                        <label for="codsisin">Contratado:</label>
+                                        <label for="institucion_contratado">Contratado:</label>
                                         <v-select label="nombre" :options="cla_institucional"
                                                   v-model="jsonData.contratado_id"
                                                   placeholder="Selecione una opción">
@@ -176,32 +188,38 @@
                                         </v-select>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="codsisin">Que Modifica:</label>
+                                        <label for="checkboxes">Que Modifica:</label>
                                         <div class="row">
                                             <div class="custom-control custom-checkbox col-md-4">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                                <label class="custom-control-label" for="customCheck1" v-model="jsonData._plazo">Plazo</label>
+                                                <input type="checkbox" class="custom-control-input" id="customCheck1"
+                                                       value="1" v-model="jsonData.modifica">
+                                                <label class="custom-control-label" for="customCheck1"
+                                                >Plazo</label>
                                             </div>
                                             <div class="custom-control custom-checkbox col-md-4">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                                <label class="custom-control-label" for="customCheck2" v-model="jsonData._monto">Monto</label>
+                                                <input type="checkbox" class="custom-control-input" id="customCheck2"
+                                                       value="2" v-model="jsonData.modifica">
+                                                <label class="custom-control-label" for="customCheck2"
+                                                >Monto</label>
                                             </div>
                                             <div class="custom-control custom-checkbox col-md-4">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck3">
-                                                <label class="custom-control-label" for="customCheck3" v-model="jsonData._otro">Otro</label>
+                                                <input type="checkbox" class="custom-control-input" id="customCheck3"
+                                                       value="3" v-model="jsonData.modifica">
+                                                <label class="custom-control-label" for="customCheck3"
+                                                >Otro</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-6">
-                                        <label for="codsisin">Duracion de Dias:</label>
-                                        <input type="number" class="form-control" name="codsisin" id="codsisin"
+                                        <label for="dias_duracion">Duracion de Dias:</label>
+                                        <input type="number" class="form-control" name="codsisin" id="dias"
                                                placeholder="Ingresar Dias" v-model="jsonData.duracion_dias">
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="codsisin">Monto Aprobado en Bolivianos:</label>
-                                        <input type="text" class="form-control" name="codsisin" id="codsisin"
+                                        <label for="monto_bs">Monto Aprobado en Bolivianos:</label>
+                                        <input type="number" class="form-control" name="codsisin" id="monto_bs"
                                                placeholder="Ingresar Monto" v-model="jsonData.monto_bs">
                                     </div>
                                 </div>
@@ -215,7 +233,6 @@
                                             v-model="jsonData.objeto"
                                             :editor-toolbar="configToolBarEditText"
                                         ></vue-editor>
-                                        <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -230,7 +247,7 @@
                                         <button type="button" class="close" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
-                                    <input type="file" class="form-control" id="documento_res_aprobacion"
+                                    <input type="file" multiple class="form-control" id="doc_upload_contrato"
                                            @change="cargar_file" style="display:none">
                                 </div>
                             </div>
@@ -239,7 +256,8 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal" v-if="guardar_bottom==true">
+                        <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
+                                v-if="guardar_bottom==true">
                             Guardar
                         </button>
                         <button type="submit" @click="modificar();" class="btn btn-success"
@@ -301,7 +319,7 @@ export default {
                 nombreClaseParaInput: "clase-input-datepicker",
                 en: en,
                 es: es,
-                DatePickerFormat: 'dd/MMMM/yyyy',
+                DatePickerFormat: 'dd/MM/yyyy',
                 disablesFullDate: {
                     to: new Date(1987, 5, 25), //ojo los meses menos uno //fecha desde
                     from: new Date(1987, 5, 25), //fecha hasta
@@ -318,45 +336,48 @@ export default {
             optionsSelect: [{label: 'Favor de Seleccionar su opción', code: "fer"}],
             guardar_bottom: false,
             modificar_bottom: false,
-            intervenciones: [],
             tituloIntervencionModal: '',
-            //change var below
+            unidades_ejecutoras: [],
             combo_tipos_documentos: [],
             cla_institucional: [],
-            tipo_intervenciones: [],
-            sectoriales: [],
             id_eliminacion: null,
             type_name: [],
+            sectoriales: [],
+            tipo_intervenciones: [],
+            intervenciones: [],
             jsonData: {
                 //required to CRUD
                 id: 0,
-                document_types_id: '',
-                unidad_ejecutora_id: '',
-                padre: '',
-                nombre: '',
-                codigo: '',
-                contratante_id: '',
-                contratado_id: '',
+                document_types_id: null,
+                unidad_ejecutora: null,
+                padre: null,
+                nombre: null,
+                codigo: null,
+                contratante_id: null,
+                contratado_id: null,
                 fecha_firma: null,
-                duracion_dias: '',
-                monto_bs: '',
-                objeto: '',
-                modifica: '',
-                path_contrato: '',
+                duracion_dias: null,
+                monto_bs: null,
+                objeto: null,
+                modifica: [],
+                path_contrato: null,
                 files: null,
                 //Showed in the table
-                tipo_documento: '',
-                inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
-                tipo_intervencion: null,
-                codsisin: '',
-                sectorial: null,
-                fecha_aprobacion: '',
-                fecha_inicial_programada: null,
-                document_code: '',
-                fecha_inicial_real: '',
-                descripcion: '',
-                monto_aprobado_dolares: '',
-                fecha: '',
+                // _plazo: '',
+                // _monto: '',
+                // _otro: '',
+                // tipo_documento: '',
+                // inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
+                // tipo_intervencion: null,
+                // codsisin: '',
+                // sectorial: null,
+                // fecha_aprobacion: '',
+                // fecha_inicial_programada: null,
+                // document_code: '',
+                // fecha_inicial_real: '',
+                // descripcion: '',
+                // monto_aprobado_dolares: '',
+                // fecha: '',
             },
             rows: [],
             columns: [
@@ -420,16 +441,6 @@ export default {
                     name: "acciones",
                     sort: false,
                 },
-                // {
-                //     label: "Objeto",
-                //     name: "objeto",
-                //     sort: false,
-                // },
-                // {
-                //     label: "Modificacion",
-                //     name: "modifica",
-                //     sort: false,
-                // },
             ],
             actions: [//botones ejem el de descarga
                 {
@@ -562,7 +573,6 @@ export default {
             // console.log(respuesta.data);
 
             const contratosObjeto = {};
-
             contratos.forEach(contrato => {
                 contratosObjeto[contrato.id] = contrato.nombre;
             });
@@ -580,27 +590,27 @@ export default {
         async guardar() {
             console.log(this.jsonData);
             let datos_jsonData = new FormData();
+
             for (let key in this.jsonData) {
                 datos_jsonData.append(key, this.jsonData[key]);
             }
-            datos_jsonData.append('document_type_id', this.jsonData.document_types_id.id);
-            datos_jsonData.append('unidad_ejecutora_id', '20');
+            datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
+            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora.id);
             datos_jsonData.append('padre', '0');
-            // datos_jsonData.append('padre', this.jsonData.tipo_intervencion.id);
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
             datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
             datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
-            datos_jsonData.append('fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate());
+            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + fecha_firma.getMonth() + "-" + fecha_firma.getDate()));
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            datos_jsonData.append('path_contrato', ' ');
-
-            const respuesta = await axios.post('documents', datos_jsonData);
-            console.log(respuesta.data);
+            // this.jsonData.path_contrato = "CONTRATO-" + this.jsonData.nombre + "-" + this.jsonData.unidad_ejecutora + ".pdf";
+            datos_jsonData.append('path_contrato', this.jsonData.path_contrato);
+            let respuesta = await axios.post('documents', datos_jsonData);
+            console.log("SAVE", respuesta.data);
             document.getElementById("cerrarModal").click();
             this.listar();
         },
@@ -610,7 +620,7 @@ export default {
             for (let key in this.jsonData) {
                 datos_jsonData.append(key, this.jsonData[key]);
             }
-            datos_jsonData.append('document_type_id', this.jsonData.document_types_id.id);
+            datos_jsonData.append('document_type_id', this.jsonData.document_types_id);
             datos_jsonData.append('unidad_ejecutora_id', '20');
             datos_jsonData.append('padre', '0');
             // datos_jsonData.append('documento_padre_id', this.jsonData.tipo_intervencion.id);
@@ -620,7 +630,7 @@ export default {
             datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
-            datos_jsonData.append('fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate());
+            datos_jsonData.append('fecha_firma', '03/08/2022');
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
@@ -638,7 +648,7 @@ export default {
         },
         //Change object to get
         async tipos_documentos() {
-            var respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
+            let respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
             this.combo_tipos_documentos = respuesta.data;
         },
         async intervencionesTipoActivas() {
@@ -649,10 +659,15 @@ export default {
             this.optionsSelect = respuesta.data;
         },
         async institucionesGetAll() {
-            const respuesta = await axios.get('instituciones');
+            const respuesta = await axios.get('cla_instituciones');
             // console.log(respuesta.data);
             this.cla_institucional = respuesta.data;
             // this.jsonData.institucion = respuesta.data;
+        },
+        async unidadesEjecutorasGetAll() {
+            const respuesta = await axios.get('get_unidades_ejecutoras');
+            this.unidades_ejecutoras = respuesta.data;
+            console.log(respuesta.data);
         },
         //get data from?
         async sectorialesActivos() {
@@ -752,10 +767,10 @@ export default {
             }
         },
         cargar_file(event) {
-            var nombre_file = "";
-            this.jsonData.files = event.target.files[0];
+            let nombre_file = "";
+            this.jsonData.files = event.target.files;
             for (let key in event.target.files) {//cargamos datos
-                var boucle = event.target.files[key];
+                let boucle = event.target.files[key];
                 if (boucle.name != null && boucle.name != 'undefined' && boucle.name != "item") {
                     // console.log(boucle.name);
                     nombre_file = boucle.name;
@@ -772,7 +787,7 @@ export default {
     },
     created() {
         this.listar();
-        this.guardar();
+        this.unidadesEjecutorasGetAll()
         this.tipos_documentos();
         this.intervencionesTipoActivas();
         this.sectorialesActivos();
