@@ -247,7 +247,7 @@
                                         <button type="button" class="close" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
-                                    <input type="file" multiple class="form-control" id="doc_upload_contrato"
+                                    <input type="file" multiple class="form-control" id="documento_res_aprobacion"
                                            @change="cargar_file" style="display:none">
                                 </div>
                             </div>
