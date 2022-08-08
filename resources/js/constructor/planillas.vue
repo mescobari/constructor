@@ -71,7 +71,10 @@
                             </template>
                             <template slot="acciones" slot-scope="props">
                                 <div class="btn-group">
-                                    <a :href="props.row.filePathFull" target="_blank" rel="noopener noreferrer"><button type="button" class="btn btn-outline-success"><span><i class="far fa-file-pdf"></i></span></button></a>
+                                    <a :href="props.row.filePathFull" target="_blank" rel="noopener noreferrer">
+                                    <button type="button" class="btn btn-outline-success ml-1" @click="imprimir_planilla(props.row);"><span><i class="far fa-file-pdf"></i></span></button>
+                                    </a>
+
                                     <button type="button" class="btn btn-outline-warning ml-1" @click="editar(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
                                     <button type="button" class="btn btn-outline-danger ml-1" @click="eliminar(props.row.id);"><span><i class="fa fa-trash-alt"></i></span></button>                
                                 </div>
@@ -83,6 +86,7 @@
     <!-- ////////////  FIN row de la tabla mostrar detalles del modelo y acciones -->  
 
             </div>
+            
         </div>
 
     <!--  modal para la seleccion de contratos //////////--> 
@@ -302,9 +306,11 @@ export default {
                 numero_planilla:1,
                 nuri_planilla:'',
                 fecha_planilla:'',
+                fecha1:'',
                 total_planilla:'',        
                 anticipo_planilla:'',
-                retencion_planilla:'',                
+                retencion_planilla:'',
+                referencia:'',               
                 funcionario:'',                
                 files:null,
             },
@@ -318,7 +324,7 @@ export default {
                 { label: "Fecha",      name: "fecha_planilla",         filter: { type: "simple", placeholder: "Fecha", }, sort: true,  },
                 { label: "Numero",     name: "numero_planilla",              filter: { type: "simple", placeholder: "Numero" }, sort: true,     },
                 { label: "Nuri",       name: "nuri_planilla",            filter: { type: "simple", placeholder: "Nuri" },         },
-                { label: "Referencia", name: "referencia",       filter: { type: "simple", placeholder: "Referencia" },    },
+                { label: "Referencia", name: "referencia",       filter: { type: "simple", placeholder: "Referencia" },   },
                 { label: "Respaldo",   name: "path_planilla",    filter: { type: "simple", placeholder: "Respaldo" },       },
                 { label: "Total BS.",  name: "total_planilla",       filter: { type: "simple", placeholder: "Total BS." }, sort: true,      },
                 {
@@ -330,7 +336,7 @@ export default {
             
             configFile:{
                 cerrar:false,
-                contenidoDefault:" DOCUMENTO/RES APROBACIÓN",              
+                contenidoDefault:" CARGAR PLANILLLA",              
             },
             datosEnviarConfiguracion:{},        
             configFechas:{},
@@ -347,12 +353,13 @@ export default {
             console.log('estamos en guardar contrato_id');
             this.jsonData.contrato_id = this.jsonData.proyectos.id;
             console.log(this.jsonData.tipo_planilla_id);
-            
+            const fecha = new Date(this.jsonData.fecha_planilla);
+             this.jsonData.fecha1 = fecha.getFullYear() + "-" + (fecha.getMonth()+1) + "-" + fecha.getDate();
            
-            let datos_jsonData = new FormData();
-
-            console.log(datos_jsonData);
             console.log('===================');
+           
+           let datos_jsonData = new FormData();
+           
             for(let key in this.jsonData){                
                 datos_jsonData.append(key, this.jsonData[key]);
                 console.log(key, this.jsonData[key]);
@@ -360,37 +367,14 @@ export default {
             
             console.log('===================');
             
-            // datos_jsonData.append('id_proyecto', this.jsonData.proyectos.id);
-            // datos_jsonData.append('id_intitucion', this.jsonData.institucion.id);
-            // datos_jsonData.append('id_tipo_documento', this.jsonData.tipos_documento.id);
-            // datos_jsonData.append('id_organismo', this.jsonData.cofinanciador.id);//organismo financiador
-            // datos_jsonData.append('id_objetivo', this.jsonData.objetivo.id);
-            // datos_jsonData.append('id_padre', id_padre);
-            // datos_jsonData.append('modifica', modifica);
-            // datos_jsonData.append('files', this.jsonData.files);
-
-            // datos_jsonData.append('fecha_firma_1', JSON.stringify(this.jsonData.fecha_firma));
-            // var fecha_firma = new Date(this.jsonData.fecha_firma);
-            // var fecha_inicio = new Date(this.jsonData.fecha_inicio);
-            // var fecha_vencimiento = new Date(this.jsonData.fecha_vencimiento);
-            // var dia1 = fecha_firma.getDate() + "";
-            // var dia1 = fecha_inicio.getDate() + "";
-            // var dia2 = fecha_vencimiento.getDate() + "";
-            // if(dia1.length == 1){ dia1 = "0" + fecha_firma.getDate(); }else{ dia1 = "" + fecha_firma.getDate(); }
-            // if(dia1.length == 1){ dia1 = "0" + fecha_inicio.getDate(); }else{ dia1 = "" + fecha_inicio.getDate(); }
-            // if(dia2.length == 1){ dia2 = "0" + fecha_vencimiento.getDate(); }else{ dia2 = "" + fecha_vencimiento.getDate(); }
-
-            // datos_jsonData.append('id_fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + dia1);
-            // datos_jsonData.append('id_fecha_inicio', fecha_inicio.getFullYear() + "-" + (fecha_inicio.getMonth() + 1) + "-" + dia1);
-            // datos_jsonData.append('id_fecha_vencimiento', fecha_vencimiento.getFullYear() + "-" + (fecha_vencimiento.getMonth() + 1) + "-" + dia2);
-            console.log('******************');            
-            console.log(datos_jsonData);
-             console.log('******************');  
-            var respuesta = await axios.post('documentos_legaleses', datos_jsonData);
-            console.log(respuesta.data);
+             var respuesta = await axios.post('planillas', datos_jsonData);
+            
             this.buscar_doc_legales();
-            this.limpiar_formulario();
+           this.limpiar_formulario();
+            
             document.getElementById("cerrarModal").click();
+           this.ver_planilla();
+            
         },
         cargar_checks(dato){            
             if(dato == "1"){
@@ -404,7 +388,8 @@ export default {
             }
         },
         editar(data={}){
-            console.log(data.modifica);
+            console.log('XXXXXXXXXXXXXXXXX');
+            console.log(data);
             $('#modifica1').removeAttr('checked');
             $('#modifica2').removeAttr('checked');
             $('#modifica3').removeAttr('checked');
@@ -420,6 +405,7 @@ export default {
                 }
                 this.cargar_checks(dato);
             }
+            console.log('===============');
             console.log(data);//return;     
             
             this.jsonData.id = data.id;
@@ -526,6 +512,12 @@ export default {
             this.rows = planillas;
          },
 
+         imprimir_planilla(data={}){
+            console.log('imprimir_planillaXXXXXXXXXXX');
+            console.log(data);
+
+         },   
+
         async buscar_doc_legales(){
             var data = {
                 'intervencion':this.jsonData.proyectos,
@@ -594,7 +586,7 @@ export default {
             this.btnmodificar = false;
             this.btncancelar = false;
             this.btnguardar = true;
-            this.configFile.contenidoDefault = " DOCUMENTO/RES APROBACIÓN";
+            this.configFile.contenidoDefault = " CARGAR PLANILLA";
             this.borrar_file();
         },
         /**********************archivos para file******************* */        
@@ -607,15 +599,14 @@ export default {
                     // console.log(boucle.name);
                     nombre_file = boucle.name;
                 }
-                // for(let key2 in boucle){
-                //     console.log(key2);
-                //     console.log(boucle[key2]);
-                // }
+               
             }
+           
             this.configFile.cerrar = true;
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>'; 
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion',[nombre_file]);
         },
+
         borrar_file(){            
             var nombre_file = "<i class='fas fa-download fa-1x'></i><br><span> " + this.configFile.contenidoDefault + "</span>";
             $('#documento_res_aprobacion').val("");

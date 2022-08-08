@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>FICHA PROYECTO</title>    
+        <title>FICHA DE CONTRATO</title>    
     </head>
     <body style="border:  1px solid #000;">
         <div id="header">

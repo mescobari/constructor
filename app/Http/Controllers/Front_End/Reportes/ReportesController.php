@@ -179,7 +179,7 @@ class ReportesController extends Controller
         //datos del reporte
         $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
         $nombre_institucion = $intervencion->institucion->nombre;
-        $siglas = "SISPRO";
+        $siglas = "EL CONSTRUCTOR";
         $codigo_proyecto = $intervencion->codsisin;
         $fecha_hora_emision = date('d-m-Y h:i:s a', time());
         $nombre_proyecto = $intervencion->nombre;

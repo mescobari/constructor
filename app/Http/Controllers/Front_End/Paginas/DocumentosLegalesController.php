@@ -41,7 +41,7 @@ class DocumentosLegalesController extends Controller
             $datoReemplazar = "_";
             $cadenaProcesar = $request->titulo;              
             $titulo = str_replace($datoBuscar, $datoReemplazar, $cadenaProcesar);
-            $name = $request->file('file')->getClientOriginalName();
+            $name = 'miArchivo';
             //$nombre_archivo = $request->id_proyecto . '_' . $request->id_tipo_documento . '_' . trim($titulo) . '.' . $extencion;
             $nombre_archivo =  $name . '.' . $extencion;;
             $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador

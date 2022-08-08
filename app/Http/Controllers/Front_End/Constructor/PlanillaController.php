@@ -44,7 +44,39 @@ class PlanillaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //subimos el archivo y armamos el path doc
+        if($request->hasFile('files')){
+            $extension = $request->file('files')->getClientOriginalExtension(); 
+            $nombre_carpeta = "/constructor";
+            $nombre_archivo = $request->contrato_id.'_pla_'.$_FILES['files']['name'];
+            $path= $nombre_carpeta.'/'.$nombre_archivo;
+            $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
+        
+            //dd($_FILES);
+
+        }
+
+        // grbamos en planilla
+       
+
+      $planilla_save = Planilla::create([
+            'tipo_planilla_id'=>$request->tipo_planilla_id,
+            'contrato_id'=>$request->contrato_id,
+           'numero_planilla'=>$request->numero_planilla,
+            'nuri_planilla'=>$request->nuri_planilla, 
+            'fecha_planilla'=>$request->fecha1,
+             'total_planilla'=>$request->total_planilla,
+            'anticipo_planilla'=>$request->anticipo_planilla,
+            'retencion_planilla'=>$request->retencion_planilla,
+            'referencia'=>$request->referencia, 
+            'path_planilla'=>$path,            
+        ]);
+        
+        
+        //$mensaje='volviendo del backend grabar path documento '.$path;
+        return $planilla_save;
+
+
     }
 
     /**
