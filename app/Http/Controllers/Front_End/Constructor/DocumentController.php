@@ -69,7 +69,6 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
                 $d = new document();
-
                 $d->document_types_id = $request->document_types_id;
                 $d->unidad_ejecutora_id = $request->unidad_ejecutora_id;
                 $d->padre = $request->padre;

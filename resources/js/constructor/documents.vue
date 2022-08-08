@@ -247,7 +247,7 @@
                                         <button type="button" class="close" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
-                                    <input type="file" class="form-control" id="documento_res_aprobacion"
+                                    <input type="file" multiple class="form-control" id="documento_res_aprobacion"
                                            @change="cargar_file" style="display:none">
                                 </div>
                             </div>
@@ -591,6 +591,7 @@ export default {
         async guardar() {
             console.log(this.jsonData);
             let datos_jsonData = new FormData();
+
             for (let key in this.jsonData) {
                 datos_jsonData.append(key, this.jsonData[key]);
             }
@@ -607,6 +608,7 @@ export default {
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
+            // this.jsonData.path_contrato = "CONTRATO-" + this.jsonData.nombre + "-" + this.jsonData.unidad_ejecutora + ".pdf";
             datos_jsonData.append('path_contrato', this.jsonData.path_contrato);
             let respuesta = await axios.post('documents', datos_jsonData);
             console.log("SAVE", respuesta.data);
@@ -766,10 +768,10 @@ export default {
             }
         },
         cargar_file(event) {
-            var nombre_file = "";
-            this.jsonData.files = event.target.files[0];
+            let nombre_file = "";
+            this.jsonData.files = event.target.files;
             for (let key in event.target.files) {//cargamos datos
-                var boucle = event.target.files[key];
+                let boucle = event.target.files[key];
                 if (boucle.name != null && boucle.name != 'undefined' && boucle.name != "item") {
                     // console.log(boucle.name);
                     nombre_file = boucle.name;
