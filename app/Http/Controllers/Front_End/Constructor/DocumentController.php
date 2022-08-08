@@ -78,11 +78,15 @@ class DocumentController extends Controller
                 $d->contratado_id = $request->contratado_id;
                 $d->duracion_dias = $request->duracion_dias;
 //                 $d->fecha_firma = date('Y-m-d', strtotime($request->fecha_firma));
+                $input = Input::file('doc_upload_contrato');
+                $destinationPath = '/public/uploads/contratos/';
+                $filename = $input->getClientOriginalName();
+                $input->move($destinationPath, $filename);
                 $d->fecha_firma = $request->fecha_firma;
                 $d->monto_bs = $request->monto_bs;
                 $d->objeto = $request->objeto;
                 $d->modifica = $request->modifica;
-                $d->path_contrato = $request->path_contrato;
+                $d->path_contrato = $destinationPath;
 
                 $d -> save();
 

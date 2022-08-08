@@ -247,7 +247,7 @@
                                         <button type="button" class="close" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
-                                    <input type="file" multiple class="form-control" id="documento_res_aprobacion"
+                                    <input type="file" multiple class="form-control" id="doc_upload_contrato"
                                            @change="cargar_file" style="display:none">
                                 </div>
                             </div>
@@ -573,7 +573,6 @@ export default {
             // console.log(respuesta.data);
 
             const contratosObjeto = {};
-
             contratos.forEach(contrato => {
                 contratosObjeto[contrato.id] = contrato.nombre;
             });
