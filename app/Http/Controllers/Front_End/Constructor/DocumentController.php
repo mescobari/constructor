@@ -86,7 +86,7 @@ class DocumentController extends Controller
                 $d->monto_bs = $request->monto_bs;
                 $d->objeto = $request->objeto;
                 $d->modifica = $request->modifica;
-                $d->path_contrato = $destinationPath;
+                $d->path_contrato = $request->path_contrato;
 
                 $d -> save();
 
