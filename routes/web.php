@@ -6,6 +6,7 @@ include_once 'otras_rutas/administracion/Administracion.php';
 include_once 'otras_rutas/seguridad/Login.php';
 
 include_once 'otras_rutas/front-end/constructor/Registros.php';
+include_once 'otras_rutas/front-end/constructor/Reportes.php';
 
 include_once 'otras_rutas/front-end/registroProyecto/Intervencion.php';
 include_once 'otras_rutas/front-end/registroProyecto/Instituciones.php';

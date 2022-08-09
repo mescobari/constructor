@@ -23,5 +23,8 @@
         Route::get('seguimiento_comprobante_individual/{id}', 'ReportesController@seguimiento_comprobante_individual');
         Route::get('ficha_proyecto_estructura_financiamiento2/{id}', 'ReportesController@ficha_proyecto_estructura_financiamiento2')->name('ficha_proyecto_estructura_financiamiento2');
         
+        
+   
+   
     });     
 ?>

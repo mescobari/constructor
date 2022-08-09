@@ -71,8 +71,8 @@
                             </template>
                             <template slot="acciones" slot-scope="props">
                                 <div class="btn-group">
-                                    <a :href="props.row.filePathFull" target="_blank" rel="noopener noreferrer">
-                                    <button type="button" class="btn btn-outline-success ml-1" @click="imprimir_planilla(props.row);"><span><i class="far fa-file-pdf"></i></span></button>
+                                    <a :href="'ver_planilla/'+props.row.id" target="_blank" rel="noopener noreferrer">
+                                    <button type="button" class="btn btn-outline-success ml-1" ><span><i class="far fa-file-pdf"></i></span></button>
                                     </a>
 
                                     <button type="button" class="btn btn-outline-warning ml-1" @click="editar(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
@@ -512,11 +512,7 @@ export default {
             this.rows = planillas;
          },
 
-         imprimir_planilla(data={}){
-            console.log('imprimir_planillaXXXXXXXXXXX');
-            console.log(data);
-
-         },   
+        
 
         async buscar_doc_legales(){
             var data = {
