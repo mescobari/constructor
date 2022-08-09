@@ -361,22 +361,6 @@ export default {
                 objeto: null,
                 modifica: [],
                 files: null,
-                //Showed in the table
-                // _plazo: '',
-                // _monto: '',
-                // _otro: '',
-                // tipo_documento: '',
-                // inteventiontype: {id: 0, nombre: "Seleccione por favor...", created_at: null, updated_at: null},
-                // tipo_intervencion: null,
-                // codsisin: '',
-                // sectorial: null,
-                // fecha_aprobacion: '',
-                // fecha_inicial_programada: null,
-                // document_code: '',
-                // fecha_inicial_real: '',
-                // descripcion: '',
-                // monto_aprobado_dolares: '',
-                // fecha: '',
             },
             rows: [],
             columns: [
@@ -578,6 +562,7 @@ export default {
 
             const documentos = respuesta.data.map(documento => {
                 documento.tipo_documento = contratosObjeto[documento.document_types_id];
+                documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
@@ -589,10 +574,12 @@ export default {
         async guardar() {
             console.log(this.jsonData);
             let datos_jsonData = new FormData();
-
-            for (let key in this.jsonData) {
-                datos_jsonData.append(key, this.jsonData[key]);
-            }
+            // console.log("===================================================")
+            // for (let key in this.jsonData) {
+            //     datos_jsonData.append(key, this.jsonData[key]);
+            //     console.log(key, this.jsonData[key]);
+            // }
+            // console.log("===================================================")
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora.id);
             datos_jsonData.append('padre', '0');
@@ -606,8 +593,7 @@ export default {
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            // this.jsonData.path_contrato = "CONTRATO-" + this.jsonData.nombre + "-" + this.jsonData.unidad_ejecutora + ".pdf";
-            // datos_jsonData.append('path_contrato', this.jsonData.path_contrato);
+            datos_jsonData.append('files', this.jsonData.files);
             let respuesta = await axios.post('documents', datos_jsonData);
             console.log("SAVE", respuesta.data);
             document.getElementById("cerrarModal").click();
@@ -767,7 +753,7 @@ export default {
         },
         cargar_file(event) {
             let nombre_file = "";
-            this.jsonData.files = event.target.files;
+            this.jsonData.files = event.target.files[0];
             for (let key in event.target.files) {//cargamos datos
                 let boucle = event.target.files[key];
                 if (boucle.name != null && boucle.name != 'undefined' && boucle.name != "item") {
