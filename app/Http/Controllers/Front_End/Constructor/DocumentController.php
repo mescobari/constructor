@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 use App\Models\Constructor\document;
 
 
@@ -66,15 +66,20 @@ class DocumentController extends Controller
      */
     public function store(Request $request)
     {
+    //get the file from the request and store
+
+//        $insert_id = DB::table('documents')->insertGetId(['id'=> $request->input('')]);
         $files = "";
         $path = "";
+//        $increment = 1;
         if ($request->hasFile('files')) {
             $extension = $request->file('files')->getClientOriginalExtension();
             $nombre_carpeta = "/constructor";
-            $nombre_archivo = $_FILES['files']['name'];
+            $nombre_archivo = /*($insert_id + 1) . '-' .*/ $request->document_types_id . '-' . $_FILES['files']['name'];
             $path = $nombre_carpeta . '/' . $nombre_archivo;
             $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
         }
+
         $d = document::create([
             'document_types_id' => $request->document_types_id,
             'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
@@ -90,6 +95,7 @@ class DocumentController extends Controller
             'modifica' => $request->modifica,
             'path_contrato' => $path,
         ]);
+
         return $d;
     }
 
@@ -124,7 +130,9 @@ class DocumentController extends Controller
      */
     public function update(Request $request, document $document)
     {
-        //
+        $data = document::find($document);
+        $data -> name = $request -> $id.$name;
+
     }
 
     /**
