@@ -130,8 +130,7 @@ class DocumentController extends Controller
      */
     public function update(Request $request, document $document)
     {
-        $data = document::find($document);
-        $data -> name = $request -> $id.$name;
+
 
     }
 
