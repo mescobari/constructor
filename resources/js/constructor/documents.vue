@@ -4,7 +4,7 @@
             <h3 class="card-title">Creacion de Contratos</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#intervencion"
-                    @click="ModalCrear();">
+                        @click="ModalCrear();">
                     Añadir Contrato
                 </button>
             </div>
@@ -14,7 +14,7 @@
         <div class="card-body">
             <div class="table-responsive">
                 <vue-bootstrap4-table :rows="rows" :columns="columns" :config="config" @on-download="mostrar"
-                    :classes="classes">
+                                      :classes="classes">
                     <template slot="simple-filter-clear-icon">
                         <i class="fas fa-times-circle"></i>
                     </template>
@@ -47,11 +47,11 @@
                     <template slot="aprobacion" slot-scope="props">
                         <div v-if="props.row.soli_estado == 'R'">
                             <button class="btn btn-outline btn-danger dim" type="button"
-                                @click="aprobarSolicitud(props.row)"><i class="fa fa-thumbs-o-down"></i></button>
+                                    @click="aprobarSolicitud(props.row)"><i class="fa fa-thumbs-o-down"></i></button>
                         </div>
                         <div v-else>
                             <button class="btn btn-outline btn-primary dim" type="button"><i
-                                    class="fa fa-thumbs-o-up"></i></button>
+                                class="fa fa-thumbs-o-up"></i></button>
                         </div>
                     </template>
                     <template slot="descripcion" slot-scope="props">
@@ -59,21 +59,21 @@
                                                                                         white-space: nowrap;
                                                                                         overflow: hidden;
                                                                                         text-overflow: Ellipsis"
-                            :title="props.row.descripcion">
+                             :title="props.row.descripcion">
                         </div>
                     </template>
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
                             <a :href="props.row.filePathFull" target="_blank" rel="noopener noreferrer">
                                 <button type="button" class="btn btn-outline-success"><span><i
-                                            class="far fa-file-pdf"></i> </span></button>
+                                    class="far fa-file-pdf"></i> </span></button>
                             </a>
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
-                                data-target="#intervencion" @click="contratoModificar(props.row);"><span><i
-                                        class="fa fa-user-edit"></i></span></button>
+                                    data-target="#intervencion" @click="contratoModificar(props.row);"><span><i
+                                class="fa fa-user-edit"></i></span></button>
                             <button type="button" class="btn btn-outline-danger ml-1"
-                                @click="preguntarModalAlertaConfirmacion(props.row.id);"><span><i
-                                        class="fa fa-trash-alt"></i></span></button>
+                                    @click="preguntarModalAlertaConfirmacion(props.row.id);"><span><i
+                                class="fa fa-trash-alt"></i></span></button>
                         </div>
                     </template>
                 </vue-bootstrap4-table>
@@ -83,7 +83,7 @@
 
         <!------------------------------------------------------Modal Crear Contrato------------------------------------------------------->
         <div class="modal fade" id="intervencion" tabindex="-1" role="dialog" style="overflow-y: scroll;"
-            aria-labelledby="intervencionTitle" aria-hidden="true">
+             aria-labelledby="intervencionTitle" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <!--modal header, close button-->
@@ -101,7 +101,10 @@
                                         <!--                                        Doc Type Spinner-->
                                         <label for="document_type">Tipo de Documento:</label>
                                         <v-select label="nombre" :options="combo_tipos_documentos"
-                                            v-model="jsonData.document_types_id" placeholder="Selecione una opción" >
+                                                  v-model="jsonData.document_types_id"
+                                                  @input="cambioTipoDocumento()"
+                                                  placeholder="Selecione una opción">
+                                            <!--                                                  v-if="(jsonData.document_types_idus.id === null||jsonData.document_types_id.id === 1)disablePadre==true "-->
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -110,14 +113,15 @@
                                     <div class="form-group">
                                         <label for="descripcion">Codigo de Documento:</label>
                                         <input type="text" class="form-control" name="duracion_dias" id="duracion_dias"
-                                            v-model="jsonData.codigo" placeholder="Introduzca el codigo del documento">
+                                               v-model="jsonData.codigo"
+                                               placeholder="Introduzca el codigo del documento">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="descripcion">Contratante:</label>
                                         <v-select label="nombre" :options="cla_institucional"
-                                            v-model="jsonData.contratante_id" placeholder="Selecione una opción">
+                                                  v-model="jsonData.contratante_id" placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -127,14 +131,18 @@
                                         <label for="fecha-firma">Fecha de Firma:</label>
                                         <!-- <input type="date" class="form-control" name="fecha_inicial_programada" id="fecha_inicial_programada" v-model="jsonData.fecha_inicial_programada"> -->
                                         <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
-                                            :calendar-class="configFechas.nombreClaseParaModal"
-                                            :input-class="configFechas.nombreClaseParaInput" :monday-first="true"
-                                            :clear-button="true" :clear-button-icon="configFechas.IconoBotonBorrar"
-                                            :calendar-button="true" :calendar-button-icon="configFechas.IconoBotonAbrir"
-                                            calendar-button-icon-content="" :format="configFechas.DatePickerFormat"
-                                            :full-month-name="true" :bootstrap-styling="true"
-                                            :disabled-dates="configFechas.disabledDates"
-                                            :typeable="configFechas.typeable" v-model="jsonData.fecha_firma">
+                                                    :calendar-class="configFechas.nombreClaseParaModal"
+                                                    :input-class="configFechas.nombreClaseParaInput"
+                                                    :monday-first="true"
+                                                    :clear-button="true"
+                                                    :clear-button-icon="configFechas.IconoBotonBorrar"
+                                                    :calendar-button="true"
+                                                    :calendar-button-icon="configFechas.IconoBotonAbrir"
+                                                    calendar-button-icon-content=""
+                                                    :format="configFechas.DatePickerFormat"
+                                                    :full-month-name="true" :bootstrap-styling="true"
+                                                    :disabled-dates="configFechas.disabledDates"
+                                                    :typeable="configFechas.typeable" v-model="jsonData.fecha_firma">
                                         </datepicker>
                                     </div>
                                 </div>
@@ -145,8 +153,11 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="tipo_intervencion">Documento Padre:</label>
-                                            <v-select label="nombre" :options="tipo_intervenciones" v-bind:disabled="disabled"
-                                                v-model="jsonData.padre" placeholder="Selecione una opción">
+                                            <v-select label="nombre" :options="tipo_intervenciones"
+                                                      v-model="jsonData.padre"
+                                                      placeholder="Selecione una opción" v-bind:disabled="disablePadre">
+<!--                                                        <span  v-if="disablePadre===true">v-bind:aria-disabled="tipo_intervenciones"</span>-->
+                                                <!--                                                      v-on:disabled="computed.disabled"-->
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
                                         </div>
@@ -155,7 +166,8 @@
                                         <div class="form-group">
                                             <label for="unidades_ejecutoras">Unidad Ejecutora:</label>
                                             <v-select label="nombre" :options="unidades_ejecutoras"
-                                                v-model="jsonData.unidad_ejecutora" placeholder="Selecione una opción">
+                                                      v-model="jsonData.unidad_ejecutora"
+                                                      placeholder="Selecione una opción">
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
                                         </div>
@@ -165,14 +177,14 @@
                                     <div class="form-group">
                                         <label for="nombre">Nombre de Documento:</label>
                                         <input type="text" class="form-control" name="nombre" id="nombre"
-                                            placeholder="Ingresar Nombre del Documento" v-model="jsonData.nombre">
+                                               placeholder="Ingresar Nombre del Documento" v-model="jsonData.nombre">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md-6">
                                         <label for="institucion_contratado">Contratado:</label>
                                         <v-select label="nombre" :options="cla_institucional"
-                                            v-model="jsonData.contratado_id" placeholder="Selecione una opción">
+                                                  v-model="jsonData.contratado_id" placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -181,17 +193,17 @@
                                         <div class="row">
                                             <div class="custom-control custom-checkbox col-md-4">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck1"
-                                                    value="1" v-model="jsonData.modifica">
+                                                       value="1" v-model="jsonData.modifica">
                                                 <label class="custom-control-label" for="customCheck1">Plazo</label>
                                             </div>
                                             <div class="custom-control custom-checkbox col-md-4">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck2"
-                                                    value="2" v-model="jsonData.modifica">
+                                                       value="2" v-model="jsonData.modifica">
                                                 <label class="custom-control-label" for="customCheck2">Monto</label>
                                             </div>
                                             <div class="custom-control custom-checkbox col-md-4">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck3"
-                                                    value="3" v-model="jsonData.modifica">
+                                                       value="3" v-model="jsonData.modifica">
                                                 <label class="custom-control-label" for="customCheck3">Otro</label>
                                             </div>
                                         </div>
@@ -201,12 +213,12 @@
                                     <div class="form-group col-md-6">
                                         <label for="dias_duracion">Duracion de Dias:</label>
                                         <input type="number" class="form-control" name="codsisin" id="dias"
-                                            placeholder="Ingresar Dias" v-model="jsonData.duracion_dias">
+                                               placeholder="Ingresar Dias" v-model="jsonData.duracion_dias">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="monto_bs">Monto Aprobado en Bolivianos:</label>
                                         <input type="number" class="form-control" name="codsisin" id="monto_bs"
-                                            placeholder="Ingresar Monto" v-model="jsonData.monto_bs">
+                                               placeholder="Ingresar Monto" v-model="jsonData.monto_bs">
                                     </div>
                                 </div>
 
@@ -222,17 +234,17 @@
                                 <div class="col-md-3">
                                     <label for="descripcion">Documento de Respaldo:</label>
                                     <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
-                                        class="bg-primary"
-                                        style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
+                                           class="bg-primary"
+                                           style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
                                         <span id="contenido_documento_res_aprobacion"><i
-                                                class="fas fa-download fa-1x"></i><br> <span> {{
-                                                        configFile.contenidoDefault
-                                                }}</span></span>
+                                            class="fas fa-download fa-1x"></i><br> <span> {{
+                                                configFile.contenidoDefault
+                                            }}</span></span>
                                         <button type="button" class="close" v-if="configFile.cerrar"
-                                            @click="borrar_file();"><span>&times;</span></button>
+                                                @click="borrar_file();"><span>&times;</span></button>
                                     </label>
                                     <input type="file" multiple class="form-control" id="documento_res_aprobacion"
-                                        @change="cargar_file" style="display:none">
+                                           @change="cargar_file" style="display:none">
                                 </div>
                             </div>
                         </div>
@@ -241,11 +253,11 @@
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
                         <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
-                            v-if="guardar_bottom == true">
+                                v-if="guardar_bottom == true">
                             Guardar
                         </button>
                         <button type="submit" @click="modificar();" class="btn btn-success"
-                            v-if="modificar_bottom == true">Modificar
+                                v-if="modificar_bottom == true">Modificar
                         </button>
                     </div>
                 </div>
@@ -253,7 +265,7 @@
         </div>
         <!----------------------------------------Fin Modal Crear Contrato---------------------------------------->
         <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
-            ref="abrirAlerta"></alert-confirmacion>
+                            ref="abrirAlerta"></alert-confirmacion>
     </div>
 </template>
 
@@ -264,15 +276,15 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
-import { en, es } from 'vuejs-datepicker/dist/locale'
-import { VueEditor } from "vue2-editor";
+import {en, es} from 'vuejs-datepicker/dist/locale'
+import {VueEditor} from "vue2-editor";
 
 Vue.component("v-select", vSelect);
 import moment from 'moment';
 import documents from "./documents";
 
 export default {
-    props: ['url', 'csrf', 'ast', 'operations', 'user'],
+    props: ['url', 'csrf', 'ast', 'operations', 'user', 'template'],
     data() {
         return {
             configFile: {
@@ -281,20 +293,20 @@ export default {
             },
             mandarMensajesAlerta: {},
             configToolBarEditText: [
-                [{ font: [] }],
-                [{ header: [false, 1, 2, 3, 4, 5, 6] }],//mismo que tamaño pequeño, mediano y grande pero esta tiene seis niveles
+                [{font: []}],
+                [{header: [false, 1, 2, 3, 4, 5, 6]}],//mismo que tamaño pequeño, mediano y grande pero esta tiene seis niveles
                 // [{ size: ["small", "large", "huge"] }],    //misma que tamaño 1-6 pero esta solo seria pequeño, mediano y grande
                 ["bold", "italic", "underline", "strike"], // toggled buttons
                 [
-                    { align: "" },
-                    { align: "center" },
-                    { align: "right" },
-                    { align: "justify" }
+                    {align: ""},
+                    {align: "center"},
+                    {align: "right"},
+                    {align: "justify"}
                 ],
                 ["blockquote", "code-block"],
-                [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-                [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-                [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+                [{list: "ordered"}, {list: "bullet"}, {list: "check"}],
+                [{indent: "-1"}, {indent: "+1"}], // outdent/indent
+                [{color: []}, {background: []}], // dropdown with defaults from theme
                 ["link"],
                 // ["link", "image", "video"],//comentamos por que no quiero que se cargue imagenes ni video
                 ["clean"] // remove formatting button
@@ -318,18 +330,17 @@ export default {
                 typeable: false,//bloquear edicion por teclado
                 disabledDates: {},
             },
-            computed:{
-                disabled(){
-                    return this.jsonData.document_types_id.id!==1;
-                }
+            computed: {
+                //format thousand separator to input in real time (v-model)
+                verify_document_types_id() {
+                    return this.jsonData.document_types_id.id === 1;
+                },
             },
-            optionsSelect: [{ label: 'Favor de Seleccionar su opción', code: "fer" }],
-            disabled(){
-                return this.jsonData.document_types_id.id===1;
-            },
-            // deshabilitar_input: false,
+            optionsSelect: [{label: 'Favor de Seleccionar su opción', code: "fer"}],
+            number: '',
             guardar_bottom: false,
             modificar_bottom: false,
+            disablePadre: false,
             tituloIntervencionModal: '',
             unidades_ejecutoras: [],
             combo_tipos_documentos: [],
@@ -471,7 +482,39 @@ export default {
             },
         }
     },
+
+    watch: {
+
+        numberFormatter(value) {
+            if (!value) return ''
+            value = value.toString()
+            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        },
+        numberFormatterInput() {
+            if (this.number) return ''
+            this.number = this.number.toString()
+            return this.number.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        },
+
+
+    },
     methods: {
+        cambioTipoDocumento() {
+
+            if (this.jsonData.document_types_id.id === 1) {
+                this.disablePadre = true;
+
+                console.log('BEHAVIOR', this.disablePadre);
+            } else {
+                this.disablePadre = false;
+                console.log('BEHAVIOR', this.disablePadre);
+            }
+        },
+        numberFormatter(value) {
+            if (!value) return ''
+            value = value.toString()
+            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        },
         async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
             var respuesta = await axios.get('tipo_cambio_bs_sus');
             console.log(respuesta.data);
@@ -625,16 +668,16 @@ export default {
 
             this.jsonData.id = data.id;
             this.jsonData.codigo = data.codigo;
+            this.jsonData.nombre = data.nombre;
             this.jsonData.contratado_id = data.contratado_id;
             this.jsonData.contratante_id = data.contratante_id;
-            this.jsonData.nombre = data.nombre;
-            this.jsonData.document_types_id.nombre = data.document_types_id;
+            this.jsonData.document_types_id = data.document_types_id;
             this.jsonData.unidad_ejecutora = data.unidad_ejecutora;
             this.jsonData.modifica = data.modifica;
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
-            this.jsonData.fecha_firma = fecha_firma.getFullYear() + "-" + fecha_firma.getMonth() + "-" + fecha_firma.getDate();
+            this.jsonData.fecha_firma = data.fecha_firma.getFullYear() + "-" + data.fecha_firma.getMonth() + "-" + data.fecha_firma.getDate();
             this.jsonData.files = data.files;
 
         },
@@ -770,17 +813,6 @@ export default {
         this.intervencionesTipoActivas();
         this.sectorialesActivos();
         this.institucionesGetAll()
-    },
-    watch: {
-        props: function (val, oldVal) {
-            console.log("paso algpo");
-            // for (var i = 0; i < this.cases.length; i++) {
-            //     if (this.cases[i].status == val) {
-            //         this.activeCases.Push(this.cases[i]);
-            //         alert("Fired! " + val);
-            //     }
-            // }
-        }
     },
     components: {
         VueBootstrap4Table,
