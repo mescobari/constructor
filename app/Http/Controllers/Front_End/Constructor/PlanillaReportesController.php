@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\FrontEnd\intervenciones\ClaInstitucional;
 use App\Models\User;
@@ -182,15 +183,103 @@ class PlanillaReportesController extends Controller
     /* ficha de proyecto inicio */
 
     public function planilla_individual(Request $request, $id){ 
-        $planilla = Planilla::where('id', $id)->first();
-        $PlanillaMov = PlanillaMovimiento::where('planilla_id', $id)->with('planilla_items')->get();
+        //$planilla = Planilla::where('id', $id)->first();
+        //$PlanillaMov = PlanillaMovimiento::where('planilla_id', $id)->with('planilla_item', 'unidad')->get();
 
-        $mensaje='estamos en planilla_individual(Request $request, $id)-->'.$id;
-        return $PlanillaMov;
+        $planilla = DB::table('planillas')
+        ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->leftjoin('unidades', 'planilla_items.unidad_id', '=', 'unidades.id')
+        ->select('planillas.*', 'planilla_movimientos.*', 'planilla_items.*','unidades.simbolo' )
+        ->where('planillas.id', $id)
+        ->get();
+
+
+        $array1 = json_decode($planilla, true);
+            
+        $keys = array_keys($array1);
+        $salida=[];
+
+
+        $grupos = array();
+        for($i = 0; $i < count($array1); $i++) {
+            foreach($array1[$keys[$i]] as $key => $value) {
+                if ($key =="tipo") {
+                    if ($value =="G") {
+                        $grupos[] = $i;
+                    } 
+                }
+            }
+         }
+
+        for($i = 0; $i < count($array1); $i++) {
+           
+            foreach($array1[$keys[$i]] as $key => $value) {
+                $salida[$i][$key]=  $value ;
+                if ($key =="tipo_planilla_id") {
+                    if ($value==1) {
+                        $newvalue='Planilla Inicial';
+                      } elseif ($value==2) {
+                        $newvalue='Planilla Modificatoria';
+                      } else {
+                        $newvalue='Planilla de Avance';;
+                      }
+
+                    $salida[$i][$key]= $newvalue;
+                 }
+
+                if ($key =="fecha_planilla") {
+
+                    $salida[$i][$key]= date("d-m-Y", strtotime($value));
+                 }
+
+                if ($key =="total_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 } 
+                 if ($key =="anticipo_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 } 
+                 if ($key =="retencion_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 } 
+
+
+
+            }
+            // aqui los campos calculados y actualizacion
+            $salida[$i]['precio_total']=$salida[$i]['cantidad']*$salida[$i]['precio_unitario'];
+
+           
+
+        }
+        
+        
+        
+        
+        /* 
+        foreach ($array1 as $value) {
+            $array1['total_planilla']= number_format($value['total_planilla'],2,",",".") ;
+            
+        }
+
+
+       foreach ($planilla as $key => $value) {
+
+            if ($key =="total_planilla") {
+                $planilla['total_planilla'] = "hsfsgfdhsf";
+              } 
+            //echo $key;
+           
+            //echo $value;
+           
+         }*/
+
+        
+        return  $grupos;
     }
 
     public function planilla_individual2(Request $request, $id){        
-        $intervencion = Planilla::where('id', $id)->with('documents')->first(); 
+        $intervencion = Planilla::where('id', $id)->first(); 
 
         //datos del reporte
         $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
