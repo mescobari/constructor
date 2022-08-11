@@ -184,8 +184,7 @@ class PlanillaReportesController extends Controller
 
     public function planilla_individual(Request $request, $id){ 
         //$planilla = Planilla::where('id', $id)->first();
-        //$PlanillaMov = PlanillaMovimiento::where('planilla_id', $id)->with('planilla_item', 'unidad')->get();
-
+       
         $planilla = DB::table('planillas')
         ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
         ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
@@ -194,23 +193,31 @@ class PlanillaReportesController extends Controller
         ->where('planillas.id', $id)
         ->get();
 
+        $suma_grupos = DB::table('planilla_movimientos')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->select( 'planilla_items.padre',DB::raw('sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as precio_total') )
+        ->where('planilla_movimientos.planilla_id', $id)
+        ->groupBy('planilla_items.padre') 
+        ->get();
+
+//SELECT m.cantidad, m.precio_unitario, (m.cantidad* m.precio_unitario) as precio_total, i.padre FROM planilla_movimientos m, planilla_items i WHERE m.planilla_item_id=i.id and m.planilla_id = 1;
+
+//SELECT m.cantidad, m.precio_unitario, 
+//sum(m.cantidad* m.precio_unitario) as precio_total, i.padre  
+//FROM planilla_movimientos m, planilla_items i 
+//WHERE m.planilla_item_id=i.id and m.planilla_id = 1 GROUP BY i.padre;
 
         $array1 = json_decode($planilla, true);
-            
+        $array2 = json_decode($suma_grupos, true);
+        
+        
         $keys = array_keys($array1);
         $salida=[];
 
 
-        $grupos = array();
-        for($i = 0; $i < count($array1); $i++) {
-            foreach($array1[$keys[$i]] as $key => $value) {
-                if ($key =="tipo") {
-                    if ($value =="G") {
-                        $grupos[] = $i;
-                    } 
-                }
-            }
-         }
+        
+
+
 
         for($i = 0; $i < count($array1); $i++) {
            
@@ -242,40 +249,44 @@ class PlanillaReportesController extends Controller
                  if ($key =="retencion_planilla") {
                     $salida[$i][$key]= number_format($value,2,",",".");
                  } 
-
-
+                 
 
             }
             // aqui los campos calculados y actualizacion
-            $salida[$i]['precio_total']=$salida[$i]['cantidad']*$salida[$i]['precio_unitario'];
-
-           
+            $salida[$i]['precio_total']=number_format($salida[$i]['cantidad']*$salida[$i]['precio_unitario'],2,",",".");
+            $salida[$i]['cantidad']= number_format( $salida[$i]['cantidad'],2,",",".");
+            $salida[$i]['precio_unitario']= number_format( $salida[$i]['precio_unitario'],2,",",".");
 
         }
         
-        
-        
-        
-        /* 
-        foreach ($array1 as $value) {
-            $array1['total_planilla']= number_format($value['total_planilla'],2,",",".") ;
+        $grupos = array();
+        for($i = 0; $i < count($array1); $i++) {
             
-        }
+            foreach($array1[$keys[$i]] as $key => $value) {
+                
+                if ($key =="tipo") {
+                    if ($value =="G") {
+                        $grupos[] =  $array1[$i]['id'];
+                        $id =  $array1[$i]['id'];
+                        
+                        //$buscar= array_search($id,$array2);
+                        $found_key = array_search($id, array_column($array2, 'padre'));
+                        if ($found_key != false) {
+                            $salida[$i]['precio_total']=
+                            number_format($array2[$found_key]['precio_total'],2,",",".");
+                            
+                        }
 
 
-       foreach ($planilla as $key => $value) {
-
-            if ($key =="total_planilla") {
-                $planilla['total_planilla'] = "hsfsgfdhsf";
-              } 
-            //echo $key;
-           
-            //echo $value;
-           
-         }*/
-
+                    } 
+                }
+            }
+         }       
         
-        return  $grupos;
+        
+       
+        
+        return  $salida;
     }
 
     public function planilla_individual2(Request $request, $id){        
