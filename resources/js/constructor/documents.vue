@@ -611,15 +611,20 @@ export default {
             // }
             // console.log("===================================================")
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
+            if(this.jsonData.document_types_id.id===1) {
+                datos_jsonData.append('padre', '0');
+            }
+            else {
+                datos_jsonData.append('padre', this.jsonData.padre.id);
+            }
             datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora.id);
-            datos_jsonData.append('padre', '0');
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
             datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
             datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
-            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + fecha_firma.getMonth() + "-" + fecha_firma.getDate()));
+            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth()+1) + "-" + fecha_firma.getDate()));
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
