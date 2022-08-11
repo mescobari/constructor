@@ -15,30 +15,10 @@ class DocumentController extends Controller
     {
         return view('front-end.constructor.IndexDocuments');
     }
-    //     public function documentSave(Request $request){
-    //
-    //         $d = document::create([
-    //                     'document_types_id' => $request->document_types_id,
-    //                     'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
-    //                     'padre' => $request->padre,
-    //                     'nombre' => $request->nombre,
-    //                     'codigo' => $request->codigo,
-    //                     'contratante_id' => $request->contratante_id,
-    //                     'contratado_id' => $request->contratado_id,
-    //                     'duracion_dias' => $request->duracion_dias,
-    // //                      'fecha_firma' => date('d-m-Y', strtotime($request->fecha_firma)),
-    //                     'fecha_firma' => $request->fecha_firma,
-    //                     'monto_bs' => $request->monto_bs,
-    //                     'objeto' => $request->objeto,
-    //                     'modifica' => $request->modifica,
-    //                     'path_contrato' => $request->path_contrato,
-    //             ]);
-    //             return $d;
-    //     }
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return document[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response
      */
 
     public function index()

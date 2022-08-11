@@ -104,7 +104,6 @@
                                                   v-model="jsonData.document_types_id"
                                                   @input="cambioTipoDocumento()"
                                                   placeholder="Selecione una opción">
-                                            <!--                                                  v-if="(jsonData.document_types_idus.id === null||jsonData.document_types_id.id === 1)disablePadre==true "-->
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -153,10 +152,11 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="tipo_intervencion">Documento Padre:</label>
-                                            <v-select label="nombre" :options="tipo_intervenciones"
+                                            <v-select label="nombre" :options="combo_padres"
                                                       v-model="jsonData.padre"
-                                                      placeholder="Selecione una opción" v-bind:disabled="disablePadre">
-<!--                                                        <span  v-if="disablePadre===true">v-bind:aria-disabled="tipo_intervenciones"</span>-->
+                                                      placeholder="Seleccione una opción"
+                                                      v-bind:disabled="disablePadre">
+                                                <!--                                                        <span  v-if="disablePadre===true">v-bind:aria-disabled="tipo_intervenciones"</span>-->
                                                 <!--                                                      v-on:disabled="computed.disabled"-->
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
@@ -253,11 +253,11 @@
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
                         <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
-                                v-if="guardar_bottom == true">
+                                v-if="guardar_bottom === true">
                             Guardar
                         </button>
                         <button type="submit" @click="modificar();" class="btn btn-success"
-                                v-if="modificar_bottom == true">Modificar
+                                v-if="modificar_bottom === true">Modificar
                         </button>
                     </div>
                 </div>
@@ -278,10 +278,9 @@ import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
 import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
+import moment from 'moment';
 
 Vue.component("v-select", vSelect);
-import moment from 'moment';
-import documents from "./documents";
 
 export default {
     props: ['url', 'csrf', 'ast', 'operations', 'user', 'template'],
@@ -337,10 +336,10 @@ export default {
                 },
             },
             optionsSelect: [{label: 'Favor de Seleccionar su opción', code: "fer"}],
-            number: '',
             guardar_bottom: false,
             modificar_bottom: false,
             disablePadre: false,
+            combo_padres: [],
             tituloIntervencionModal: '',
             unidades_ejecutoras: [],
             combo_tipos_documentos: [],
@@ -503,17 +502,11 @@ export default {
 
             if (this.jsonData.document_types_id.id === 1) {
                 this.disablePadre = true;
-
                 console.log('BEHAVIOR', this.disablePadre);
-            } else {
+            } else if (this.jsonData.document_types_id.id !== 1) {
                 this.disablePadre = false;
                 console.log('BEHAVIOR', this.disablePadre);
             }
-        },
-        numberFormatter(value) {
-            if (!value) return ''
-            value = value.toString()
-            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         },
         async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
             var respuesta = await axios.get('tipo_cambio_bs_sus');
@@ -573,7 +566,7 @@ export default {
         async listar() {
             const respuesta = await axios.get('documents');
             // console.log("listar");
-            this.intervenciones = respuesta.data;
+            // this.intervenciones = respuesta.data;
             const contratos =
                 [
                     {
@@ -681,6 +674,16 @@ export default {
             this.jsonData.files = data.files;
 
         },
+        async padreGetAll() {
+            let response = await axios.get('documents');
+            this.combo_padres = response.data.map(docPadre => {
+                    if (docPadre.id === 0)
+                        docPadre.combo_padres = docPadre;
+                    return docPadre;
+                }
+            );
+        },
+
         //Change object to get
         async eliminar(id) {
             const respuesta = await axios.delete('intervenciones/' + id);
@@ -808,11 +811,12 @@ export default {
     },
     created() {
         this.listar();
-        this.unidadesEjecutorasGetAll()
+        this.unidadesEjecutorasGetAll();
         this.tipos_documentos();
         this.intervencionesTipoActivas();
         this.sectorialesActivos();
-        this.institucionesGetAll()
+        this.institucionesGetAll();
+        this.padreGetAll();
     },
     components: {
         VueBootstrap4Table,
