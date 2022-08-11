@@ -184,7 +184,26 @@ class PlanillaReportesController extends Controller
 
     public function planilla_individual(Request $request, $id){ 
         //$planilla = Planilla::where('id', $id)->first();
-       
+        $documento = DB::table('planilla_documents')
+        ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+        ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+        ->select('documents.*', 'document_types.nombre' )
+        ->where('planilla_documents.planilla_id', $id)
+        ->first();
+
+        $padre=$documento->padre;
+        if ($padre != 0) {
+            $documento_padre = DB::table('planilla_documents')
+            ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+            ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+            ->select('documents.*', 'document_types.nombre')
+            ->where('documents.id', $padre)
+            ->first();
+
+        } else  {
+            $documento_padre = $documento;
+        }
+
         $planilla = DB::table('planillas')
         ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
         ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
@@ -217,7 +236,7 @@ class PlanillaReportesController extends Controller
 
         
 
-
+//procesamos la planlla poniendo los campos extras, cambiando formatos y calculando total item
 
         for($i = 0; $i < count($array1); $i++) {
            
@@ -258,7 +277,9 @@ class PlanillaReportesController extends Controller
             $salida[$i]['precio_unitario']= number_format( $salida[$i]['precio_unitario'],2,",",".");
 
         }
-        
+
+// calculamos los totales de la planilla
+
         $grupos = array();
         for($i = 0; $i < count($array1); $i++) {
             
@@ -283,10 +304,67 @@ class PlanillaReportesController extends Controller
             }
          }       
         
-        
-       
-        
-        return  $salida;
+//datos para la cabecera del reportedel reporte
+$titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
+$nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
+$siglas = "EL CONSTRUCTOR";
+$documento_codigo = $documento->codigo;// codigo del contrato
+$fecha_hora_emision = date('d-m-Y h:i:s a', time());
+$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
+
+$documento_nombre= $documento->objeto;
+$documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
+$documento_monto= number_format($documento->monto_bs,2,",",".");
+
+$fecha_planilla= $salida[0]['fecha_planilla'];
+$nuri_planilla= $salida[0]['nuri_planilla'];
+$referencia= $salida[0]['referencia'];
+$total_planilla=  $salida[0]['total_planilla'];
+$anticipo_planilla=  $salida[0]['anticipo_planilla'];
+$retencion_planilla=  $salida[0]['retencion_planilla'];
+
+$principal_codigo=$documento_padre->codigo;
+$principal_nombre=$documento_padre->objeto;
+$principal_firma=date("d-m-Y", strtotime($documento_padre->fecha_firma));
+$principal_monto= number_format($documento_padre->monto_bs,2,",",".");
+
+// otros datos para el cuerpo
+
+
+ /* cargamos la vista   */
+ 
+        $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
+            'link_img'=>'img/sistema-front-end/logo-pdf.png',
+            'titulo_grande' => $titulo_grande,
+            'nombre_institucion' => $nombre_institucion,
+            'siglas' => $siglas,
+            'documento_codigo' => $documento_codigo,
+            'fecha_hora_emision' => $fecha_hora_emision,
+            'nombre_reporte' => $nombre_reporte,
+            'documento_nombre' => $documento_nombre,
+            'documento_firma' => $documento_firma,
+            'documento_monto' => $documento_monto,
+            'fecha_planilla' => $fecha_planilla,
+            'nuri_planilla' => $nuri_planilla,
+            'referencia' => $referencia,
+            'total_planilla' => $total_planilla,
+            'anticipo_planilla' => $anticipo_planilla,
+            'retencion_planilla' => $retencion_planilla,
+            'principal_codigo' => $principal_codigo,
+            'principal_nombre' => $principal_nombre,
+            'principal_firma' =>  $principal_firma,
+            'principal_monto' =>  $principal_monto,
+            'padre' =>  $padre,
+            'planilla' =>  $salida,
+            
+
+
+        ]);
+        $pdf->setPaper('letter', 'portrait');
+        return $pdf->stream('reporte_ficha_proyecto.pdf');       
+     
+     
+      //return  json_encode($salida);
     }
 
     public function planilla_individual2(Request $request, $id){        
@@ -298,6 +376,8 @@ class PlanillaReportesController extends Controller
         $siglas = "EL CONSTRUCTOR";
         $codigo_proyecto = $intervencion->codsisin;
         $fecha_hora_emision = date('d-m-Y h:i:s a', time());
+        $nombre_reporte= "PLANILLA";
+
         $nombre_proyecto = $intervencion->nombre;
         $entidad_ejecutora = $intervencion->institucion->codigo . ' - ' . $nombre_institucion;
         $duracion_proyecto_inicio = $intervencion->fecha_inicial_programada;
@@ -325,6 +405,7 @@ class PlanillaReportesController extends Controller
             'siglas' => $siglas,
             'codigo_proyecto' => $codigo_proyecto,
             'fecha_hora_emision' => $fecha_hora_emision,
+            'nombre_reporte' => $nombre_reporte,
             'nombre_proyecto' => $nombre_proyecto,
             'entidad_ejecutora' => $entidad_ejecutora,
             'duracion_proyecto_inicio' => $duracion_proyecto_inicio,

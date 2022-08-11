@@ -182,6 +182,7 @@ class ReportesController extends Controller
         $siglas = "EL CONSTRUCTOR";
         $codigo_proyecto = $intervencion->codsisin;
         $fecha_hora_emision = date('d-m-Y h:i:s a', time());
+        $nombre_reporte= "PLANILLA";
         $nombre_proyecto = $intervencion->nombre;
         $entidad_ejecutora = $intervencion->institucion->codigo . ' - ' . $nombre_institucion;
         $duracion_proyecto_inicio = $intervencion->fecha_inicial_programada;
@@ -209,6 +210,7 @@ class ReportesController extends Controller
             'siglas' => $siglas,
             'codigo_proyecto' => $codigo_proyecto,
             'fecha_hora_emision' => $fecha_hora_emision,
+            'nombre_reporte' => $nombre_reporte,
             'nombre_proyecto' => $nombre_proyecto,
             'entidad_ejecutora' => $entidad_ejecutora,
             'duracion_proyecto_inicio' => $duracion_proyecto_inicio,

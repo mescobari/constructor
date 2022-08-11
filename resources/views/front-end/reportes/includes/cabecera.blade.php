@@ -7,17 +7,18 @@
             <center>
                 <b class="titulo">{{$titulo_grande}}</b>
                 <p class="titulo_institucion">{{$nombre_institucion}}</p>
+                <b class="titulo">{{$nombre_reporte}}</b>
             </center>
         </td>       
         <td width="60px" class="">
             <div class="titulo_derecha">
                 <b class="titulo_institucion_derecha2">{{$siglas}}</b>
-                <p class="titulo_institucion_derecha">{{$codigo_proyecto}}</p>
+                <p class="titulo_institucion_derecha">{{$documento_codigo}}</p>
                 <p class="titulo_institucion_derecha">{{$fecha_hora_emision}}</p>
                 <p class="titulo_institucion_derecha">
                     <script type="text/php">
                         $font = $fontMetrics->get_font("arial", "bold");
-                        $pdf->page_text(525, 72, "Pág: {PAGE_NUM} / {PAGE_COUNT}", $font, 9, array(0,0,0));
+                        $pdf->page_text(525, 92, "Pág: {PAGE_NUM} / {PAGE_COUNT}", $font, 9, array(0,0,0));
                     </script> 
                 </p>  
                 <b class="titulo_institucion_derecha2">&nbsp;</b>             
