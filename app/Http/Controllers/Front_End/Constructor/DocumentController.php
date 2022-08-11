@@ -24,8 +24,7 @@ class DocumentController extends Controller
     public function index()
     {
         //
-        $data = document::all();
-        return $data;
+        return document::all();
     }
 
     /**
@@ -51,16 +50,15 @@ class DocumentController extends Controller
 //        $insert_id = DB::table('documents')->insertGetId(['id'=> $request->input('')]);
         $files = "";
         $path = "";
-//        $increment = 1;
         if ($request->hasFile('files')) {
-            $extension = $request->file('files')->getClientOriginalExtension();
+//            $extension = $request->file('files')->getClientOriginalExtension();
             $nombre_carpeta = "/constructor";
             $nombre_archivo = /*($insert_id + 1) . '-' .*/ $request->document_types_id . '-' . $_FILES['files']['name'];
             $path = $nombre_carpeta . '/' . $nombre_archivo;
             $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
         }
 
-        $d = document::create([
+        return document::create([
             'document_types_id' => $request->document_types_id,
             'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
             'padre' => $request->padre,
@@ -75,8 +73,6 @@ class DocumentController extends Controller
             'modifica' => $request->modifica,
             'path_contrato' => $path,
         ]);
-
-        return $d;
     }
 
     /**
@@ -94,11 +90,14 @@ class DocumentController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Constructor\document  $document
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function edit(document $document)
     {
-        //
+        $doc_edit = document::find($document);
+
+
+        return response()->json($doc_edit);
     }
 
     /**
@@ -110,8 +109,34 @@ class DocumentController extends Controller
      */
     public function update(Request $request, document $document)
     {
-
-
+        //
+//    }
+//    {
+//
+//        $path = "";
+//        if ($request->hasFile('files')) {
+////            $extension = $request->file('files')->getClientOriginalExtension();
+//            $nombre_carpeta = "/constructor";
+//            $nombre_archivo = /*($insert_id + 1) . '-' .*/ $request->document_types_id . '-' . $_FILES['files']['name'];
+//            $path = $nombre_carpeta . '/' . $nombre_archivo;
+//            $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
+//        }
+//
+//        return document::where('id', $request->$id)->update([
+//            'document_types_id' => $request->document_types_id,
+//            'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
+//            'padre' => $request->padre,
+//            'nombre' => $request->nombre,
+//            'codigo' => $request->codigo,
+//            'contratante_id' => $request->contratante_id,
+//            'contratado_id' => $request->contratado_id,
+//            'duracion_dias' => $request->duracion_dias,
+//            'fecha_firma' => $request->fecha_firma,
+//            'monto_bs' => $request->monto_bs,
+//            'objeto' => $request->objeto,
+//            'modifica' => $request->modifica,
+//            'path_contrato' => $path,
+//        ]);
     }
 
     /**
