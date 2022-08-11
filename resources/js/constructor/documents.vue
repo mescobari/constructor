@@ -3,7 +3,7 @@
         <div class="card-header ferdy-background-Primary-blak">
             <h3 class="card-title">Creacion de Contratos</h3>
             <div class="card-tools">
-                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#intervencion"
+                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#contrato"
                         @click="ModalCrear();">
                     Añadir Contrato
                 </button>
@@ -45,7 +45,7 @@
                         <i class="fas fa-sort"> </i>
                     </template>
                     <template slot="aprobacion" slot-scope="props">
-                        <div v-if="props.row.soli_estado == 'R'">
+                        <div v-if="props.row.soli_estado === 'R'">
                             <button class="btn btn-outline btn-danger dim" type="button"
                                     @click="aprobarSolicitud(props.row)"><i class="fa fa-thumbs-o-down"></i></button>
                         </div>
@@ -69,7 +69,7 @@
                                     class="far fa-file-pdf"></i> </span></button>
                             </a>
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
-                                    data-target="#intervencion" @click="contratoModificar(props.row);"><span><i
+                                    data-target="#contrato" @click="contratoModalModificar(props.row);"><span><i
                                 class="fa fa-user-edit"></i></span></button>
                             <button type="button" class="btn btn-outline-danger ml-1"
                                     @click="preguntarModalAlertaConfirmacion(props.row.id);"><span><i
@@ -82,7 +82,7 @@
         <!------------------------------------------------------Fin Tabla Contrato--------------------------------------------------------->
 
         <!------------------------------------------------------Modal Crear Contrato------------------------------------------------------->
-        <div class="modal fade" id="intervencion" tabindex="-1" role="dialog" style="overflow-y: scroll;"
+        <div class="modal fade" id="contrato" tabindex="-1" role="dialog" style="overflow-y: scroll;"
              aria-labelledby="intervencionTitle" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
@@ -166,7 +166,7 @@
                                         <div class="form-group">
                                             <label for="unidades_ejecutoras">Unidad Ejecutora:</label>
                                             <v-select label="nombre" :options="unidades_ejecutoras"
-                                                      v-model="jsonData.unidad_ejecutora"
+                                                      v-model="jsonData.unidad_ejecutora_id"
                                                       placeholder="Selecione una opción">
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
@@ -278,12 +278,11 @@ import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
 import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
-import moment from 'moment';
 
 Vue.component("v-select", vSelect);
 
 export default {
-    props: ['url', 'csrf', 'ast', 'operations', 'user', 'template'],
+    props: ['url', 'csrf', 'ast', 'operations', 'user'],
     data() {
         return {
             configFile: {
@@ -353,7 +352,7 @@ export default {
                 //required to CRUD
                 id: 0,
                 document_types_id: null,
-                unidad_ejecutora: null,
+                unidad_ejecutora_id: null,
                 padre: null,
                 nombre: null,
                 codigo: null,
@@ -529,12 +528,6 @@ export default {
                 }
             }
         },
-        calcula_dias() {
-            var fecha_ini = moment(this.jsonData.fecha_aprobacion);
-            var fecha_fin = moment(this.jsonData.fecha_inicial_programada);
-            console.log(fecha_fin.diff(fecha_ini, 'days'), ' dias de diferencia');
-            this.jsonData.duracion_dias = fecha_fin.diff(fecha_ini, 'days');
-        },
         preguntarModalAlertaConfirmacion(id) {
             this.mandarMensajesAlerta = {
                 titulo: "Mensajes del Sistema",//titulo del mensaje
@@ -551,7 +544,7 @@ export default {
         },
         respuestaModalAlertaConfirmacion(datos) {
             // console.log(datos.respuesta);
-            if (datos.respuesta == true) {
+            if (datos.respuesta === true) {
                 this.eliminar(this.id_eliminacion);
             }
         },
@@ -583,23 +576,21 @@ export default {
                     }
                 ];
 
-            // console.log(respuesta.data);
-
             const contratosObjeto = {};
             contratos.forEach(contrato => {
                 contratosObjeto[contrato.id] = contrato.nombre;
             });
 
-            const documentos = respuesta.data.map(documento => {
+            this.rows = respuesta.data.map(documento => {
                 documento.tipo_documento = contratosObjeto[documento.document_types_id];
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
 
-            console.log('documentos', documentos)
+            console.log('documentos', this.rows)
 
-            this.rows = documentos;
+            // this.rows = documentos;
         },
         async guardar() {
             console.log(this.jsonData);
@@ -617,7 +608,7 @@ export default {
             else {
                 datos_jsonData.append('padre', this.jsonData.padre.id);
             }
-            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora.id);
+            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
             datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
@@ -632,7 +623,7 @@ export default {
             let respuesta = await axios.post('documents', datos_jsonData);
             console.log("SAVE", respuesta.data);
             document.getElementById("cerrarModal").click();
-            this.listar();
+            await this.listar();
         },
         async modificar() {
             // console.log(this.jsonData);
@@ -641,7 +632,7 @@ export default {
             //     datos_jsonData.append(key, this.jsonData[key]);
             // }
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
-            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora.id);
+            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
             datos_jsonData.append('padre', '0');
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
@@ -649,7 +640,7 @@ export default {
             datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
-            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + fecha_firma.getMonth() + "-" + fecha_firma.getDate()));
+            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth()+1) + "-" + fecha_firma.getDate()));
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
@@ -657,9 +648,9 @@ export default {
             const respuesta = await axios.post('documents/', datos_jsonData);
             console.log(respuesta.data);
             document.getElementById("cerrarModal").click();
-            this.listar();
+            await this.listar();
         },
-        contratoModificar(data = {}) {
+        contratoModalModificar(data = {}) {
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
@@ -667,15 +658,16 @@ export default {
             this.jsonData.id = data.id;
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
+            this.jsonData.unidad_ejecutora_id = data.unidad_ejecutora_id;
             this.jsonData.contratado_id = data.contratado_id;
             this.jsonData.contratante_id = data.contratante_id;
             this.jsonData.document_types_id = data.document_types_id;
-            this.jsonData.unidad_ejecutora = data.unidad_ejecutora;
+            this.jsonData.padre = data.padre;
             this.jsonData.modifica = data.modifica;
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
-            this.jsonData.fecha_firma = data.fecha_firma.getFullYear() + "-" + data.fecha_firma.getMonth() + "-" + data.fecha_firma.getDate();
+            this.jsonData.fecha_firma = new Date(data.fecha_firma)
             this.jsonData.files = data.files;
 
         },
@@ -730,8 +722,8 @@ export default {
             this.tituloIntervencionModal = "Formulario de Creación de Contratos";
         },
         mostrar() {
-            console.log(this.jsonData.inteventiontype);
-            console.log(this.jsonData.inteventiontype.id);
+            console.log(this.jsonData.nombre);
+            console.log(this.jsonData.document_types_id.id);
         },
         onDownload(payload) {
             console.log(payload);
