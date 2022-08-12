@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Constructor\document;
 
 
-
 class DocumentController extends Controller
 {
     public function inicio()
     {
         return view('front-end.constructor.IndexDocuments');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -40,12 +40,12 @@ class DocumentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-    //get the file from the request and store
+        //get the file from the request and store
 
 //        $insert_id = DB::table('documents')->insertGetId(['id'=> $request->input('')]);
         $files = "";
@@ -53,11 +53,11 @@ class DocumentController extends Controller
         if ($request->hasFile('files')) {
 //            $extension = $request->file('files')->getClientOriginalExtension();
             $nombre_carpeta = "/constructor";
-            $nombre_archivo = /*($insert_id + 1) . '-' .*/ $request->document_types_id . '-' . $_FILES['files']['name'];
+            $nombre_archivo = /*($insert_id + 1) . '-' .*/
+                $request->document_types_id . '-' . $_FILES['files']['name'];
             $path = $nombre_carpeta . '/' . $nombre_archivo;
             $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
-        }
-
+        };
         return document::create([
             'document_types_id' => $request->document_types_id,
             'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
@@ -78,7 +78,7 @@ class DocumentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Constructor\document  $document
+     * @param \App\Models\Constructor\document $document
      * @return \Illuminate\Http\Response
      */
     public function show(document $document)
@@ -89,7 +89,7 @@ class DocumentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Constructor\document  $document
+     * @param \App\Models\Constructor\document $document
      * @return \Illuminate\Http\JsonResponse
      */
     public function edit(document $document)
@@ -103,42 +103,19 @@ class DocumentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Constructor\document  $document
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Constructor\document $document
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, document $document)
     {
-        $path = "";
-        if ($request->hasFile('files')) {
-//            $extension = $request->file('files')->getClientOriginalExtension();
-            $nombre_carpeta = "/constructor";
-            $nombre_archivo = /*($insert_id + 1) . '-' .*/ $request->document_types_id . '-' . $_FILES['files']['name'];
-            $path = $nombre_carpeta . '/' . $nombre_archivo;
-            $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
-        }
-
-//        return document::where('id', $request->$id)->update([
-//            'document_types_id' => $request->document_types_id,
-//            'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
-//            'padre' => $request->padre,
-//            'nombre' => $request->nombre,
-//            'codigo' => $request->codigo,
-//            'contratante_id' => $request->contratante_id,
-//            'contratado_id' => $request->contratado_id,
-//            'duracion_dias' => $request->duracion_dias,
-//            'fecha_firma' => $request->fecha_firma,
-//            'monto_bs' => $request->monto_bs,
-//            'objeto' => $request->objeto,
-//            'modifica' => $request->modifica,
-//            'path_contrato' => $path,
-//        ]);
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Constructor\document  $document
+     * @param \App\Models\Constructor\document $document
      * @return \Illuminate\Http\Response
      */
     public function destroy(document $id)
@@ -146,5 +123,39 @@ class DocumentController extends Controller
         $document = document::findOrFail($id);
         $document->delete();
         return "registro eliminado";
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateContrato(Request $request)
+    {
+        $documentId = document::findOrFail($request->id);
+        $path = "";
+        if ($request->hasFile('files')) {
+//            $extension = $request->file('files')->getClientOriginalExtension();
+            $nombre_carpeta = "/constructor";
+            $nombre_archivo = /*($insert_id + 1) . '-' .*/
+                $request->document_types_id . '-' . $_FILES['files']['name'];
+            $path = $nombre_carpeta . '/' . $nombre_archivo;
+            $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
+        }
+        return $documentId->update([
+            'document_types_id' => $request->document_types_id,
+            'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
+            'padre' => $request->padre,
+            'nombre' => $request->nombre,
+            'codigo' => $request->codigo,
+            'contratante_id' => $request->contratante_id,
+            'contratado_id' => $request->contratado_id,
+            'duracion_dias' => $request->duracion_dias,
+            'fecha_firma' => $request->fecha_firma,
+            'monto_bs' => $request->monto_bs,
+            'objeto' => $request->objeto,
+            'modifica' => $request->modifica,
+            'path_contrato' => $request->$path,
+        ]);
+//        return $documentId;
     }
 }

@@ -6,7 +6,7 @@
         Route::get('listar_unidades_ejecutoras', 'UnidadEjecutoraController@listarUnidadesEjecutoras')->name('listar_unidades_ejecutoras');
         Route::get('get_unidades_ejecutoras', 'UnidadEjecutoraController@getUnidadesEjecutoras')->name('get_unidades_ejecutoras');
         Route::apiResource('unidades_ejecutoras', UnidadEjecutoraController::class);
-
+        Route::post('update_contrato', 'DocumentController@updateContrato')->name('update_contrato');
         Route::get('documents_ini', 'DocumentController@inicio')->name('documents_ini');
         Route::apiResource('documents', DocumentController::class);
 

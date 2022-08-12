@@ -1,4 +1,4 @@
-<template slot-scope="props">
+<template>
     <div class="card">
         <div class="card-header ferdy-background-Primary-blak">
             <h3 class="card-title">Creacion de Contratos</h3>
@@ -256,7 +256,7 @@
                                     v-if="guardar_bottom === true">
                                 Guardar
                             </button>
-                            <button type="submit" @click="modificar(props.row.id);" class="btn btn-success"
+                            <button type="submit" @click="modificar();" class="btn btn-success"
                                     v-if="modificar_bottom === true">Modificar
                             </button>
                     </div>
@@ -631,17 +631,20 @@ export default {
         },
         async modificar() {
             let datos_jsonData = new FormData();
-            datos_jsonData.append('do cument_types_id', this.jsonData.document_types_id.id);
-            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
-            if (this.jsonData.document_types_id.id === 1) {
+            // for(let key in this.jsonData){
+            //     datos_jsonData.append(key, this.jsonData[key]);
+            // }
+            datos_jsonData.append('document_types_id', this.jsonData.document_types_id);
+            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id);
+            if (this.jsonData.document_types_id === 1) {
                 datos_jsonData.append('padre', '0');
             } else {
-                datos_jsonData.append('padre', this.jsonData.padre.id);
+                datos_jsonData.append('padre', this.jsonData.padre);
             }
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
-            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            datos_jsonData.append('contratante_id', this.jsonData.contratante_id);
+            datos_jsonData.append('contratado_id', this.jsonData.contratado_id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
             datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
@@ -650,10 +653,32 @@ export default {
             datos_jsonData.append('modifica', this.jsonData.modifica);
             datos_jsonData.append('files', this.jsonData.files);
 
-            const respuesta = await axios.put(`documents/${this.getDocId()}`, datos_jsonData);
-            console.log(respuesta.data);
+            const respuesta = await axios.post(`update_contrato`, datos_jsonData);
+            console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
             await this.listar();
+            // this.limpiar_formulario();
+        },
+        limpiar_formulario(){
+            this.jsonData.id=null;
+            this.jsonData.document_types_id=null;
+            this.jsonData.codigo=[];
+            this.jsonData.nombre=[];
+            this.jsonData.unidad_ejecutora_id=[];
+            this.jsonData.contratado_id=null;
+            this.jsonData.contratante_id=null;
+            this.jsonData.fecha_firma='';
+            this.jsonData.duracion_dias=null;
+            this.jsonData.monto_bs=null;
+            this.jsonData.modifica=null;
+            this.jsonData.padre=null;
+            this.jsonData.files=null;
+
+            // this.btnmodificar = false;
+            // this.btncancelar = false;
+            // this.btnguardar = true;
+            // this.configFile.contenidoDefault = " DOCUMENTO/";
+            // this.borrar_file();
         },
         contratoModalModificar(data = {}) {
             this.modificar_bottom = true;
