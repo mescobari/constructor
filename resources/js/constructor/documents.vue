@@ -256,7 +256,7 @@
                                     v-if="guardar_bottom === true">
                                 Guardar
                             </button>
-                            <button type="submit" @click="modificar();" class="btn btn-success"
+                            <button type="submit" @click="modificar(props.row.id);" class="btn btn-success"
                                     v-if="modificar_bottom === true">Modificar
                             </button>
                     </div>
