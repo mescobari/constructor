@@ -109,19 +109,15 @@ class DocumentController extends Controller
      */
     public function update(Request $request, document $document)
     {
-        //
-//    }
-//    {
-//
-//        $path = "";
-//        if ($request->hasFile('files')) {
-////            $extension = $request->file('files')->getClientOriginalExtension();
-//            $nombre_carpeta = "/constructor";
-//            $nombre_archivo = /*($insert_id + 1) . '-' .*/ $request->document_types_id . '-' . $_FILES['files']['name'];
-//            $path = $nombre_carpeta . '/' . $nombre_archivo;
-//            $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
-//        }
-//
+        $path = "";
+        if ($request->hasFile('files')) {
+//            $extension = $request->file('files')->getClientOriginalExtension();
+            $nombre_carpeta = "/constructor";
+            $nombre_archivo = /*($insert_id + 1) . '-' .*/ $request->document_types_id . '-' . $_FILES['files']['name'];
+            $path = $nombre_carpeta . '/' . $nombre_archivo;
+            $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
+        }
+
 //        return document::where('id', $request->$id)->update([
 //            'document_types_id' => $request->document_types_id,
 //            'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
