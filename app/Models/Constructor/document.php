@@ -9,9 +9,9 @@ class document extends Model
 {
     use HasFactory;
     protected $fillable = [
-    'id',
-    'document_type_id',
+    'document_types_id',
     'unidad_ejecutora_id',
+    'padre',
     'nombre',
     'codigo',
     'contratante_id',
@@ -21,9 +21,6 @@ class document extends Model
     'monto_bs',
     'objeto',
     'modifica',
+    'path_contrato'
     ];
-
-    public function doc_type(){
-        return $this->belongsTo(document_types::class, 'document_type_id', 'id');
-    }
 }
