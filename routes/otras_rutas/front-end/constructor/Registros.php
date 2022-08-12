@@ -13,8 +13,10 @@
 //         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');
 
         Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');
-
         Route::apiResource('planillas', PlanillaController::class);
+
+        Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');
+        Route::apiResource('requerimientos', RequerimientoController::class);
 
 
         /*Route::apiResource('intervenciones', IntervencionesController::class);
