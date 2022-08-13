@@ -348,6 +348,7 @@ export default {
             sectoriales: [],
             tipo_intervenciones: [],
             intervenciones: [],
+            path_contrato: '',
             jsonData: {
                 //required to CRUD
                 id: 0,
@@ -504,10 +505,9 @@ export default {
         }
     },
     methods: {
-
+        //modify the value of the input in real time from v-select document_types_id and padre
         cambioTipoDocumento() {
-
-            if (this.jsonData.document_types_id.id === 1 || this.jsonData.document_types_id.nombre === 'Contrato Principal') {
+            if (this.jsonData.document_types_id.id === 1 || this.jsonData.id === null) {
                 this.disablePadre = true;
                 console.log('BEHAVIOR', this.disablePadre);
             } else if (this.jsonData.document_types_id.id !== 1) {
@@ -659,52 +659,36 @@ export default {
         limpiar_formulario() {
             this.jsonData.id = null;
             this.jsonData.document_types_id = null;
-            this.jsonData.codigo = [];
-            this.jsonData.nombre = [];
-            this.jsonData.unidad_ejecutora_id = [];
+            this.jsonData.codigo = '';
+            this.jsonData.nombre = '';
+            this.jsonData.unidad_ejecutora_id = null;
             this.jsonData.contratado_id = null;
             this.jsonData.contratante_id = null;
             this.jsonData.fecha_firma = '';
             this.jsonData.duracion_dias = null;
             this.jsonData.monto_bs = null;
-            this.jsonData.modifica = null;
+            this.jsonData.modifica = [];
             this.jsonData.padre = null;
             this.jsonData.files = null;
-
-            // this.btnmodificar = false;
-            // this.btncancelar = false;
-            // this.btnguardar = true;
-            // this.configFile.contenidoDefault = " DOCUMENTO/";
-            // this.borrar_file();
+            this.jsonData.objeto = '';
         },
         async contratoModalModificar(data = {}) {
+            const response_documents = await axios.get(`documents`);
+            const response_doc_types = await axios.get('documentos_legaleses');
+            const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
+            const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
-            this.jsonData.id = data.id;
+
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
-            // this.jsonData.unidad_ejecutora_id = data.unidad_ejecutora_id;
-            // this.jsonData.contratado_id = data.contratado_id;
-            // this.jsonData.contratante_id = data.contratante_id;
-            // this.jsonData.document_types_id = data.document_types_id;
-            // this.jsonData.padre = data.padre;
             this.jsonData.modifica = data.modifica;
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
             this.jsonData.fecha_firma = new Date(data.fecha_firma)
-            this.jsonData.files = data.files;
-
-            const response_documents = await axios.get(`documents`);
-            const response_doc_types = await axios.get('documentos_legaleses');
-            const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
-            const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
-            console.log("DOCUMENTS TYPE", response_doc_types.data);
-            console.log("DOCUMENTS", response_documents.data);
-            console.log("UNIDAD EJECUTORA", response_unidad_ejecutora.data);
-            console.log("INSTITUCION CONTRATANTE CONTRATADORA", response_institucion_contratante_contratadora.data);
-
+            this.jsonData.files = data.path_contrato;
             //set data to v-select contratante_id
             for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
                 if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
@@ -749,18 +733,6 @@ export default {
                 }
 
             }
-
-
-            // response_documents.data.document_types_id
-            // const res = response_documents.data.map(documento => {
-            //     if(data.document_types_id === documento.id) {
-            //         documento.jsonData.document_types_id = document_types_names[documento.document_types_id];
-            //     }
-            //     return documento;
-            // });
-            // this.combo_tipos_documentos = res;
-            // console.log("ID OBJECT SELECTED", data.id);
-            // this.getDocId(data.id)
         },
         async padreGetAll() {
             let response = await axios.get('documents');
@@ -816,6 +788,7 @@ export default {
         ModalCrear() {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
+            this.limpiar_formulario();
             this.tituloIntervencionModal = "Formulario de Creación de Contratos";
         },
         mostrar() {
