@@ -684,11 +684,11 @@ export default {
             this.jsonData.id = data.id;
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
-            this.jsonData.unidad_ejecutora_id = data.unidad_ejecutora_id;
-            this.jsonData.contratado_id = data.contratado_id;
-            this.jsonData.contratante_id = data.contratante_id;
+            // this.jsonData.unidad_ejecutora_id = data.unidad_ejecutora_id;
+            // this.jsonData.contratado_id = data.contratado_id;
+            // this.jsonData.contratante_id = data.contratante_id;
             // this.jsonData.document_types_id = data.document_types_id;
-            this.jsonData.padre = data.padre;
+            // this.jsonData.padre = data.padre;
             this.jsonData.modifica = data.modifica;
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
@@ -698,14 +698,39 @@ export default {
 
             const response_documents = await axios.get(`documents`);
             const response_doc_types = await axios.get('documentos_legaleses');
+            const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
+            const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
             console.log("DOCUMENTS TYPE", response_doc_types.data);
             console.log("DOCUMENTS", response_documents.data);
+            console.log("UNIDAD EJECUTORA", response_unidad_ejecutora.data);
+            console.log("INSTITUCION CONTRATANTE CONTRATADORA", response_institucion_contratante_contratadora.data);
 
+            //set data to v-select contratante_id
+            for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
+                if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
+                    this.jsonData.contratante_id = response_institucion_contratante_contratadora.data[i];
+                    i = response_institucion_contratante_contratadora.data.length;
+                }
+            }
+            //set data to v-select contratado_id
+            for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
+                if (data.contratado_id === response_institucion_contratante_contratadora.data[i].id) {
+                    this.jsonData.contratado_id = response_institucion_contratante_contratadora.data[i];
+                    i = response_institucion_contratante_contratadora.data.length;
+                }
+            }
+            //set data to v-select unidad_ejecutora_id
+            for (let i = 0; i < response_unidad_ejecutora.data.length; i++) {
+                if (data.unidad_ejecutora_id === response_unidad_ejecutora.data[i].id) {
+                    this.jsonData.unidad_ejecutora_id = response_unidad_ejecutora.data[i];
+                    i = response_unidad_ejecutora.data.length;
+                }
+            }
             //set data to v-select document_types_id
             for (let i = 0; i < response_doc_types.data.length; i++) {
                 if (data.document_types_id === response_doc_types.data[i].id) {
                     this.jsonData.document_types_id = response_doc_types.data[i];
-                    return
+                    i = response_doc_types.data.length;
                 }
             }
             //if padre === 0 then disable select padre because padre dont have hierarchy above
@@ -719,7 +744,7 @@ export default {
                     if (data.padre === response_documents.data[i].id) {
                         this.disablePadre = false;
                         this.jsonData.padre = response_documents.data[i];
-                        return
+                        i = response_documents.data.length;
                     }
                 }
 
