@@ -83,7 +83,7 @@
 
         <!------------------------------------------------------Modal Crear Contrato------------------------------------------------------->
         <div class="modal fade" id="contrato" tabindex="-1" role="dialog" style="overflow-y: scroll;"
-             aria-labelledby="intervencionTitle" aria-hidden="true" >
+             aria-labelledby="intervencionTitle" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <!--modal header, close button-->
@@ -250,15 +250,15 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
-                            </button>
-                            <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
-                                    v-if="guardar_bottom === true">
-                                Guardar
-                            </button>
-                            <button type="submit" @click="modificar();" class="btn btn-success"
-                                    v-if="modificar_bottom === true">Modificar
-                            </button>
+                        <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
+                        </button>
+                        <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
+                                v-if="guardar_bottom === true">
+                            Guardar
+                        </button>
+                        <button type="submit" @click="modificar();" class="btn btn-success" id="modificarModal"
+                                v-if="modificar_bottom === true">Modificar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -504,13 +504,10 @@ export default {
         }
     },
     methods: {
-        getDocId(id) {
-            const doc_id = id;
-            return doc_id;
-        },
+
         cambioTipoDocumento() {
 
-            if (this.jsonData.document_types_id.id === 1) {
+            if (this.jsonData.document_types_id.id === 1 || this.jsonData.document_types_id.nombre === 'Contrato Principal') {
                 this.disablePadre = true;
                 console.log('BEHAVIOR', this.disablePadre);
             } else if (this.jsonData.document_types_id.id !== 1) {
@@ -657,22 +654,22 @@ export default {
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
             await this.listar();
-            // this.limpiar_formulario();
+            this.limpiar_formulario();
         },
-        limpiar_formulario(){
-            this.jsonData.id=null;
-            this.jsonData.document_types_id=null;
-            this.jsonData.codigo=[];
-            this.jsonData.nombre=[];
-            this.jsonData.unidad_ejecutora_id=[];
-            this.jsonData.contratado_id=null;
-            this.jsonData.contratante_id=null;
-            this.jsonData.fecha_firma='';
-            this.jsonData.duracion_dias=null;
-            this.jsonData.monto_bs=null;
-            this.jsonData.modifica=null;
-            this.jsonData.padre=null;
-            this.jsonData.files=null;
+        limpiar_formulario() {
+            this.jsonData.id = null;
+            this.jsonData.document_types_id = null;
+            this.jsonData.codigo = [];
+            this.jsonData.nombre = [];
+            this.jsonData.unidad_ejecutora_id = [];
+            this.jsonData.contratado_id = null;
+            this.jsonData.contratante_id = null;
+            this.jsonData.fecha_firma = '';
+            this.jsonData.duracion_dias = null;
+            this.jsonData.monto_bs = null;
+            this.jsonData.modifica = null;
+            this.jsonData.padre = null;
+            this.jsonData.files = null;
 
             // this.btnmodificar = false;
             // this.btncancelar = false;
@@ -680,18 +677,17 @@ export default {
             // this.configFile.contenidoDefault = " DOCUMENTO/";
             // this.borrar_file();
         },
-        contratoModalModificar(data = {}) {
+        async contratoModalModificar(data = {}) {
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
-
             this.jsonData.id = data.id;
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
             this.jsonData.unidad_ejecutora_id = data.unidad_ejecutora_id;
             this.jsonData.contratado_id = data.contratado_id;
             this.jsonData.contratante_id = data.contratante_id;
-            this.jsonData.document_types_id = data.document_types_id;
+            // this.jsonData.document_types_id = data.document_types_id;
             this.jsonData.padre = data.padre;
             this.jsonData.modifica = data.modifica;
             this.jsonData.duracion_dias = data.duracion_dias;
@@ -699,17 +695,62 @@ export default {
             this.jsonData.objeto = data.objeto;
             this.jsonData.fecha_firma = new Date(data.fecha_firma)
             this.jsonData.files = data.files;
-            console.log("ID OBJECT SELECTED", data.id);
-            this.getDocId(data.id)
+
+            const response_documents = await axios.get(`documents`);
+            const response_doc_types = await axios.get('documentos_legaleses');
+            console.log("DOCUMENTS TYPE", response_doc_types.data);
+            console.log("DOCUMENTS", response_documents.data);
+
+            //set data to v-select document_types_id
+            for (let i = 0; i < response_doc_types.data.length; i++) {
+                if (data.document_types_id === response_doc_types.data[i].id) {
+                    this.jsonData.document_types_id = response_doc_types.data[i];
+                    return
+                }
+            }
+            //if padre === 0 then disable select padre because padre dont have hierarchy above
+            if (data.padre === 0) {
+                this.jsonData.padre = "";
+                this.disablePadre = true;
+
+            } else {
+                //set data to v-select padre
+                for (let i = 0; i < response_documents.data.length; i++) {
+                    if (data.padre === response_documents.data[i].id) {
+                        this.disablePadre = false;
+                        this.jsonData.padre = response_documents.data[i];
+                        return
+                    }
+                }
+
+            }
+
+
+            // response_documents.data.document_types_id
+            // const res = response_documents.data.map(documento => {
+            //     if(data.document_types_id === documento.id) {
+            //         documento.jsonData.document_types_id = document_types_names[documento.document_types_id];
+            //     }
+            //     return documento;
+            // });
+            // this.combo_tipos_documentos = res;
+            // console.log("ID OBJECT SELECTED", data.id);
+            // this.getDocId(data.id)
         },
         async padreGetAll() {
             let response = await axios.get('documents');
-            this.combo_padres = response.data.map(docPadre => {
-                    if (docPadre.id === 0)
-                        docPadre.combo_padres = docPadre;
-                    return docPadre;
+            let padresArray = []
+
+            for (let i = 0; i < response.data.length; i++) {
+                if (response.data[i].document_types_id === 1 ||
+                    response.data[i].document_types_id === 2) {
+                    padresArray[response.data[i].id] = response.data[i];
+                } else {
+                    console.log("NO ES PADRE", response.data[i]);
                 }
-            );
+            }
+            this.combo_padres = padresArray
+
         },
 
         //Change object to get
@@ -836,7 +877,8 @@ export default {
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
         },
-    },
+    }
+    ,
     created() {
         this.listar();
         this.unidadesEjecutorasGetAll();
@@ -845,13 +887,15 @@ export default {
         this.sectorialesActivos();
         this.institucionesGetAll();
         this.padreGetAll();
-    },
+    }
+    ,
     components: {
         VueBootstrap4Table,
         Datepicker,
         VueEditor,
     }
-};
+}
+;
 
 </script>
 <style>
