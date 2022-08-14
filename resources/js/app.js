@@ -27,7 +27,7 @@ Vue.component('unidad-ejecutora', require('./constructor/unidades_ejecutoras.vue
 Vue.component('contrato-principal', require('./constructor/contrato_principal.vue').default);
 Vue.component('documents', require('./constructor/documents.vue').default);
 Vue.component('planillas', require('./constructor/planillas.vue').default);
-
+Vue.component('requerimiento', require('./constructor/requerimiento.vue').default);
 
 //componentes
 Vue.component('alert', require('./components/Alerta.vue').default);
