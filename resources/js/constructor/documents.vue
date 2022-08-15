@@ -633,7 +633,7 @@ export default {
             // }
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
-            if (this.jsonData.document_types_id === 1) {
+            if (this.jsonData.document_types_id.id === 1) {
                 datos_jsonData.append('padre', '0');
             } else {
                 datos_jsonData.append('padre', this.jsonData.padre.id);
@@ -650,7 +650,8 @@ export default {
             datos_jsonData.append('modifica', this.jsonData.modifica);
             datos_jsonData.append('files', this.jsonData.files);
 
-            const respuesta = await axios.post(`update_contrato/`+this.jsonData.id, datos_jsonData);
+            console.log('APPEND', datos_jsonData);
+            const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
             await this.listar();
@@ -688,7 +689,8 @@ export default {
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
             this.jsonData.fecha_firma = new Date(data.fecha_firma)
-            // this.jsonData.files = data.files;
+            this.jsonData.files = data.files;
+
             //set data to v-select contratante_id
             for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
                 if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
@@ -718,21 +720,25 @@ export default {
                 }
             }
             //if padre === 0 then disable select padre because padre dont have hierarchy above
-            if (data.padre === 0) {
-                this.jsonData.padre = "";
-                this.disablePadre = true;
-
-            } else {
-                //set data to v-select padre
-                for (let i = 0; i < response_documents.data.length; i++) {
-                    if (data.padre === response_documents.data[i].id) {
-                        this.disablePadre = false;
-                        this.jsonData.padre = response_documents.data[i];
-                        i = response_documents.data.length;
-                    }
+            // if (data.padre.id === 0||data.padre.id === null || data.padre.id === undefined) {
+            //     // this.disablePadre = true;
+            //     this.jsonData.padre.id = '0';
+            //
+            // } else {
+            //set data to v-select padre
+            for (let i = 0; i < response_documents.data.length; i++) {
+                if (data.padre === response_documents.data[i].id) {
+                    this.disablePadre = false;
+                    this.jsonData.padre = response_documents.data[i];
+                    i = response_documents.data.length;
+                    console.log('PADRE', this.jsonData.padre);
+                } else {
+                    this.disablePadre = true;
+                    this.jsonData.padre = '0';
+                    console.log('PADRE', this.jsonData.padre);
                 }
-
             }
+            // }
         },
         async padreGetAll() {
             let response = await axios.get('documents');
