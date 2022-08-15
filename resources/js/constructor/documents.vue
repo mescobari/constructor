@@ -1,4 +1,4 @@
-<template>
+<template slot-scope="props">
     <div class="card">
         <div class="card-header ferdy-background-Primary-blak">
             <h3 class="card-title">Creacion de Contratos</h3>
@@ -72,7 +72,7 @@
                                     data-target="#contrato" @click="contratoModalModificar(props.row);"><span><i
                                 class="fa fa-user-edit"></i></span></button>
                             <button type="button" class="btn btn-outline-danger ml-1"
-                                    @click="preguntarModalAlertaConfirmacion(props.row.id);"><span><i
+                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row);"><span><i
                                 class="fa fa-trash-alt"></i></span></button>
                         </div>
                     </template>
@@ -515,28 +515,7 @@ export default {
                 console.log('BEHAVIOR', this.disablePadre);
             }
         },
-        async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
-            var respuesta = await axios.get('tipo_cambio_bs_sus');
-            console.log(respuesta.data);
-            if (respuesta.data == "") {
-                alert("No se tiene registrado el tipo de cambio para hoy");
-            } else {
-                if (tipo_local == 'BS') {//como guarda en bs cargamos al de dolar
-                    var valor = "";
-                    console.log("aqui");
-                    var valor = this.jsonData.monto_aprobado_bs / respuesta.data.valor_compra;
-                    valor = valor.toFixed(2);
-                    this.jsonData.monto_aprobado_dolares = valor;
-                } else {//como guarda en dolar cargamos al de bs
-                    var valor = "";
-                    var valor = this.jsonData.monto_aprobado_dolares * respuesta.data.valor_venta;
-                    valor = valor.toFixed(2);
-                    this.jsonData.monto_aprobado_bs = valor;
-
-                }
-            }
-        },
-        preguntarModalAlertaConfirmacion(id) {
+        preguntarModalAlertaConfirmacionEliminar(document) {
             this.mandarMensajesAlerta = {
                 titulo: "Mensajes del Sistema",//titulo del mensaje
                 contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
@@ -547,22 +526,15 @@ export default {
                 tituloBotonDos: "NO", //texto segundo boton del de false
                 respuesta: false,
             };
-            this.id_eliminacion = id;
-            this.$refs.abrirAlerta.abrirAlerta();
+            this.id_eliminacion = document.id;
+            this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
         },
         respuestaModalAlertaConfirmacion(datos) {
             // console.log(datos.respuesta);
             if (datos.respuesta === true) {
-                this.eliminar(this.id_eliminacion);
+                console.log('eliminando', datos.respuesta);
+                this.deleteItem(this.id_eliminacion);
             }
-        },
-        seleccionoDespuesdeCargarFecha() {
-            console.log("entro");
-            console.log(this.jsonData.descripcion);
-            console.log("selecciono una fecha" + this.jsonData.fecha);//v-on:closed="seleccionoDespuesdeCargarFecha"
-        },
-        seleccionoAntesdeCargarFecha() {
-            console.log("selecciono una fecha" + this.jsonData.fecha);//v-on:selected
         },
         async listar() {
             const respuesta = await axios.get('documents');
@@ -719,12 +691,13 @@ export default {
                     i = response_doc_types.data.length;
                 }
             }
-            //if padre === 0 then disable select padre because padre dont have hierarchy above
-            // if (data.padre.id === 0||data.padre.id === null || data.padre.id === undefined) {
-            //     // this.disablePadre = true;
-            //     this.jsonData.padre.id = '0';
-            //
-            // } else {
+            //set this data to padre Contrato Principal
+            const padreIdName = [
+                {
+                    id: 0,
+                    nombre: 'Ninguno'
+                }
+            ];
             //set data to v-select padre
             for (let i = 0; i < response_documents.data.length; i++) {
                 if (data.padre === response_documents.data[i].id) {
@@ -734,16 +707,16 @@ export default {
                     console.log('PADRE', this.jsonData.padre);
                 } else {
                     this.disablePadre = true;
-                    this.jsonData.padre = '0';
+                    this.jsonData.padre = padreIdName[0];
                     console.log('PADRE', this.jsonData.padre);
                 }
             }
-            // }
         },
+        //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         async padreGetAll() {
             let response = await axios.get('documents');
             let padresArray = []
-
+            //fill array of padres with contrato principal (1) and sub contrato (2)
             for (let i = 0; i < response.data.length; i++) {
                 if (response.data[i].document_types_id === 1 ||
                     response.data[i].document_types_id === 2) {
@@ -752,18 +725,15 @@ export default {
                 }
             }
             this.combo_padres = padresArray
-
         },
-
-        //Change object to get
-        async eliminar(id) {
-            const respuesta = await axios.delete('intervenciones/' + id);
-            this.id_eliminacion = null;
+        async deleteItem(doc) {
+            const respuesta = await axios.delete('documents/' + doc);
+            // this.id_eliminacion = null;
             console.log(respuesta.data);
-            this.listar();
+            await this.listar();
         },
-        async tipos_documentos() {
-            let respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
+        async tipoDocumentoGetAll() {
+            let respuesta = await axios.get('documentos_legaleses');
             this.combo_tipos_documentos = respuesta.data;
         },
         async intervencionesTipoActivas() {
@@ -779,12 +749,12 @@ export default {
             this.cla_institucional = respuesta.data;
             // this.jsonData.institucion = respuesta.data;
         },
-        //get data from?
         async unidadesEjecutorasGetAll() {
             const respuesta = await axios.get('get_unidades_ejecutoras');
             this.unidades_ejecutoras = respuesta.data;
             console.log(respuesta.data);
         },
+        //get data from?
         async sectorialesActivos() {
             var respuesta = await axios.get('sectorials');
             // console.log(respuesta.data);
@@ -831,13 +801,13 @@ export default {
                     console.log(err);
                 });
         },
-        /////////////////*****************funciones de configuraciones********************* */
-
         borrar_file() {
             var nombre_file = "<i class='fas fa-download fa-1x'></i><br><span> " + this.configFile.contenidoDefault + "</span>";
             $('#documento_res_aprobacion').val("");
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-primary'], '#contenido_documento_res_aprobacion', [nombre_file]);
         },
+        /////////////////*****************funciones de configuraciones********************* */
+
         reiniciar_file(id, clase_borrar, clase_adicionar, id_contenido, contenido_cargar) {
             // console.log("entro");
             console.log(contenido_cargar);
@@ -867,7 +837,7 @@ export default {
             this.jsonData.files = event.target.files[0];
             for (let key in event.target.files) {//cargamos datos
                 let boucle = event.target.files[key];
-                if (boucle.name != null && boucle.name != 'undefined' && boucle.name != "item") {
+                if (boucle.name != null && boucle.name !== 'undefined' && boucle.name !== "item") {
                     // console.log(boucle.name);
                     nombre_file = boucle.name;
                 }
@@ -880,12 +850,32 @@ export default {
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
         },
-    }
-    ,
+        async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
+            var respuesta = await axios.get('tipo_cambio_bs_sus');
+            console.log(respuesta.data);
+            if (respuesta.data == "") {
+                alert("No se tiene registrado el tipo de cambio para hoy");
+            } else {
+                if (tipo_local == 'BS') {//como guarda en bs cargamos al de dolar
+                    var valor = "";
+                    console.log("aqui");
+                    var valor = this.jsonData.monto_aprobado_bs / respuesta.data.valor_compra;
+                    valor = valor.toFixed(2);
+                    this.jsonData.monto_aprobado_dolares = valor;
+                } else {//como guarda en dolar cargamos al de bs
+                    var valor = "";
+                    var valor = this.jsonData.monto_aprobado_dolares * respuesta.data.valor_venta;
+                    valor = valor.toFixed(2);
+                    this.jsonData.monto_aprobado_bs = valor;
+
+                }
+            }
+        },
+    },
     created() {
         this.listar();
         this.unidadesEjecutorasGetAll();
-        this.tipos_documentos();
+        this.tipoDocumentoGetAll();
         this.intervencionesTipoActivas();
         this.sectorialesActivos();
         this.institucionesGetAll();
