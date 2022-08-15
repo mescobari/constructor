@@ -129,9 +129,9 @@ class DocumentController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function updateContrato(Request $request)
+    public function updateContrato(Request $request, $id)
     {
-        $documentId = document::findOrFail($request->id);
+        $documentId = document::findOrFail($id);
         $path = "";
         if ($request->hasFile('files')) {
 //            $extension = $request->file('files')->getClientOriginalExtension();

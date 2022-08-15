@@ -631,17 +631,17 @@ export default {
             // for(let key in this.jsonData){
             //     datos_jsonData.append(key, this.jsonData[key]);
             // }
-            datos_jsonData.append('document_types_id', this.jsonData.document_types_id);
-            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id);
+            datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
+            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
             if (this.jsonData.document_types_id === 1) {
                 datos_jsonData.append('padre', '0');
             } else {
-                datos_jsonData.append('padre', this.jsonData.padre);
+                datos_jsonData.append('padre', this.jsonData.padre.id);
             }
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
-            datos_jsonData.append('contratante_id', this.jsonData.contratante_id);
-            datos_jsonData.append('contratado_id', this.jsonData.contratado_id);
+            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
             datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
@@ -650,7 +650,7 @@ export default {
             datos_jsonData.append('modifica', this.jsonData.modifica);
             datos_jsonData.append('files', this.jsonData.files);
 
-            const respuesta = await axios.post(`update_contrato`, datos_jsonData);
+            const respuesta = await axios.post(`update_contrato/`+this.jsonData.id, datos_jsonData);
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
             await this.listar();
@@ -680,7 +680,7 @@ export default {
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
-
+            this.jsonData.id = data.id;
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
             this.jsonData.modifica = data.modifica;
@@ -688,7 +688,7 @@ export default {
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
             this.jsonData.fecha_firma = new Date(data.fecha_firma)
-            this.jsonData.files = data.path_contrato;
+            // this.jsonData.files = data.files;
             //set data to v-select contratante_id
             for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
                 if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
@@ -743,7 +743,6 @@ export default {
                     response.data[i].document_types_id === 2) {
                     padresArray[response.data[i].id] = response.data[i];
                 } else {
-                    console.log("NO ES PADRE", response.data[i]);
                 }
             }
             this.combo_padres = padresArray
