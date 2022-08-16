@@ -8,6 +8,7 @@
         Route::apiResource('unidades_ejecutoras', UnidadEjecutoraController::class);
         Route::post('update_contrato/{id}', 'DocumentController@updateContrato');
         Route::get('documents_ini', 'DocumentController@inicio')->name('documents_ini');
+        Route::get('download_document/{id}', 'DocumentController@downloadDocument')->name('download_document');
         Route::apiResource('documents', DocumentController::class);
 
 //         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');

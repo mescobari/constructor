@@ -64,12 +64,12 @@
                     </template>
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
-                            <a :href="props.row.filePathFull" target="_blank" rel="noopener noreferrer">
-                                <button type="button" class="btn btn-outline-success"><span><i
+<!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
+                                <button type="button" class="btn btn-outline-success" @click="downloadDocument(props.row.id)"><span><i
                                     class="far fa-file-pdf"></i> </span></button>
-                            </a>
+<!--                            </a>-->
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
-                                    data-target="#contrato" @click="contratoModalModificar(props.row);"><span><i
+                                    data-target="#contrato" @click="editarModal(props.row);"><span><i
                                 class="fa fa-user-edit"></i></span></button>
                             <button type="button" class="btn btn-outline-danger ml-1"
                                     @click="preguntarModalAlertaConfirmacionEliminar(props.row);"><span><i
@@ -253,8 +253,9 @@
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
                         <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
-                                v-if="guardar_bottom === true">
+                                v-if="guardar_bottom === true"><slot >
                             Guardar
+                        </slot>
                         </button>
                         <button type="submit" @click="modificar();" class="btn btn-success" id="modificarModal"
                                 v-if="modificar_bottom === true">Modificar
@@ -507,7 +508,7 @@ export default {
     methods: {
         //modify the value of the input in real time from v-select document_types_id and padre
         cambioTipoDocumento() {
-            if (this.jsonData.document_types_id.id === 1 || this.jsonData.id === null) {
+            if (this.jsonData.document_types_id.id === 1 || this.jsonData.document_types_id.id === null) {
                 this.disablePadre = true;
                 console.log('BEHAVIOR', this.disablePadre);
             } else if (this.jsonData.document_types_id.id !== 1) {
@@ -591,6 +592,7 @@ export default {
             datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
+
             datos_jsonData.append('modifica', this.jsonData.modifica);
             datos_jsonData.append('files', this.jsonData.files);
             let respuesta = await axios.post('documents', datos_jsonData);
@@ -600,9 +602,7 @@ export default {
         },
         async modificar() {
             let datos_jsonData = new FormData();
-            // for(let key in this.jsonData){
-            //     datos_jsonData.append(key, this.jsonData[key]);
-            // }
+
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
             if (this.jsonData.document_types_id.id === 1) {
@@ -621,13 +621,13 @@ export default {
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
             datos_jsonData.append('files', this.jsonData.files);
-
+            // datos_jsonData.append('id', this.jsonData.id);
             console.log('APPEND', datos_jsonData);
             const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
             await this.listar();
-            this.limpiar_formulario();
+            // this.limpiar_formulario();
         },
         limpiar_formulario() {
             this.jsonData.id = null;
@@ -645,18 +645,43 @@ export default {
             this.jsonData.files = null;
             this.jsonData.objeto = '';
         },
-        async contratoModalModificar(data = {}) {
+        async editarModal(data = {}) {
             const response_documents = await axios.get(`documents`);
             const response_doc_types = await axios.get('documentos_legaleses');
             const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
             const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
+
+
+            $('#customCheck1').removeAttr('checked');
+            $('#customCheck2').removeAttr('checked');
+            $('#customCheck3').removeAttr('checked');
+            if (data.modifica[0] === '1') {
+                $('#customCheck1').attr('checked', 'checked');
+            }
+            if (data.modifica[1] === '2') {
+                $('#customCheck2').attr('checked', 'checked');
+            }
+            if (data.modifica[2] === '3') {
+                $('#customCheck3').attr('checked', 'checked');
+            }
+
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
             this.jsonData.id = data.id;
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
-            this.jsonData.modifica = data.modifica;
+            this.jsonData.modifica = data.modifica.split(',');
+            // if (data.modifica[0] ===)
+            // let firstModifica = this.jsonData.modifica[0];
+            // let secondModifica = this.jsonData.modifica[1];
+            // let thirdModifica = this.jsonData.modifica[2];
+            // this.jsonData.modifica = firstModifica + "," + secondModifica + "," + thirdModifica;
+
+            this.jsonData.modifica[0] = data.modifica[0];
+            this.jsonData.modifica[1] = data.modifica[1];
+            this.jsonData.modifica[2] = data.modifica[2];
+            console.log("MODIFICA", this.jsonData.modifica);
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
@@ -704,13 +729,16 @@ export default {
                     this.disablePadre = false;
                     this.jsonData.padre = response_documents.data[i];
                     i = response_documents.data.length;
-                    console.log('PADRE', this.jsonData.padre);
                 } else {
                     this.disablePadre = true;
                     this.jsonData.padre = padreIdName[0];
-                    console.log('PADRE', this.jsonData.padre);
                 }
             }
+        },
+        async downloadDocument(id){
+            const response = await axios.get(`download_document/${id}`);
+
+            window.open(response.data.url, '_blank');
         },
         //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         async padreGetAll() {
