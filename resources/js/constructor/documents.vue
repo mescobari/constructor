@@ -65,7 +65,7 @@
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
 <!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
-                                <button type="button" class="btn btn-outline-success" @click="downloadDocument(props.row.id)"><span><i
+                                <button type="button" class="btn btn-outline-success" @click="downloadDocument(props.row)"><span><i
                                     class="far fa-file-pdf"></i> </span></button>
 <!--                            </a>-->
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
@@ -735,10 +735,27 @@ export default {
                 }
             }
         },
-        async downloadDocument(id){
-            const response = await axios.get(`download_document/${id}`);
-
-            window.open(response.data.url, '_blank');
+        async downloadDocument(data = {}) {
+            const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
+            const blob = new Blob([response.data.files], {type: 'octet-stream'});
+            const href = URL.createObjectURL(blob);
+            const a = Object.assign(document.createElement('a'), {
+                href,
+                style: 'display: none',
+                download: data.path_contrato
+            });
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(href);
+            a.remove()
+            // const link = document.createElement('a');
+            // link.href = window.URL.createObjectURL(blob);
+            // link.download = label;
+            // link.click();
+            // URL.revokeObjectURL(link.href);
+            //
+            // window.open(response.data.url, '_blank');
+            // console.log('DOCUMENT DOWNLOAD', response.data.url);
         },
         //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         async padreGetAll() {

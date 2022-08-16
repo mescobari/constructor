@@ -207,6 +207,6 @@ class DocumentController extends Controller
         $document = document::findOrFail($id);
         $path = $document->path_contrato;
         $file = Storage::disk('public')->get($path);
-        return response($file, 200)->header('Content-Type', 'application/pdf');
+        return response($file, 200)->header('Content-Type', 'octet-stream');
     }
 }
