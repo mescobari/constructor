@@ -24,22 +24,30 @@
 <!-- Tabs navs -->
 <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
                   <li class="nav-item">
-                    <a class="nav-link active" id="custom-tabs-three-home-tab" 
-                    data-toggle="pill" href="#custom-tabs-three-home" role="tab" 
-                    aria-controls="custom-tabs-three-home" aria-selected="true">Requerimiento en Obra</a>
+                    <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" 
+                    href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" 
+                    aria-selected="true"><h4> Requerimiento en Obra</h4></a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-three-profile-tab" 
-                    data-toggle="pill" href="#custom-tabs-three-profile" role="tab" 
-                    aria-controls="custom-tabs-three-profile" aria-selected="false">Relacion con el Contrato Principal</a>
+                    <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" 
+                    href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" 
+                    aria-selected="false"><h4>Relacion con el Contrato Principal</h4></a>
                   </li>
-                  
+                  <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill" 
+                    href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages" 
+                    aria-selected="false"><h4>Otros Gastos</h4></a>
+                  </li>
+                 
                 </ul>
+
+
 <!-- Tabs navs -->
 
 </div>
-<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
- <div class="tab-content" id="custom-tabs-three-tabContent">
+<div class="tab-content" id="custom-tabs-three-tabContent"><!-- ////////////  INICIO contenedor de tabs -->
+<!-- REQxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+ 
                   <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
                   
 
@@ -63,11 +71,11 @@
                                                 </div>
                                                 <div class="custom-control custom-radio">
                                                     <input class="custom-control-input" type="radio" id="customRadio4" value="4" v-model="jsonData.tipo_requerimiento_id" >
-                                                    <label for="customRadio3" class="custom-control-label">Llave en Mano</label>
+                                                    <label for="customRadio4" class="custom-control-label">Fondos en Avance</label>
                                                 </div>
                                                 <div class="custom-control custom-radio">
                                                     <input class="custom-control-input" type="radio" id="customRadio5" value="5" v-model="jsonData.tipo_requerimiento_id" >
-                                                    <label for="customRadio3" class="custom-control-label">Fondos en Avance</label>
+                                                    <label for="customRadio5" class="custom-control-label">Llave en Mano</label>
                                                 </div>
 
                                             </div>
@@ -162,11 +170,18 @@
                                         <input type="text" class="form-control" name="codigo" placeholder="Codigo" v-model="jsonData.codigo_recurso" disabled>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="nombre">Descripcion Recurso</label>
-                                        <input type="text" class="form-control" name="descripcion" placeholder="Descripcion" v-model="jsonData.descripcion_recurso">
+                                <div class="col-md-3">                                    
+                                   <div class="form-group">
+                                        <!-- Recursos  Spinner-->
+                                        <label for="document_type">Descripcion Recurso:</label>
+                                        <v-select label="nombre" :options="combo_tipos_documentos"
+                                                  v-model="jsonData.descripcion_recurso"
+                                                  @input="cambioTipoDocumento()"
+                                                  placeholder="Selecione una opción">
+                                            <span slot="no-options">No hay data para cargar</span>
+                                        </v-select>
                                     </div>
+                                   
                                 </div>
                                 <div class="col-md-1">
                                     <div class="form-group">
@@ -225,10 +240,10 @@
 
                             </div>
 
-                <!-- ======================/ termina form Formulario Lineal -->
-                        <hr>
+                        <!-- ======================/ termina form Formulario Lineal -->
+                                <hr>
 
-                <!--  row para la tabla mostrar detalles del modelo y acciones //////////-->
+                        <!--  row para la tabla mostrar detalles del modelo y acciones //////////-->
                             <div class="row">  
 
                                 <div class="table-responsive">
@@ -287,20 +302,297 @@
                             
                 <!-- ////////////  FIN row de la tabla mostrar detalles del modelo y acciones -->  
 
-                    </div>    <!-- ////////////  FIN del primer tab -->   
+                 </div>    <!-- ////////////  FIN del primer tab -->   
 
-<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
         <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
-                 
-            Tab 2 content
-        </div>
+          <div class="row">
+                            <div class="col-md-3">  
+                                 <div class="row">
+                                        <div class="col-md-12"> 
+                                            <center class="text-danger font-weight-bold">
+                                            <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
+                                            <h3 v-else> Contrato LLave en Mano</h3>                                               
+                                            </center>        
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">          
+                                            <div class="form-group">
+                                                <label for="nombre">Correlativo Requerimiento:</label>
+                                                <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.correlativo_requerimiento" disabled>
+                                            </div>
+                                        </div>
 
- </div>
+                                 </div>
+
+                                 <div class="row">
+                                        <div class="col-md-12">          
+                                            <div class="form-group">
+                                                <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
+                                                <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
+                                                <input type="text" class="form-control" name="nombre"
+                                                 placeholder="Ingresar Nombre" v-model="jsonData.fecha_requerimiento" disabled>
+                                          
+                                                
+                                                </div>
+                                        </div>
+                                        
+                                 </div>
+                                 <div class="row">
+                                    
+                                   
+                                        <div class="col-md-12"> 
+                                            <div class="form-group">
+                                                <label for="nombre">NURI Correspondencia:</label>
+                                                <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento" disabled>
+                                            </div>
+                                         </div>
+                                        
+                                 </div>
+
+                            </div>
+                            <div class="col-md-9">  
+                                  <div class="form-group">
+                                        <label for="descripcion">Trabajpos a ser encarados, con este requerimiento:</label>
+                                        <vue-editor 
+                                            v-model="jsonData.trabajos_encarados"
+                                            :editor-toolbar="configToolBarEditText"
+                                        ></vue-editor>
+                                        <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
+                                    </div>
+                            </div>
+                            
+                        </div>
+
+                        
+                     <!-- hasta aqui el row span> -->
+                        <h4 class="text-danger font-weight-bold">RELACION CON  ITEMS CONTRATO PRINCIPAL</h4>
+                        <hr>
+       
+                     <!-- INICIO fORMULARIO EN FILA relacion items contrato principal--> 
+
+                         <div class="row bg-success">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Codigo:</label>
+                                        <input type="text" class="form-control" name="codigo" placeholder="Codigo" v-model="jsonData.item_codigo" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <!-- Recursos  Spinner-->
+                                        <label for="document_type">Item Relacionado:</label>
+                                        <v-select label="nombre" :options="combo_tipos_documentos"
+                                                  v-model="jsonData.item_descripcion"
+                                                  @input="cambioTipoDocumento()"
+                                                  placeholder="Selecione una opción">
+                                            <span slot="no-options">No hay data para cargar</span>
+                                        </v-select>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Unidad</label>
+                                        <input type="text" class="form-control" name="unidad" placeholder="Unidad" v-model="jsonData.item_simbolo" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Vigente</label>
+                                        <input type="text" class="form-control" name="cantidad" placeholder="Cantidad" v-model="jsonData.item_vigente">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5">
+                                <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Avance</label>
+                                                <input type="text" class="form-control" name="horas" placeholder="Horas Requeridas" v-model="jsonData.item_avance">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Saldo</label>
+                                                <input type="text" class="form-control" name="dias" placeholder="Dias Requeridos" v-model="jsonData.item_saldo">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Avance Estimado</label>
+                                                <input type="text" class="form-control" name="plazo" placeholder="dias de ejecucion" v-model="jsonData.item_estimado">
+                                            </div>
+                                        </div>
+                                       
+                                        
+                                    </div>
+                                </div> 
+                                <div class="col-md-1">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <br>
+                                            <button type="submit" @click="guardar();" class="btn btn-danger" >Agregar</button>
+                                        </div>
+                                    </div>
+                                </div>
 
 
+
+
+
+                            </div>
+
+                     <!-- ///FIN  fORMULARIO EN FILA relacion items --> 
+
+
+                    <!-- tabla de relacion de items-->
+                        <div class="row">  
+
+                                <div class="table-responsive">
+                                    <vue-bootstrap4-table :rows="rows1" :columns="columns1" :config="configTablas" :classes="configTablas.classes">
+                                        <template slot="global-search-clear-icon">
+                                            <i class="fas fa-times-circle"></i>
+                                        </template>
+                                        <template slot = "paginataion-previous-button">
+                                            <span class="text-primary"><i class="fas fa-angle-double-left"></i></span> Anterior
+                                        </template>
+                                        <template slot = "paginataion-next-button">
+                                            Siguiente <span class="text-primary"><i class="fas fa-angle-double-right"></i></span>
+                                        </template>
+                                        <template slot = "pagination-info" slot-scope = "props">
+                                            Mostrando: {{props.currentPageRowsLength}} de: {{props.filteredRowsLength}} |
+                                            de un total de: {{props.originalRowsLength}} Registros Obtenidos
+                                        </template>
+                                        <template slot = "selected-rows-info" slot-scope = "props">
+                                            Número total de filas seleccionadas: {{props.selectedItemsCount}}
+                                        </template>
+
+                                        <template slot="simple-filter-clear-icon">
+                                            <i class="fas fa-times-circle"></i>
+                                        </template>
+                                        <template slot = "sort-asc-icon">
+                                            <span class="text-primary"><i class = "fas fa-arrow-up"> </i></span>
+                                        </template>
+                                        <template slot = "sort-desc-icon">
+                                            <span class="text-danger"><i class = "fas fa-arrow-down"> </i></span>
+                                        </template>
+                                        <template slot = "no-sort-icon">
+                                            <i class = "fas fa-sort"> </i>
+                                        </template>
+                                        <template slot="aprobacion" slot-scope="props">
+                                        <div v-if="props.row.soli_estado=='R'">
+                                            <button class="btn btn-outline btn-danger dim" type="button" @click="aprobarSolicitud(props.row)"><i class="fa fa-thumbs-o-down"></i></button>
+                                        </div>
+                                        <div v-else>
+                                            <button class="btn btn-outline btn-primary dim" type="button"><i class="fa fa-thumbs-o-up"></i></button>
+                                        </div>
+                                        </template>
+                                        <template slot="filePath" slot-scope="props">
+                                            <a :href="props.row.filePathFull" target="_blank" title="Ver el archivo digital">
+                                                <span class="badge badge-primary">Ver: {{props.row.cofinanciador_documento.titulo}}</span>
+                                            </a>                    
+                                        </template>
+                                        <template slot="acciones" slot-scope="props">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-outline-warning ml-1" @click="editar(props.row1);"><span><i class="fa fa-user-edit"></i></span></button>
+                                                <button type="button" class="btn btn-outline-danger ml-1" @click="eliminar(props.row1.id);"><span><i class="fa fa-trash-alt"></i></span></button>                
+                                            </div>
+                                        </template>
+                                    </vue-bootstrap4-table>
+                                </div>                    
+                            </div> 
+
+
+
+
+                    <!-- tabla de relacion de items-->
+
+       
+       </div> <!-- ////////////  FIN del segundo tab --> 
+
+
+
+ 
+<!-- Otrosxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx --> 
+            <div class="tab-pane fade" id="custom-tabs-three-messages" role="tabpanel" aria-labelledby="custom-tabs-three-messages-tab">
+                    
+                <div class="row">
+                            <div class="col-md-3">  
+                                 <div class="row">
+                                        <div class="col-md-12"> 
+                                            <center class="text-danger font-weight-bold">
+                                            <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
+                                            <h3 v-else> Contrato LLave en Mano</h3>                                               
+                                            </center>        
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">          
+                                            <div class="form-group">
+                                                <label for="nombre">Correlativo Requerimiento:</label>
+                                                <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.correlativo_requerimiento" disabled>
+                                            </div>
+                                        </div>
+
+                                 </div>
+
+                                 <div class="row">
+                                        <div class="col-md-12">          
+                                            <div class="form-group">
+                                                <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
+                                                <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
+                                                <input type="text" class="form-control" name="nombre"
+                                                 placeholder="Ingresar Nombre" v-model="jsonData.fecha_requerimiento" disabled>
+                                          
+                                                
+                                                </div>
+                                        </div>
+                                        
+                                 </div>
+                                 <div class="row">
+                                    
+                                   
+                                        <div class="col-md-12"> 
+                                            <div class="form-group">
+                                                <label for="nombre">NURI Correspondencia:</label>
+                                                <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento" disabled>
+                                            </div>
+                                         </div>
+                                        
+                                 </div>
+
+                            </div>
+                            <div class="col-md-9">  
+                                  <div class="form-group">
+                                        <label for="descripcion">Gastos generales u otros gastos, con este requerimiento:</label>
+                                        <vue-editor 
+                                            v-model="jsonData.trabajos_encarados"
+                                            :editor-toolbar="configToolBarEditText"
+                                        ></vue-editor>
+                                        <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
+                                    </div>
+                            </div>
+                            
+                        </div>
+
+                        
+                     <!-- hasta aqui el row span> -->
+                        <h4 class="text-danger font-weight-bold">GASTOS GENERALES</h4>
+                        <hr>
+                
+                
+                </div>
 
 <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx --> 
+</div> <!-- ////////////  FIN contenedor de tabs<div class="tab-content" id="custom-tabs-three-tabContent"> -->
 
             </div> <!-- ////////////  FIN card-body -->
 
@@ -403,7 +695,17 @@ export default {
                 dias_recurso:'', 
                 tiempo_total_recurso:'',               
                 precio_referencia_recurso:'', 
+                trabajos_encarados:'trabajos a ser encarados explicacion de ello', 
                 files:null,
+                item_codigo:'zzzz',
+                item_descripcion:'',
+                item_simbolo:'abc',
+                item_vigente:'1',
+                item_avance:'2',
+                item_saldo:'3',
+                item_estimado:'4',
+
+
             },
             rows:[],
             columns:[
@@ -459,6 +761,56 @@ export default {
                 },
             ],
             
+             rows1:[],
+             columns1:[
+                    {
+                        label: "Codigo",
+                        name: "item_codigo",
+                        filter: { type: "simple", placeholder: "Codigo", }, sort: true,
+                    },
+                    { 
+                        label: "Item Relacionado:",
+                        name: "item_descripcion",         
+                        filter: { type: "simple", placeholder: "Item Relacionado", }, 
+                        sort: true,  
+                    },
+                    { 
+                        label: "Unidad",     
+                        name: "item_simbolo",             
+                        filter: { type: "simple", placeholder: "Unidad" }, 
+                        sort: true,     
+                    },
+                    { 
+                        label: "Cantidad Vigente",       
+                        name: "item_vigente",            
+                        filter: { type: "simple", placeholder: "Cantidad Vigente" },         
+                    }, 
+                    { 
+                        label: "Avance",       
+                        name: "item_avance",            
+                        filter: { type: "simple", placeholder: "Avance" },         
+                    }, 
+                    { 
+                        label: "Por Ejecutar",       
+                        name: "item_saldo",            
+                        filter: { type: "simple", placeholder: "Por Ejecutar" },         
+                    },
+                    { 
+                        label: "Avance Estimado",       
+                        name: "item_estimado",            
+                        filter: { type: "simple", placeholder: "Avance Estimado" },         
+                    },
+
+
+                    {
+                        label: "Acciones",
+                        name: "acciones",
+                        sort: false,
+                    },
+
+
+                 ],
+
             configFile:{
                 cerrar:false,
                 contenidoDefault:" CARGAR INFORME TECNICO/JUSTIFICACION",              

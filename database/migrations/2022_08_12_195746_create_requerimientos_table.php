@@ -21,6 +21,8 @@ class CreateRequerimientosTable extends Migration
             $table->date('fecha_requerimiento');
             $table->string('nuri_requerimiento')->nullable();
             $table->text('descripcion_requerimiento');
+            $table->text('trabajos_encarados');
+            $table->text('gastos_generales');
             $table->string('path_requerimientos')->nullable();
             $table->timestamps();
             $table->foreign('document_id')->references('id')->on('documents');
