@@ -621,9 +621,10 @@ export default {
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
             datos_jsonData.append('files', this.jsonData.files);
-            // datos_jsonData.append('id', this.jsonData.id);
+            datos_jsonData.append('id', this.jsonData.id);
             console.log('APPEND', datos_jsonData);
             const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
+            // const respuesta = await axios.put(`documents/` + this.jsonData.id, datos_jsonData);
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
             await this.listar();
@@ -642,7 +643,7 @@ export default {
             this.jsonData.monto_bs = null;
             this.jsonData.modifica = [];
             this.jsonData.padre = null;
-            this.jsonData.files = null;
+            this.jsonData.files = '';
             this.jsonData.objeto = '';
         },
         async editarModal(data = {}) {
@@ -737,7 +738,7 @@ export default {
         },
         async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
-            const blob = new Blob([response.data.files], {type: 'octet-stream'});
+            const blob = new Blob([response.data], {type: 'octet-stream'});
             const href = URL.createObjectURL(blob);
             const a = Object.assign(document.createElement('a'), {
                 href,
@@ -748,19 +749,12 @@ export default {
             a.click();
             URL.revokeObjectURL(href);
             a.remove()
-            // const link = document.createElement('a');
-            // link.href = window.URL.createObjectURL(blob);
-            // link.download = label;
-            // link.click();
-            // URL.revokeObjectURL(link.href);
-            //
-            // window.open(response.data.url, '_blank');
-            // console.log('DOCUMENT DOWNLOAD', response.data.url);
         },
         //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         async padreGetAll() {
             let response = await axios.get('documents');
-            let padresArray = []
+            let padresArray = [];
+            let padresSubsArray = [];
             //fill array of padres with contrato principal (1) and sub contrato (2)
             for (let i = 0; i < response.data.length; i++) {
                 if (response.data[i].document_types_id === 1 ||
