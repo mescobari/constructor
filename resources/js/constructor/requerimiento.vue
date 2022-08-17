@@ -174,7 +174,7 @@
                                    <div class="form-group">
                                         <!-- Recursos  Spinner-->
                                         <label for="document_type">Descripcion Recurso:</label>
-                                        <v-select label="nombre" :options="combo_tipos_documentos"
+                                        <v-select label="nombre" :options="combo_requerimiento_recursos"
                                                   v-model="jsonData.descripcion_recurso"
                                                   @input="cambioTipoDocumento()"
                                                   placeholder="Selecione una opción">
@@ -387,7 +387,7 @@
                                     <div class="form-group">
                                         <!-- Recursos  Spinner-->
                                         <label for="document_type">Item Relacionado:</label>
-                                        <v-select label="nombre" :options="combo_tipos_documentos"
+                                        <v-select label="nombre" :options="combo_requerimiento_recursos"
                                                   v-model="jsonData.item_descripcion"
                                                   @input="cambioTipoDocumento()"
                                                   placeholder="Selecione una opción">
@@ -574,7 +574,7 @@
                                   <div class="form-group">
                                         <label for="descripcion">Gastos generales u otros gastos, con este requerimiento:</label>
                                         <vue-editor 
-                                            v-model="jsonData.trabajos_encarados"
+                                            v-model="jsonData.gastos_generales"
                                             :editor-toolbar="configToolBarEditText"
                                         ></vue-editor>
                                         <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
@@ -588,11 +588,143 @@
                         <h4 class="text-danger font-weight-bold">GASTOS GENERALES</h4>
                         <hr>
                 
+                     <!-- INICIO fORMULARIO EN FILA relacion otros gastos--> 
+
+                         <div class="row bg-success">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Codigo:</label>
+                                        <input type="text" class="form-control" name="codigo" placeholder="Codigo" v-model="jsonData.codigo_otros" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <!-- Recursos  Spinner-->
+                                        <label for="document_type">Gastos Generales:</label>
+                                        <v-select label="nombre" :options="combo_tipos_documentos"
+                                                  v-model="jsonData.descripcion_otros"
+                                                  @input="cambioTipoDocumento()"
+                                                  placeholder="Selecione una opción">
+                                            <span slot="no-options">No hay data para cargar</span>
+                                        </v-select>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Unidad</label>
+                                        <input type="text" class="form-control" name="unidad" placeholder="Unidad" v-model="jsonData.simbolo_otros" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Cantidad</label>
+                                        <input type="text" class="form-control" name="cantidad" placeholder="Cantidad" v-model="jsonData.cantidad_otros">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5">
+                                <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Monto</label>
+                                                <input type="text" class="form-control" name="horas" placeholder="Horas Requeridas" v-model="jsonData.monto_otros">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <label for="nombre">Detallar</label>
+                                                <input type="text" class="form-control" name="dias" placeholder="Dias Requeridos" v-model="jsonData.explicar_otros">
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                </div> 
+                                <div class="col-md-1">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <br>
+                                            <button type="submit" @click="guardar();" class="btn btn-danger" >Agregar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+                            </div>
+
+                     <!-- ///FIN  fORMULARIO EN FILA otros gastos --> 
+
+                    <!-- tabla de relacion con otros gastos-->
+                        <div class="row">  
+
+                                <div class="table-responsive">
+                                    <vue-bootstrap4-table :rows="rows2" :columns="columns2" :config="configTablas" :classes="configTablas.classes">
+                                        <template slot="global-search-clear-icon">
+                                            <i class="fas fa-times-circle"></i>
+                                        </template>
+                                        <template slot = "paginataion-previous-button">
+                                            <span class="text-primary"><i class="fas fa-angle-double-left"></i></span> Anterior
+                                        </template>
+                                        <template slot = "paginataion-next-button">
+                                            Siguiente <span class="text-primary"><i class="fas fa-angle-double-right"></i></span>
+                                        </template>
+                                        <template slot = "pagination-info" slot-scope = "props">
+                                            Mostrando: {{props.currentPageRowsLength}} de: {{props.filteredRowsLength}} |
+                                            de un total de: {{props.originalRowsLength}} Registros Obtenidos
+                                        </template>
+                                        <template slot = "selected-rows-info" slot-scope = "props">
+                                            Número total de filas seleccionadas: {{props.selectedItemsCount}}
+                                        </template>
+
+                                        <template slot="simple-filter-clear-icon">
+                                            <i class="fas fa-times-circle"></i>
+                                        </template>
+                                        <template slot = "sort-asc-icon">
+                                            <span class="text-primary"><i class = "fas fa-arrow-up"> </i></span>
+                                        </template>
+                                        <template slot = "sort-desc-icon">
+                                            <span class="text-danger"><i class = "fas fa-arrow-down"> </i></span>
+                                        </template>
+                                        <template slot = "no-sort-icon">
+                                            <i class = "fas fa-sort"> </i>
+                                        </template>
+                                        <template slot="aprobacion" slot-scope="props">
+                                        <div v-if="props.row.soli_estado=='R'">
+                                            <button class="btn btn-outline btn-danger dim" type="button" @click="aprobarSolicitud(props.row)"><i class="fa fa-thumbs-o-down"></i></button>
+                                        </div>
+                                        <div v-else>
+                                            <button class="btn btn-outline btn-primary dim" type="button"><i class="fa fa-thumbs-o-up"></i></button>
+                                        </div>
+                                        </template>
+                                        <template slot="filePath" slot-scope="props">
+                                            <a :href="props.row.filePathFull" target="_blank" title="Ver el archivo digital">
+                                                <span class="badge badge-primary">Ver: {{props.row.cofinanciador_documento.titulo}}</span>
+                                            </a>                    
+                                        </template>
+                                        <template slot="acciones" slot-scope="props">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-outline-warning ml-1" @click="editar(props.rows2);"><span><i class="fa fa-user-edit"></i></span></button>
+                                                <button type="button" class="btn btn-outline-danger ml-1" @click="eliminar(props.row2.id);"><span><i class="fa fa-trash-alt"></i></span></button>                
+                                            </div>
+                                        </template>
+                                    </vue-bootstrap4-table>
+                                </div>                    
+                            </div> 
+
+
+
+
+                    <!-- tabla de relacion con otros gastos-->
+
+
+
                 
                 </div>
 
 <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx --> 
-</div> <!-- ////////////  FIN contenedor de tabs<div class="tab-content" id="custom-tabs-three-tabContent"> -->
+    </div> <!-- ////////////  FIN contenedor de tabs<div class="tab-content" id="custom-tabs-three-tabContent"> -->
 
             </div> <!-- ////////////  FIN card-body -->
 
@@ -662,12 +794,9 @@ export default {
 
             tituloDocLegalesModal:'',
 
-            combo_tipos_documentos:[],
-            combo_instituciones:[],
-            combo_cofinanciadores:[],
-            combo_documentos_legales:[],
-            combo_objetivos:[],
-
+            combo_requerimiento_recursos:[],           
+            combo_items_planilla:[],
+            
             proyectos:[],
             jsonData:{
                 id:"",
@@ -704,7 +833,13 @@ export default {
                 item_avance:'2',
                 item_saldo:'3',
                 item_estimado:'4',
-
+                gastos_generales:'se explica en que gatsos generales se trabajara',
+                codigo_otros:'yyyyyyy',
+                descripcion_otros:'',
+                simbolo_otros:'abcde',
+                cantidad_otros:'10',
+                monto_otros:'20',
+                explicar_otros:'30',
 
             },
             rows:[],
@@ -811,6 +946,49 @@ export default {
 
                  ],
 
+              rows2:[],
+             columns2:[
+                    {
+                        label: "Codigo",
+                        name: "codigo_otros",
+                        filter: { type: "simple", placeholder: "Codigo", }, sort: true,
+                    },
+                    { 
+                        label: "Gastos Generales:",
+                        name: "descripcion_otros",         
+                        filter: { type: "simple", placeholder: "Gastos Generales", }, 
+                        sort: true,  
+                    },
+                    { 
+                        label: "Unidad",     
+                        name: "simbolo_otros",             
+                        filter: { type: "simple", placeholder: "Unidad" }, 
+                        sort: true,     
+                    },
+                    { 
+                        label: "Cantidad",       
+                        name: "cantidad_otros",            
+                        filter: { type: "simple", placeholder: "Cantidad" },         
+                    }, 
+                    { 
+                        label: "Monto",       
+                        name: "monto_otros",            
+                        filter: { type: "simple", placeholder: "Monto" },         
+                    }, 
+                    { 
+                        label: "Uso",       
+                        name: "explicar_otros",            
+                        filter: { type: "simple", placeholder: "Uso" },         
+                    },
+                    {
+                        label: "Acciones",
+                        name: "acciones",
+                        sort: false,
+                    },
+
+
+                 ],    
+
             configFile:{
                 cerrar:false,
                 contenidoDefault:" CARGAR INFORME TECNICO/JUSTIFICACION",              
@@ -826,6 +1004,11 @@ export default {
     methods:{
         
        
+        async tipoDocumentoGetAll() {
+            let respuesta = await axios.get('documentos_legaleses');
+            this.combo_requerimiento_recursos = respuesta.data;
+        },
+
         async guardar(){
             console.log('estamos en guardar contrato_id');
             this.jsonData.contrato_id = this.jsonData.proyectos.id;
