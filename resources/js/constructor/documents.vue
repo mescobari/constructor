@@ -64,15 +64,15 @@
                     </template>
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
-                            <a :href="props.row.filePathFull" target="_blank" rel="noopener noreferrer">
-                                <button type="button" class="btn btn-outline-success"><span><i
+<!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
+                                <button type="button" class="btn btn-outline-success" @click="downloadDocument(props.row)"><span><i
                                     class="far fa-file-pdf"></i> </span></button>
-                            </a>
+<!--                            </a>-->
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
-                                    data-target="#contrato" @click="contratoModalModificar(props.row);"><span><i
+                                    data-target="#contrato" @click="editarModal(props.row);"><span><i
                                 class="fa fa-user-edit"></i></span></button>
                             <button type="button" class="btn btn-outline-danger ml-1"
-                                    @click="preguntarModalAlertaConfirmacion(props.row.id);"><span><i
+                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row);"><span><i
                                 class="fa fa-trash-alt"></i></span></button>
                         </div>
                     </template>
@@ -83,7 +83,7 @@
 
         <!------------------------------------------------------Modal Crear Contrato------------------------------------------------------->
         <div class="modal fade" id="contrato" tabindex="-1" role="dialog" style="overflow-y: scroll;"
-             aria-labelledby="intervencionTitle" aria-hidden="true" >
+             aria-labelledby="intervencionTitle" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <!--modal header, close button-->
@@ -250,15 +250,16 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
-                            </button>
-                            <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
-                                    v-if="guardar_bottom === true">
-                                Guardar
-                            </button>
-                            <button type="submit" @click="modificar(props.row.id);" class="btn btn-success"
-                                    v-if="modificar_bottom === true">Modificar
-                            </button>
+                        <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
+                        </button>
+                        <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
+                                v-if="guardar_bottom === true"><slot >
+                            Guardar
+                        </slot>
+                        </button>
+                        <button type="submit" @click="modificar();" class="btn btn-success" id="modificarModal"
+                                v-if="modificar_bottom === true">Modificar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -348,6 +349,7 @@ export default {
             sectoriales: [],
             tipo_intervenciones: [],
             intervenciones: [],
+            path_contrato: '',
             jsonData: {
                 //required to CRUD
                 id: 0,
@@ -504,13 +506,9 @@ export default {
         }
     },
     methods: {
-        getDocId(id) {
-            const doc_id = id;
-            return doc_id;
-        },
+        //modify the value of the input in real time from v-select document_types_id and padre
         cambioTipoDocumento() {
-
-            if (this.jsonData.document_types_id.id === 1) {
+            if (this.jsonData.document_types_id.id === 1 || this.jsonData.document_types_id.id === null) {
                 this.disablePadre = true;
                 console.log('BEHAVIOR', this.disablePadre);
             } else if (this.jsonData.document_types_id.id !== 1) {
@@ -518,28 +516,7 @@ export default {
                 console.log('BEHAVIOR', this.disablePadre);
             }
         },
-        async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
-            var respuesta = await axios.get('tipo_cambio_bs_sus');
-            console.log(respuesta.data);
-            if (respuesta.data == "") {
-                alert("No se tiene registrado el tipo de cambio para hoy");
-            } else {
-                if (tipo_local == 'BS') {//como guarda en bs cargamos al de dolar
-                    var valor = "";
-                    console.log("aqui");
-                    var valor = this.jsonData.monto_aprobado_bs / respuesta.data.valor_compra;
-                    valor = valor.toFixed(2);
-                    this.jsonData.monto_aprobado_dolares = valor;
-                } else {//como guarda en dolar cargamos al de bs
-                    var valor = "";
-                    var valor = this.jsonData.monto_aprobado_dolares * respuesta.data.valor_venta;
-                    valor = valor.toFixed(2);
-                    this.jsonData.monto_aprobado_bs = valor;
-
-                }
-            }
-        },
-        preguntarModalAlertaConfirmacion(id) {
+        preguntarModalAlertaConfirmacionEliminar(document) {
             this.mandarMensajesAlerta = {
                 titulo: "Mensajes del Sistema",//titulo del mensaje
                 contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
@@ -550,22 +527,15 @@ export default {
                 tituloBotonDos: "NO", //texto segundo boton del de false
                 respuesta: false,
             };
-            this.id_eliminacion = id;
-            this.$refs.abrirAlerta.abrirAlerta();
+            this.id_eliminacion = document.id;
+            this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
         },
         respuestaModalAlertaConfirmacion(datos) {
             // console.log(datos.respuesta);
             if (datos.respuesta === true) {
-                this.eliminar(this.id_eliminacion);
+                console.log('eliminando', datos.respuesta);
+                this.deleteItem(this.id_eliminacion);
             }
-        },
-        seleccionoDespuesdeCargarFecha() {
-            console.log("entro");
-            console.log(this.jsonData.descripcion);
-            console.log("selecciono una fecha" + this.jsonData.fecha);//v-on:closed="seleccionoDespuesdeCargarFecha"
-        },
-        seleccionoAntesdeCargarFecha() {
-            console.log("selecciono una fecha" + this.jsonData.fecha);//v-on:selected
         },
         async listar() {
             const respuesta = await axios.get('documents');
@@ -622,6 +592,7 @@ export default {
             datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
+
             datos_jsonData.append('modifica', this.jsonData.modifica);
             datos_jsonData.append('files', this.jsonData.files);
             let respuesta = await axios.post('documents', datos_jsonData);
@@ -631,7 +602,8 @@ export default {
         },
         async modificar() {
             let datos_jsonData = new FormData();
-            datos_jsonData.append('do cument_types_id', this.jsonData.document_types_id.id);
+
+            datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
             if (this.jsonData.document_types_id.id === 1) {
                 datos_jsonData.append('padre', '0');
@@ -649,53 +621,164 @@ export default {
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
             datos_jsonData.append('files', this.jsonData.files);
-
-            const respuesta = await axios.put(`documents/${this.getDocId()}`, datos_jsonData);
-            console.log(respuesta.data);
+            // datos_jsonData.append('id', this.jsonData.id);
+            console.log('APPEND', datos_jsonData);
+            const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
+            console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
             await this.listar();
+            // this.limpiar_formulario();
         },
-        contratoModalModificar(data = {}) {
+        limpiar_formulario() {
+            this.jsonData.id = null;
+            this.jsonData.document_types_id = null;
+            this.jsonData.codigo = '';
+            this.jsonData.nombre = '';
+            this.jsonData.unidad_ejecutora_id = null;
+            this.jsonData.contratado_id = null;
+            this.jsonData.contratante_id = null;
+            this.jsonData.fecha_firma = '';
+            this.jsonData.duracion_dias = null;
+            this.jsonData.monto_bs = null;
+            this.jsonData.modifica = [];
+            this.jsonData.padre = null;
+            this.jsonData.files = null;
+            this.jsonData.objeto = '';
+        },
+        async editarModal(data = {}) {
+            const response_documents = await axios.get(`documents`);
+            const response_doc_types = await axios.get('documentos_legaleses');
+            const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
+            const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
+
+
+            $('#customCheck1').removeAttr('checked');
+            $('#customCheck2').removeAttr('checked');
+            $('#customCheck3').removeAttr('checked');
+            if (data.modifica[0] === '1') {
+                $('#customCheck1').attr('checked', 'checked');
+            }
+            if (data.modifica[1] === '2') {
+                $('#customCheck2').attr('checked', 'checked');
+            }
+            if (data.modifica[2] === '3') {
+                $('#customCheck3').attr('checked', 'checked');
+            }
+
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
-
             this.jsonData.id = data.id;
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
-            this.jsonData.unidad_ejecutora_id = data.unidad_ejecutora_id;
-            this.jsonData.contratado_id = data.contratado_id;
-            this.jsonData.contratante_id = data.contratante_id;
-            this.jsonData.document_types_id = data.document_types_id;
-            this.jsonData.padre = data.padre;
-            this.jsonData.modifica = data.modifica;
+            this.jsonData.modifica = data.modifica.split(',');
+            // if (data.modifica[0] ===)
+            // let firstModifica = this.jsonData.modifica[0];
+            // let secondModifica = this.jsonData.modifica[1];
+            // let thirdModifica = this.jsonData.modifica[2];
+            // this.jsonData.modifica = firstModifica + "," + secondModifica + "," + thirdModifica;
+
+            this.jsonData.modifica[0] = data.modifica[0];
+            this.jsonData.modifica[1] = data.modifica[1];
+            this.jsonData.modifica[2] = data.modifica[2];
+            console.log("MODIFICA", this.jsonData.modifica);
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
             this.jsonData.fecha_firma = new Date(data.fecha_firma)
             this.jsonData.files = data.files;
-            console.log("ID OBJECT SELECTED", data.id);
-            this.getDocId(data.id)
+
+            //set data to v-select contratante_id
+            for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
+                if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
+                    this.jsonData.contratante_id = response_institucion_contratante_contratadora.data[i];
+                    i = response_institucion_contratante_contratadora.data.length;
+                }
+            }
+            //set data to v-select contratado_id
+            for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
+                if (data.contratado_id === response_institucion_contratante_contratadora.data[i].id) {
+                    this.jsonData.contratado_id = response_institucion_contratante_contratadora.data[i];
+                    i = response_institucion_contratante_contratadora.data.length;
+                }
+            }
+            //set data to v-select unidad_ejecutora_id
+            for (let i = 0; i < response_unidad_ejecutora.data.length; i++) {
+                if (data.unidad_ejecutora_id === response_unidad_ejecutora.data[i].id) {
+                    this.jsonData.unidad_ejecutora_id = response_unidad_ejecutora.data[i];
+                    i = response_unidad_ejecutora.data.length;
+                }
+            }
+            //set data to v-select document_types_id
+            for (let i = 0; i < response_doc_types.data.length; i++) {
+                if (data.document_types_id === response_doc_types.data[i].id) {
+                    this.jsonData.document_types_id = response_doc_types.data[i];
+                    i = response_doc_types.data.length;
+                }
+            }
+            //set this data to padre Contrato Principal
+            const padreIdName = [
+                {
+                    id: 0,
+                    nombre: 'Ninguno'
+                }
+            ];
+            //set data to v-select padre
+            for (let i = 0; i < response_documents.data.length; i++) {
+                if (data.padre === response_documents.data[i].id) {
+                    this.disablePadre = false;
+                    this.jsonData.padre = response_documents.data[i];
+                    i = response_documents.data.length;
+                } else {
+                    this.disablePadre = true;
+                    this.jsonData.padre = padreIdName[0];
+                }
+            }
         },
+        async downloadDocument(data = {}) {
+            const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
+            const blob = new Blob([response.data.files], {type: 'octet-stream'});
+            const href = URL.createObjectURL(blob);
+            const a = Object.assign(document.createElement('a'), {
+                href,
+                style: 'display: none',
+                download: data.path_contrato
+            });
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(href);
+            a.remove()
+            // const link = document.createElement('a');
+            // link.href = window.URL.createObjectURL(blob);
+            // link.download = label;
+            // link.click();
+            // URL.revokeObjectURL(link.href);
+            //
+            // window.open(response.data.url, '_blank');
+            // console.log('DOCUMENT DOWNLOAD', response.data.url);
+        },
+        //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         async padreGetAll() {
             let response = await axios.get('documents');
-            this.combo_padres = response.data.map(docPadre => {
-                    if (docPadre.id === 0)
-                        docPadre.combo_padres = docPadre;
-                    return docPadre;
+            let padresArray = []
+            //fill array of padres with contrato principal (1) and sub contrato (2)
+            for (let i = 0; i < response.data.length; i++) {
+                if (response.data[i].document_types_id === 1 ||
+                    response.data[i].document_types_id === 2) {
+                    padresArray[response.data[i].id] = response.data[i];
+                } else {
                 }
-            );
+            }
+            this.combo_padres = padresArray
         },
-
-        //Change object to get
-        async eliminar(id) {
-            const respuesta = await axios.delete('intervenciones/' + id);
-            this.id_eliminacion = null;
+        async deleteItem(doc) {
+            const respuesta = await axios.delete('documents/' + doc);
+            // this.id_eliminacion = null;
             console.log(respuesta.data);
-            this.listar();
+            await this.listar();
         },
-        async tipos_documentos() {
-            let respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
+        async tipoDocumentoGetAll() {
+            let respuesta = await axios.get('documentos_legaleses');
             this.combo_tipos_documentos = respuesta.data;
         },
         async intervencionesTipoActivas() {
@@ -711,12 +794,12 @@ export default {
             this.cla_institucional = respuesta.data;
             // this.jsonData.institucion = respuesta.data;
         },
-        //get data from?
         async unidadesEjecutorasGetAll() {
             const respuesta = await axios.get('get_unidades_ejecutoras');
             this.unidades_ejecutoras = respuesta.data;
             console.log(respuesta.data);
         },
+        //get data from?
         async sectorialesActivos() {
             var respuesta = await axios.get('sectorials');
             // console.log(respuesta.data);
@@ -725,6 +808,7 @@ export default {
         ModalCrear() {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
+            this.limpiar_formulario();
             this.tituloIntervencionModal = "Formulario de Creación de Contratos";
         },
         mostrar() {
@@ -762,13 +846,13 @@ export default {
                     console.log(err);
                 });
         },
-        /////////////////*****************funciones de configuraciones********************* */
-
         borrar_file() {
             var nombre_file = "<i class='fas fa-download fa-1x'></i><br><span> " + this.configFile.contenidoDefault + "</span>";
             $('#documento_res_aprobacion').val("");
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-primary'], '#contenido_documento_res_aprobacion', [nombre_file]);
         },
+        /////////////////*****************funciones de configuraciones********************* */
+
         reiniciar_file(id, clase_borrar, clase_adicionar, id_contenido, contenido_cargar) {
             // console.log("entro");
             console.log(contenido_cargar);
@@ -798,7 +882,7 @@ export default {
             this.jsonData.files = event.target.files[0];
             for (let key in event.target.files) {//cargamos datos
                 let boucle = event.target.files[key];
-                if (boucle.name != null && boucle.name != 'undefined' && boucle.name != "item") {
+                if (boucle.name != null && boucle.name !== 'undefined' && boucle.name !== "item") {
                     // console.log(boucle.name);
                     nombre_file = boucle.name;
                 }
@@ -811,22 +895,45 @@ export default {
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
         },
+        async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
+            var respuesta = await axios.get('tipo_cambio_bs_sus');
+            console.log(respuesta.data);
+            if (respuesta.data == "") {
+                alert("No se tiene registrado el tipo de cambio para hoy");
+            } else {
+                if (tipo_local == 'BS') {//como guarda en bs cargamos al de dolar
+                    var valor = "";
+                    console.log("aqui");
+                    var valor = this.jsonData.monto_aprobado_bs / respuesta.data.valor_compra;
+                    valor = valor.toFixed(2);
+                    this.jsonData.monto_aprobado_dolares = valor;
+                } else {//como guarda en dolar cargamos al de bs
+                    var valor = "";
+                    var valor = this.jsonData.monto_aprobado_dolares * respuesta.data.valor_venta;
+                    valor = valor.toFixed(2);
+                    this.jsonData.monto_aprobado_bs = valor;
+
+                }
+            }
+        },
     },
     created() {
         this.listar();
         this.unidadesEjecutorasGetAll();
-        this.tipos_documentos();
+        this.tipoDocumentoGetAll();
         this.intervencionesTipoActivas();
         this.sectorialesActivos();
         this.institucionesGetAll();
         this.padreGetAll();
-    },
+    }
+    ,
     components: {
         VueBootstrap4Table,
         Datepicker,
         VueEditor,
     }
-};
+}
+;
 
 </script>
 <style>

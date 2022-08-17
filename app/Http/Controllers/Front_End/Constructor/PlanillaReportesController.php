@@ -71,7 +71,7 @@ class PlanillaReportesController extends Controller
                 }
                 if($existe == 0){
                     $departamento = array_merge($departamento, ['id' . $ubicacion['id'] . 'd' => $ubicacion['nombre1']]);
-                }                
+                }
             }
             if(isset($ubicacion['nombre3'])){
                 $existe = 0;
@@ -82,8 +82,8 @@ class PlanillaReportesController extends Controller
                 }
                 if($existe == 0){
                     $municipio = array_merge($municipio, ['id' . $ubicacion['id'] . 'd' => $ubicacion['nombre3']]);
-                }                
-            }            
+                }
+            }
         }
         // dd($documentos_legales->cofinanciador_documento->id);
         $fecha_real_inicio = $proyecto->fecha_inicial_real;
@@ -123,7 +123,7 @@ class PlanillaReportesController extends Controller
         $comprobante_encabezados = ComprobanteEncabezado::where('intervenciones_id', $proyecto->id)->get();
         $monto_comprometido = 0;
         foreach($comprobante_encabezados as $comprobante_encabezado){
-            $comprobantes_detalles = ComprobanteDetalle::where('comprobante_encabezado_id', $comprobante_encabezado->id)->with('cofinanciadores')->get();   
+            $comprobantes_detalles = ComprobanteDetalle::where('comprobante_encabezado_id', $comprobante_encabezado->id)->with('cofinanciadores')->get();
             // dd($comprobantes_detalles);
             foreach($comprobantes_detalles as $comprobantes_detalle){
                 $id_inst = 196;
@@ -133,8 +133,8 @@ class PlanillaReportesController extends Controller
                 if($id_inst == $comprobantes_detalle->cofinanciadores->institucion_id){
                     if(isset($comprobantes_detalle->monto_bs)){
                         $monto_comprometido = $monto_comprometido + $comprobantes_detalle->monto_bs;
-                    }    
-                }            
+                    }
+                }
             }
         }
         $firstDate = $ultimo_plazo_vigencia;
@@ -144,7 +144,7 @@ class PlanillaReportesController extends Controller
         $years  = floor($dateDifference / (365 * 60 * 60 * 24));
         $months = floor(($dateDifference - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
         $days   = floor(($dateDifference - $years * 365 * 60 * 60 * 24 - $months * 30 * 60 * 60 *24) / (60 * 60 * 24));
-        $dias_vencimiento = number_format($dateDifference / (60 * 60 * 24),0);        
+        $dias_vencimiento = number_format($dateDifference / (60 * 60 * 24),0);
         // dump($firstDate);
         // dump($secondDate);
         // dd($dias_vencimiento);
@@ -182,7 +182,7 @@ class PlanillaReportesController extends Controller
     /* documentos legales de un proyecto inicio */
     /* ficha de proyecto inicio */
 
-    public function planilla_individual(Request $request, $id){ 
+    public function planilla_individual(Request $request, $id){
         //$planilla = Planilla::where('id', $id)->first();
         $documento = DB::table('planilla_documents')
         ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
@@ -216,30 +216,30 @@ class PlanillaReportesController extends Controller
         ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
         ->select( 'planilla_items.padre',DB::raw('sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as precio_total') )
         ->where('planilla_movimientos.planilla_id', $id)
-        ->groupBy('planilla_items.padre') 
+        ->groupBy('planilla_items.padre')
         ->get();
 
 //SELECT m.cantidad, m.precio_unitario, (m.cantidad* m.precio_unitario) as precio_total, i.padre FROM planilla_movimientos m, planilla_items i WHERE m.planilla_item_id=i.id and m.planilla_id = 1;
 
-//SELECT m.cantidad, m.precio_unitario, 
-//sum(m.cantidad* m.precio_unitario) as precio_total, i.padre  
-//FROM planilla_movimientos m, planilla_items i 
+//SELECT m.cantidad, m.precio_unitario,
+//sum(m.cantidad* m.precio_unitario) as precio_total, i.padre
+//FROM planilla_movimientos m, planilla_items i
 //WHERE m.planilla_item_id=i.id and m.planilla_id = 1 GROUP BY i.padre;
 
         $array1 = json_decode($planilla, true);
         $array2 = json_decode($suma_grupos, true);
-        
-        
+
+
         $keys = array_keys($array1);
         $salida=[];
 
 
-        
+
 
 //procesamos la planlla poniendo los campos extras, cambiando formatos y calculando total item
 
         for($i = 0; $i < count($array1); $i++) {
-           
+
             foreach($array1[$keys[$i]] as $key => $value) {
                 $salida[$i][$key]=  $value ;
                 if ($key =="tipo_planilla_id") {
@@ -261,14 +261,14 @@ class PlanillaReportesController extends Controller
 
                 if ($key =="total_planilla") {
                     $salida[$i][$key]= number_format($value,2,",",".");
-                 } 
+                 }
                  if ($key =="anticipo_planilla") {
                     $salida[$i][$key]= number_format($value,2,",",".");
-                 } 
+                 }
                  if ($key =="retencion_planilla") {
                     $salida[$i][$key]= number_format($value,2,",",".");
-                 } 
-                 
+                 }
+
 
             }
             // aqui los campos calculados y actualizacion
@@ -282,28 +282,28 @@ class PlanillaReportesController extends Controller
 
         $grupos = array();
         for($i = 0; $i < count($array1); $i++) {
-            
+
             foreach($array1[$keys[$i]] as $key => $value) {
-                
+
                 if ($key =="tipo") {
                     if ($value =="G") {
                         $grupos[] =  $array1[$i]['id'];
                         $id =  $array1[$i]['id'];
-                        
+
                         //$buscar= array_search($id,$array2);
                         $found_key = array_search($id, array_column($array2, 'padre'));
                         if ($found_key != false) {
                             $salida[$i]['precio_total']=
                             number_format($array2[$found_key]['precio_total'],2,",",".");
-                            
+
                         }
 
 
-                    } 
+                    }
                 }
             }
-         }       
-        
+         }
+
 //datos para la cabecera del reportedel reporte
 $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
 $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
@@ -332,7 +332,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 
 
  /* cargamos la vista   */
- 
+
         $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
             'link_img'=>'img/sistema-front-end/logo-pdf.png',
             'titulo_grande' => $titulo_grande,
@@ -356,19 +356,19 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'principal_monto' =>  $principal_monto,
             'padre' =>  $padre,
             'planilla' =>  $salida,
-            
+
 
 
         ]);
         $pdf->setPaper('letter', 'portrait');
-        return $pdf->stream('reporte_ficha_proyecto.pdf');       
-     
-     
+        return $pdf->stream('reporte_ficha_proyecto.pdf');
+
+
       //return  json_encode($salida);
     }
 
-    public function planilla_individual2(Request $request, $id){        
-        $intervencion = Planilla::where('id', $id)->first(); 
+    public function planilla_individual2(Request $request, $id){
+        $intervencion = Planilla::where('id', $id)->first();
 
         //datos del reporte
         $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
@@ -384,7 +384,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $duracion_proyecto_fin = $intervencion->fecha_aprobacion;
         $clasificador_sectorial_codigo = $intervencion->sectorial->sigla;
         $clasificador_sectorial_descripcion = $intervencion->sectorial->denominacion;
-        $descripcion_proyecto = $intervencion->descripcion;        
+        $descripcion_proyecto = $intervencion->descripcion;
         $proposito = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 2)->first();
         $componentes = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 3)->get();
         $localizacion_geografica = $this->BuscaUbicacionesRegistradas($intervencion->id);
@@ -414,22 +414,22 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'clasificador_sectorial_descripcion' => $clasificador_sectorial_descripcion,
             'descripcion_proyecto' => $descripcion_proyecto,
             'proposito' => $proposito,
-            'componentes' => $componentes,            
+            'componentes' => $componentes,
             'localizacion_geografica' => $localizacion_geografica,
             'estructura_financiamiento' => $estructura_financiamiento,
             'documentacion_respaldo' => $documentacion_respaldo,
         ]);
         $pdf->setPaper('letter', 'portrait');
         return $pdf->stream('reporte_ficha_proyecto.pdf');
-    }    
-    public function proyectos_de_institucion_reporte(){        
+    }
+    public function proyectos_de_institucion_reporte(){
         $respuestaUser = User::where('id', auth()->user()->id)->with('datos')->get();//me va dar el id de institucion
-        $respuestaInstitucion = Intervencion::where('institucion_id', $respuestaUser[0]->datos->institucion_id)->get();//me va dar los proyectos de la institucion         
+        $respuestaInstitucion = Intervencion::where('institucion_id', $respuestaUser[0]->datos->institucion_id)->get();//me va dar los proyectos de la institucion
         return $respuestaInstitucion;
     }
     public function DocumentosRespaldo($id_proyecto, $request, $matriz){
 
-        $cofinanciadores = Cofinanciador::where('intervenciones_id', $id_proyecto)->with('cofinanciador_documento')->get();         
+        $cofinanciadores = Cofinanciador::where('intervenciones_id', $id_proyecto)->with('cofinanciador_documento')->get();
         foreach($cofinanciadores as $cofinanciador){
             if(isset($cofinanciador->cofinanciador_documento->pathDocumento) && $cofinanciador->cofinanciador_documento->pathDocumento != ''){
                 array_push($matriz, ['descripcion'=>$cofinanciador->cofinanciador_documento->objeto, 'link'=>$request->getSchemeAndHttpHost() . '/' . $cofinanciador->cofinanciador_documento->pathDocumento]);
@@ -445,7 +445,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                                 foreach($indicador_resultado->indicador_planificaciones as $indicador_planificacion){
                                     if(isset($indicador_planificacion->pathDocumento) && $indicador_planificacion->pathDocumento != ''){
                                         array_push($matriz, ['descripcion'=>$indicador_planificacion->glosa, 'link'=>$request->getSchemeAndHttpHost() . '/' . $indicador_planificacion->pathDocumento]);
-                                    }                                    
+                                    }
                                 }
                             }
                         }
@@ -460,8 +460,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             }
         }
         return $matriz;
-    }    
-    public function BuscarEstructurasFinanciamiento($id_proyecto){    
+    }
+    public function BuscarEstructurasFinanciamiento($id_proyecto){
         $matriz = [];
         $matriz_aux = [];
         $nombre_cofinanciadores = ['componente'=>'Componente', 'partida'=>'Partida'];
@@ -479,7 +479,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                         if($comprobantes_detalle->partidas->id == $mat['partida_id']){
                             $existe++;
                         }
-                    }                    
+                    }
                 }
                 if($existe == 0){
                     array_push($matriz, [
@@ -494,14 +494,14 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                     if($nombre == $comprobantes_detalle->cofinanciadores->cofinanciador_documento->titulo){
                         $existe++;
                     }
-                }                
+                }
                 if($existe == 0){
                     $nombre_cofinanciadores = array_merge($nombre_cofinanciadores, ['i' . $comprobantes_detalle->cofinanciadores->id . 'd' => $comprobantes_detalle->cofinanciadores->cofinanciador_documento->titulo]);
                     $nombre_cofinanciadores_total = array_merge($nombre_cofinanciadores_total, ['i' . $comprobantes_detalle->cofinanciadores->id . 'd' => 0]);
                 }
             }
-            //llenamos los valores de los cofinanciadores    
-            // dump($comprobantes_detalles->toArray());        
+            //llenamos los valores de los cofinanciadores
+            // dump($comprobantes_detalles->toArray());
             // $contFER = 0;
             foreach($matriz as $mat){
                 $existe = 0;
@@ -513,7 +513,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                         if($comprobantes_detalle->partidas->id == $mat['partida_id']){
                             $existe++;
                             $mat = array_merge($mat, [
-                                'cofinanciador_id' . $comprobantes_detalle->cofinanciadores->id =>$comprobantes_detalle->cofinanciadores->id, 
+                                'cofinanciador_id' . $comprobantes_detalle->cofinanciadores->id =>$comprobantes_detalle->cofinanciadores->id,
                                 'cofinanciador' . $comprobantes_detalle->cofinanciadores->id =>$comprobantes_detalle->cofinanciadores->cofinanciador_documento->titulo,
                                 'i' . $comprobantes_detalle->cofinanciadores->id . 'd' => $comprobantes_detalle->cofinanciadores->cofinanciador_documento->monto_bs
                             ]);
@@ -526,7 +526,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                             // dump($tot);
                             $nombre_cofinanciadores_total['i' . $comprobantes_detalle->cofinanciadores->id . 'd'] = $nombre_cofinanciadores_total['i' . $comprobantes_detalle->cofinanciadores->id . 'd'] + $comprobantes_detalle->cofinanciadores->cofinanciador_documento->monto_bs;
                         }
-                    } 
+                    }
                 }
                 // dump($tot);
                 $total = $total + $tot;
@@ -562,13 +562,13 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                 //lo que vamos a hacer es: preguntas es uno debes buscar 2localizacionesFull,3,4,5 es 2 debes buscar 1,3,4,5 y asi sucesivamente dentro de nuestro full array buscar todas las conincidencias y assignar el nombre que corresponde segun el array
                 if($localizacion->locationtype_id == $tipo_localizacion->id){//preguntar si estamos en tipo de localizacion buscado
                     $primerArreglo = ['nombre' . $tipo_localizacion->id => $localizacion->nombre];
-                    
+
                 }
-                if(empty($primerArreglo)){//si esta vacio entonces aun no encontramos la igualdad de localizacion por lo que tenemos el nivel superior pero no el inferior, en todo caso asignaremos valor nulo                    
+                if(empty($primerArreglo)){//si esta vacio entonces aun no encontramos la igualdad de localizacion por lo que tenemos el nivel superior pero no el inferior, en todo caso asignaremos valor nulo
                     $array_aux = ['nombre' . $tipo_localizacion->id => "-"];
                     $arregloTodosTiposLocalizaciones = array_merge($arregloTodosTiposLocalizaciones, $array_aux);
-                }else{//si no esta vacio entonces quiere decir que ya tenemos un vector con el valor inicial                    
-                    if($cont == 0){//es la primera vez que hay valores en el vector                        
+                }else{//si no esta vacio entonces quiere decir que ya tenemos un vector con el valor inicial
+                    if($cont == 0){//es la primera vez que hay valores en el vector
                         $arregloTodosTiposLocalizaciones = array_merge($arregloTodosTiposLocalizaciones, $primerArreglo);
                     }else{//no es la primera vez es la x veces
                         //entonces lo que debemos hacer es buscar el id de padre con respecto a el $primerArreglo y asignarle el valor obtenido a $primerArreglo tal como fue la primera vez
@@ -583,8 +583,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                             $array_aux = ['nombre' . $tipo_localizacion->id => $localizacion_x->nombre];
                             $arregloTodosTiposLocalizaciones = array_merge($arregloTodosTiposLocalizaciones, $array_aux);
                             $cont_aux++;
-                            
-                        } 
+
+                        }
                     }
                     $cont++;
                 }
@@ -613,8 +613,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         return $respuesta;
     }
         /* inicio localizacion */
-    public function ficha_proyecto_localizacion(Request $request, $id){ 
-        $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();        
+    public function ficha_proyecto_localizacion(Request $request, $id){
+        $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();
         $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
         $nombre_institucion = $intervencion->institucion->nombre;
         $siglas = "SISPRO";
@@ -626,7 +626,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $duracion_proyecto_fin = $intervencion->fecha_aprobacion;
         $clasificador_sectorial_codigo = $intervencion->sectorial->sigla;
         $clasificador_sectorial_descripcion = $intervencion->sectorial->denominacion;
-        $descripcion_proyecto = $intervencion->descripcion;        
+        $descripcion_proyecto = $intervencion->descripcion;
         $proposito = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 2)->first();
         $componentes = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 3)->get();
         $localizacion_geografica = $this->BuscaUbicacionesRegistradas($intervencion->id);
@@ -651,7 +651,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'clasificador_sectorial_descripcion' => $clasificador_sectorial_descripcion,
             'descripcion_proyecto' => $descripcion_proyecto,
             'proposito' => $proposito,
-            'componentes' => $componentes,            
+            'componentes' => $componentes,
             'localizacion_geografica' => $localizacion_geografica,
             'estructura_financiamiento' => $estructura_financiamiento,
             'documentacion_respaldo' => $documentacion_respaldo,
@@ -661,8 +661,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
     }
         /* fin localizacion */
         /* inicio estructura financiamiento */
-    public function ficha_proyecto_estructura_financiamiento(Request $request, $id){         
-        $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();        
+    public function ficha_proyecto_estructura_financiamiento(Request $request, $id){
+        $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();
         $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
         $nombre_institucion = $intervencion->institucion->nombre;
         $siglas = "SISPRO";
@@ -674,7 +674,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $duracion_proyecto_fin = $intervencion->fecha_aprobacion;
         $clasificador_sectorial_codigo = $intervencion->sectorial->sigla;
         $clasificador_sectorial_descripcion = $intervencion->sectorial->denominacion;
-        $descripcion_proyecto = $intervencion->descripcion;        
+        $descripcion_proyecto = $intervencion->descripcion;
         $proposito = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 2)->first();
         $componentes = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 3)->get();
         $localizacion_geografica = $this->BuscaUbicacionesRegistradas($intervencion->id);
@@ -700,7 +700,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'clasificador_sectorial_descripcion' => $clasificador_sectorial_descripcion,
             'descripcion_proyecto' => $descripcion_proyecto,
             'proposito' => $proposito,
-            'componentes' => $componentes,            
+            'componentes' => $componentes,
             'localizacion_geografica' => $localizacion_geografica,
             'estructura_financiamiento' => $estructura_financiamiento,
             'documentacion_respaldo' => $documentacion_respaldo,
@@ -710,8 +710,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
     }
         /* fin estructura financiamiento */
         /* inicio documentos */
-    public function ficha_proyecto_documentos(Request $request, $id){         
-        $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();        
+    public function ficha_proyecto_documentos(Request $request, $id){
+        $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();
         $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
         $nombre_institucion = $intervencion->institucion->nombre;
         $siglas = "SISPRO";
@@ -723,7 +723,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $duracion_proyecto_fin = $intervencion->fecha_aprobacion;
         $clasificador_sectorial_codigo = $intervencion->sectorial->sigla;
         $clasificador_sectorial_descripcion = $intervencion->sectorial->denominacion;
-        $descripcion_proyecto = $intervencion->descripcion;        
+        $descripcion_proyecto = $intervencion->descripcion;
         $proposito = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 2)->first();
         $componentes = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 3)->get();
         $localizacion_geografica = $this->BuscaUbicacionesRegistradas($intervencion->id);
@@ -748,7 +748,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'clasificador_sectorial_descripcion' => $clasificador_sectorial_descripcion,
             'descripcion_proyecto' => $descripcion_proyecto,
             'proposito' => $proposito,
-            'componentes' => $componentes,            
+            'componentes' => $componentes,
             'localizacion_geografica' => $localizacion_geografica,
             'estructura_financiamiento' => $estructura_financiamiento,
             'documentacion_respaldo' => $documentacion_respaldo,
@@ -758,15 +758,15 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
     }
         /* fin documentos */
     /* ficha de proyecto fin */
-    public function seguimiento_comprobante(Request $request, $id, $gestion){    
+    public function seguimiento_comprobante(Request $request, $id, $gestion){
         if(!isset($gestion)){
             return "Favor de seleccionar Gestión";
-        }    
+        }
         if(!isset($id)){
             return "Favor de seleccionar Proyecto";
-        }    
+        }
         $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();
-        
+
         $aux = new ComprobanteEncabezado;
         $comprobantes_encabezados = ComprobanteEncabezado::where('intervenciones_id', $intervencion->id)->where('gestion', $gestion)->with('tipos')->get();
         $cont = 0;
@@ -774,7 +774,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $total_sus = 0;
         foreach($comprobantes_encabezados as $comprobantes_encabezado){
             $cont++;
-            $comprobantes_encabezado['monto_bs'] = $aux->montoBS($comprobantes_encabezado->id);            
+            $comprobantes_encabezado['monto_bs'] = $aux->montoBS($comprobantes_encabezado->id);
             $comprobantes_encabezado['monto_Sus'] = $aux->montoSUS($comprobantes_encabezado->id);
             $total_bs = $total_bs + $comprobantes_encabezado['monto_bs'];
             $total_sus = $total_sus + $comprobantes_encabezado['monto_Sus'];
@@ -804,15 +804,15 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $pdf->setPaper('letter', 'portrait');
         return $pdf->stream('reporte_SEGUIMIENTO_COMPROBANTE.pdf');
     }
-    
+
     public function seguimiento_comprobante_individual(Request $request, $id){
-        $comprobantes_encabezados = ComprobanteEncabezado::where('id', $id)->with('tipos')->first();        
+        $comprobantes_encabezados = ComprobanteEncabezado::where('id', $id)->with('tipos')->first();
         $comprobante_detalles = ComprobanteDetalle::where('comprobante_encabezado_id', $id)->with('componentes', 'partidas', 'cofinanciadores')->get();
-        $intervencion = Intervencion::where('id', $comprobantes_encabezados->intervenciones_id)->first();      
-        $aux = new ComprobanteEncabezado;  
+        $intervencion = Intervencion::where('id', $comprobantes_encabezados->intervenciones_id)->first();
+        $aux = new ComprobanteEncabezado;
         $total_bs = $aux->montoBS($comprobantes_encabezados->id);   ;
         $total_sus = $aux->montoSUS($comprobantes_encabezados->id);   ;
-        
+
         $ubicaciones = $this->BuscaUbicacionesRegistradas($intervencion->id);
         $departamento = [];
         $municipio = [];
@@ -826,7 +826,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                 }
                 if($existe == 0){
                     $departamento = array_merge($departamento, ['id' . $ubicacion['id'] . 'd' => $ubicacion['nombre1']]);
-                }                
+                }
             }
             if(isset($ubicacion['nombre3'])){
                 $existe = 0;
@@ -837,8 +837,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
                 }
                 if($existe == 0){
                     $municipio = array_merge($municipio, ['id' . $ubicacion['id'] . 'd' => $ubicacion['nombre3']]);
-                }                
-            }            
+                }
+            }
         }
         // dump($municipio);
         // dd($intervencion->nombre);
@@ -862,12 +862,12 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         ]);
         $pdf->setPaper('letter', 'portrait');
         return $pdf->stream('reporte_SEGUIMIENTO_COMPROBANTE.pdf');
-    }  
+    }
 
     public function ficha_proyecto_estructura_financiamiento2(Request $request, $id){
-        $comprobantes_encabezados = ComprobanteEncabezado::where('id', $id)->with('tipos')->first(); 
+        $comprobantes_encabezados = ComprobanteEncabezado::where('id', $id)->with('tipos')->first();
         //solo reemplazamos por una busqeuda auxiliar para cumplir con los mismos parametros
-        $intervencion = Intervencion::where('id', $comprobantes_encabezados->intervenciones_id)->with('institucion','sectorial')->first();        
+        $intervencion = Intervencion::where('id', $comprobantes_encabezados->intervenciones_id)->with('institucion','sectorial')->first();
         $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
         $nombre_institucion = $intervencion->institucion->nombre;
         $siglas = "SISPRO";
@@ -879,7 +879,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $duracion_proyecto_fin = $intervencion->fecha_aprobacion;
         $clasificador_sectorial_codigo = $intervencion->sectorial->sigla;
         $clasificador_sectorial_descripcion = $intervencion->sectorial->denominacion;
-        $descripcion_proyecto = $intervencion->descripcion;        
+        $descripcion_proyecto = $intervencion->descripcion;
         $proposito = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 2)->first();
         $componentes = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 3)->get();
         $localizacion_geografica = $this->BuscaUbicacionesRegistradas($intervencion->id);
@@ -905,7 +905,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'clasificador_sectorial_descripcion' => $clasificador_sectorial_descripcion,
             'descripcion_proyecto' => $descripcion_proyecto,
             'proposito' => $proposito,
-            'componentes' => $componentes,            
+            'componentes' => $componentes,
             'localizacion_geografica' => $localizacion_geografica,
             'estructura_financiamiento' => $estructura_financiamiento,
             'documentacion_respaldo' => $documentacion_respaldo,
@@ -916,8 +916,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 
 //modificaciones Max +++++++++++++++++++++++++++++
 
-public function mml_proyecto(Request $request, $id){        
-    $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();        
+public function mml_proyecto(Request $request, $id){
+    $intervencion = Intervencion::where('id', $id)->with('institucion','sectorial')->first();
     //datos del reporte
     $titulo_grande = "MATRIZ DEL MARCO LOGICO";
     $nombre_institucion = $intervencion->institucion->nombre;
@@ -930,7 +930,7 @@ public function mml_proyecto(Request $request, $id){
     $duracion_proyecto_fin = $intervencion->fecha_aprobacion;
     $clasificador_sectorial_codigo = $intervencion->sectorial->sigla;
     $clasificador_sectorial_descripcion = $intervencion->sectorial->denominacion;
-    $descripcion_proyecto = $intervencion->descripcion;        
+    $descripcion_proyecto = $intervencion->descripcion;
     $proposito = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 2)->first();
     $componentes = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 3)->get();
     $localizacion_geografica = $this->BuscaUbicacionesRegistradas($intervencion->id);
@@ -959,7 +959,7 @@ public function mml_proyecto(Request $request, $id){
         'clasificador_sectorial_descripcion' => $clasificador_sectorial_descripcion,
         'descripcion_proyecto' => $descripcion_proyecto,
         'proposito' => $proposito,
-        'componentes' => $componentes,            
+        'componentes' => $componentes,
         'localizacion_geografica' => $localizacion_geografica,
         'estructura_financiamiento' => $estructura_financiamiento,
         'documentacion_respaldo' => $documentacion_respaldo,

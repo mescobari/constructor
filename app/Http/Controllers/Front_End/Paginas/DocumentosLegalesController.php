@@ -23,7 +23,7 @@ class DocumentosLegalesController extends Controller
     }
     public function index()
     {
-
+        return TipoDocumento::all();
     }
 
     public function store(Request $request)
