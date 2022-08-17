@@ -64,10 +64,11 @@
                     </template>
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
-<!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
-                                <button type="button" class="btn btn-outline-success" @click="downloadDocument(props.row)"><span><i
-                                    class="far fa-file-pdf"></i> </span></button>
-<!--                            </a>-->
+                            <!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
+                            <button type="button" class="btn btn-outline-success"
+                                    @click="downloadDocument(props.row)"><span><i
+                                class="far fa-file-pdf"></i> </span></button>
+                            <!--                            </a>-->
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
                                     data-target="#contrato" @click="editarModal(props.row);"><span><i
                                 class="fa fa-user-edit"></i></span></button>
@@ -253,9 +254,10 @@
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
                         <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
-                                v-if="guardar_bottom === true"><slot >
-                            Guardar
-                        </slot>
+                                v-if="guardar_bottom === true">
+                            <slot>
+                                Guardar
+                            </slot>
                         </button>
                         <button type="submit" @click="modificar();" class="btn btn-success" id="modificarModal"
                                 v-if="modificar_bottom === true">Modificar
@@ -507,11 +509,26 @@ export default {
     },
     methods: {
         //modify the value of the input in real time from v-select document_types_id and padre
-        cambioTipoDocumento() {
-            if (this.jsonData.document_types_id.id === 1 || this.jsonData.document_types_id.id === null) {
+        async cambioTipoDocumento() {
+            let padresObjeto = await this.padreGetAll()
+            let subPadres = []
+
+            if (this.jsonData.document_types_id.id === 1) {
                 this.disablePadre = true;
+                this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
                 console.log('BEHAVIOR', this.disablePadre);
-            } else if (this.jsonData.document_types_id.id !== 1) {
+
+            } else if (this.jsonData.document_types_id.id === 2) {
+                for (let i=0; i < padresObjeto.length; i++) {
+                    if (padresObjeto[i].padre === 0) {
+                        subPadres.push(padresObjeto[i]);
+                    }
+                }
+                this.combo_padres = subPadres;
+                this.disablePadre = false;
+                console.log('BEHAVIOR', this.disablePadre);
+            } else {
+                this.combo_padres = padresObjeto;
                 this.disablePadre = false;
                 console.log('BEHAVIOR', this.disablePadre);
             }
@@ -754,16 +771,39 @@ export default {
         async padreGetAll() {
             let response = await axios.get('documents');
             let padresArray = [];
-            let padresSubsArray = [];
+            let position = 0
             //fill array of padres with contrato principal (1) and sub contrato (2)
             for (let i = 0; i < response.data.length; i++) {
                 if (response.data[i].document_types_id === 1 ||
                     response.data[i].document_types_id === 2) {
-                    padresArray[response.data[i].id] = response.data[i];
-                } else {
+                    padresArray[position] = response.data[i];
+                    position++;
                 }
             }
-            this.combo_padres = padresArray
+            return padresArray;
+            // await this.filterPadre(padresArray);
+            // this.combo_padres = padresArray
+        },
+        async filterPadre(data = {}) {
+            console.log("DATA", data);
+            let padreSubArray = [];
+            // let padreVoid = [{id: 0, nombre: 'Ninguno'}];
+            // if (this.jsonData.document_types_id === 1) {
+            //     this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
+            //
+            // } else
+                if (this.jsonData.document_types_id === 'Sub-Contrato') {
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].padre === 0) {
+                        padreSubArray.push(data[i]);
+                    }
+                }
+                    console.log("DATA", padreSubArray);
+                this.combo_padres = padreSubArray;
+            } else {
+                // this.disablePadre = false;
+                this.combo_padres = data;
+            }
         },
         async deleteItem(doc) {
             const respuesta = await axios.delete('documents/' + doc);
