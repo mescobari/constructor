@@ -512,25 +512,23 @@ export default {
         async cambioTipoDocumento() {
             let padresObjeto = await this.padreGetAll()
             let subPadres = []
-
-            if (this.jsonData.document_types_id.id === 1) {
-                this.disablePadre = true;
-                this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
-                console.log('BEHAVIOR', this.disablePadre);
-
-            } else if (this.jsonData.document_types_id.id === 2) {
-                for (let i=0; i < padresObjeto.length; i++) {
-                    if (padresObjeto[i].padre === 0) {
-                        subPadres.push(padresObjeto[i]);
+            switch(this.jsonData.document_types_id.id) {
+                case 1:
+                    this.disablePadre = true;
+                    this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
+                    break;
+                case 2:
+                    for (let i=0; i < padresObjeto.length; i++) {
+                        if (padresObjeto[i].padre === 0) {
+                            subPadres.push(padresObjeto[i]);
+                        }
+                        this.combo_padres = subPadres;
+                        this.disablePadre = false;
                     }
-                }
-                this.combo_padres = subPadres;
-                this.disablePadre = false;
-                console.log('BEHAVIOR', this.disablePadre);
-            } else {
-                this.combo_padres = padresObjeto;
-                this.disablePadre = false;
-                console.log('BEHAVIOR', this.disablePadre);
+                    break;
+                default:
+                    this.combo_padres = padresObjeto;
+                    this.disablePadre = false;
             }
         },
         preguntarModalAlertaConfirmacionEliminar(document) {
