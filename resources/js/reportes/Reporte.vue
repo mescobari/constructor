@@ -16,7 +16,7 @@
  
 
                     <div class="row">
-                        <div class="col-md-10">          
+                        <div class="col-md-12">          
                             <div class="form-group">
                                 <label for="codsisin">Seleccione Contrato:</label>
                                 <v-select label="nombre" :options="proyectos" v-model="proyecto" placeholder="Selecione un contrato">
@@ -24,19 +24,14 @@
                                 </v-select>
                             </div>
                         </div>
-                        <div class="col-md-2">          
-                            <div class="form-group">
-                                <label for="" class="text-white"> Boton Buscar</label>
-                                <button type="button" class="form-control btn btn-primary btn-md"  @click="buscar();">Buscar</button>
-                            </div>
-                        </div>
+                       
                     </div>
                 </div>
 
 
 <hr>
 
-<div class="row">
+                <div class="row">
                     <div class="col-md-12">
                         <center>
                              <h3>  {{ proyecto.nombre }}</h3>
@@ -47,19 +42,25 @@
                  <hr>
 
 
+            <div class="card card-primary shadow">
+              <div class="card-header">
+                <h3 class="card-title">Contratos y Movimientos</h3>
 
-
-
-
-
-
-<div class="row">
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                  </button>
+                </div>
+                <!-- /.card-tools -->
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                 <div class="row">
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-info">
                         <div class="inner">
                             <br><br>
-                            <h4>LIsa de Documentos</h4>
-                            <br>
+                            <h4>Lista de Documentos</h4>
+                            
                         </div>
                         <div class="icon">
                             <i class="far fa-flag"></i>
@@ -89,16 +90,29 @@
                         </div>
                     </div>
                 </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
 
-  <!-- / aqui termina Mod MAx -->
 <hr>
+
+        <div class="card card-success shadow">
+              <div class="card-header">
+                <h3 class="card-title">Seguimiento Fisico - Planillas</h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
                 <div class="row">
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-info">
                         <div class="inner">
                             <br><br>
                             <h4>Planilla Vigente</h4>
-                            <br>
+                           
                         </div>
                         <div class="icon">
                             <i class="far fa-envelope"></i>
@@ -122,30 +136,36 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-warning">
                         <div class="inner">
-                            <br><br>
+                            <br>
                             <!-- <h3>44</h3> -->
-                            <h4>Inidcadores Ejec. Fisica</h4>
+                            <h4>Indicadores Ejecucion Fisica</h4>
                         </div>
                         <div class="icon">
                             <i class="far fa-copy"></i>
                         </div>
-                        <a :href="'ficha_proyecto_estructura_financiamiento/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
+                        <a :href="'ver_gra_fisico/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-danger">
                         <div class="inner">
-                            <br><br>
+                            <br>
                             <!-- <h3>65</h3> -->
                             <h4>Repositorio de Documentos</h4>
                         </div>
                         <div class="icon">
                             <i class="far fa-star"></i>
                         </div>
-                        <a :href="'ficha_proyecto_documentos/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
+                        <a :href="'lista_respaldos/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                 </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+
+
+                
 
 
 

@@ -16,7 +16,7 @@
 
             <!-- contrato principal -->
 
-            <table class="styled-table" border="1">
+            <table class="styled-table1" border="1">
             <thead>
                  <tr  align="center">
                     <td class="td-texto-titulo" >
@@ -56,7 +56,7 @@
          <!-- docuento de la planilla que puede coincider con el contrato principal -->
          @if($padre!=0)
          <div class="contenido">
-            <table class="styled-table" >
+            <table class="styled-table1" border="1">
             <thead>
                     <tr  align="center">
                         <td class="td-texto-titulo" >
@@ -99,7 +99,7 @@
 
         <div class="contenido">
             @if ($nombre_reporte != "PLANILLA DE AVANCE")
-                <table class="styled-table" >
+                <table class="styled-table1" border="1">
                 <thead>
                 <tr  align="center"> 
                             <td colspan="4" class="td-texto-titulo" >
@@ -141,7 +141,7 @@
                         </tbody>
                     </table>
             @else
-                <table class="styled-table" >
+                <table class="styled-table1" border="1">
                 <thead>
                         <tr  align="center"> 
                             <td colspan="3" class="td-texto-titulo" >
@@ -219,7 +219,7 @@
                     $salida=[];
                     $filas = count($planilla);
                     $inicial=20;
-                    $filas_pagina=35;
+                    $filas_pagina=45;
                     $tablas=  intdiv(($filas-$inicial), $filas_pagina)+2;
                     $t[0]=0;
                     $a_item = array("item_codigo", "item_descripcion", "simbolo","cantidad", "precio_unitario", "precio_total","tipo");
@@ -263,11 +263,11 @@
                                     <tr>
                                 @endif
                                     <td>{{$salida['item_codigo']}}({{$salida['tipo']}})</td>  
-                                    <td>{{$salida['item_descripcion']}}</td>
+                                    <td width="50%">{{$salida['item_descripcion']}}</td>
                                     <td align="center">{{$salida['simbolo']}}</td>   
                                     <td align="right">{{$salida['cantidad']}}</td>  
                                     <td align="right">{{$salida['precio_unitario']}}</td> 
-                                    <td align="right">{{$salida['precio_total']}}</td>
+                                    <td align="right" width="15%">{{$salida['precio_total']}}</td>
 
                                     
                                 </tr>
@@ -319,12 +319,46 @@
             
         }
 
+/* xxxxxxxxxxxxEncabezadoxxxxxxxxxxxxxxxxx */
+
+        .styled-table1 { 
+            width: 100%;
+            border-collapse: collapse; 
+            margin: 10px 0; 
+            font-size: 1em; 
+            font-family: sans-serif; 
+            min-width: 450px; 
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
+        }
+
+        .styled-table1 thead tr { 
+            background-color: #980081; 
+            color: #ffffff; 
+            text-align: middle; 
+        }
+
+        .styled-table1 th, .styled-table1 td { 
+            padding: 2px 8px; 
+        }
+
+        .styled-table1 tbody tr { 
+            border-bottom: 1px solid #dddddd; 
+        } 
+        .styled-table1 tbody tr:nth-of-type(even) { 
+            background-color: #f3f3f3; 
+        } 
+        .styled-table1 tbody tr:last-of-type { 
+            border-bottom: 1px solid #009879; 
+        }
+
+
+/* xxxxxxxxxxxxdetallexxxxxxxxxxxxxxxxx */
 
         .styled-table { 
             width: 100%;
             border-collapse: collapse; 
             margin: 10px 0; 
-            font-size: 0.7em; 
+            font-size: 0.6em; 
             font-family: sans-serif; 
             min-width: 450px; 
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 

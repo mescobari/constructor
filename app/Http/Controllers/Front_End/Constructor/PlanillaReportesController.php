@@ -367,61 +367,741 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
       //return  json_encode($salida);
     }
 
-    public function planilla_individual2(Request $request, $id){
-        $intervencion = Planilla::where('id', $id)->first();
+    public function planilla_vigente(Request $request, $id){
+        //$planilla = Planilla::where('id', $id)->first();
+        $documento = DB::table('planilla_documents')
+        ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+        ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+        ->select('documents.*', 'document_types.nombre' )
+        ->where('planilla_documents.planilla_id', $id)
+        ->first();
 
-        //datos del reporte
-        $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
-        $nombre_institucion = $intervencion->institucion->nombre;
-        $siglas = "EL CONSTRUCTOR";
-        $codigo_proyecto = $intervencion->codsisin;
-        $fecha_hora_emision = date('d-m-Y h:i:s a', time());
-        $nombre_reporte= "PLANILLA";
+        $padre=$documento->padre;
+        if ($padre != 0) {
+            $documento_padre = DB::table('planilla_documents')
+            ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+            ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+            ->select('documents.*', 'document_types.nombre')
+            ->where('documents.id', $padre)
+            ->first();
 
-        $nombre_proyecto = $intervencion->nombre;
-        $entidad_ejecutora = $intervencion->institucion->codigo . ' - ' . $nombre_institucion;
-        $duracion_proyecto_inicio = $intervencion->fecha_inicial_programada;
-        $duracion_proyecto_fin = $intervencion->fecha_aprobacion;
-        $clasificador_sectorial_codigo = $intervencion->sectorial->sigla;
-        $clasificador_sectorial_descripcion = $intervencion->sectorial->denominacion;
-        $descripcion_proyecto = $intervencion->descripcion;
-        $proposito = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 2)->first();
-        $componentes = Objetivo::select('desc_corta', 'descripcion')->where('intervenciones_id', $intervencion->id)->where('objetivetype_id', 3)->get();
-        $localizacion_geografica = $this->BuscaUbicacionesRegistradas($intervencion->id);
-        $matriz = [];
-        if(isset($intervencion->path_proyecto) && $intervencion->path_proyecto != ''){
-            array_push($matriz, ['descripcion'=>$intervencion->nombre, 'link'=>$request->getSchemeAndHttpHost() . '/' . $intervencion->path_proyecto]);
+        } else  {
+            $documento_padre = $documento;
         }
-        $estructura_financiamiento = $this->BuscarEstructurasFinanciamiento($intervencion->id);
-        // dd($estructura_financiamiento);
-        $documentacion_respaldo = $this->DocumentosRespaldo($intervencion->id, $request, $matriz);
-        // dd($documentacion_respaldo->toArray());
-        //generando pdf
-        // dd($documentacion_respaldo);
-        $pdf = PDF::loadView('front-end.reportes.ficha_proyecto.cuerpo', [
+
+        $planilla = DB::table('planillas')
+        ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->leftjoin('unidades', 'planilla_items.unidad_id', '=', 'unidades.id')
+        ->select('planillas.*', 'planilla_movimientos.*', 'planilla_items.*','unidades.simbolo' )
+        ->where('planillas.id', $id)
+        ->get();
+
+        $suma_grupos = DB::table('planilla_movimientos')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->select( 'planilla_items.padre',DB::raw('sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as precio_total') )
+        ->where('planilla_movimientos.planilla_id', $id)
+        ->groupBy('planilla_items.padre')
+        ->get();
+
+
+
+        $array1 = json_decode($planilla, true);
+        $array2 = json_decode($suma_grupos, true);
+
+
+        $keys = array_keys($array1);
+        $salida=[];
+
+
+
+
+//procesamos la planlla poniendo los campos extras, cambiando formatos y calculando total item
+
+        for($i = 0; $i < count($array1); $i++) {
+
+            foreach($array1[$keys[$i]] as $key => $value) {
+                $salida[$i][$key]=  $value ;
+                if ($key =="tipo_planilla_id") {
+                    if ($value==1) {
+                        $newvalue='Planilla Inicial';
+                      } elseif ($value==2) {
+                        $newvalue='Planilla Modificatoria';
+                      } else {
+                        $newvalue='Planilla de Avance';;
+                      }
+
+                    $salida[$i][$key]= $newvalue;
+                 }
+
+                if ($key =="fecha_planilla") {
+
+                    $salida[$i][$key]= date("d-m-Y", strtotime($value));
+                 }
+
+                if ($key =="total_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+                 if ($key =="anticipo_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+                 if ($key =="retencion_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+
+
+            }
+            // aqui los campos calculados y actualizacion
+            $salida[$i]['precio_total']=number_format($salida[$i]['cantidad']*$salida[$i]['precio_unitario'],2,",",".");
+            $salida[$i]['cantidad']= number_format( $salida[$i]['cantidad'],2,",",".");
+            $salida[$i]['precio_unitario']= number_format( $salida[$i]['precio_unitario'],2,",",".");
+
+        }
+
+// calculamos los totales de la planilla
+
+        $grupos = array();
+        for($i = 0; $i < count($array1); $i++) {
+
+            foreach($array1[$keys[$i]] as $key => $value) {
+
+                if ($key =="tipo") {
+                    if ($value =="G") {
+                        $grupos[] =  $array1[$i]['id'];
+                        $id =  $array1[$i]['id'];
+
+                        //$buscar= array_search($id,$array2);
+                        $found_key = array_search($id, array_column($array2, 'padre'));
+                        if ($found_key != false) {
+                            $salida[$i]['precio_total']=
+                            number_format($array2[$found_key]['precio_total'],2,",",".");
+
+                        }
+
+
+                    }
+                }
+            }
+         }
+
+//datos para la cabecera del reportedel reporte
+$titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
+$nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
+$siglas = "EL CONSTRUCTOR";
+$documento_codigo = $documento->codigo;// codigo del contrato
+$fecha_hora_emision = date('d-m-Y h:i:s a', time());
+//$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
+$nombre_reporte='ÇALCULO DEL VALOR VIGENTE';
+$documento_nombre= $documento->objeto;
+$documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
+$documento_monto= number_format($documento->monto_bs,2,",",".");
+
+$fecha_planilla= $salida[0]['fecha_planilla'];
+$nuri_planilla= $salida[0]['nuri_planilla'];
+$referencia= $salida[0]['referencia'];
+$total_planilla=  $salida[0]['total_planilla'];
+$anticipo_planilla=  $salida[0]['anticipo_planilla'];
+$retencion_planilla=  $salida[0]['retencion_planilla'];
+
+$principal_codigo=$documento_padre->codigo;
+$principal_nombre=$documento_padre->objeto;
+$principal_firma=date("d-m-Y", strtotime($documento_padre->fecha_firma));
+$principal_monto= number_format($documento_padre->monto_bs,2,",",".");
+
+// otros datos para el cuerpo
+
+
+ /* cargamos la vista   */
+
+        $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
             'link_img'=>'img/sistema-front-end/logo-pdf.png',
             'titulo_grande' => $titulo_grande,
             'nombre_institucion' => $nombre_institucion,
             'siglas' => $siglas,
-            'codigo_proyecto' => $codigo_proyecto,
+            'documento_codigo' => $documento_codigo,
             'fecha_hora_emision' => $fecha_hora_emision,
             'nombre_reporte' => $nombre_reporte,
-            'nombre_proyecto' => $nombre_proyecto,
-            'entidad_ejecutora' => $entidad_ejecutora,
-            'duracion_proyecto_inicio' => $duracion_proyecto_inicio,
-            'duracion_proyecto_fin' => $duracion_proyecto_fin,
-            'clasificador_sectorial_codigo' => $clasificador_sectorial_codigo,
-            'clasificador_sectorial_descripcion' => $clasificador_sectorial_descripcion,
-            'descripcion_proyecto' => $descripcion_proyecto,
-            'proposito' => $proposito,
-            'componentes' => $componentes,
-            'localizacion_geografica' => $localizacion_geografica,
-            'estructura_financiamiento' => $estructura_financiamiento,
-            'documentacion_respaldo' => $documentacion_respaldo,
+            'documento_nombre' => $documento_nombre,
+            'documento_firma' => $documento_firma,
+            'documento_monto' => $documento_monto,
+            'fecha_planilla' => $fecha_planilla,
+            'nuri_planilla' => $nuri_planilla,
+            'referencia' => $referencia,
+            'total_planilla' => $total_planilla,
+            'anticipo_planilla' => $anticipo_planilla,
+            'retencion_planilla' => $retencion_planilla,
+            'principal_codigo' => $principal_codigo,
+            'principal_nombre' => $principal_nombre,
+            'principal_firma' =>  $principal_firma,
+            'principal_monto' =>  $principal_monto,
+            'padre' =>  $padre,
+            'planilla' =>  $salida,
+
+
+
         ]);
         $pdf->setPaper('letter', 'portrait');
         return $pdf->stream('reporte_ficha_proyecto.pdf');
+
+
+      //return  json_encode($salida);
     }
+
+
+    public function planilla_ejecucion(Request $request, $id){
+        //$planilla = Planilla::where('id', $id)->first();
+        $documento = DB::table('planilla_documents')
+        ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+        ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+        ->select('documents.*', 'document_types.nombre' )
+        ->where('planilla_documents.planilla_id', $id)
+        ->first();
+
+        $padre=$documento->padre;
+        if ($padre != 0) {
+            $documento_padre = DB::table('planilla_documents')
+            ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+            ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+            ->select('documents.*', 'document_types.nombre')
+            ->where('documents.id', $padre)
+            ->first();
+
+        } else  {
+            $documento_padre = $documento;
+        }
+
+        $planilla = DB::table('planillas')
+        ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->leftjoin('unidades', 'planilla_items.unidad_id', '=', 'unidades.id')
+        ->select('planillas.*', 'planilla_movimientos.*', 'planilla_items.*','unidades.simbolo' )
+        ->where('planillas.id', $id)
+        ->get();
+
+        $suma_grupos = DB::table('planilla_movimientos')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->select( 'planilla_items.padre',DB::raw('sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as precio_total') )
+        ->where('planilla_movimientos.planilla_id', $id)
+        ->groupBy('planilla_items.padre')
+        ->get();
+
+
+
+        $array1 = json_decode($planilla, true);
+        $array2 = json_decode($suma_grupos, true);
+
+
+        $keys = array_keys($array1);
+        $salida=[];
+
+
+
+
+//procesamos la planlla poniendo los campos extras, cambiando formatos y calculando total item
+
+        for($i = 0; $i < count($array1); $i++) {
+
+            foreach($array1[$keys[$i]] as $key => $value) {
+                $salida[$i][$key]=  $value ;
+                if ($key =="tipo_planilla_id") {
+                    if ($value==1) {
+                        $newvalue='Planilla Inicial';
+                      } elseif ($value==2) {
+                        $newvalue='Planilla Modificatoria';
+                      } else {
+                        $newvalue='Planilla de Avance';;
+                      }
+
+                    $salida[$i][$key]= $newvalue;
+                 }
+
+                if ($key =="fecha_planilla") {
+
+                    $salida[$i][$key]= date("d-m-Y", strtotime($value));
+                 }
+
+                if ($key =="total_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+                 if ($key =="anticipo_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+                 if ($key =="retencion_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+
+
+            }
+            // aqui los campos calculados y actualizacion
+            $salida[$i]['precio_total']=number_format($salida[$i]['cantidad']*$salida[$i]['precio_unitario'],2,",",".");
+            $salida[$i]['cantidad']= number_format( $salida[$i]['cantidad'],2,",",".");
+            $salida[$i]['precio_unitario']= number_format( $salida[$i]['precio_unitario'],2,",",".");
+
+        }
+
+// calculamos los totales de la planilla
+
+        $grupos = array();
+        for($i = 0; $i < count($array1); $i++) {
+
+            foreach($array1[$keys[$i]] as $key => $value) {
+
+                if ($key =="tipo") {
+                    if ($value =="G") {
+                        $grupos[] =  $array1[$i]['id'];
+                        $id =  $array1[$i]['id'];
+
+                        //$buscar= array_search($id,$array2);
+                        $found_key = array_search($id, array_column($array2, 'padre'));
+                        if ($found_key != false) {
+                            $salida[$i]['precio_total']=
+                            number_format($array2[$found_key]['precio_total'],2,",",".");
+
+                        }
+
+
+                    }
+                }
+            }
+         }
+
+//datos para la cabecera del reportedel reporte
+$titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
+$nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
+$siglas = "EL CONSTRUCTOR";
+$documento_codigo = $documento->codigo;// codigo del contrato
+$fecha_hora_emision = date('d-m-Y h:i:s a', time());
+//$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
+$nombre_reporte='calculo avance acumulado y saldos';
+$documento_nombre= $documento->objeto;
+$documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
+$documento_monto= number_format($documento->monto_bs,2,",",".");
+
+$fecha_planilla= $salida[0]['fecha_planilla'];
+$nuri_planilla= $salida[0]['nuri_planilla'];
+$referencia= $salida[0]['referencia'];
+$total_planilla=  $salida[0]['total_planilla'];
+$anticipo_planilla=  $salida[0]['anticipo_planilla'];
+$retencion_planilla=  $salida[0]['retencion_planilla'];
+
+$principal_codigo=$documento_padre->codigo;
+$principal_nombre=$documento_padre->objeto;
+$principal_firma=date("d-m-Y", strtotime($documento_padre->fecha_firma));
+$principal_monto= number_format($documento_padre->monto_bs,2,",",".");
+
+// otros datos para el cuerpo
+
+
+ /* cargamos la vista   */
+
+        $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
+            'link_img'=>'img/sistema-front-end/logo-pdf.png',
+            'titulo_grande' => $titulo_grande,
+            'nombre_institucion' => $nombre_institucion,
+            'siglas' => $siglas,
+            'documento_codigo' => $documento_codigo,
+            'fecha_hora_emision' => $fecha_hora_emision,
+            'nombre_reporte' => $nombre_reporte,
+            'documento_nombre' => $documento_nombre,
+            'documento_firma' => $documento_firma,
+            'documento_monto' => $documento_monto,
+            'fecha_planilla' => $fecha_planilla,
+            'nuri_planilla' => $nuri_planilla,
+            'referencia' => $referencia,
+            'total_planilla' => $total_planilla,
+            'anticipo_planilla' => $anticipo_planilla,
+            'retencion_planilla' => $retencion_planilla,
+            'principal_codigo' => $principal_codigo,
+            'principal_nombre' => $principal_nombre,
+            'principal_firma' =>  $principal_firma,
+            'principal_monto' =>  $principal_monto,
+            'padre' =>  $padre,
+            'planilla' =>  $salida,
+
+
+
+        ]);
+        $pdf->setPaper('letter', 'portrait');
+        return $pdf->stream('reporte_ficha_proyecto.pdf');
+
+
+      //return  json_encode($salida);
+    }
+
+
+
+    public function graficos_ejecucion(Request $request, $id){
+        //$planilla = Planilla::where('id', $id)->first();
+        $documento = DB::table('planilla_documents')
+        ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+        ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+        ->select('documents.*', 'document_types.nombre' )
+        ->where('planilla_documents.planilla_id', $id)
+        ->first();
+
+        $padre=$documento->padre;
+        if ($padre != 0) {
+            $documento_padre = DB::table('planilla_documents')
+            ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+            ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+            ->select('documents.*', 'document_types.nombre')
+            ->where('documents.id', $padre)
+            ->first();
+
+        } else  {
+            $documento_padre = $documento;
+        }
+
+        $planilla = DB::table('planillas')
+        ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->leftjoin('unidades', 'planilla_items.unidad_id', '=', 'unidades.id')
+        ->select('planillas.*', 'planilla_movimientos.*', 'planilla_items.*','unidades.simbolo' )
+        ->where('planillas.id', $id)
+        ->get();
+
+        $suma_grupos = DB::table('planilla_movimientos')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->select( 'planilla_items.padre',DB::raw('sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as precio_total') )
+        ->where('planilla_movimientos.planilla_id', $id)
+        ->groupBy('planilla_items.padre')
+        ->get();
+
+
+
+        $array1 = json_decode($planilla, true);
+        $array2 = json_decode($suma_grupos, true);
+
+
+        $keys = array_keys($array1);
+        $salida=[];
+
+
+
+
+//procesamos la planlla poniendo los campos extras, cambiando formatos y calculando total item
+
+        for($i = 0; $i < count($array1); $i++) {
+
+            foreach($array1[$keys[$i]] as $key => $value) {
+                $salida[$i][$key]=  $value ;
+                if ($key =="tipo_planilla_id") {
+                    if ($value==1) {
+                        $newvalue='Planilla Inicial';
+                      } elseif ($value==2) {
+                        $newvalue='Planilla Modificatoria';
+                      } else {
+                        $newvalue='Planilla de Avance';;
+                      }
+
+                    $salida[$i][$key]= $newvalue;
+                 }
+
+                if ($key =="fecha_planilla") {
+
+                    $salida[$i][$key]= date("d-m-Y", strtotime($value));
+                 }
+
+                if ($key =="total_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+                 if ($key =="anticipo_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+                 if ($key =="retencion_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+
+
+            }
+            // aqui los campos calculados y actualizacion
+            $salida[$i]['precio_total']=number_format($salida[$i]['cantidad']*$salida[$i]['precio_unitario'],2,",",".");
+            $salida[$i]['cantidad']= number_format( $salida[$i]['cantidad'],2,",",".");
+            $salida[$i]['precio_unitario']= number_format( $salida[$i]['precio_unitario'],2,",",".");
+
+        }
+
+// calculamos los totales de la planilla
+
+        $grupos = array();
+        for($i = 0; $i < count($array1); $i++) {
+
+            foreach($array1[$keys[$i]] as $key => $value) {
+
+                if ($key =="tipo") {
+                    if ($value =="G") {
+                        $grupos[] =  $array1[$i]['id'];
+                        $id =  $array1[$i]['id'];
+
+                        //$buscar= array_search($id,$array2);
+                        $found_key = array_search($id, array_column($array2, 'padre'));
+                        if ($found_key != false) {
+                            $salida[$i]['precio_total']=
+                            number_format($array2[$found_key]['precio_total'],2,",",".");
+
+                        }
+
+
+                    }
+                }
+            }
+         }
+
+//datos para la cabecera del reportedel reporte
+$titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
+$nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
+$siglas = "EL CONSTRUCTOR";
+$documento_codigo = $documento->codigo;// codigo del contrato
+$fecha_hora_emision = date('d-m-Y h:i:s a', time());
+//$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
+$nombre_reporte='ÇALCULO DEL VALOR VIGENTE';
+$documento_nombre= $documento->objeto;
+$documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
+$documento_monto= number_format($documento->monto_bs,2,",",".");
+
+$fecha_planilla= $salida[0]['fecha_planilla'];
+$nuri_planilla= $salida[0]['nuri_planilla'];
+$referencia= $salida[0]['referencia'];
+$total_planilla=  $salida[0]['total_planilla'];
+$anticipo_planilla=  $salida[0]['anticipo_planilla'];
+$retencion_planilla=  $salida[0]['retencion_planilla'];
+
+$principal_codigo=$documento_padre->codigo;
+$principal_nombre=$documento_padre->objeto;
+$principal_firma=date("d-m-Y", strtotime($documento_padre->fecha_firma));
+$principal_monto= number_format($documento_padre->monto_bs,2,",",".");
+
+// otros datos para el cuerpo
+
+
+ /* cargamos la vista   */
+
+        $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
+            'link_img'=>'img/sistema-front-end/logo-pdf.png',
+            'titulo_grande' => $titulo_grande,
+            'nombre_institucion' => $nombre_institucion,
+            'siglas' => $siglas,
+            'documento_codigo' => $documento_codigo,
+            'fecha_hora_emision' => $fecha_hora_emision,
+            'nombre_reporte' => $nombre_reporte,
+            'documento_nombre' => $documento_nombre,
+            'documento_firma' => $documento_firma,
+            'documento_monto' => $documento_monto,
+            'fecha_planilla' => $fecha_planilla,
+            'nuri_planilla' => $nuri_planilla,
+            'referencia' => $referencia,
+            'total_planilla' => $total_planilla,
+            'anticipo_planilla' => $anticipo_planilla,
+            'retencion_planilla' => $retencion_planilla,
+            'principal_codigo' => $principal_codigo,
+            'principal_nombre' => $principal_nombre,
+            'principal_firma' =>  $principal_firma,
+            'principal_monto' =>  $principal_monto,
+            'padre' =>  $padre,
+            'planilla' =>  $salida,
+
+
+
+        ]);
+        $pdf->setPaper('letter', 'portrait');
+        return $pdf->stream('reporte_ficha_proyecto.pdf');
+
+
+      //return  json_encode($salida);
+    }
+
+
+
+
+
+    public function documentos_respaldo(Request $request, $id){
+        //$planilla = Planilla::where('id', $id)->first();
+        $documento = DB::table('planilla_documents')
+        ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+        ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+        ->select('documents.*', 'document_types.nombre' )
+        ->where('planilla_documents.planilla_id', $id)
+        ->first();
+
+        $padre=$documento->padre;
+        if ($padre != 0) {
+            $documento_padre = DB::table('planilla_documents')
+            ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+            ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
+            ->select('documents.*', 'document_types.nombre')
+            ->where('documents.id', $padre)
+            ->first();
+
+        } else  {
+            $documento_padre = $documento;
+        }
+
+        $planilla = DB::table('planillas')
+        ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->leftjoin('unidades', 'planilla_items.unidad_id', '=', 'unidades.id')
+        ->select('planillas.*', 'planilla_movimientos.*', 'planilla_items.*','unidades.simbolo' )
+        ->where('planillas.id', $id)
+        ->get();
+
+        $suma_grupos = DB::table('planilla_movimientos')
+        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->select( 'planilla_items.padre',DB::raw('sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as precio_total') )
+        ->where('planilla_movimientos.planilla_id', $id)
+        ->groupBy('planilla_items.padre')
+        ->get();
+
+
+
+        $array1 = json_decode($planilla, true);
+        $array2 = json_decode($suma_grupos, true);
+
+
+        $keys = array_keys($array1);
+        $salida=[];
+
+
+
+
+//procesamos la planlla poniendo los campos extras, cambiando formatos y calculando total item
+
+        for($i = 0; $i < count($array1); $i++) {
+
+            foreach($array1[$keys[$i]] as $key => $value) {
+                $salida[$i][$key]=  $value ;
+                if ($key =="tipo_planilla_id") {
+                    if ($value==1) {
+                        $newvalue='Planilla Inicial';
+                      } elseif ($value==2) {
+                        $newvalue='Planilla Modificatoria';
+                      } else {
+                        $newvalue='Planilla de Avance';;
+                      }
+
+                    $salida[$i][$key]= $newvalue;
+                 }
+
+                if ($key =="fecha_planilla") {
+
+                    $salida[$i][$key]= date("d-m-Y", strtotime($value));
+                 }
+
+                if ($key =="total_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+                 if ($key =="anticipo_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+                 if ($key =="retencion_planilla") {
+                    $salida[$i][$key]= number_format($value,2,",",".");
+                 }
+
+
+            }
+            // aqui los campos calculados y actualizacion
+            $salida[$i]['precio_total']=number_format($salida[$i]['cantidad']*$salida[$i]['precio_unitario'],2,",",".");
+            $salida[$i]['cantidad']= number_format( $salida[$i]['cantidad'],2,",",".");
+            $salida[$i]['precio_unitario']= number_format( $salida[$i]['precio_unitario'],2,",",".");
+
+        }
+
+// calculamos los totales de la planilla
+
+        $grupos = array();
+        for($i = 0; $i < count($array1); $i++) {
+
+            foreach($array1[$keys[$i]] as $key => $value) {
+
+                if ($key =="tipo") {
+                    if ($value =="G") {
+                        $grupos[] =  $array1[$i]['id'];
+                        $id =  $array1[$i]['id'];
+
+                        //$buscar= array_search($id,$array2);
+                        $found_key = array_search($id, array_column($array2, 'padre'));
+                        if ($found_key != false) {
+                            $salida[$i]['precio_total']=
+                            number_format($array2[$found_key]['precio_total'],2,",",".");
+
+                        }
+
+
+                    }
+                }
+            }
+         }
+
+//datos para la cabecera del reportedel reporte
+$titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
+$nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
+$siglas = "EL CONSTRUCTOR";
+$documento_codigo = $documento->codigo;// codigo del contrato
+$fecha_hora_emision = date('d-m-Y h:i:s a', time());
+//$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
+$nombre_reporte='calculo avance acumulado y saldos';
+$documento_nombre= $documento->objeto;
+$documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
+$documento_monto= number_format($documento->monto_bs,2,",",".");
+
+$fecha_planilla= $salida[0]['fecha_planilla'];
+$nuri_planilla= $salida[0]['nuri_planilla'];
+$referencia= $salida[0]['referencia'];
+$total_planilla=  $salida[0]['total_planilla'];
+$anticipo_planilla=  $salida[0]['anticipo_planilla'];
+$retencion_planilla=  $salida[0]['retencion_planilla'];
+
+$principal_codigo=$documento_padre->codigo;
+$principal_nombre=$documento_padre->objeto;
+$principal_firma=date("d-m-Y", strtotime($documento_padre->fecha_firma));
+$principal_monto= number_format($documento_padre->monto_bs,2,",",".");
+
+// otros datos para el cuerpo
+
+
+ /* cargamos la vista   */
+
+        $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
+            'link_img'=>'img/sistema-front-end/logo-pdf.png',
+            'titulo_grande' => $titulo_grande,
+            'nombre_institucion' => $nombre_institucion,
+            'siglas' => $siglas,
+            'documento_codigo' => $documento_codigo,
+            'fecha_hora_emision' => $fecha_hora_emision,
+            'nombre_reporte' => $nombre_reporte,
+            'documento_nombre' => $documento_nombre,
+            'documento_firma' => $documento_firma,
+            'documento_monto' => $documento_monto,
+            'fecha_planilla' => $fecha_planilla,
+            'nuri_planilla' => $nuri_planilla,
+            'referencia' => $referencia,
+            'total_planilla' => $total_planilla,
+            'anticipo_planilla' => $anticipo_planilla,
+            'retencion_planilla' => $retencion_planilla,
+            'principal_codigo' => $principal_codigo,
+            'principal_nombre' => $principal_nombre,
+            'principal_firma' =>  $principal_firma,
+            'principal_monto' =>  $principal_monto,
+            'padre' =>  $padre,
+            'planilla' =>  $salida,
+
+
+
+        ]);
+        $pdf->setPaper('letter', 'portrait');
+        return $pdf->stream('reporte_ficha_proyecto.pdf');
+
+
+      //return  json_encode($salida);
+    }
+
+
+
+
+
+
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
     public function proyectos_de_institucion_reporte(){
         $respuestaUser = User::where('id', auth()->user()->id)->with('datos')->get();//me va dar el id de institucion
         $respuestaInstitucion = Intervencion::where('institucion_id', $respuestaUser[0]->datos->institucion_id)->get();//me va dar los proyectos de la institucion
