@@ -228,10 +228,41 @@ class PlanillaReportesController extends Controller
 
         $array1 = json_decode($planilla, true);
         $array2 = json_decode($suma_grupos, true);
-
-
         $keys = array_keys($array1);
         $salida=[];
+        $super=[];
+       
+//xxxxxxxxxxxxxCalculamos subtotales de primer nivel o nivel superior rabajamos con array 2
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+// debemos seleccionartodos 
+for($i = 0; $i < count($array2); $i++) {
+    $nivel=array_search(null, array_column($array2, 'precio_total'));
+    if ($nivel!==false){
+        $array2[$nivel]['precio_total']=12345;
+        $super[]= $array2[$nivel]['padre'];
+    }  
+}
+for($i = 1; $i < count($super); $i++) {
+    $super_padre=$super[$i];
+    $padres_grupos = DB::table('planilla_items')
+        ->select('planilla_items.id' )
+         ->where('planilla_items.padre', $super_padre)
+        ->get();
+        $super_suma=0;  
+        $array3 = json_decode($padres_grupos, true);
+        for($j = 0; $j < count($array3); $j++) {
+            $item=$array3[$j]['id'];
+            $indice=array_search($item, array_column($array2, 'padre'));
+            $super_suma=$super_suma + $array2[$indice]['precio_total'];
+          }
+          $nivel=array_search($super_padre, array_column($array2, 'padre'));
+         $array2[$nivel]['precio_total']=$super_suma;
+}
+
+
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+       
 
 
 
@@ -331,7 +362,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 // otros datos para el cuerpo
 
 
- /* cargamos la vista   */
+ /* cargamos la vista  */
 
         $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
             'link_img'=>'img/sistema-front-end/logo-pdf.png',
@@ -363,17 +394,20 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $pdf->setPaper('letter', 'portrait');
         return $pdf->stream('reporte_ficha_proyecto.pdf');
 
-
-      //return  json_encode($salida);
+ 
+     // return  $array3;
     }
 
+
+
     public function planilla_vigente(Request $request, $id){
+        $contrato_id=$id;
+
         //$planilla = Planilla::where('id', $id)->first();
-        $documento = DB::table('planilla_documents')
-        ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
+        $documento = DB::table('documents')
         ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
-        ->select('documents.*', 'document_types.nombre' )
-        ->where('planilla_documents.planilla_id', $id)
+        ->select('documents.*', 'document_types.nombre as tipo_nombre' )
+        ->where('documents.id', $contrato_id)
         ->first();
 
         $padre=$documento->padre;
@@ -388,6 +422,11 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         } else  {
             $documento_padre = $documento;
         }
+
+// aqui tengo $items=planilla_items
+// analizar cuantas planillas de cambio hubo tipo_planilla
+//sacar la original y la ultima vigente
+
 
         $planilla = DB::table('planillas')
         ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
@@ -408,8 +447,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 
         $array1 = json_decode($planilla, true);
         $array2 = json_decode($suma_grupos, true);
-
-
+        
         $keys = array_keys($array1);
         $salida=[];
 
@@ -484,6 +522,10 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             }
          }
 
+
+
+
+
 //datos para la cabecera del reportedel reporte
 $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
 $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
@@ -511,7 +553,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 // otros datos para el cuerpo
 
 
- /* cargamos la vista   */
+ /* cargamos la vista  
 
         $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
             'link_img'=>'img/sistema-front-end/logo-pdf.png',
@@ -542,9 +584,9 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         ]);
         $pdf->setPaper('letter', 'portrait');
         return $pdf->stream('reporte_ficha_proyecto.pdf');
+ */
 
-
-      //return  json_encode($salida);
+      return  $planilla;
     }
 
 
@@ -553,7 +595,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $documento = DB::table('planilla_documents')
         ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
         ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
-        ->select('documents.*', 'document_types.nombre' )
+        ->select('documents.*', 'document_types.nombre as tipo_nombre' )
         ->where('planilla_documents.planilla_id', $id)
         ->first();
 
