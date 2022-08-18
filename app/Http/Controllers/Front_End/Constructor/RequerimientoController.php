@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front_End\Constructor;
 use App\Models\Constructor\Requerimiento;
 
 use App\Http\Controllers\Controller;
+use App\Models\Constructor\RequerimientoRecursos;
 use Illuminate\Http\Request;
 
 class RequerimientoController extends Controller
@@ -17,11 +18,11 @@ class RequerimientoController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Requerimiento[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        return RequerimientoRecursos::all();
     }
 
     /**

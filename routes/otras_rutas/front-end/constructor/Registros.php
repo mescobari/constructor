@@ -1,5 +1,8 @@
 <?php
-    Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], function () {
+
+use Illuminate\Support\Facades\Route;
+
+Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], function () {
         Route::get('unidad_ejec', 'UnidadEjecutoraController@inicio')->name('unidad_ejec');  //menu
         Route::get('contrato_prin', 'ContratoPrincipalController@inicio')->name('contrato_prin');  //menu
 

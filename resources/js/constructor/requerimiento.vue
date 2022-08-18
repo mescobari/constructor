@@ -190,9 +190,8 @@
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Descripcion Recurso:</label>
-                                    <v-select label="nombre" :options="combo_requerimiento_recursos"
-                                              v-model="jsonData.descripcion_recurso"
-                                              @input="cambioTipoDocumento()"
+                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                              v-model="jsonData.descripcion_recurso" @input="descripcionRecursoGetbyType"
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
@@ -429,7 +428,7 @@
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Item Relacionado:</label>
-                                    <v-select label="nombre" :options="combo_requerimiento_recursos"
+                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
                                               v-model="jsonData.item_descripcion"
                                               @input="cambioTipoDocumento()"
                                               placeholder="Selecione una opción">
@@ -663,9 +662,8 @@
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Gastos Generales:</label>
-                                    <v-select label="nombre" :options="combo_tipos_documentos"
+                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
                                               v-model="jsonData.descripcion_otros"
-                                              @input="cambioTipoDocumento()"
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
@@ -879,7 +877,7 @@ export default {
             proyectos: [],
             jsonData: {
                 id: "",
-                proyectos: {},
+                proyectos: '',
                 tipos_documento: {},
                 institucion: {},
                 cofinanciador: {},
@@ -1081,8 +1079,59 @@ export default {
         }
     },
     methods: {
+        async descripcionRecursoGetAll(){
+            let response = await axios.get('requerimientos')
+            return response.data
+        },
 
-
+        async descripcionRecursoGetbyType(){
+          let desRecursoAarray = await this.descripcionRecursoGetAll()
+          let reqArraybyId = []
+          console.log('ARRAY',response.data);
+          // this.combo_requerimiento_recursos = response.data;
+            switch(this.jsonData.tipo_requerimiento_id) {
+                case 1:
+                    for(let i; i<desRecursoAarray.length; i++){
+                        if(desRecursoAarray[i].tipo_requerimiento_id === 1){
+                            reqArraybyId.push(desRecursoAarray[i]);
+                        }
+                    }
+                    this.combo_requerimiento_recursos = reqArraybyId;
+                    break;
+                case 2:
+                    for(let i; i<desRecursoAarray.length; i++){
+                        if(desRecursoAarray[i].tipo_requerimiento_id === 2){
+                            reqArraybyId.push(desRecursoAarray[i]);
+                        }
+                    }
+                    this.combo_requerimiento_recursos = reqArraybyId;
+                    break;
+                case 3:
+                    for(let i; i<desRecursoAarray.length; i++){
+                        if(desRecursoAarray[i].tipo_requerimiento_id === 3){
+                            reqArraybyId.push(desRecursoAarray[i]);
+                        }
+                    }
+                    this.combo_requerimiento_recursos = reqArraybyId;
+                    break;
+                case 4:
+                    for(let i; i<desRecursoAarray.length; i++){
+                        if(desRecursoAarray[i].tipo_requerimiento_id === 4){
+                            reqArraybyId.push(desRecursoAarray[i]);
+                        }
+                    }
+                    this.combo_requerimiento_recursos = reqArraybyId;
+                    break;
+                default:
+                    for(let i; i<desRecursoAarray.length; i++){
+                        if(desRecursoAarray[i].tipo_requerimiento_id === 5){
+                            reqArraybyId.push(desRecursoAarray[i]);
+                        }
+                    }
+                    this.combo_requerimiento_recursos = reqArraybyId;
+            }
+            // this.combo_requerimiento_recursos = desRecursoAarray
+        },
         async tipoDocumentoGetAll() {
             let respuesta = await axios.get('documentos_legaleses');
             this.combo_requerimiento_recursos = respuesta.data;
@@ -1108,21 +1157,21 @@ export default {
 
             var respuesta = await axios.post('planillas', datos_jsonData);
 
-            this.buscar_doc_legales();
+            await this.buscar_doc_legales();
             this.limpiar_formulario();
 
             document.getElementById("cerrarModal").click();
-            this.ver_planilla();
+            await this.ver_planilla();
 
         },
         cargar_checks(dato) {
-            if (dato == "1") {
+            if (dato === "1") {
                 $('#modifica1').attr('checked', 'checked');
             }
-            if (dato == "2") {
+            if (dato === "2") {
                 $('#modifica2').attr('checked', 'checked');
             }
-            if (dato == "3") {
+            if (dato === "3") {
                 $('#modifica3').attr('checked', 'checked');
             }
         },
@@ -1132,7 +1181,7 @@ export default {
             $('#modifica1').removeAttr('checked');
             $('#modifica2').removeAttr('checked');
             $('#modifica3').removeAttr('checked');
-            if (data.modifica != 'undefined' && data.modifica != null && data.modifica != undefined) {
+            if (data.modifica !== 'undefined' && data.modifica != null) {
                 var dato = "";
                 for (var i = 0; i < data.modifica.length; i++) {
                     if (data.modifica[i] != ',') {
@@ -1242,8 +1291,9 @@ export default {
 
         },
         async seleccionar_cont_primario() {
-            var respuesta = await axios.get('documents');
+            const respuesta = await axios.get('documents');
             const principales = respuesta.data.filter((item) => item.document_types_id === 1)
+            console.log('Documentos Principales', principales);
             this.proyectos = principales;
             $("#seleccion_proyecto_doc_legales").modal("show");
 
@@ -1290,10 +1340,6 @@ export default {
             this.organismos_financiadores();
             this.doc_legales();
             this.objetivos();
-        },
-        async tipos_documentos() {
-            var respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
-            this.combo_tipos_documentos = respuesta.data;
         },
         async instituciones() {
             var respuesta = await axios.post('buscar_documentos_legaleses_instituciones');
@@ -1408,11 +1454,9 @@ export default {
         /*************************fin funciones de configuracion********************** */
     },
     mounted() {
-        // this.instituciones_activas();
-        // this.organismosFinanciadores();
-        // this.tipoDocumento();
         this.funcionRecuperaConfig();
         this.seleccionar_cont_primario();
+        this.descripcionRecursoGetbyType();
 
 
     },
