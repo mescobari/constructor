@@ -55,35 +55,43 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group" @input="descripcionRecursoGetbyType">
                                             <label for="nombre">Tipo de Requerimiento:</label>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio1"
-                                                       value="1" v-model="jsonData.tipo_requerimiento_id">
-                                                <label for="customRadio1" class="custom-control-label font-weight-normal">Mano de
+                                                       value="1" v-model="jsonData.tipo_requerimiento_id"/>
+                                                <label for="customRadio1"
+                                                       class="custom-control-label font-weight-normal">Mano de
                                                     obra</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio2"
-                                                       value="2" v-model="jsonData.tipo_requerimiento_id">
-                                                <label for="customRadio2" class="custom-control-label font-weight-normal">Material</label>
+                                                       value="2" v-model="jsonData.tipo_requerimiento_id"/>
+                                                <label for="customRadio2"
+                                                       class="custom-control-label font-weight-normal">Material</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio3"
-                                                       value="3" v-model="jsonData.tipo_requerimiento_id">
-                                                <label for="customRadio3" class="custom-control-label font-weight-normal">Equipo</label>
+                                                       value="3" v-model="jsonData.tipo_requerimiento_id"/>
+                                                <label for="customRadio3"
+                                                       class="custom-control-label font-weight-normal">Equipo</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio4"
-                                                       value="4" v-model="jsonData.tipo_requerimiento_id">
-                                                <label for="customRadio4" class="custom-control-label font-weight-normal">Fondos en
+                                                       value="4" v-model="jsonData.tipo_requerimiento_id"/>
+                                                <label for="customRadio4"
+                                                       class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio5"
-                                                       value="5" v-model="jsonData.tipo_requerimiento_id">
-                                                <label for="customRadio5" class="custom-control-label font-weight-normal">Llave en
+                                                       value="5" v-model="jsonData.tipo_requerimiento_id"/>
+                                                <label for="customRadio5"
+                                                       class="custom-control-label font-weight-normal">Llave en
                                                     Mano</label>
+                                            </div>
+                                            <div>
+                                                <H6>{{ jsonData.tipo_requerimiento_id }}</H6>
                                             </div>
 
                                         </div>
@@ -146,7 +154,9 @@
                                                class="bg-primary"
                                                style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
                                             <span id="contenido_documento_res_aprobacion"><i
-                                                class="fas fa-download fa-1x"></i><br> <span> {{ configFile.contenidoDefault }}</span></span>
+                                                class="fas fa-download fa-1x"></i><br> <span> {{
+                                                    configFile.contenidoDefault
+                                                }}</span></span>
                                             <button type="button" class="close" v-if="configFile.cerrar"
                                                     @click="borrar_file();"><span>&times;</span></button>
                                         </label>
@@ -176,7 +186,7 @@
 
                         <hr>
 
-                        <!-- ============================== Formulario Lineal -->
+                        <!-- ============================== Formulario Lineal -------------------------------->
 
                         <div class="row bg-warning">
                             <div class="col-md-1">
@@ -191,7 +201,7 @@
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Descripcion Recurso:</label>
                                     <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
-                                              v-model="jsonData.descripcion_recurso" @input="descripcionRecursoGetbyType"
+                                              v-model="jsonData.descripcion_recurso"
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
@@ -317,7 +327,9 @@
                                         <a :href="props.row.filePathFull" target="_blank"
                                            title="Ver el archivo digital">
                                             <span
-                                                class="badge badge-primary">Ver: {{ props.row.cofinanciador_documento.titulo }}</span>
+                                                class="badge badge-primary">Ver: {{
+                                                    props.row.cofinanciador_documento.titulo
+                                                }}</span>
                                         </a>
                                     </template>
                                     <template slot="acciones" slot-scope="props">
@@ -430,7 +442,7 @@
                                     <label for="document_type">Item Relacionado:</label>
                                     <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
                                               v-model="jsonData.item_descripcion"
-                                              @input="cambioTipoDocumento()"
+                                              @change="descripcionRecursoGetbyType"
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
@@ -547,7 +559,9 @@
                                         <a :href="props.row.filePathFull" target="_blank"
                                            title="Ver el archivo digital">
                                             <span
-                                                class="badge badge-primary">Ver: {{ props.row.cofinanciador_documento.titulo }}</span>
+                                                class="badge badge-primary">Ver: {{
+                                                    props.row.cofinanciador_documento.titulo
+                                                }}</span>
                                         </a>
                                     </template>
                                     <template slot="acciones" slot-scope="props">
@@ -720,10 +734,9 @@
 
                         <!-- tabla de relacion con otros gastos-->
                         <div class="row">
-
                             <div class="table-responsive">
                                 <vue-bootstrap4-table :rows="rows2" :columns="columns2" :config="configTablas"
-                                                      :classes="configTablas.classes">
+                                                      :classes="configTablas.classes" @on-download="showtable">
                                     <template slot="global-search-clear-icon">
                                         <i class="fas fa-times-circle"></i>
                                     </template>
@@ -771,7 +784,9 @@
                                         <a :href="props.row.filePathFull" target="_blank"
                                            title="Ver el archivo digital">
                                             <span
-                                                class="badge badge-primary">Ver: {{ props.row.cofinanciador_documento.titulo }}</span>
+                                                class="badge badge-primary">Ver: {{
+                                                    props.row.cofinanciador_documento.titulo
+                                                }}</span>
                                         </a>
                                     </template>
                                     <template slot="acciones" slot-scope="props">
@@ -868,7 +883,7 @@ export default {
         return {
             modificar_bottom: false,
             guardar_bottom: false,
-
+            clickedAdd: false,
             tituloDocLegalesModal: '',
 
             combo_requerimiento_recursos: [],
@@ -934,7 +949,7 @@ export default {
                 },
                 {
                     label: "Unidad",
-                    name: "simbolo",
+                    name: "unidad_id",
                     filter: {type: "simple", placeholder: "Simbolo"},
                     sort: true,
                 },
@@ -1079,62 +1094,40 @@ export default {
         }
     },
     methods: {
-        async descripcionRecursoGetAll(){
+
+        async listarRecursos() {
+            const respuesta = await axios.get('requerimientos')
+            // this.rows = [];
+            // this.rows1 = [];
+            this.rows = [];
+            // this.rows = await this.getRecursos();
+            // this.rows1 = await this.getItems();
+            this.rows = respuesta.data
+        },
+        showtable() {
+            console.log(this.jsonData.requerimiento_recurso_id);
+            console.log(this.jsonData.tipo_requerimiento_id);
+        },
+        async descripcionRecursoGetAll() {
             let response = await axios.get('requerimientos')
+            // this.combo_requerimiento_recursos = response.data
             return response.data
         },
+        async descripcionRecursoGetbyType() {
+            let response = await axios.get('requerimientos')
+            let reqArraybyId = []
 
-        async descripcionRecursoGetbyType(){
-          let desRecursoAarray = await this.descripcionRecursoGetAll()
-          let reqArraybyId = []
-          console.log('ARRAY',response.data);
-          // this.combo_requerimiento_recursos = response.data;
-            switch(this.jsonData.tipo_requerimiento_id) {
-                case 1:
-                    for(let i; i<desRecursoAarray.length; i++){
-                        if(desRecursoAarray[i].tipo_requerimiento_id === 1){
-                            reqArraybyId.push(desRecursoAarray[i]);
-                        }
-                    }
-                    this.combo_requerimiento_recursos = reqArraybyId;
-                    break;
-                case 2:
-                    for(let i; i<desRecursoAarray.length; i++){
-                        if(desRecursoAarray[i].tipo_requerimiento_id === 2){
-                            reqArraybyId.push(desRecursoAarray[i]);
-                        }
-                    }
-                    this.combo_requerimiento_recursos = reqArraybyId;
-                    break;
-                case 3:
-                    for(let i; i<desRecursoAarray.length; i++){
-                        if(desRecursoAarray[i].tipo_requerimiento_id === 3){
-                            reqArraybyId.push(desRecursoAarray[i]);
-                        }
-                    }
-                    this.combo_requerimiento_recursos = reqArraybyId;
-                    break;
-                case 4:
-                    for(let i; i<desRecursoAarray.length; i++){
-                        if(desRecursoAarray[i].tipo_requerimiento_id === 4){
-                            reqArraybyId.push(desRecursoAarray[i]);
-                        }
-                    }
-                    this.combo_requerimiento_recursos = reqArraybyId;
-                    break;
-                default:
-                    for(let i; i<desRecursoAarray.length; i++){
-                        if(desRecursoAarray[i].tipo_requerimiento_id === 5){
-                            reqArraybyId.push(desRecursoAarray[i]);
-                        }
-                    }
-                    this.combo_requerimiento_recursos = reqArraybyId;
+            for(let i = 0; i < response.data.length; i++) {
+                if (response.data[i].tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id) {
+                    reqArraybyId.push(response.data[i]);
+                }
             }
-            // this.combo_requerimiento_recursos = desRecursoAarray
+            this.combo_requerimiento_recursos = reqArraybyId;
         },
         async tipoDocumentoGetAll() {
             let respuesta = await axios.get('documentos_legaleses');
-            this.combo_requerimiento_recursos = respuesta.data;
+            // this.combo_requerimiento_recursos = respuesta.data;
+            console.log('DOCUMENTOS TIPO', respuesta.data);
         },
 
         async guardar() {
@@ -1184,7 +1177,7 @@ export default {
             if (data.modifica !== 'undefined' && data.modifica != null) {
                 var dato = "";
                 for (var i = 0; i < data.modifica.length; i++) {
-                    if (data.modifica[i] != ',') {
+                    if (data.modifica[i] !== ',') {
                         dato = dato + data.modifica[i];
                     } else {
                         this.cargar_checks(dato);
@@ -1456,12 +1449,10 @@ export default {
     mounted() {
         this.funcionRecuperaConfig();
         this.seleccionar_cont_primario();
-        this.descripcionRecursoGetbyType();
-
-
     },
     created() {
-
+        this.descripcionRecursoGetAll();
+        this.descripcionRecursoGetbyType();
     },
     components: {
         VueBootstrap4Table,

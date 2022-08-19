@@ -782,27 +782,6 @@ export default {
             // await this.filterPadre(padresArray);
             // this.combo_padres = padresArray
         },
-        async filterPadre(data = {}) {
-            console.log("DATA", data);
-            let padreSubArray = [];
-            // let padreVoid = [{id: 0, nombre: 'Ninguno'}];
-            // if (this.jsonData.document_types_id === 1) {
-            //     this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
-            //
-            // } else
-                if (this.jsonData.document_types_id === 'Sub-Contrato') {
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].padre === 0) {
-                        padreSubArray.push(data[i]);
-                    }
-                }
-                    console.log("DATA", padreSubArray);
-                this.combo_padres = padreSubArray;
-            } else {
-                // this.disablePadre = false;
-                this.combo_padres = data;
-            }
-        },
         async deleteItem(doc) {
             const respuesta = await axios.delete('documents/' + doc);
             // this.id_eliminacion = null;

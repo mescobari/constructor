@@ -11,6 +11,11 @@ use Illuminate\Http\Request;
 class RequerimientoController extends Controller
 {
 
+
+    public function getRequerimientos($id)
+    {
+        return Requerimiento::find($id);
+    }
     public function inicio()
     {
         return view('front-end.constructor.IndexRequerimientos');

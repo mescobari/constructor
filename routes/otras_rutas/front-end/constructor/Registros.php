@@ -18,10 +18,10 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
 
         Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');
         Route::apiResource('planillas', PlanillaController::class);
-
+//requerimientos
         Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');
         Route::apiResource('requerimientos', RequerimientoController::class);
-
+        Route::get('get_requerimientos', 'RequerimientoController@getRequerimientos')->name('get_requerimientos');
 
         /*Route::apiResource('intervenciones', IntervencionesController::class);
         Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
