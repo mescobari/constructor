@@ -21,6 +21,8 @@ use App\Models\FrontEnd\estructura_financiamiento\ComprobanteDetalle;
 use App\Models\Constructor\Planilla;
 use App\Models\Constructor\PlanillaMovimiento;
 use App\Models\Constructor\PlanillaItem;
+use App\Models\Constructor\document;
+
 
 use PDF;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -402,6 +404,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 
     public function planilla_vigente(Request $request, $id){
         $contrato_id=$id;
+        $plaI= new PlanillaItem;
+        $docs= new Document;
 
         //$planilla = Planilla::where('id', $id)->first();
         $documento = DB::table('documents')
@@ -423,8 +427,14 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             $documento_padre = $documento;
         }
 
-// aqui tengo $items=planilla_items
-// analizar cuantas planillas de cambio hubo tipo_planilla
+        // aqui tengo $items=planilla_items
+
+        $items=$plaI->getItems($contrato_id);
+
+        // analizar cuantas planillas de cambio hubo tipo_planilla
+
+        $modificaciones=$docs->getModificacion($contrato_id);
+
 //sacar la original y la ultima vigente
 
 
@@ -586,7 +596,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         return $pdf->stream('reporte_ficha_proyecto.pdf');
  */
 
-      return  $planilla;
+      return  $modificaciones;
     }
 
 
