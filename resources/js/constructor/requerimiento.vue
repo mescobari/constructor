@@ -191,8 +191,8 @@
                         <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
-                                    <label for="nombre">Codigo:</label>
-                                    <input type="text" class="form-control" name="codigo" placeholder="Codigo"
+                                    <label for="codigo_recurso">Codigo:</label>
+                                    <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
                                            v-model="jsonData.codigo_recurso" disabled>
                                 </div>
                             </div>
@@ -202,7 +202,7 @@
                                     <label for="document_type">Descripcion Recurso:</label>
                                     <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
                                               v-model="jsonData.descripcion_recurso"
-                                              placeholder="Selecione una opción">
+                                              placeholder="Selecione una opción" @input="retrieveFromCurrentDescripcionRecurso">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
                                 </div>
@@ -211,7 +211,7 @@
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Unidad</label>
-                                    <input type="text" class="form-control" name="unidad" placeholder="Unidad"
+                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
                                            v-model="jsonData.simbolo" disabled>
                                 </div>
                             </div>
@@ -442,7 +442,7 @@
                                     <label for="document_type">Item Relacionado:</label>
                                     <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
                                               v-model="jsonData.item_descripcion"
-                                              @change="descripcionRecursoGetbyType"
+
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
@@ -736,7 +736,7 @@
                         <div class="row">
                             <div class="table-responsive">
                                 <vue-bootstrap4-table :rows="rows2" :columns="columns2" :config="configTablas"
-                                                      :classes="configTablas.classes" @on-download="showtable">
+                                                      :classes="configTablas.classes">
                                     <template slot="global-search-clear-icon">
                                         <i class="fas fa-times-circle"></i>
                                     </template>
@@ -1104,9 +1104,27 @@ export default {
             // this.rows1 = await this.getItems();
             this.rows = respuesta.data
         },
-        showtable() {
-            console.log(this.jsonData.requerimiento_recurso_id);
-            console.log(this.jsonData.tipo_requerimiento_id);
+        async retrieveFromCurrentDescripcionRecurso() {
+
+            const descripcion_recurso = await this.descripcionRecursoGetAll();
+            console.log("array desc rec",descripcion_recurso);
+           for (let i=0; i < descripcion_recurso.length; i++) {
+                if(descripcion_recurso[i].id == this.jsonData.descripcion_recurso.id){
+                    this.jsonData.codigo_recurso = descripcion_recurso[i].codigo_recurso;
+                    console.log("codigo recurso",descripcion_recurso[i].codigo_recurso);
+                    break;
+                }
+           }
+           const responseUnidades = await axios.get('get_unidades');
+           console.log("array unidades",responseUnidades.data);
+            for (let i=0; i < responseUnidades.data.length; i++) {
+                if(responseUnidades.data[i].id == this.jsonData.descripcion_recurso.unidad_id){
+                    this.jsonData.simbolo = responseUnidades.data[i].simbolo;
+
+                    console.log("unidad recurso",responseUnidades.data[i]);
+                    break;
+                }
+            }
         },
         async descripcionRecursoGetAll() {
             let response = await axios.get('requerimientos')
@@ -1117,7 +1135,7 @@ export default {
             let response = await axios.get('requerimientos')
             let reqArraybyId = []
 
-            for(let i = 0; i < response.data.length; i++) {
+            for (let i = 0; i < response.data.length; i++) {
                 if (response.data[i].tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id) {
                     reqArraybyId.push(response.data[i]);
                 }
@@ -1129,7 +1147,6 @@ export default {
             // this.combo_requerimiento_recursos = respuesta.data;
             console.log('DOCUMENTOS TIPO', respuesta.data);
         },
-
         async guardar() {
             console.log('estamos en guardar contrato_id');
             this.jsonData.contrato_id = this.jsonData.proyectos.id;

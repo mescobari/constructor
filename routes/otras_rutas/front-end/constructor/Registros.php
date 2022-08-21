@@ -22,7 +22,7 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
         Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');
         Route::apiResource('requerimientos', RequerimientoController::class);
         Route::get('get_requerimientos', 'RequerimientoController@getRequerimientos')->name('get_requerimientos');
-
+        Route::get('get_unidades', 'RequerimientoController@getUnidades')->name('get_unidades');
         /*Route::apiResource('intervenciones', IntervencionesController::class);
         Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
         Route::get('proyectos', 'IntervencionesController@proyectos')->name('proyectos');
