@@ -16,7 +16,7 @@ class PlanillaItem extends Model
         return $this->belongsTo(Unidad::class, 'unidad_id', 'id');
     }
 
-    public function getItems($contrato_id)
+    public function getEstructuraItems($contrato_id)
     {
         $items=[];
         $j=0;

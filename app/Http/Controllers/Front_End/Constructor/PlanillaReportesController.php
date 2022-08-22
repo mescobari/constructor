@@ -22,6 +22,7 @@ use App\Models\Constructor\Planilla;
 use App\Models\Constructor\PlanillaMovimiento;
 use App\Models\Constructor\PlanillaItem;
 use App\Models\Constructor\document;
+use App\Models\Constructor\PlanillaDocument;
 
 
 use PDF;
@@ -406,34 +407,149 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $contrato_id=$id;
         $plaI= new PlanillaItem;
         $docs= new Document;
+        $movs= new PlanillaMovimiento;
 
-        //$planilla = Planilla::where('id', $id)->first();
-        $documento = DB::table('documents')
-        ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
-        ->select('documents.*', 'document_types.nombre as tipo_nombre' )
-        ->where('documents.id', $contrato_id)
-        ->first();
+        $documento = $docs->getDocumento($contrato_id );
 
-        $padre=$documento->padre;
-        if ($padre != 0) {
-            $documento_padre = DB::table('planilla_documents')
-            ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
-            ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
-            ->select('documents.*', 'document_types.nombre')
-            ->where('documents.id', $padre)
-            ->first();
-
-        } else  {
-            $documento_padre = $documento;
-        }
 
         // aqui tengo $items=planilla_items
 
-        $items=$plaI->getItems($contrato_id);
+        $items=$plaI->getEstructuraItems($contrato_id);
 
         // analizar cuantas planillas de cambio hubo tipo_planilla
+         // cargamos la planilla-cuadro
+       for($i = 0; $i < count( $items); $i++) { 
 
-        $modificaciones=$docs->getModificacion($contrato_id);
+        $items[$i]['inic_cant']= 0;
+        $items[$i]['inic_pu']=0;
+        $items[$i]['inic_pt']= 0;
+
+        $items[$i]['vig_cant']= 0;
+        $items[$i]['vig_pu']= 0;
+        $items[$i]['vig_pt']= 0;
+
+        $items[$i]['diff_cant']= 0;
+        $items[$i]['diff_pu']= 0;
+        $items[$i]['diff_pt']=0; 
+
+    }
+
+        $docs_modificatorios= $docs->getModificacion($contrato_id);
+        
+
+            //inicial    
+        $inic_doc=$docs_modificatorios[0]['id'];
+        $busPla = DB::table('planilla_documents')->where('document_id', $inic_doc) ->first();
+        $inicial_id=$busPla->planilla_id;
+        $inicial=$movs->getPlanilla($inicial_id);
+        
+        for($i = 0; $i < count( $items); $i++) { 
+            $linea=$items[$i]['id'];
+            $key = array_search( $linea, array_column($inicial, 'planilla_item_id'));
+            if ($key!=false){
+
+                $items[$i]['inic_cant']= $inicial[$key]['cantidad'] ;
+                $items[$i]['inic_pu']= $inicial[$key]['precio_unitario'] ;
+                $items[$i]['inic_pt']= ($inicial[$key]['cantidad']*$inicial[$key]['precio_unitario']) ;
+                
+
+            } else { 
+                $items[$i]['inic_cant']=1;
+                $items[$i]['inic_cant']=1;
+                $items[$i]['inic_cant']=1;
+            } 
+
+
+         }
+
+
+        // obtenemos la planilla vigente
+        $vig_doc=$docs_modificatorios[count($docs_modificatorios)-1]['id'];
+        $busPla = DB::table('planilla_documents')->where('document_id', $vig_doc) ->first();
+        $vigente_id=$busPla->planilla_id;
+       $vigente=$movs->getPlanilla($vigente_id);      
+
+         //vigente
+         for($i = 0; $i < count( $items); $i++) { 
+            $linea=$items[$i]['id'];
+            $key = array_search( $linea, array_column($vigente, 'planilla_item_id'));
+            if ($key!=false){
+
+                $items[$i]['vig_cant']= $vigente[$key]['cantidad'] ;
+                $items[$i]['vig_pu']= $vigente[$key]['precio_unitario'] ;
+                $items[$i]['vig_pt']= ($vigente[$key]['cantidad']*$vigente[$key]['precio_unitario']) ;
+                
+
+            } else { 
+                $items[$i]['vig_cant']=1;
+                $items[$i]['vig_pu']=1;
+                $items[$i]['vig_pt']=1;
+            } 
+
+
+         }
+
+
+
+       //diferencia
+
+       for($i = 0; $i < count( $items); $i++) { 
+       
+        $items[$i]['diff_cant']=   $items[$i]['vig_cant'] -$items[$i]['inic_cant'];
+        $items[$i]['diff_pu']=    $items[$i]['inic_pu']; ;
+        $items[$i]['diff_pt']= $items[$i]['vig_pt'] -$items[$i]['inic_pt'];
+
+        
+     }
+
+
+     //calculamos subtotales
+     // necesitamos el array de patriarcas
+        $json = DB::table('planilla_items')->where('contrato_id', $contrato_id)
+        ->where('padre', '0')
+        ->get();    
+        $patriarca = json_decode($json, true);
+
+        for($i = 0; $i < count( $patriarca); $i++) { 
+            $padre0=$items[$i]['id'];
+            for($j = 0; $j < count( $items); $j++) {
+
+                     If ($padre0 = $items[$j]['padre']){                       
+                       
+                        $items[$i]['inic_pt']= $items[$i]['inic_pt']+$items[$j]['inic_pt'];
+
+
+
+                    }
+
+            } 
+        }    
+
+      // una vez calculado ponemos en formato
+
+     for($i = 0; $i < count( $items); $i++) { 
+
+       
+        $items[$i]['inic_cant']= number_format( $items[$i]['inic_cant'],2,",",".");
+        $items[$i]['inic_pu']= number_format( $items[$i]['inic_pu'],2,",",".");
+        $items[$i]['inic_pt']= number_format( $items[$i]['inic_pt'],2,",",".");
+
+        $items[$i]['vig_cant']= number_format( $items[$i]['vig_cant'],2,",",".");
+        $items[$i]['vig_pu']= number_format( $items[$i]['vig_pu'],2,",",".");
+        $items[$i]['vig_pt']= number_format( $items[$i]['vig_pt'],2,",",".");
+
+        $items[$i]['diff_cant']= number_format( $items[$i]['diff_cant'],2,",",".");
+        $items[$i]['diff_pu']= number_format( $items[$i]['diff_pu'],2,",",".");
+        $items[$i]['diff_pt']= number_format( $items[$i]['diff_pt'],2,",",".");
+
+
+     }
+
+
+        
+     
+
+
 
 //sacar la original y la ultima vigente
 
@@ -548,6 +664,8 @@ $documento_nombre= $documento->objeto;
 $documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
 $documento_monto= number_format($documento->monto_bs,2,",",".");
 
+
+
 $fecha_planilla= $salida[0]['fecha_planilla'];
 $nuri_planilla= $salida[0]['nuri_planilla'];
 $referencia= $salida[0]['referencia'];
@@ -555,17 +673,18 @@ $total_planilla=  $salida[0]['total_planilla'];
 $anticipo_planilla=  $salida[0]['anticipo_planilla'];
 $retencion_planilla=  $salida[0]['retencion_planilla'];
 
-$principal_codigo=$documento_padre->codigo;
-$principal_nombre=$documento_padre->objeto;
-$principal_firma=date("d-m-Y", strtotime($documento_padre->fecha_firma));
-$principal_monto= number_format($documento_padre->monto_bs,2,",",".");
+$principal_codigo=$docs_modificatorios[0]['codigo'];
+$principal_nombre=$docs_modificatorios[0]['nombre'];
+ $principal_firma=date("d-m-Y", strtotime($docs_modificatorios[0]['fecha_firma']));
+ $principal_monto= number_format($docs_modificatorios[0]['monto_bs'],2,",",".");
+
 
 // otros datos para el cuerpo
 
 
- /* cargamos la vista  
+ /* cargamos la vista  */
 
-        $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
+        $pdf = PDF::loadView('front-end.reportes.constructor.vigente', [
             'link_img'=>'img/sistema-front-end/logo-pdf.png',
             'titulo_grande' => $titulo_grande,
             'nombre_institucion' => $nombre_institucion,
@@ -586,17 +705,16 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'principal_nombre' => $principal_nombre,
             'principal_firma' =>  $principal_firma,
             'principal_monto' =>  $principal_monto,
-            'padre' =>  $padre,
-            'planilla' =>  $salida,
+            'planilla' =>  $items,
 
 
 
         ]);
-        $pdf->setPaper('letter', 'portrait');
+        $pdf->setPaper('letter', 'landscape');
         return $pdf->stream('reporte_ficha_proyecto.pdf');
- */
 
-      return  $modificaciones;
+
+     //return  $hijos;
     }
 
 
