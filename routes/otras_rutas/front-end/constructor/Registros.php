@@ -1,5 +1,8 @@
 <?php
-    Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], function () {
+
+use Illuminate\Support\Facades\Route;
+
+Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], function () {
         Route::get('unidad_ejec', 'UnidadEjecutoraController@inicio')->name('unidad_ejec');  //menu
         Route::get('contrato_prin', 'ContratoPrincipalController@inicio')->name('contrato_prin');  //menu
 
@@ -15,11 +18,11 @@
 
         Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');
         Route::apiResource('planillas', PlanillaController::class);
-
+//requerimientos
         Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');
         Route::apiResource('requerimientos', RequerimientoController::class);
-
-
+        Route::get('get_requerimientos', 'RequerimientoController@getRequerimientos')->name('get_requerimientos');
+        Route::get('get_unidades', 'RequerimientoController@getUnidades')->name('get_unidades');
         /*Route::apiResource('intervenciones', IntervencionesController::class);
         Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
         Route::get('proyectos', 'IntervencionesController@proyectos')->name('proyectos');

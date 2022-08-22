@@ -5,11 +5,21 @@ namespace App\Http\Controllers\Front_End\Constructor;
 use App\Models\Constructor\Requerimiento;
 
 use App\Http\Controllers\Controller;
+use App\Models\Constructor\RequerimientoRecursos;
+use App\Models\Constructor\Unidad;
 use Illuminate\Http\Request;
 
 class RequerimientoController extends Controller
 {
 
+
+    public function  getUnidades(){
+        return Unidad::all();
+    }
+    public function getRequerimientos($id)
+    {
+        return Requerimiento::find($id);
+    }
     public function inicio()
     {
         return view('front-end.constructor.IndexRequerimientos');
@@ -17,11 +27,11 @@ class RequerimientoController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Requerimiento[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        return RequerimientoRecursos::all();
     }
 
     /**
