@@ -90,10 +90,6 @@
                                                        class="custom-control-label font-weight-normal">Llave en
                                                     Mano</label>
                                             </div>
-                                            <div>
-                                                <H6>{{ jsonData.tipo_requerimiento_id }}</H6>
-                                            </div>
-
                                         </div>
                                     </div>
 
@@ -105,7 +101,6 @@
                                                    v-model="jsonData.correlativo_requerimiento">
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div class="row">
@@ -202,7 +197,8 @@
                                     <label for="document_type">Descripcion Recurso:</label>
                                     <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
                                               v-model="jsonData.descripcion_recurso"
-                                              placeholder="Selecione una opción" @input="retrieveFromCurrentDescripcionRecurso">
+                                              placeholder="Selecione una opción"
+                                              @input="retrieveFromCurrentDescripcionRecurso">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
                                 </div>
@@ -262,7 +258,9 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br>
-                                        <button type="submit" @click="guardar();" class="btn btn-success">Agregar
+                                        <button type="submit" @input="behaviorRequerimiento" @click="guardar();"
+                                                class="btn btn-success">
+                                            Agregar
                                         </button>
                                     </div>
                                 </div>
@@ -879,222 +877,14 @@ Vue.component("v-select", vSelect);
 import moment from 'moment';
 
 export default {
-    data() {
-        return {
-            modificar_bottom: false,
-            guardar_bottom: false,
-            clickedAdd: false,
-            tituloDocLegalesModal: '',
-
-            combo_requerimiento_recursos: [],
-            combo_items_planilla: [],
-
-            proyectos: [],
-            jsonData: {
-                id: "",
-                proyectos: '',
-                tipos_documento: {},
-                institucion: {},
-                cofinanciador: {},
-                titulo: '',
-                doc_legal: {},
-                objetivo: {},
-                document_id: '',
-                tipo_requerimiento_id: 5,
-                correlativo_requerimiento: '/2022',
-                fecha_requerimiento: '2022/01/01',
-                nuri_requerimiento: '/2022',
-                descripcion_requerimiento: '<p>prueba <b>planolla inicial si</b> carga file</p>',
-                requerimiento_id: '',
-                requerimiento_recurso_id: '',
-                codigo_recurso: '',
-                descripcion_recurso: '',
-                unidad_id: '',
-                simbolo: '',
-                cantidad_recurso: '',
-                horas_recurso: '',
-                dias_recurso: '',
-                tiempo_total_recurso: '',
-                precio_referencia_recurso: '',
-                trabajos_encarados: 'trabajos a ser encarados explicacion de ello',
-                files: null,
-                item_codigo: 'zzzz',
-                item_descripcion: '',
-                item_simbolo: 'abc',
-                item_vigente: '1',
-                item_avance: '2',
-                item_saldo: '3',
-                item_estimado: '4',
-                gastos_generales: 'se explica en que gatsos generales se trabajara',
-                codigo_otros: 'yyyyyyy',
-                descripcion_otros: '',
-                simbolo_otros: 'abcde',
-                cantidad_otros: '10',
-                monto_otros: '20',
-                explicar_otros: '30',
-
-            },
-            rows: [],
-            columns: [
-                {
-                    label: "Codigo",
-                    name: "codigo_recurso",
-                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
-                },
-                {
-                    label: "Descripcion Recurso:",
-                    name: "descripcion_recurso",
-                    filter: {type: "simple", placeholder: "descripcion_recurso",},
-                    sort: true,
-                },
-                {
-                    label: "Unidad",
-                    name: "unidad_id",
-                    filter: {type: "simple", placeholder: "Simbolo"},
-                    sort: true,
-                },
-                {
-                    label: "Cantidad",
-                    name: "cantidad_recurso",
-                    filter: {type: "simple", placeholder: "Cantidad"},
-                },
-                {
-                    label: "Horas Requeridas",
-                    name: "horas_recurso",
-                    filter: {type: "simple", placeholder: "Horas Requeridas"},
-                },
-                {
-                    label: "Dias Requeridos",
-                    name: "dias_recurso",
-                    filter: {type: "simple", placeholder: "Dias Requeridos"},
-                },
-                {
-                    label: "Plazo Ejecucion",
-                    name: "tiempo_total_recurso",
-                    filter: {type: "simple", placeholder: "Plazo Ejecucion"},
-                    sort: true,
-                },
-                {
-                    label: "Precio referencial",
-                    name: "precio_referencia_recurso",
-                    filter: {type: "simple", placeholder: "Precio referencial"},
-                    sort: true,
-                },
-
-                {
-                    label: "Acciones",
-                    name: "acciones",
-                    sort: false,
-                },
-            ],
-
-            rows1: [],
-            columns1: [
-                {
-                    label: "Codigo",
-                    name: "item_codigo",
-                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
-                },
-                {
-                    label: "Item Relacionado:",
-                    name: "item_descripcion",
-                    filter: {type: "simple", placeholder: "Item Relacionado",},
-                    sort: true,
-                },
-                {
-                    label: "Unidad",
-                    name: "item_simbolo",
-                    filter: {type: "simple", placeholder: "Unidad"},
-                    sort: true,
-                },
-                {
-                    label: "Cantidad Vigente",
-                    name: "item_vigente",
-                    filter: {type: "simple", placeholder: "Cantidad Vigente"},
-                },
-                {
-                    label: "Avance",
-                    name: "item_avance",
-                    filter: {type: "simple", placeholder: "Avance"},
-                },
-                {
-                    label: "Por Ejecutar",
-                    name: "item_saldo",
-                    filter: {type: "simple", placeholder: "Por Ejecutar"},
-                },
-                {
-                    label: "Avance Estimado",
-                    name: "item_estimado",
-                    filter: {type: "simple", placeholder: "Avance Estimado"},
-                },
-
-
-                {
-                    label: "Acciones",
-                    name: "acciones",
-                    sort: false,
-                },
-
-
-            ],
-
-            rows2: [],
-            columns2: [
-                {
-                    label: "Codigo",
-                    name: "codigo_otros",
-                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
-                },
-                {
-                    label: "Gastos Generales:",
-                    name: "descripcion_otros",
-                    filter: {type: "simple", placeholder: "Gastos Generales",},
-                    sort: true,
-                },
-                {
-                    label: "Unidad",
-                    name: "simbolo_otros",
-                    filter: {type: "simple", placeholder: "Unidad"},
-                    sort: true,
-                },
-                {
-                    label: "Cantidad",
-                    name: "cantidad_otros",
-                    filter: {type: "simple", placeholder: "Cantidad"},
-                },
-                {
-                    label: "Monto",
-                    name: "monto_otros",
-                    filter: {type: "simple", placeholder: "Monto"},
-                },
-                {
-                    label: "Uso",
-                    name: "explicar_otros",
-                    filter: {type: "simple", placeholder: "Uso"},
-                },
-                {
-                    label: "Acciones",
-                    name: "acciones",
-                    sort: false,
-                },
-
-
-            ],
-
-            configFile: {
-                cerrar: false,
-                contenidoDefault: " CARGAR INFORME TECNICO/JUSTIFICACION",
-            },
-            datosEnviarConfiguracion: {},
-            configFechas: {},
-            configTablas: {},
-            actions: [],
-            classes: {},
-            configToolBarEditText: [],
-        }
-    },
     methods: {
-
+        behaviorRequerimiento() {
+            if (this.requerimientoFirstFill === false) {
+                this.requerimientoFirstFill = true;
+            } else {
+                console.log("El Requerimiento ya fue creado");
+            }
+        },
         async listarRecursos() {
             const respuesta = await axios.get('requerimientos')
             // this.rows = [];
@@ -1107,28 +897,26 @@ export default {
         async retrieveFromCurrentDescripcionRecurso() {
 
             const descripcion_recurso = await this.descripcionRecursoGetAll();
-            console.log("array desc rec",descripcion_recurso);
-           for (let i=0; i < descripcion_recurso.length; i++) {
-                if(descripcion_recurso[i].id == this.jsonData.descripcion_recurso.id){
+            console.log("array desc rec", descripcion_recurso);
+            for (let i = 0; i < descripcion_recurso.length; i++) {
+                if (descripcion_recurso[i].id == this.jsonData.descripcion_recurso.id) {
                     this.jsonData.codigo_recurso = descripcion_recurso[i].codigo_recurso;
-                    console.log("codigo recurso",descripcion_recurso[i].codigo_recurso);
+                    console.log("codigo recurso", descripcion_recurso[i].codigo_recurso);
                     break;
                 }
-           }
-           const responseUnidades = await axios.get('get_unidades');
-           console.log("array unidades",responseUnidades.data);
-            for (let i=0; i < responseUnidades.data.length; i++) {
-                if(responseUnidades.data[i].id == this.jsonData.descripcion_recurso.unidad_id){
+            }
+            const responseUnidades = await axios.get('get_unidades');
+            console.log("array unidades", responseUnidades.data);
+            for (let i = 0; i < responseUnidades.data.length; i++) {
+                if (responseUnidades.data[i].id == this.jsonData.descripcion_recurso.unidad_id) {
                     this.jsonData.simbolo = responseUnidades.data[i].simbolo;
-
-                    console.log("unidad recurso",responseUnidades.data[i]);
+                    console.log("unidad recurso", responseUnidades.data[i]);
                     break;
                 }
             }
         },
         async descripcionRecursoGetAll() {
             let response = await axios.get('requerimientos')
-            // this.combo_requerimiento_recursos = response.data
             return response.data
         },
         async descripcionRecursoGetbyType() {
@@ -1147,43 +935,53 @@ export default {
             // this.combo_requerimiento_recursos = respuesta.data;
             console.log('DOCUMENTOS TIPO', respuesta.data);
         },
-        async guardar() {
-            console.log('estamos en guardar contrato_id');
-            this.jsonData.contrato_id = this.jsonData.proyectos.id;
-            console.log(this.jsonData.tipo_planilla_id);
-            const fecha = new Date(this.jsonData.fecha_planilla);
-            this.jsonData.fecha1 = fecha.getFullYear() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getDate();
-
-            console.log('===================');
+        async requerimientoFirstSave() {
+            this.jsonData.document_id = this.jsonData.proyectos.id
+            console.log('DOCUMENT ID', this.jsonData.document_id);
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('document_id', this.jsonData.document_id);
+            datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
+            datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
+            datos_jsonData.append('fecha_requerimiento', this.jsonData.fecha_requerimiento);
+            datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
+            datos_jsonData.append('descripcion_requerimiento', this.jsonData.descripcion_requerimiento)
+            datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
+            datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
+            datos_jsonData.append('files', this.jsonData.files);
+            // datos_jsonData.append('path_requerimientos', this.jsonData.path_requerimientos);
+            let response = await axios.post('create_requerimiento', datos_jsonData);
+            console.log('CREATE REQ', response.data);
+        },
+        async reqItemSave() {
+            this.jsonData.requerimiento_recurso_id = this.jsonData.descripcion_recurso.id;
 
             let datos_jsonData = new FormData();
-
-            for (let key in this.jsonData) {
-                datos_jsonData.append(key, this.jsonData[key]);
-                console.log(key, this.jsonData[key]);
-            }
-
-            console.log('===================');
-
-            var respuesta = await axios.post('planillas', datos_jsonData);
-
-            await this.buscar_doc_legales();
-            this.limpiar_formulario();
-
-            document.getElementById("cerrarModal").click();
-            await this.ver_planilla();
-
+            datos_jsonData.append('requerimiento_id','1');
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
+            datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
+            datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
+            datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
+            datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
+            datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
+            const response = await axios.post('requerimientos', datos_jsonData);
+            console.log("SAVE ITEM REQ", response.data);
         },
-        cargar_checks(dato) {
-            if (dato === "1") {
-                $('#modifica1').attr('checked', 'checked');
-            }
-            if (dato === "2") {
-                $('#modifica2').attr('checked', 'checked');
-            }
-            if (dato === "3") {
-                $('#modifica3').attr('checked', 'checked');
-            }
+        async guardar() {
+            //requerimientoFirstFill
+            const response_req = await axios.get('get_requerimientos');
+            // await this.reqItemSave();
+            await this.requerimientoFirstSave();
+        //     if (this.requerimientoFirstFill === false) {
+        //         await this.requerimientoFirstSave()
+        //         console.log('REQ ID', this.jsonData.requerimiento_id);
+        //         console.log("requerimientoFirstFill", requerimientoFirstFill);
+        //         this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1];
+        //         await this.reqItemSave();
+        //         this.requerimientoFirstFill = true;
+        //     } else {
+        //         await this.reqItemSave();
+        //     }
+        //     this.limpiar_formulario();
         },
         editar(data = {}) {
             console.log('XXXXXXXXXXXXXXXXX');
@@ -1462,6 +1260,221 @@ export default {
             this.$refs.RecuperaConfig.RecuperaConfig();//esta es la funcion de mandar configuracion desde hijo
         }
         /*************************fin funciones de configuracion********************** */
+    },
+    data() {
+        return {
+            modificar_bottom: false,
+            guardar_bottom: false,
+            clickedAdd: false,
+            tituloDocLegalesModal: '',
+            requerimientoFirstFill: true,
+            combo_requerimiento_recursos: [],
+            combo_items_planilla: [],
+
+            proyectos: [],
+            jsonData: {
+                id: "",
+                correlativo_requerimiento: '/2022',
+                fecha_requerimiento: '2022/01/01',
+                nuri_requerimiento: '/2022',
+                requerimiento_id: '',
+                tipo_requerimiento_id: 5,
+
+                codigo_recurso: '',
+                proyectos: '',
+                tipos_documento: {},
+                institucion: {},
+                cofinanciador: {},
+                titulo: '',
+                doc_legal: {},
+                objetivo: {},
+                document_id: '',
+                descripcion_requerimiento: '<p>prueba <b>planolla inicial si</b> carga file</p>',
+                requerimiento_recurso_id: '',
+                descripcion_recurso: '',
+                unidad_id: '',
+                simbolo: '',
+                cantidad_recurso: '',
+                horas_recurso: '',
+                dias_recurso: '',
+                tiempo_total_recurso: '',
+                precio_referencia_recurso: '',
+                trabajos_encarados: 'trabajos a ser encarados explicacion de ello',
+                files: null,
+                item_codigo: 'zzzz',
+                item_descripcion: '',
+                item_simbolo: 'abc',
+                item_vigente: '1',
+                item_avance: '2',
+                item_saldo: '3',
+                item_estimado: '4',
+                gastos_generales: 'se explica en que gatsos generales se trabajara',
+                codigo_otros: 'yyyyyyy',
+                descripcion_otros: '',
+                simbolo_otros: 'abcde',
+                cantidad_otros: '10',
+                monto_otros: '20',
+                explicar_otros: '30',
+
+            },
+            rows: [],
+            columns: [
+                {
+                    label: "Codigo",
+                    name: "codigo_recurso",
+                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
+                },
+                {
+                    label: "Descripcion Recurso:",
+                    name: "descripcion_recurso",
+                    filter: {type: "simple", placeholder: "descripcion_recurso",},
+                    sort: true,
+                },
+                {
+                    label: "Unidad",
+                    name: "unidad_id",
+                    filter: {type: "simple", placeholder: "Simbolo"},
+                    sort: true,
+                },
+                {
+                    label: "Cantidad",
+                    name: "cantidad_recurso",
+                    filter: {type: "simple", placeholder: "Cantidad"},
+                },
+                {
+                    label: "Horas Requeridas",
+                    name: "horas_recurso",
+                    filter: {type: "simple", placeholder: "Horas Requeridas"},
+                },
+                {
+                    label: "Dias Requeridos",
+                    name: "dias_recurso",
+                    filter: {type: "simple", placeholder: "Dias Requeridos"},
+                },
+                {
+                    label: "Plazo Ejecucion",
+                    name: "tiempo_total_recurso",
+                    filter: {type: "simple", placeholder: "Plazo Ejecucion"},
+                    sort: true,
+                },
+                {
+                    label: "Precio referencial",
+                    name: "precio_referencia_recurso",
+                    filter: {type: "simple", placeholder: "Precio referencial"},
+                    sort: true,
+                },
+
+                {
+                    label: "Acciones",
+                    name: "acciones",
+                    sort: false,
+                },
+            ],
+
+            rows1: [],
+            columns1: [
+                {
+                    label: "Codigo",
+                    name: "item_codigo",
+                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
+                },
+                {
+                    label: "Item Relacionado:",
+                    name: "item_descripcion",
+                    filter: {type: "simple", placeholder: "Item Relacionado",},
+                    sort: true,
+                },
+                {
+                    label: "Unidad",
+                    name: "item_simbolo",
+                    filter: {type: "simple", placeholder: "Unidad"},
+                    sort: true,
+                },
+                {
+                    label: "Cantidad Vigente",
+                    name: "item_vigente",
+                    filter: {type: "simple", placeholder: "Cantidad Vigente"},
+                },
+                {
+                    label: "Avance",
+                    name: "item_avance",
+                    filter: {type: "simple", placeholder: "Avance"},
+                },
+                {
+                    label: "Por Ejecutar",
+                    name: "item_saldo",
+                    filter: {type: "simple", placeholder: "Por Ejecutar"},
+                },
+                {
+                    label: "Avance Estimado",
+                    name: "item_estimado",
+                    filter: {type: "simple", placeholder: "Avance Estimado"},
+                },
+
+
+                {
+                    label: "Acciones",
+                    name: "acciones",
+                    sort: false,
+                },
+
+
+            ],
+
+            rows2: [],
+            columns2: [
+                {
+                    label: "Codigo",
+                    name: "codigo_otros",
+                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
+                },
+                {
+                    label: "Gastos Generales:",
+                    name: "descripcion_otros",
+                    filter: {type: "simple", placeholder: "Gastos Generales",},
+                    sort: true,
+                },
+                {
+                    label: "Unidad",
+                    name: "simbolo_otros",
+                    filter: {type: "simple", placeholder: "Unidad"},
+                    sort: true,
+                },
+                {
+                    label: "Cantidad",
+                    name: "cantidad_otros",
+                    filter: {type: "simple", placeholder: "Cantidad"},
+                },
+                {
+                    label: "Monto",
+                    name: "monto_otros",
+                    filter: {type: "simple", placeholder: "Monto"},
+                },
+                {
+                    label: "Uso",
+                    name: "explicar_otros",
+                    filter: {type: "simple", placeholder: "Uso"},
+                },
+                {
+                    label: "Acciones",
+                    name: "acciones",
+                    sort: false,
+                },
+
+
+            ],
+
+            configFile: {
+                cerrar: false,
+                contenidoDefault: " CARGAR INFORME TECNICO/JUSTIFICACION",
+            },
+            datosEnviarConfiguracion: {},
+            configFechas: {},
+            configTablas: {},
+            actions: [],
+            classes: {},
+            configToolBarEditText: [],
+        }
     },
     mounted() {
         this.funcionRecuperaConfig();

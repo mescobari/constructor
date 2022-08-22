@@ -180,7 +180,7 @@ class DocumentController extends Controller
         $files = "";
         if ($request->hasFile('files')) {
             $files = $request->file('files');
-            $nombre_carpeta = "documentos/constructor";
+            $nombre_carpeta = "constructor/documentos";
             $nombre_archivo = $request->document_types_id . '-' . $_FILES['files']['name'];
             $path = $files->storeAs( $nombre_carpeta, $nombre_archivo);
         }
