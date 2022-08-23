@@ -37,6 +37,9 @@ class RequerimientoController extends Controller
         ]);
     }
 
+    public function getRequerimientoItems(){
+        return RequerimientoItem::all();
+    }
     public function getUnidades()
     {
         return Unidad::all();
@@ -89,16 +92,6 @@ class RequerimientoController extends Controller
         $re_item->tiempo_total_recurso = $request->tiempo_total_recurso;
         $re_item->precio_referencia_recurso = $request->precio_referencia_recurso;
         $re_item->save();
-//        return RequerimientoItem::create([
-//            'requerimiento_id' => $request->requerimiento_id,
-//            'requerimiento_recurso_id' => $request->requerimiento_recurso_id,
-//            'cantidad_recurso' => $request->cantidad_recurso,
-//            'horas_recurso' => $request->horas_recurso,
-//            'dias_recurso' => $request->dias_recurso,
-//            'tiempo_total_recurso' => $request->tiempo_total_recurso,
-//            'precio_referencia_recurso' => $request->precio_referencia_recurso
-//        ]);
-
     }
 
     /**

@@ -98,7 +98,7 @@
                                             <label for="nombre">Correlativo Requerimiento:</label>
                                             <input type="text" class="form-control" name="nombre"
                                                    placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento">
+                                                   v-model="jsonData.correlativo_requerimiento" disabled>
                                         </div>
                                     </div>
                                 </div>
@@ -719,7 +719,8 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br>
-                                        <button type="submit" @click="guardar();" class="btn btn-danger">Agregar
+                                        <button type="submit" @input="listarRequerimientoItem" @click="guardar();"
+                                                class="btn btn-danger">Agregar
                                         </button>
                                     </div>
                                 </div>
@@ -849,7 +850,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="ver_planilla();">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
                             Seleccionar
                         </button>
                     </div>
@@ -870,11 +871,9 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
-import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
 
 Vue.component("v-select", vSelect);
-import moment from 'moment';
 
 export default {
     watch: {
@@ -888,33 +887,50 @@ export default {
         }
     },
     methods: {
+        async filterList(arrayItems) {
+            const responseRecursos = (await axios.get('requerimientos')).data;
 
-        async listarRecursos() {
-            const respuesta = await axios.get('requerimientos')
-            // this.rows = [];
-            // this.rows1 = [];
-            this.rows = [];
-            // this.rows = await this.getRecursos();
-            // this.rows1 = await this.getItems();
-            this.rows = respuesta.data
+            let arrayItemsFiltered = [];
+            for (let i = 0; i < arrayItems.length; i++) {
+                if (arrayItems[i].requerimiento_id === this.jsonData.requerimiento_id) {
+                    for (let j = 0; j < responseRecursos.length; j++) {
+                        if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
+                            arrayItemsFiltered.push({
+                                ...arrayItems[i],
+                                ...responseRecursos[j],
+                                // ...responseRecursos[j].codigo_recurso,
+                                // ...responseRecursos[j].descripcion_recurso
+                            })
+                            j = responseRecursos.length;
+                        }
+
+                    }
+                }
+            }
+            console.log('LIST CURRENT', arrayItemsFiltered);
+            return arrayItemsFiltered
+        },
+
+        async listarRequerimientoItem() {
+            const response = await axios.get('get_requerimiento_items');
+            const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
+            console.log('ITEM RECURSOS', response.data);
+            this.rows = await this.filterList(response.data);
+            // this.rows = items
         },
         async retrieveFromCurrentDescripcionRecurso() {
 
             const descripcion_recurso = await this.descripcionRecursoGetAll();
-            console.log("array desc rec", descripcion_recurso);
             for (let i = 0; i < descripcion_recurso.length; i++) {
                 if (descripcion_recurso[i].id == this.jsonData.descripcion_recurso.id) {
                     this.jsonData.codigo_recurso = descripcion_recurso[i].codigo_recurso;
-                    console.log("codigo recurso", descripcion_recurso[i].codigo_recurso);
                     break;
                 }
             }
             const responseUnidades = await axios.get('get_unidades');
-            console.log("array unidades", responseUnidades.data);
             for (let i = 0; i < responseUnidades.data.length; i++) {
                 if (responseUnidades.data[i].id == this.jsonData.descripcion_recurso.unidad_id) {
                     this.jsonData.simbolo = responseUnidades.data[i].simbolo;
-                    console.log("unidad recurso", responseUnidades.data[i]);
                     break;
                 }
             }
@@ -952,7 +968,6 @@ export default {
             datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
             datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
             datos_jsonData.append('files', this.jsonData.files);
-            // datos_jsonData.append('path_requerimientos', this.jsonData.path_requerimientos);
             let response = await axios.post('create_requerimiento', datos_jsonData);
             console.log('CREATE REQ', response.data);
         },
@@ -960,6 +975,7 @@ export default {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             this.jsonData.requerimiento_recurso_id = this.jsonData.descripcion_recurso.id;
+
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
@@ -976,7 +992,8 @@ export default {
             console.log('MEMORYSELECTED', this.memorySelected);
             console.log('TIPO REQ', this.jsonData.tipo_requerimiento_id)
             console.log('=================================================')
-            if (this.memorySelected===this.jsonData.tipo_requerimiento_id) {
+            if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
+                console.log('MEMORYSELECTED', this.memorySelected + ' ' + this.jsonData.tipo_requerimiento_id);
                 await this.reqItemSave();
                 console.log('TRUE WAY')
                 console.log('=================================================')
@@ -988,6 +1005,7 @@ export default {
                 console.log('FALSE WAY')
                 console.log('=================================================')
             }
+            await this.listarRequerimientoItem();
             // this.limpiar_formulario();
         },
         editar(data = {}) {
@@ -1286,7 +1304,8 @@ export default {
                 nuri_requerimiento: '/2022',
                 requerimiento_id: '',
                 tipo_requerimiento_id: 5,
-
+                itemsWithRecursos: [],
+                position: 0,
                 codigo_recurso: '',
                 proyectos: '',
                 tipos_documento: {},
