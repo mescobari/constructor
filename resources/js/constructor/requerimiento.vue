@@ -258,7 +258,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br>
-                                        <button type="submit" @input="behaviorRequerimiento" @click="guardar();"
+                                        <button type="submit" @click="guardar();"
                                                 class="btn btn-success">
                                             Agregar
                                         </button>
@@ -877,14 +877,18 @@ Vue.component("v-select", vSelect);
 import moment from 'moment';
 
 export default {
-    methods: {
-        behaviorRequerimiento() {
-            if (this.requerimientoFirstFill === false) {
+    watch: {
+        behaviorReq() {
+            if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
                 this.requerimientoFirstFill = true;
             } else {
-                console.log("El Requerimiento ya fue creado");
+                this.memorySelected = this.jsonData.tipo_requerimiento_id
+                this.requerimientoFirstFill = false;
             }
-        },
+        }
+    },
+    methods: {
+
         async listarRecursos() {
             const respuesta = await axios.get('requerimientos')
             // this.rows = [];
@@ -953,10 +957,11 @@ export default {
             console.log('CREATE REQ', response.data);
         },
         async reqItemSave() {
+            const response_req = await axios.get('get_requerimientos');
+            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             this.jsonData.requerimiento_recurso_id = this.jsonData.descripcion_recurso.id;
-
             let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id',this.jsonData.requerimiento_id);
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
             datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
             datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
@@ -968,20 +973,22 @@ export default {
         },
         async guardar() {
             //requerimientoFirstFill
-            const response_req = await axios.get('get_requerimientos');
-            // await this.reqItemSave();
-            // await this.requerimientoFirstSave();
-            if (this.requerimientoFirstFill === false) {
-                await this.requerimientoFirstSave()
-                console.log('REQ ID', this.jsonData.requerimiento_id);
-                console.log("requerimientoFirstFill", requerimientoFirstFill);
-                this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1];
+            console.log('MEMORYSELECTED', this.memorySelected);
+            console.log('TIPO REQ', this.jsonData.tipo_requerimiento_id)
+            console.log('=================================================')
+            if (this.memorySelected===this.jsonData.tipo_requerimiento_id) {
                 await this.reqItemSave();
-                this.requerimientoFirstFill = true;
+                console.log('TRUE WAY')
+                console.log('=================================================')
             } else {
+                this.memorySelected = this.jsonData.tipo_requerimiento_id;
+                console.log('MEMORYSELECTED', this.memorySelected + ' ' + this.jsonData.tipo_requerimiento_id);
+                await this.requerimientoFirstSave()
                 await this.reqItemSave();
+                console.log('FALSE WAY')
+                console.log('=================================================')
             }
-            this.limpiar_formulario();
+            // this.limpiar_formulario();
         },
         editar(data = {}) {
             console.log('XXXXXXXXXXXXXXXXX');
@@ -1270,7 +1277,7 @@ export default {
             requerimientoFirstFill: true,
             combo_requerimiento_recursos: [],
             combo_items_planilla: [],
-
+            memorySelected: '',
             proyectos: [],
             jsonData: {
                 id: "",
