@@ -510,20 +510,82 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         ->get();    
         $patriarca = json_decode($json, true);
 
-        for($i = 0; $i < count( $patriarca); $i++) { 
-            $padre0=$items[$i]['id'];
-            for($j = 0; $j < count( $items); $j++) {
+        //sumamos items 
+        for($i = 0; $i < count( $items); $i++) { 
+            $tipo=$items[$i]['tipo'];
+            
 
-                     If ($padre0 = $items[$j]['padre']){                       
-                       
-                        $items[$i]['inic_pt']= $items[$i]['inic_pt']+$items[$j]['inic_pt'];
-
-
-
+            if ($tipo =="G") { 
+                $padre=$items[$i]['id']; 
+                $inic_total=0;   $vig_total=0;    $diff_total=0;                 
+                // sumamos todos los itemes que tiene padre=$padre
+                for($j = 0; $j < count( $items); $j++) {
+                    $padreI=$items[$j]['padre'];
+                    if ($padreI ==$padre) {
+                        $tipoI=$items[$j]['tipo'];
+                        if ($tipoI =="I") {
+                            $inic_total=$inic_total+$items[$j]['inic_pt'];
+                            $vig_total=$vig_total+$items[$j]['vig_pt'];
+                            $diff_total=$diff_total+$items[$j]['diff_pt'];
+                        }
                     }
 
-            } 
-        }    
+                }
+                // registramos la sumayo 
+                $items[$i]['inic_pt']=$inic_total;
+                $items[$i]['vig_pt']=$vig_total;
+                $items[$i]['diff_pt']=$diff_total;
+
+             }
+           
+        }   
+
+        // ahora sumamos los grupos
+
+        for($i = 0; $i < count( $items); $i++) { 
+            $tipo=$items[$i]['tipo'];
+            
+
+            if ($tipo =="G") { 
+                $padre=$items[$i]['id']; 
+                $inic_total=0;   $vig_total=0;    $diff_total=0;                 
+                // sumamos todos los itemes que tiene padre=$padre
+                for($j = 0; $j < count( $items); $j++) {
+                    $padreI=$items[$j]['padre'];
+                    if ($padreI ==$padre) {
+                        $tipoI=$items[$j]['tipo'];
+                        if ($tipoI =="G") {
+                            $inic_total=$inic_total+$items[$j]['inic_pt'];
+                            $vig_total=$vig_total+$items[$j]['vig_pt'];
+                            $diff_total=$diff_total+$items[$j]['diff_pt'];
+                        }
+                    }
+
+                }
+                // registramos la sumayo 
+                $items[$i]['inic_pt']=$inic_total+ $items[$i]['inic_pt'];
+                $items[$i]['vig_pt']=$vig_total+ $items[$i]['vig_pt'];
+                $items[$i]['diff_pt']=$diff_total+ $items[$i]['diff_pt'];
+
+             }
+           
+        }   
+        
+        // obtenemos el tota total
+        $inic_total=0;   $vig_total=0;    $diff_total=0; 
+
+        for($i = 0; $i < count( $items); $i++) { 
+            $tipo=$items[$i]['tipo'];
+            if ($tipoI =="I") {
+                $inic_total=$inic_total+$items[$i]['inic_pt'];
+                $vig_total=$vig_total+$items[$i]['vig_pt'];
+                $diff_total=$diff_total+$items[$i]['diff_pt'];
+            }
+
+        }
+        $inic_total= number_format( $inic_total,2,",",".");
+        $vig_total= number_format( $vig_total,2,",",".");
+        $diff_total= number_format( $diff_total,2,",",".");
 
       // una vez calculado ponemos en formato
 
@@ -550,109 +612,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
      
 
 
-
-//sacar la original y la ultima vigente
-
-
-        $planilla = DB::table('planillas')
-        ->leftjoin('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
-        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
-        ->leftjoin('unidades', 'planilla_items.unidad_id', '=', 'unidades.id')
-        ->select('planillas.*', 'planilla_movimientos.*', 'planilla_items.*','unidades.simbolo' )
-        ->where('planillas.id', $id)
-        ->get();
-
-        $suma_grupos = DB::table('planilla_movimientos')
-        ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
-        ->select( 'planilla_items.padre',DB::raw('sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as precio_total') )
-        ->where('planilla_movimientos.planilla_id', $id)
-        ->groupBy('planilla_items.padre')
-        ->get();
-
-
-
-        $array1 = json_decode($planilla, true);
-        $array2 = json_decode($suma_grupos, true);
-        
-        $keys = array_keys($array1);
-        $salida=[];
-
-
-
-
-//procesamos la planlla poniendo los campos extras, cambiando formatos y calculando total item
-
-        for($i = 0; $i < count($array1); $i++) {
-
-            foreach($array1[$keys[$i]] as $key => $value) {
-                $salida[$i][$key]=  $value ;
-                if ($key =="tipo_planilla_id") {
-                    if ($value==1) {
-                        $newvalue='Planilla Inicial';
-                      } elseif ($value==2) {
-                        $newvalue='Planilla Modificatoria';
-                      } else {
-                        $newvalue='Planilla de Avance';;
-                      }
-
-                    $salida[$i][$key]= $newvalue;
-                 }
-
-                if ($key =="fecha_planilla") {
-
-                    $salida[$i][$key]= date("d-m-Y", strtotime($value));
-                 }
-
-                if ($key =="total_planilla") {
-                    $salida[$i][$key]= number_format($value,2,",",".");
-                 }
-                 if ($key =="anticipo_planilla") {
-                    $salida[$i][$key]= number_format($value,2,",",".");
-                 }
-                 if ($key =="retencion_planilla") {
-                    $salida[$i][$key]= number_format($value,2,",",".");
-                 }
-
-
-            }
-            // aqui los campos calculados y actualizacion
-            $salida[$i]['precio_total']=number_format($salida[$i]['cantidad']*$salida[$i]['precio_unitario'],2,",",".");
-            $salida[$i]['cantidad']= number_format( $salida[$i]['cantidad'],2,",",".");
-            $salida[$i]['precio_unitario']= number_format( $salida[$i]['precio_unitario'],2,",",".");
-
-        }
-
-// calculamos los totales de la planilla
-
-        $grupos = array();
-        for($i = 0; $i < count($array1); $i++) {
-
-            foreach($array1[$keys[$i]] as $key => $value) {
-
-                if ($key =="tipo") {
-                    if ($value =="G") {
-                        $grupos[] =  $array1[$i]['id'];
-                        $id =  $array1[$i]['id'];
-
-                        //$buscar= array_search($id,$array2);
-                        $found_key = array_search($id, array_column($array2, 'padre'));
-                        if ($found_key != false) {
-                            $salida[$i]['precio_total']=
-                            number_format($array2[$found_key]['precio_total'],2,",",".");
-
-                        }
-
-
-                    }
-                }
-            }
-         }
-
-
-
-
-
-//datos para la cabecera del reportedel reporte
+         //datos para la cabecera del reportedel reporte
 $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
 $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
 $siglas = "EL CONSTRUCTOR";
@@ -664,14 +624,6 @@ $documento_nombre= $documento->objeto;
 $documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
 $documento_monto= number_format($documento->monto_bs,2,",",".");
 
-
-
-$fecha_planilla= $salida[0]['fecha_planilla'];
-$nuri_planilla= $salida[0]['nuri_planilla'];
-$referencia= $salida[0]['referencia'];
-$total_planilla=  $salida[0]['total_planilla'];
-$anticipo_planilla=  $salida[0]['anticipo_planilla'];
-$retencion_planilla=  $salida[0]['retencion_planilla'];
 
 $principal_codigo=$docs_modificatorios[0]['codigo'];
 $principal_nombre=$docs_modificatorios[0]['nombre'];
@@ -695,12 +647,6 @@ $principal_nombre=$docs_modificatorios[0]['nombre'];
             'documento_nombre' => $documento_nombre,
             'documento_firma' => $documento_firma,
             'documento_monto' => $documento_monto,
-            'fecha_planilla' => $fecha_planilla,
-            'nuri_planilla' => $nuri_planilla,
-            'referencia' => $referencia,
-            'total_planilla' => $total_planilla,
-            'anticipo_planilla' => $anticipo_planilla,
-            'retencion_planilla' => $retencion_planilla,
             'principal_codigo' => $principal_codigo,
             'principal_nombre' => $principal_nombre,
             'principal_firma' =>  $principal_firma,
@@ -714,11 +660,224 @@ $principal_nombre=$docs_modificatorios[0]['nombre'];
         return $pdf->stream('reporte_ficha_proyecto.pdf');
 
 
-     //return  $hijos;
+     //return  $items;
     }
 
 
     public function planilla_ejecucion(Request $request, $id){
+
+
+        $contrato_id=$id;
+        $plaI= new PlanillaItem;
+        $docs= new Document;
+        $movs= new PlanillaMovimiento;
+        $plani= new Planilla;
+
+        $documento = $docs->getDocumento($contrato_id );
+
+
+        // aqui tengo $items=planilla_items, la estructura
+
+        $items=$plaI->getEstructuraItems($contrato_id);
+
+        // analizar cuantas planillas de cambio hubo tipo_planilla
+         // cargamos la planilla-cuadro
+       for($i = 0; $i < count( $items); $i++) { 
+
+        $items[$i]['vig_cant']= 0;
+        $items[$i]['vig_pu']= 0;
+        $items[$i]['vig_pt']= 0;
+
+        $items[$i]['acum_cant']= 0;
+        $items[$i]['acum_pu']=0;
+        $items[$i]['acum_pt']= 0;
+
+        $items[$i]['diff_cant']= 0;
+        $items[$i]['diff_pu']= 0;
+        $items[$i]['diff_pt']=0; 
+
+    }
+
+// ya tenemos la estructura d ela planilla
+// ahora traer las planillas que seran desplegadas
+ // obtenemos la planilla vigente
+
+ $docs_modificatorios= $docs->getModificacion($contrato_id);
+
+ $vig_doc=$docs_modificatorios[count($docs_modificatorios)-1]['id'];
+
+ $busPla = DB::table('planilla_documents')->where('document_id', $vig_doc) ->first();
+ $vigente_id=$busPla->planilla_id;
+ $vigente=$movs->getPlanilla($vigente_id);      
+
+  //vigente
+  for($i = 0; $i < count( $items); $i++) { 
+     $linea=$items[$i]['id'];
+     $key = array_search( $linea, array_column($vigente, 'planilla_item_id'));
+     if ($key!=false){
+
+         $items[$i]['vig_cant']= $vigente[$key]['cantidad'] ;
+         $items[$i]['vig_pu']= $vigente[$key]['precio_unitario'] ;
+         $items[$i]['vig_pt']= ($vigente[$key]['cantidad']*$vigente[$key]['precio_unitario']) ;
+         
+
+     } else { 
+         $items[$i]['vig_cant']=1;
+         $items[$i]['vig_pu']=1;
+         $items[$i]['vig_pt']=1;
+     } 
+
+
+  }
+
+  // acumulado suma de planillas
+
+  $docs_avance= $plani->getAvance($contrato_id);
+  $avance_acumulado=$plani->getAvanceAcumulado($contrato_id); 
+
+//acumulado
+  for($i = 0; $i < count( $items); $i++) { 
+     $linea=$items[$i]['id'];
+     $key = array_search( $linea, array_column($avance_acumulado, 'planilla_item_id'));
+     if ($key!=false){
+
+         $items[$i]['acum_cant']= $avance_acumulado[$key]['cantidad'] ;
+         $items[$i]['acum_pu']= $avance_acumulado[$key]['precio_unitario'] ;
+         $items[$i]['acum_pt']= ($avance_acumulado[$key]['cantidad']*$avance_acumulado[$key]['precio_unitario']) ;
+         
+
+     } else { 
+         $items[$i]['acum_cant']=0;
+         $items[$i]['acum_pu']=0;
+         $items[$i]['acum_pt']=0;
+     } 
+
+
+  }
+
+
+//diferencia
+
+       for($i = 0; $i < count( $items); $i++) { 
+       
+        $items[$i]['diff_cant']=   $items[$i]['vig_cant'] -$items[$i]['acum_cant'];
+        $items[$i]['diff_pu']=    $items[$i]['vig_pu']; ;
+        $items[$i]['diff_pt']= $items[$i]['vig_pt'] -$items[$i]['acum_pt'];
+
+        
+     }
+
+//********************************************************************************************* */
+  //calculamos subtotales
+     
+     //sumamos items 
+     for($i = 0; $i < count( $items); $i++) { 
+         $tipo=$items[$i]['tipo'];
+         
+
+         if ($tipo =="G") { 
+             $padre=$items[$i]['id']; 
+             $vig_total=0;   $acum_total=0;    $diff_total=0;                 
+             // sumamos todos los itemes que tiene padre=$padre
+             for($j = 0; $j < count( $items); $j++) {
+                 $padreI=$items[$j]['padre'];
+                 if ($padreI ==$padre) {
+                     $tipoI=$items[$j]['tipo'];
+                     if ($tipoI =="I") {
+                         $vig_total=$vig_total+$items[$j]['vig_pt'];
+                         $acum_total=$acum_total+$items[$j]['acum_pt'];
+                         $diff_total=$diff_total+$items[$j]['diff_pt'];
+                     }
+                 }
+
+             }
+             // registramos la sumayo 
+             $items[$i]['vig_pt']=$vig_total;
+             $items[$i]['acum_pt']=$acum_total;
+             $items[$i]['diff_pt']=$diff_total;
+
+          }
+        
+     }   
+
+     // ahora sumamos los grupos
+
+     for($i = 0; $i < count( $items); $i++) { 
+         $tipo=$items[$i]['tipo'];
+         
+
+         if ($tipo =="G") { 
+             $padre=$items[$i]['id']; 
+             $vig_total=0;   $acum_total=0;    $diff_total=0;                 
+             // sumamos todos los itemes que tiene padre=$padre
+             for($j = 0; $j < count( $items); $j++) {
+                 $padreI=$items[$j]['padre'];
+                 if ($padreI ==$padre) {
+                     $tipoI=$items[$j]['tipo'];
+                     if ($tipoI =="G") {
+                         $vig_total=$vig_total+$items[$j]['vig_pt'];
+                         $acum_total=$acum_total+$items[$j]['acum_pt'];
+                         $diff_total=$diff_total+$items[$j]['diff_pt'];
+                     }
+                 }
+
+             }
+             // registramos la sumayo 
+             $items[$i]['vig_pt']=$vig_total+ $items[$i]['vig_pt'];
+             $items[$i]['acum_pt']=$acum_total+ $items[$i]['acum_pt'];
+             $items[$i]['diff_pt']=$diff_total+ $items[$i]['diff_pt'];
+
+          }
+        
+     }   
+     
+     // obtenemos el tota total
+     $vig_total=0;   $acum_total=0;    $diff_total=0; 
+
+     for($i = 0; $i < count( $items); $i++) { 
+         $tipo=$items[$i]['tipo'];
+         if ($tipoI =="I") {
+             $vig_total=$vig_total+$items[$i]['vig_pt'];
+             $acum_total=$acum_total+$items[$i]['acum_pt'];
+             $diff_total=$diff_total+$items[$i]['diff_pt'];
+         }
+
+     }
+     $vig_total= number_format( $vig_total,2,",",".");
+     $acum_total= number_format( $acum_total,2,",",".");
+     $diff_total= number_format( $diff_total,2,",",".");
+
+   // una vez calculado ponemos en formato
+
+  for($i = 0; $i < count( $items); $i++) { 
+
+    
+    
+     $items[$i]['vig_cant']= number_format( $items[$i]['vig_cant'],2,",",".");
+     $items[$i]['vig_pu']= number_format( $items[$i]['vig_pu'],2,",",".");
+     $items[$i]['vig_pt']= number_format( $items[$i]['vig_pt'],2,",",".");
+
+     $items[$i]['acum_cant']= number_format( $items[$i]['acum_cant'],2,",",".");
+     $items[$i]['acum_pu']= number_format( $items[$i]['acum_pu'],2,",",".");
+     $items[$i]['acum_pt']= number_format( $items[$i]['acum_pt'],2,",",".");
+
+
+     $items[$i]['diff_cant']= number_format( $items[$i]['diff_cant'],2,",",".");
+     $items[$i]['diff_pu']= number_format( $items[$i]['diff_pu'],2,",",".");
+     $items[$i]['diff_pt']= number_format( $items[$i]['diff_pt'],2,",",".");
+
+
+  }
+
+
+     
+ //********************************************************************************************* */ 
+//********************************************************************************************* */
+
+
+
+
+
         //$planilla = Planilla::where('id', $id)->first();
         $documento = DB::table('planilla_documents')
         ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
@@ -862,9 +1021,9 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 // otros datos para el cuerpo
 
 
- /* cargamos la vista   */
+ /* cargamos la vista  */ 
 
-        $pdf = PDF::loadView('front-end.reportes.constructor.cuerpo', [
+        $pdf = PDF::loadView('front-end.reportes.constructor.avance', [
             'link_img'=>'img/sistema-front-end/logo-pdf.png',
             'titulo_grande' => $titulo_grande,
             'nombre_institucion' => $nombre_institucion,
@@ -886,16 +1045,16 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'principal_firma' =>  $principal_firma,
             'principal_monto' =>  $principal_monto,
             'padre' =>  $padre,
-            'planilla' =>  $salida,
+            'planilla' =>  $items,
 
 
 
         ]);
-        $pdf->setPaper('letter', 'portrait');
+        $pdf->setPaper('letter', 'landscape');
         return $pdf->stream('reporte_ficha_proyecto.pdf');
 
 
-      //return  json_encode($salida);
+      //return  $items;
     }
 
 

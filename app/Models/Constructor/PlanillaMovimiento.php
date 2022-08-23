@@ -27,11 +27,6 @@ class PlanillaMovimiento extends Model
 
         $obj = json_decode($json, true);
 
-
-
-
-
-
         return $obj;
     }
 

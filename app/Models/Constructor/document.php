@@ -5,8 +5,10 @@ namespace App\Models\Constructor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 use App\Models\FrontEnd\cofinanciadores\TipoDocumento;
 use App\Models\BackEnd\intervenciones\ClaInstitucional;
+
 
 class document extends Model
 {
@@ -109,6 +111,7 @@ class document extends Model
 
 
     }
+
 
 
 }
