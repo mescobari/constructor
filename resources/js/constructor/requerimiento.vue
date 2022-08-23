@@ -956,7 +956,7 @@ export default {
             this.jsonData.requerimiento_recurso_id = this.jsonData.descripcion_recurso.id;
 
             let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id','1');
+            datos_jsonData.append('requerimiento_id',this.jsonData.requerimiento_id);
             datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
             datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
             datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
@@ -970,18 +970,18 @@ export default {
             //requerimientoFirstFill
             const response_req = await axios.get('get_requerimientos');
             // await this.reqItemSave();
-            await this.requerimientoFirstSave();
-        //     if (this.requerimientoFirstFill === false) {
-        //         await this.requerimientoFirstSave()
-        //         console.log('REQ ID', this.jsonData.requerimiento_id);
-        //         console.log("requerimientoFirstFill", requerimientoFirstFill);
-        //         this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1];
-        //         await this.reqItemSave();
-        //         this.requerimientoFirstFill = true;
-        //     } else {
-        //         await this.reqItemSave();
-        //     }
-        //     this.limpiar_formulario();
+            // await this.requerimientoFirstSave();
+            if (this.requerimientoFirstFill === false) {
+                await this.requerimientoFirstSave()
+                console.log('REQ ID', this.jsonData.requerimiento_id);
+                console.log("requerimientoFirstFill", requerimientoFirstFill);
+                this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1];
+                await this.reqItemSave();
+                this.requerimientoFirstFill = true;
+            } else {
+                await this.reqItemSave();
+            }
+            this.limpiar_formulario();
         },
         editar(data = {}) {
             console.log('XXXXXXXXXXXXXXXXX');
