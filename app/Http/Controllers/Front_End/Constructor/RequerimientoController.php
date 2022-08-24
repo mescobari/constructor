@@ -148,9 +148,7 @@ class RequerimientoController extends Controller
         $itemAndId->dias_recurso = $request->dias_recurso;
         $itemAndId->tiempo_total_recurso = $request->tiempo_total_recurso;
         $itemAndId->precio_referencia_recurso = $request->precio_referencia_recurso;
-
         $itemAndId->unidad_ejecutora_id = $request->unidad_ejecutora_id;
-//        $document->path_contrato = $file;
         $itemAndId -> save();
     }
 }
