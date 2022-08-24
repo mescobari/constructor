@@ -49,6 +49,10 @@ class RequerimientoController extends Controller
         ]);
     }
 
+    public function getRequerimientoRelacion(){
+        return RequerimientoRelacion::all();
+    }
+
     public function getRequerimientoItems()
     {
         return RequerimientoItem::all();

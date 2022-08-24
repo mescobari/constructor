@@ -27,6 +27,7 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::get('get_requerimiento_items', 'RequerimientoController@getRequerimientoItems')->name('get_requerimiento_items');
     Route::get('update_requerimiento_item/{id}', 'RequerimientoController@updateRequerimientoItem')->name('update_requerimiento_item');
     Route::post('create_requerimiento_relacion', 'RequerimientoController@createRequerimientoRelacion')->name('create_requerimiento_relacion');
+    Route::get('get_requerimiento_relacion', 'RequerimientoController@getRequerimientoRelacion')->name('get_requerimiento_relacion');
     /*Route::apiResource('intervenciones', IntervencionesController::class);
     Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
     Route::get('proyectos', 'IntervencionesController@proyectos')->name('proyectos');

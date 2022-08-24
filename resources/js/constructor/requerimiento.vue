@@ -571,10 +571,10 @@
                                     <template slot="acciones" slot-scope="props">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-outline-warning ml-1"
-                                                    @click="editar(props.row1);"><span><i
+                                                    @click="editarItemRelacion(props.rows1);"><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="eliminar(props.row1.id);"><span><i
+                                                    @click="eliminarItemRelacion(props.rows1.id);"><span><i
                                                 class="fa fa-trash-alt"></i></span></button>
                                         </div>
                                     </template>
@@ -1104,7 +1104,8 @@ export default {
         },
 
         async listarItemRelacion() {
-
+            var respuesta = await axios.get('listar_item_relacion');
+            this.lista_item_relacion = respuesta.data;
         },
         async guardarItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
@@ -1120,29 +1121,19 @@ export default {
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
             console.log('SAVE ITEM RELACION',itemRelacion.data);
         },
-        async editarItemRelacion() {
+        async editarItemRelacion(data={}) {
 
         },
         async modificarItemRelacion() {
 
         },
-        async eliminarItemRelacion() {
+        async eliminarItemRelacion(id) {
 
         },
         async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');
+            // responseItemPlanilla.data.filter(this.jsonData.item_descripcion.padre === );
             this.combo_items_planilla = responseItemPlanilla.data;
-
-            // for (let i = 0; i < responseItemPlanilla.data.length; i++) {
-            //     if(responseItemPlanilla.data[i].id == this.jsonData.item_descripcion.id){
-            //         this.jsonData.item_codigo = responseItemPlanilla.data[i].item_codigo
-            //         this.jsonData.item_simbolo = responseItemPlanilla.data[i].item_simbolo
-            //         console.log("CODIGO ITEM", responseItemPlanilla.data[i]);
-            //         console.log("UNIDAD ITEM", responseItemPlanilla.data[i]);
-            //         break;
-            //     }
-            // }
-            // console.log("PLANILLA ITEM", responseItemPlanilla.data);
         },
         async getNameForItemRelacion() {
             const responseUnidad = (await axios.get('get_unidades')).data;
@@ -1327,6 +1318,7 @@ export default {
             combo_requerimiento_recursos: [],
             combo_items_planilla: [],
             memorySelected: '',
+            memorySelectedRelacion: '',
             proyectos: [],
             jsonData: {
                 //REQUERIMIENTO OBRA
@@ -1540,10 +1532,14 @@ export default {
         // this.seleccionar_cont_primario();
     },
     created() {
+        //Requerimiento
         this.descripcionRecursoGetAll();
         this.descripcionRecursoGetbyType();
+        //Item Relacionado
         this.getAllItemRelacion();
         this.getNameForItemRelacion();
+        this.listarItemRelacion();
+        //Otros
     },
     components: {
         VueBootstrap4Table,
