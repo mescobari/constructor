@@ -1172,6 +1172,21 @@ export default {
                 }
             }
         },
+        async listarItemOtrosGastos() {
+
+        },
+        async guardarItemOtrosGastos() {
+
+        },
+        async editarItemOtrosGastos() {
+
+        },
+        async modificarItemOtrosGastos() {
+
+        },
+        async eliminarItemOtrosGastos() {
+
+        },
         async seleccionar_cont_primario() {
             const respuesta = await axios.get('documents');
             const principales = respuesta.data.filter((item) => item.document_types_id === 1)
