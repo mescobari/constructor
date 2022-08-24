@@ -498,7 +498,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br>
-                                        <button type="submit" @click="guardar();" class="btn btn-danger">Agregar
+                                        <button type="submit" @click="guardarItemRelacion();" class="btn btn-danger">Agregar
                                         </button>
                                     </div>
                                 </div>
@@ -1107,8 +1107,8 @@ export default {
 
         },
         async guardarItemRelacion() {
-            // const response_req = await axios.get('get_requerimientos');
-            // this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
+            const response_req = await axios.get('get_requerimientos');
+            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
@@ -1118,7 +1118,7 @@ export default {
 
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
-
+            console.log('SAVE ITEM RELACION',itemRelacion.data);
         },
         async editarItemRelacion() {
 
