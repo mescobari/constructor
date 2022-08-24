@@ -46,7 +46,6 @@ class RequerimientoController extends Controller
             'avance' => $request->avance,
             'estimado' => $request->estimado,
             'precio_unitario' => $request->precio_unitario,
-
         ]);
     }
 

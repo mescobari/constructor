@@ -408,7 +408,7 @@
                             </div>
                             <div class="col-md-9">
                                 <div class="form-group">
-                                    <label for="descripcion">Trabajpos a ser encarados, con este requerimiento:</label>
+                                    <label for="descripcion">Trabajos a ser encarados, con este requerimiento:</label>
                                     <vue-editor
                                         v-model="jsonData.trabajos_encarados"
                                         :editor-toolbar="configToolBarEditText"
@@ -484,7 +484,13 @@
                                                    placeholder="dias de ejecucion" v-model="jsonData.item_estimado">
                                         </div>
                                     </div>
-
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Precio Unitario</label>
+                                            <input type="text" class="form-control" name="plazo"
+                                                   placeholder="dias de ejecucion" v-model="jsonData.item_precio_unitario">
+                                        </div>
+                                    </div>
 
                                 </div>
                             </div>
@@ -1110,7 +1116,7 @@ export default {
             datos_jsonData.append('avance', this.jsonData.item_avance);
             datos_jsonData.append('estimado', this.jsonData.item_estimado);
 
-            datos_jsonData.append('precio_unitario', this.jsonData.precio_unitario);
+            datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('item_relacion', datos_jsonData);
         },
         async editarItemRelacion() {
@@ -1126,22 +1132,22 @@ export default {
             const responseItemPlanilla = await axios.get('get_planilla_item');
             this.combo_items_planilla = responseItemPlanilla.data;
 
-            for (let i = 0; i < responseItemPlanilla.data.length; i++) {
-                if(responseItemPlanilla.data[i].id == this.jsonData.item_descripcion.id){
-                    this.jsonData.item_codigo = responseItemPlanilla.data[i].item_codigo
-                    this.jsonData.item_simbolo = responseItemPlanilla.data[i].item_simbolo
-                    console.log("CODIGO ITEM", responseItemPlanilla.data[i]);
-                    console.log("UNIDAD ITEM", responseItemPlanilla.data[i]);
-                    break;
-                }
-            }
-            console.log("PLANILLA ITEM", responseItemPlanilla.data);
+            // for (let i = 0; i < responseItemPlanilla.data.length; i++) {
+            //     if(responseItemPlanilla.data[i].id == this.jsonData.item_descripcion.id){
+            //         this.jsonData.item_codigo = responseItemPlanilla.data[i].item_codigo
+            //         this.jsonData.item_simbolo = responseItemPlanilla.data[i].item_simbolo
+            //         console.log("CODIGO ITEM", responseItemPlanilla.data[i]);
+            //         console.log("UNIDAD ITEM", responseItemPlanilla.data[i]);
+            //         break;
+            //     }
+            // }
+            // console.log("PLANILLA ITEM", responseItemPlanilla.data);
         },
         async getNameForItemRelacion() {
             const responseUnidad = (await axios.get('get_unidades')).data;
             for (let i = 0; i < responseUnidad.length; i++) {
                 if (this.jsonData.item_descripcion.unidad_id == responseUnidad[i].id) {
-                    this.jsonData.item_simbolo = responseUnidad[i].nombre;
+                    this.jsonData.item_simbolo = responseUnidad[i].simbolo;
                     this.jsonData.item_codigo = this.jsonData.item_descripcion.item_codigo;
                     break;
                 }
@@ -1357,6 +1363,7 @@ export default {
                 item_avance: '',
                 item_saldo: '',
                 item_estimado: '',
+                item_precio_unitario: '',
                 fecha_requerimiento: '2022/01/01',
                 gastos_generales: 'se explica en que gatsos generales se trabajara',
                 ///FIN RELACION
