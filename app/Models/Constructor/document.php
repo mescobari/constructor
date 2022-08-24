@@ -52,7 +52,28 @@ class document extends Model
         return $documento;
     }
 
+    public function queModifica($modifica)
+    {
+        $que_modifica='';
+        $modi=explode( ',', $modifica ) ;
+        for($i = 0; $i < count( $modi); $i++) { 
+                switch($modi[$i]) {
+                    case 1:
+                    $res='1.- Plazo';
+                    break;
+                    case 2:
+                        $res='2.- Monto';
+                    break;
+                    case 3:
+                        $res='3.- Items en Planilla';
+                    break;
+                }
+                $que_modifica= $que_modifica.' '.$res;
 
+            }
+
+        return $que_modifica;
+    }
 
     public function getModificacion($contrato_id)
     {
@@ -67,7 +88,7 @@ class document extends Model
         $items[0]['monto_bs']=$documento->monto_bs;
         $items[0]['objeto']=$documento->objeto;
         $items[0]['modifica']=$documento->modifica;
-
+        $items[0]['que_modifica']=$this->queModifica($documento->modifica);
         $items[0]['tipo_doc_nombre']=$documento->tipo_documento->nombre;
         $items[0]['contratante']=$documento->contratante->nombre;
         $items[0]['contratante_sigla']=$documento->contratante->sigla;
@@ -92,7 +113,7 @@ class document extends Model
             $items[$i]['monto_bs']=$obj[$i-1]['monto_bs'];
             $items[$i]['objeto']=$obj[$i-1]['objeto'];
             $items[$i]['modifica']=$obj[$i-1]['modifica'];
-
+            $items[$i]['que_modifica']=$this->queModifica($obj[$i-1]['modifica']);
             $items[$i]['tipo_doc_nombre']=$obj[$i-1]['tipo_documento']['nombre'];
 
           

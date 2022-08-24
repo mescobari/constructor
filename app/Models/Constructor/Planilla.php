@@ -53,8 +53,8 @@ class Planilla extends Model
             $items[$i]['referencia']=$obj[$i]['referencia'];
 
             $items[$i]['total_planilla']=$obj[$i]['total_planilla'];
-            $items[$i]['anticipo_planilla']=$obj[$i]['total_planilla'];
-            $items[$i]['retencion_planilla']=$obj[$i]['total_planilla'];
+            $items[$i]['anticipo_planilla']=$obj[$i]['anticipo_planilla'];
+            $items[$i]['retencion_planilla']=$obj[$i]['retencion_planilla'];
 
 
 
@@ -103,9 +103,9 @@ class Planilla extends Model
     $avance = Planilla::join('planilla_movimientos', 'planilla_movimientos.planilla_id', '=', 'planillas.id')
     ->where('planillas.contrato_id', $contrato_id)
     ->where('planillas.tipo_planilla_id', '3')
-    ->select('planilla_movimientos.planilla_item_id','planilla_movimientos.precio_unitario',  
+    ->select('planilla_movimientos.id','planilla_movimientos.planilla_id','planilla_movimientos.planilla_item_id','planilla_movimientos.precio_unitario',  
     DB::raw('SUM(planilla_movimientos.cantidad) as cantidad'))
-    ->groupBy('planilla_movimientos.planilla_item_id','planilla_movimientos.precio_unitario')
+    ->groupBy('planilla_movimientos.planilla_item_id','planilla_movimientos.precio_unitario','planilla_movimientos.id','planilla_movimientos.planilla_id')
     ->get();
    
 

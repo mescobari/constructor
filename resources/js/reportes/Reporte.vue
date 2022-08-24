@@ -65,7 +65,7 @@
                         <div class="icon">
                             <i class="far fa-flag"></i>
                         </div>
-                        <a :href="'mml_proyecto/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
+                        <a :href="'ver_lista_docs/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                      <div class="col-lg-3 col-6">
@@ -78,7 +78,7 @@
                         <div class="icon">
                             <i class="far fa-star"></i>
                         </div>
-                        <a :href="'ficha_proyecto_documentos/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
+                        <a :href="'ver_plazos/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">

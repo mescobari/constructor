@@ -62,14 +62,15 @@
             <table class="styled-table" >
                 <thead>
                     <tr align="center">
-                        <th colspan="12"><b>Items de la Planilla</b></th>  
+                        <th colspan="13"><b>Items de la Planilla</b></th>  
                         
                     </tr>
                     <tr align="center">
                         <th colspan='3'><b>Descripcion Item</b></th> 
                         <th colspan='3'><b>Planilla Vigente</b></th>
                         <th colspan='3'><b>Planilla Acumulado</b></th>
-                        <th colspan='3'><b>Por Ejecutar</b></th>                       
+                        <th colspan='3'><b>Por Ejecutar</b></th> 
+                        <th ><b>%</b></th>                   
                     </tr>
                     <tr align="center">
                         <th><b>Codigo</b></th>  
@@ -84,6 +85,7 @@
                         <th><b>Cantidad</b></th>  
                         <th><b>Prec. Unitario</b></th> 
                         <th><b>prec. Total</b></th>
+                        <th><b>Porcentaje</b></th>
                     </tr>
 
                 </thead> 
@@ -107,7 +109,7 @@
                             <td align="right">{{$planilla[$i]['diff_cant']}}</td>  
                             <td align="right">{{$planilla[$i]['diff_pu']}}</td> 
                             <td align="right" width="15%">{{$planilla[$i]['diff_pt']}}</td>
-
+                            <td align="right">{{$planilla[$i]['porcentaje']}}%</td> 
                             
                         </tr>
                                
@@ -115,6 +117,48 @@
                 
                 </tbody>
 
+            </table>  
+        </div>
+        <div class="contenido">
+            <table class="styled-table1" >
+            <thead>
+                    <tr align="center">
+                        <th colspan="7"><b>PLANILLAS DE AVANCE DE OBRAS EMITIDAS</b></th>  
+                        
+                    </tr>
+                    
+                    <tr align="center">
+                        <th><b>Nombre</b></th>  
+                        <th><b>Fecha</b></th>
+                        <th><b>#Planilla</b></th>   
+                        <th><b>Nuri</b></th>  
+                        <th><b>Monto Bs.</b></th> 
+                        <th><b>Devol. Anticipo</b></th>
+                        <th><b>Retenc 7%</b></th>  
+                    </tr>
+
+                </thead> 
+                <tbody>
+                @for ($i = 0; $i <  count($certificados); $i++)
+                               
+                              
+                        <tr>
+                    
+                        <td width="40%">{{$certificados[$i]['nombre']}} - {{$certificados[$i]['referencia']}}</td>  
+                        <td >{{$certificados[$i]['fecha_planilla']}}</td>
+                        <td align="center">{{$certificados[$i]['numero_planilla']}}</td>   
+                        <td>{{$certificados[$i]['nuri_planilla']}}</td>  
+                        <td align="right">{{$certificados[$i]['total_planilla']}}</td> 
+                        <td align="right">{{$certificados[$i]['anticipo_planilla']}}</td>  
+                        <td align="right">{{$certificados[$i]['retencion_planilla']}}</td> 
+                                                
+                    </tr>
+                            
+                @endfor
+
+
+
+                </tbody>
             </table>  
         </div>
        
