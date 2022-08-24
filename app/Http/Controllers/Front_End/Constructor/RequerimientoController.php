@@ -21,7 +21,7 @@ class RequerimientoController extends Controller
             $files = $request->file('files');
             $nombre_carpeta = "/constructor/documentos";
             $nombre_archivo = $request->document_types_id . '-' . $_FILES['files']['name'];
-            $path = $files->storeAs( $nombre_carpeta, $nombre_archivo);
+            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
         }
 
         return Requerimiento::create([
@@ -37,9 +37,11 @@ class RequerimientoController extends Controller
         ]);
     }
 
-    public function getRequerimientoItems(){
+    public function getRequerimientoItems()
+    {
         return RequerimientoItem::all();
     }
+
     public function getUnidades()
     {
         return Unidad::all();
@@ -137,5 +139,18 @@ class RequerimientoController extends Controller
     public function destroy(Requerimiento $requerimiento)
     {
         //
+    }
+    public function updateItemRequerimiento(Request $request, $id){
+        $itemAndId = Requerimiento::findOrFail($id);
+
+        $itemAndId->cantidad_recurso = $request->cantidad_recurso;
+        $itemAndId->horas_recurso = $request->horas_recurso;
+        $itemAndId->dias_recurso = $request->dias_recurso;
+        $itemAndId->tiempo_total_recurso = $request->tiempo_total_recurso;
+        $itemAndId->precio_referencia_recurso = $request->precio_referencia_recurso;
+
+        $itemAndId->unidad_ejecutora_id = $request->unidad_ejecutora_id;
+//        $document->path_contrato = $file;
+        $itemAndId -> save();
     }
 }

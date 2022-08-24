@@ -988,9 +988,6 @@ export default {
             console.log("SAVE ITEM REQ", response.data);
         },
         async guardar() {
-            //requerimientoFirstFill
-            console.log('MEMORYSELECTED', this.memorySelected);
-            console.log('TIPO REQ', this.jsonData.tipo_requerimiento_id)
             console.log('=================================================')
             if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
                 console.log('MEMORYSELECTED', this.memorySelected + ' ' + this.jsonData.tipo_requerimiento_id);
@@ -1009,42 +1006,16 @@ export default {
             // this.limpiar_formulario();
         },
         editar(data = {}) {
-            console.log('XXXXXXXXXXXXXXXXX');
-            console.log(data);
-            $('#modifica1').removeAttr('checked');
-            $('#modifica2').removeAttr('checked');
-            $('#modifica3').removeAttr('checked');
-            if (data.modifica !== 'undefined' && data.modifica != null) {
-                var dato = "";
-                for (var i = 0; i < data.modifica.length; i++) {
-                    if (data.modifica[i] !== ',') {
-                        dato = dato + data.modifica[i];
-                    } else {
-                        this.cargar_checks(dato);
-                        dato = "";
-                    }
-                }
-                this.cargar_checks(dato);
-            }
-            console.log('===============');
-            console.log(data);//return;
-
             this.jsonData.id = data.id;
-            // this.jsonData.proyectos={};
-            this.jsonData.tipos_documento = data.tipo_documento;
-            this.jsonData.institucion = data.institucion.institucion;
-            this.jsonData.cofinanciador = data.institucion.organismo;
-            this.jsonData.titulo = data.titulo;
-            this.jsonData.doc_legal = data.padre;
-            this.jsonData.objetivo = data.objetivo;
-            this.jsonData.fecha_firma = data.fecha_firma;
-            this.jsonData.fecha_inicio = data.fecha_inicio;
-            this.jsonData.fecha_vencimiento = data.fecha_vencimiento;
-            this.jsonData.funcionario = data.firma;
-            this.jsonData.objeto = data.objeto;
-            this.jsonData.monto_bs = data.monto_bs;
-            this.jsonData.monto_Sus = data.monto_Sus;
-            this.jsonData.duracion_dias = data.duracion_dias;
+            this.jsonData.codigo_recurso = data.codigo_recurso;
+            this.jsonData.descripcion_recursos = data.descripcion_recurso;
+            this.jsonData.unidad_id = data.unidad_id;
+
+            this.jsonData.cantidad_recurso = data.cantidad_recurso;
+            this.jsonData.horas_recurso = data.horas_recurso;
+            this.jsonData.dias_recurso = data.dias_recurso;
+            this.jsonData.tiempo_total_recurso = data.tiempo_total_recurso;
+            this.jsonData.precio_referencia_recurso = data.precio_referencia_recurso;
 
             this.modificar_bottom = true;
             this.guardar_bottom = false;
