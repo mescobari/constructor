@@ -429,7 +429,7 @@
                         <div class="row bg-success">
                             <div class="col-md-1">
                                 <div class="form-group">
-                                    <label for="nombre">Codigo:</label>
+                                    <label for="codigo">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo" placeholder="Codigo"
                                            v-model="jsonData.item_codigo" disabled>
                                 </div>
@@ -440,15 +440,15 @@
                                     <label for="document_type">Item Relacionado:</label>
                                     <v-select label="item_descripcion" :options="combo_items_planilla"
                                               v-model="jsonData.item_descripcion"
-
-                                              placeholder="Selecione una opción">
+                                              placeholder="Selecione una opción"
+                                                @input="getNameForItemRelacion">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
                                 </div>
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
-                                    <label for="nombre">Unidad</label>
+                                    <label for="nombre">Unidad:</label>
                                     <input type="text" class="form-control" name="unidad" placeholder="Unidad"
                                            v-model="jsonData.item_simbolo" disabled>
                                 </div>
@@ -1097,26 +1097,45 @@ export default {
 
         },
 
-        async listarItemRelacion(){
+        async listarItemRelacion() {
 
         },
-        async guardarItemRelacion(){
+        async guardarItemRelacion() {
 
         },
-        async editarItemRelacion(){
+        async editarItemRelacion() {
 
         },
-        async modificarItemRelacion(){
+        async modificarItemRelacion() {
 
         },
-        async eliminarItemRelacion(){
+        async eliminarItemRelacion() {
 
         },
-        async getAllItemRelacion(){
+        async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');
             this.combo_items_planilla = responseItemPlanilla.data;
+
+            for (let i = 0; i < responseItemPlanilla.data.length; i++) {
+                if(responseItemPlanilla.data[i].id == this.jsonData.item_descripcion.id){
+                    this.jsonData.item_codigo = responseItemPlanilla.data[i].item_codigo
+                    this.jsonData.item_simbolo = responseItemPlanilla.data[i].item_simbolo
+                    console.log("CODIGO ITEM", responseItemPlanilla.data[i]);
+                    console.log("UNIDAD ITEM", responseItemPlanilla.data[i]);
+                    break;
+                }
+            }
             console.log("PLANILLA ITEM", responseItemPlanilla.data);
-            return responseItemPlanilla.data;
+        },
+        async getNameForItemRelacion() {
+            const responseUnidad = (await axios.get('get_unidades')).data;
+            for (let i = 0; i < responseUnidad.length; i++) {
+                if (this.jsonData.item_descripcion.unidad_id == responseUnidad[i].id) {
+                    this.jsonData.item_simbolo = responseUnidad[i].nombre;
+                    this.jsonData.item_codigo = this.jsonData.item_descripcion.item_codigo;
+                    break;
+                }
+            }
         },
         async seleccionar_cont_primario() {
             const respuesta = await axios.get('documents');
@@ -1321,14 +1340,14 @@ export default {
                 trabajos_encarados: 'trabajos a ser encarados explicacion de ello',
                 files: null,
                 //RELACION CON EL CONTRATO PRINCIPAL
-                item_codigo: 'zzzz',
+                item_codigo: '',
                 item_descripcion: '',
-                item_simbolo: 'abc',
-                item_vigente: '1',
-                item_avance: '2',
-                item_saldo: '3',
+                item_simbolo: '',
+                item_vigente: '',
+                item_avance: '',
+                item_saldo: '',
+                item_estimado: '',
                 fecha_requerimiento: '2022/01/01',
-                item_estimado: '4',
                 gastos_generales: 'se explica en que gatsos generales se trabajara',
                 ///FIN RELACION
                 codigo_otros: 'yyyyyyy',
@@ -1499,13 +1518,14 @@ export default {
         }
     },
     mounted() {
-        this.funcionRecuperaConfig();
-        this.seleccionar_cont_primario();
+        // this.funcionRecuperaConfig();
+        // this.seleccionar_cont_primario();
     },
     created() {
         this.descripcionRecursoGetAll();
         this.descripcionRecursoGetbyType();
         this.getAllItemRelacion();
+        this.getNameForItemRelacion();
     },
     components: {
         VueBootstrap4Table,
