@@ -1101,7 +1101,17 @@ export default {
 
         },
         async guardarItemRelacion() {
+            // const response_req = await axios.get('get_requerimientos');
+            // this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
+            datos_jsonData.append('vigente', this.jsonData.item_vigente);
+            datos_jsonData.append('avance', this.jsonData.item_avance);
+            datos_jsonData.append('estimado', this.jsonData.item_estimado);
 
+            datos_jsonData.append('precio_unitario', this.jsonData.precio_unitario);
+            const itemRelacion = await axios.post('item_relacion', datos_jsonData);
         },
         async editarItemRelacion() {
 
