@@ -438,7 +438,7 @@
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Item Relacionado:</label>
-                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                    <v-select label="item_descripcion" :options="combo_items_planilla"
                                               v-model="jsonData.item_descripcion"
 
                                               placeholder="Selecione una opción">
@@ -987,6 +987,7 @@ export default {
             const response = await axios.post('requerimientos', datos_jsonData);
             console.log("SAVE ITEM REQ", response.data);
         },
+        //Guardar Requerimiento en Obra
         async guardar() {
             console.log('=================================================')
             if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
@@ -1005,6 +1006,7 @@ export default {
             await this.listarRequerimientoItem();
             // this.limpiar_formulario();
         },
+        // Editar Requerimiento en Obra
         editar(data = {}) {
             this.jsonData.id = data.id;
             this.jsonData.codigo_recurso = data.codigo_recurso;
@@ -1093,6 +1095,28 @@ export default {
         },
         async eliminar() {
 
+        },
+
+        async listarItemRelacion(){
+
+        },
+        async guardarItemRelacion(){
+
+        },
+        async editarItemRelacion(){
+
+        },
+        async modificarItemRelacion(){
+
+        },
+        async eliminarItemRelacion(){
+
+        },
+        async getAllItemRelacion(){
+            const responseItemPlanilla = await axios.get('get_planilla_item');
+            this.combo_items_planilla = responseItemPlanilla.data;
+            console.log("PLANILLA ITEM", responseItemPlanilla.data);
+            return responseItemPlanilla.data;
         },
         async seleccionar_cont_primario() {
             const respuesta = await axios.get('documents');
@@ -1269,14 +1293,12 @@ export default {
             memorySelected: '',
             proyectos: [],
             jsonData: {
+                //REQUERIMIENTO OBRA
                 id: "",
                 correlativo_requerimiento: '/2022',
-                fecha_requerimiento: '2022/01/01',
                 nuri_requerimiento: '/2022',
                 requerimiento_id: '',
                 tipo_requerimiento_id: 5,
-                itemsWithRecursos: [],
-                position: 0,
                 codigo_recurso: '',
                 proyectos: '',
                 tipos_documento: {},
@@ -1298,14 +1320,17 @@ export default {
                 precio_referencia_recurso: '',
                 trabajos_encarados: 'trabajos a ser encarados explicacion de ello',
                 files: null,
+                //RELACION CON EL CONTRATO PRINCIPAL
                 item_codigo: 'zzzz',
                 item_descripcion: '',
                 item_simbolo: 'abc',
                 item_vigente: '1',
                 item_avance: '2',
                 item_saldo: '3',
+                fecha_requerimiento: '2022/01/01',
                 item_estimado: '4',
                 gastos_generales: 'se explica en que gatsos generales se trabajara',
+                ///FIN RELACION
                 codigo_otros: 'yyyyyyy',
                 descripcion_otros: '',
                 simbolo_otros: 'abcde',
@@ -1480,6 +1505,7 @@ export default {
     created() {
         this.descripcionRecursoGetAll();
         this.descripcionRecursoGetbyType();
+        this.getAllItemRelacion();
     },
     components: {
         VueBootstrap4Table,
