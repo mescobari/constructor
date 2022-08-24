@@ -441,7 +441,7 @@
                                     <v-select label="item_descripcion" :options="combo_items_planilla"
                                               v-model="jsonData.item_descripcion"
                                               placeholder="Selecione una opción"
-                                                @input="getNameForItemRelacion">
+                                              @input="getNameForItemRelacion">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
                                 </div>
@@ -488,7 +488,8 @@
                                         <div class="form-group">
                                             <label for="nombre">Precio Unitario</label>
                                             <input type="text" class="form-control" name="plazo"
-                                                   placeholder="dias de ejecucion" v-model="jsonData.item_precio_unitario">
+                                                   placeholder="dias de ejecucion"
+                                                   v-model="jsonData.item_precio_unitario">
                                         </div>
                                     </div>
 
@@ -498,7 +499,8 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br>
-                                        <button type="submit" @click="guardarItemRelacion();" class="btn btn-danger">Agregar
+                                        <button type="submit" @click="guardarItemRelacion();" class="btn btn-danger">
+                                            Agregar
                                         </button>
                                     </div>
                                 </div>
@@ -1102,10 +1104,34 @@ export default {
         async eliminar() {
 
         },
+        async filterListItemRelacion(arrayRequerimientoRelacion) {
+            const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
+
+            let arrayItemsFiltered = [];
+            for (let i = 0; i < arrayRequerimientoRelacion.length; i++) {
+                if (arrayRequerimientoRelacion[i].requerimiento_id === this.jsonData.requerimiento_id) {
+                    for (let j = 0; j < responsePlanillaItem.length; j++) {
+                        if (responsePlanillaItem[j].id === arrayRequerimientoRelacion[i].planilla_item_id) {
+                            arrayItemsFiltered.push({
+                                ...arrayRequerimientoRelacion[i],
+                                ...responsePlanillaItem[j],
+                                // ...responseRecursos[j].codigo_recurso,
+                                // ...responseRecursos[j].descripcion_recurso
+                            })
+                            j = responsePlanillaItem.length;
+                        }
+                    }
+                }
+            }
+            console.log('LIST CURRENT', arrayItemsFiltered);
+            return arrayItemsFiltered
+        },
 
         async listarItemRelacion() {
-            var respuesta = await axios.get('listar_item_relacion');
-            this.lista_item_relacion = respuesta.data;
+            const responseReqRelacion = (await axios.get('get_requerimiento_relacion')).data;
+            this.rows1 = await this.filterListItemRelacion(responseReqRelacion);
+            // this.rows1 = responseReqRelacion;
+            console.log('LIST REQ REL', responseReqRelacion);
         },
         async guardarItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
@@ -1119,9 +1145,10 @@ export default {
 
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
-            console.log('SAVE ITEM RELACION',itemRelacion.data);
+            console.log('SAVE ITEM RELACION', itemRelacion.data);
+            await this.listarItemRelacion();
         },
-        async editarItemRelacion(data={}) {
+        async editarItemRelacion(data = {}) {
 
         },
         async modificarItemRelacion() {
@@ -1357,11 +1384,12 @@ export default {
                 item_saldo: '',
                 item_estimado: '',
                 item_precio_unitario: '',
-                fecha_requerimiento: '2022/01/01',
-                gastos_generales: 'se explica en que gatsos generales se trabajara',
+                planilla_item_id: '',
                 ///FIN RELACION
                 codigo_otros: 'yyyyyyy',
                 descripcion_otros: '',
+                fecha_requerimiento: '2022/01/01',
+                gastos_generales: 'se explica en que gatsos generales se trabajara',
                 simbolo_otros: 'abcde',
                 cantidad_otros: '10',
                 monto_otros: '20',
@@ -1437,28 +1465,28 @@ export default {
                 },
                 {
                     label: "Unidad",
-                    name: "item_simbolo",
+                    name: "id",
                     filter: {type: "simple", placeholder: "Unidad"},
                     sort: true,
                 },
                 {
                     label: "Cantidad Vigente",
-                    name: "item_vigente",
+                    name: "vigente",
                     filter: {type: "simple", placeholder: "Cantidad Vigente"},
                 },
                 {
                     label: "Avance",
-                    name: "item_avance",
+                    name: "avance",
                     filter: {type: "simple", placeholder: "Avance"},
                 },
                 {
                     label: "Por Ejecutar",
-                    name: "item_saldo",
+                    name: "precio_unitario",
                     filter: {type: "simple", placeholder: "Por Ejecutar"},
                 },
                 {
                     label: "Avance Estimado",
-                    name: "item_estimado",
+                    name: "estimado",
                     filter: {type: "simple", placeholder: "Avance Estimado"},
                 },
 
@@ -1528,8 +1556,8 @@ export default {
         }
     },
     mounted() {
-        // this.funcionRecuperaConfig();
-        // this.seleccionar_cont_primario();
+        this.funcionRecuperaConfig();
+        this.seleccionar_cont_primario();
     },
     created() {
         //Requerimiento
@@ -1538,7 +1566,7 @@ export default {
         //Item Relacionado
         this.getAllItemRelacion();
         this.getNameForItemRelacion();
-        this.listarItemRelacion();
+        // this.listarItemRelacion();
         //Otros
     },
     components: {
