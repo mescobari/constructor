@@ -1117,7 +1117,8 @@ export default {
             datos_jsonData.append('estimado', this.jsonData.item_estimado);
 
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
-            const itemRelacion = await axios.post('item_relacion', datos_jsonData);
+            const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
+
         },
         async editarItemRelacion() {
 
