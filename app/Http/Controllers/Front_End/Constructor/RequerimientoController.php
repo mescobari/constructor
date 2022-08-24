@@ -7,6 +7,7 @@ use App\Models\Constructor\Requerimiento;
 use App\Http\Controllers\Controller;
 use App\Models\Constructor\RequerimientoItem;
 use App\Models\Constructor\RequerimientoRecursos;
+use App\Models\Constructor\RequerimientoRelacion;
 use App\Models\Constructor\Unidad;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
@@ -34,6 +35,18 @@ class RequerimientoController extends Controller
             'trabajos_encarados' => $request->trabajos_encarados,
             'gastos_generales' => $request->gastos_generales,
             'path_requerimientos' => $path,
+        ]);
+    }
+
+    public function createRequerimientoRelacion(Request $request){
+        return RequerimientoRelacion::create([
+            'requerimiento_id' => $request->requerimiento_id,
+            'planilla_item_id' => $request->planilla_item_id,
+            'vigente' => $request->vigente,
+            'avance' => $request->avance,
+            'estimado' => $request->estimado,
+            'precio_unitario' => $request->precio_unitario,
+
         ]);
     }
 
