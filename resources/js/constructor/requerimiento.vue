@@ -727,7 +727,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br>
-                                        <button type="submit" @input="listarRequerimientoItem" @click="guardar();"
+                                        <button type="submit" @click="guardarItemOtrosGastos();"
                                                 class="btn btn-danger">Agregar
                                         </button>
                                     </div>
@@ -1176,12 +1176,15 @@ export default {
 
         },
         async guardarItemOtrosGastos() {
+            const response_req = (await axios.get('get_requerimientos')).data;
+            this.jsonData.requerimiento_id = response_req.data[response_req.length - 1].id;
+
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.item_descripcion.id);
-            datos_jsonData.append('cantidad_otros', this.jsonData.item_vigente);
-            datos_jsonData.append('monto_otros', this.jsonData.item_avance);
-            datos_jsonData.append('explicar_otros', this.jsonData.item_estimado);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.descripcion_otros.id);
+            datos_jsonData.append('cantidad_otros', this.jsonData.cantidad_otros);
+            datos_jsonData.append('monto_otros', this.jsonData.monto_otros);
+            datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
             const itemOtrosGastos = await axios.post('create_requerimiento_otros_gastos', datos_jsonData);
             console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
         },
