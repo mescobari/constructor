@@ -681,9 +681,10 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
-                                    <label for="document_type">Gastos Generales:</label>
+                                    <label for="nombre">Gastos Generales:</label>
                                     <v-select label="descripcion_recurso" :options="combo_otros_gastos"
                                               v-model="jsonData.descripcion_otros"
+                                              @input="filterNameForOtrosGastos"
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
@@ -1178,7 +1179,7 @@ export default {
         async guardarItemOtrosGastos() {
             const response_req = (await axios.get('get_requerimientos')).data;
             this.jsonData.requerimiento_id = response_req.data[response_req.length - 1].id;
-
+            console.log('REQ ID', this.jsonData.requerimiento_id);
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('requerimiento_recurso_id', this.jsonData.descripcion_otros.id);
@@ -1196,6 +1197,13 @@ export default {
         },
         async eliminarItemOtrosGastos() {
 
+        },
+        async filterNameForOtrosGastos(){
+            const getUnidades = (await axios.get('get_unidades')).data;
+            const currentUnidad = getUnidades.filter(unidad => unidad.id == this.jsonData.descripcion_otros.unidad_id);
+            this.jsonData.codigo_otros = this.jsonData.descripcion_otros.codigo_recurso;
+            console.log('CURRENT UNIDAD', currentUnidad);
+            this.jsonData.simbolo_otros = currentUnidad[0].simbolo;
         },
         async getAllItemOtrosGastos() {
             const responseOtrosGastos = (await axios.get('requerimientos')).data;
@@ -1417,14 +1425,14 @@ export default {
                 item_precio_unitario: '',
                 planilla_item_id: '',
                 ///FIN RELACION
-                codigo_otros: 'yyyyyyy',
+                codigo_otros: '',
                 descripcion_otros: '',
                 fecha_requerimiento: '2022/01/01',
                 gastos_generales: 'se explica en que gatsos generales se trabajara',
-                simbolo_otros: 'abcde',
-                cantidad_otros: '10',
-                monto_otros: '20',
-                explicar_otros: '30',
+                simbolo_otros: '',
+                cantidad_otros: '',
+                monto_otros: '',
+                explicar_otros: '',
 
             },
             rows: [],

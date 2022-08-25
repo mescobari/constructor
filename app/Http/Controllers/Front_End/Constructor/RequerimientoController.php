@@ -39,7 +39,8 @@ class RequerimientoController extends Controller
         ]);
     }
 
-    public function createRequerimientoOtrosGastos(Request $request){
+    public function createRequerimientoOtrosGastos(Request $request)
+    {
         return RequerimientoOtros::create([
             'requerimiento_id' => $request->requerimiento_id,
             'requerimiento_recurso_id' => $request->requerimiento_recurso_id,
@@ -49,7 +50,8 @@ class RequerimientoController extends Controller
         ]);
     }
 
-    public function createRequerimientoRelacion(Request $request){
+    public function createRequerimientoRelacion(Request $request)
+    {
         return RequerimientoRelacion::create([
             'requerimiento_id' => $request->requerimiento_id,
             'planilla_item_id' => $request->planilla_item_id,
@@ -60,7 +62,8 @@ class RequerimientoController extends Controller
         ]);
     }
 
-    public function getRequerimientoRelacion(){
+    public function getRequerimientoRelacion()
+    {
         return RequerimientoRelacion::all();
     }
 
@@ -167,7 +170,9 @@ class RequerimientoController extends Controller
     {
         //
     }
-    public function updateItemRequerimiento(Request $request, $id){
+
+    public function updateItemRequerimiento(Request $request, $id)
+    {
         $itemAndId = Requerimiento::findOrFail($id);
 
         $itemAndId->cantidad_recurso = $request->cantidad_recurso;
@@ -176,6 +181,6 @@ class RequerimientoController extends Controller
         $itemAndId->tiempo_total_recurso = $request->tiempo_total_recurso;
         $itemAndId->precio_referencia_recurso = $request->precio_referencia_recurso;
         $itemAndId->unidad_ejecutora_id = $request->unidad_ejecutora_id;
-        $itemAndId -> save();
+        $itemAndId->save();
     }
 }
