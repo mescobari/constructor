@@ -1107,15 +1107,17 @@ export default {
         },
         async filterListItemRelacion(arrayRequerimientoRelacion) {
             const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
-
+            const getUnidades = (await axios.get('get_unidades')).data;
             let arrayItemsFiltered = [];
             for (let i = 0; i < arrayRequerimientoRelacion.length; i++) {
                 if (arrayRequerimientoRelacion[i].requerimiento_id === this.jsonData.requerimiento_id) {
                     for (let j = 0; j < responsePlanillaItem.length; j++) {
                         if (responsePlanillaItem[j].id === arrayRequerimientoRelacion[i].planilla_item_id) {
+                            // let currentUnidad = getUnidades.filter(unidad => unidad.id==responsePlanillaItem[j].unidad_id);
                             arrayItemsFiltered.push({
                                 ...arrayRequerimientoRelacion[i],
                                 ...responsePlanillaItem[j],
+                                // ...currentUnidad[0],
                                 // ...responseRecursos[j].codigo_recurso,
                                 // ...responseRecursos[j].descripcion_recurso
                             })
@@ -1173,8 +1175,30 @@ export default {
                 }
             }
         },
+        async filterListOtrosGastos(arrayReqOtrosGastos) {
+            const responseReqRecursos = (await axios.get('requerimientos')).data;
+            let arrayItemsFiltered = [];
+            for (let i = 0; i < arrayReqOtrosGastos.length; i++) {
+                if (arrayReqOtrosGastos[i].requerimiento_id === this.jsonData.requerimiento_id) {
+                    for (let j = 0; j < responseReqRecursos.length; j++) {
+                        if (responseReqRecursos[j].id === arrayReqOtrosGastos[i].requerimiento_recurso_id) {
+                            arrayItemsFiltered.push({
+                                ...arrayReqOtrosGastos[i],
+                                ...responseReqRecursos[j],
+                            });
+                            j = responseReqRecursos.length;
+                        }
+                    }
+                }
+            }
+            console.log('LIST CURRENT', arrayItemsFiltered);
+            return arrayItemsFiltered
+        },
         async listarItemOtrosGastos() {
-
+            const responseReqOtrosGastos = (await axios.get('get_requerimiento_otros_gastos')).data;
+            this.rows2 = await this.filterListOtrosGastos(responseReqOtrosGastos);
+            // this.rows2 = responseReqOtrosGastos;
+            console.log('LIST REQ OTROS GASTOS', this.rows2);
         },
         async guardarItemOtrosGastos() {
             const response_req = (await axios.get('get_requerimientos')).data;
@@ -1188,6 +1212,7 @@ export default {
             datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
             const itemOtrosGastos = await axios.post('create_requerimiento_otros_gastos', datos_jsonData);
             console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
+            await this.listarItemOtrosGastos()
         },
         async editarItemOtrosGastos() {
 
@@ -1543,18 +1568,18 @@ export default {
             columns2: [
                 {
                     label: "Codigo",
-                    name: "codigo_otros",
+                    name: "codigo_recurso",
                     filter: {type: "simple", placeholder: "Codigo",}, sort: true,
                 },
                 {
                     label: "Gastos Generales:",
-                    name: "descripcion_otros",
+                    name: "descripcion_recurso",
                     filter: {type: "simple", placeholder: "Gastos Generales",},
                     sort: true,
                 },
                 {
                     label: "Unidad",
-                    name: "simbolo_otros",
+                    name: "unidad_id",
                     filter: {type: "simple", placeholder: "Unidad"},
                     sort: true,
                 },
@@ -1608,6 +1633,7 @@ export default {
         // this.listarItemRelacion();
         //Otros Gastos
         this.getAllItemOtrosGastos();
+        // this.listarItemOtrosGastos();
     },
     components: {
         VueBootstrap4Table,
