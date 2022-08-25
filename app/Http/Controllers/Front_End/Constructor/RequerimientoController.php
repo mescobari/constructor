@@ -174,6 +174,12 @@ class RequerimientoController extends Controller
     {
         //
     }
+    public function deleteItemOtrosGastos(RequerimientoOtros $requerimientoOtros)
+    {
+        $requerimientoOtros = RequerimientoOtros::findOrFail($requerimientoOtros->id);
+        $requerimientoOtros->delete();
+    }
+
 
     public function updateItemRequerimiento(Request $request, $id)
     {

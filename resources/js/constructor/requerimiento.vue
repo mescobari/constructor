@@ -1220,8 +1220,8 @@ export default {
         async modificarItemOtrosGastos() {
 
         },
-        async eliminarItemOtrosGastos() {
-
+        async eliminarItemOtrosGastos(otro) {
+            const response = await axios.delete('delete_requerimiento_otros_gastos/'+otro);
         },
         async filterNameForOtrosGastos(){
             const getUnidades = (await axios.get('get_unidades')).data;
