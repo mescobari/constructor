@@ -12,7 +12,7 @@ class RequerimientoOtros extends Model
         'requerimiento_id',
         'requerimiento_recurso_id',
         'cantidad_otros',
-        'montos_otros',
+        'monto_otros',
         'explicar_otros',
     ];
 }

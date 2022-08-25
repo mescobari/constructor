@@ -711,14 +711,14 @@
                                         <div class="form-group">
                                             <label for="nombre">Monto</label>
                                             <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas" v-model="jsonData.monto_otros">
+                                                   placeholder="Monto Requerido" v-model="jsonData.monto_otros">
                                         </div>
                                     </div>
                                     <div class="col-md-9">
                                         <div class="form-group">
                                             <label for="nombre">Detallar</label>
                                             <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.explicar_otros">
+                                                   placeholder="Detalle" v-model="jsonData.explicar_otros">
                                         </div>
                                     </div>
 
@@ -1178,7 +1178,7 @@ export default {
         },
         async guardarItemOtrosGastos() {
             const response_req = (await axios.get('get_requerimientos')).data;
-            this.jsonData.requerimiento_id = response_req.data[response_req.length - 1].id;
+            this.jsonData.requerimiento_id = response_req[response_req.length - 1].id;
             console.log('REQ ID', this.jsonData.requerimiento_id);
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);

@@ -45,7 +45,7 @@ class RequerimientoController extends Controller
             'requerimiento_id' => $request->requerimiento_id,
             'requerimiento_recurso_id' => $request->requerimiento_recurso_id,
             'cantidad_otros' => $request->cantidad_otros,
-            'montos_otros' => $request->montos_otros,
+            'monto_otros' => $request->monto_otros,
             'explicar_otros' => $request->explicar_otros,
         ]);
     }
