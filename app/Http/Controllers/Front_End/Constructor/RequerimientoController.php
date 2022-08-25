@@ -6,6 +6,7 @@ use App\Models\Constructor\Requerimiento;
 
 use App\Http\Controllers\Controller;
 use App\Models\Constructor\RequerimientoItem;
+use App\Models\Constructor\RequerimientoOtros;
 use App\Models\Constructor\RequerimientoRecursos;
 use App\Models\Constructor\RequerimientoRelacion;
 use App\Models\Constructor\Unidad;
@@ -35,6 +36,16 @@ class RequerimientoController extends Controller
             'trabajos_encarados' => $request->trabajos_encarados,
             'gastos_generales' => $request->gastos_generales,
             'path_requerimientos' => $path,
+        ]);
+    }
+
+    public function createRequerimientoOtrosGastos(Request $request){
+        return RequerimientoOtros::create([
+            'requerimiento_id' => $request->requerimiento_id,
+            'requerimiento_recurso_id' => $request->requerimiento_recurso_id,
+            'cantidad_otros' => $request->cantidad_otros,
+            'montos_otros' => $request->montos_otros,
+            'explicar_otros' => $request->explicar_otros,
         ]);
     }
 

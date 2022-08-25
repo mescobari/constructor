@@ -682,7 +682,7 @@
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Gastos Generales:</label>
-                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                    <v-select label="descripcion_recurso" :options="combo_otros_gastos"
                                               v-model="jsonData.descripcion_otros"
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
@@ -1176,7 +1176,14 @@ export default {
 
         },
         async guardarItemOtrosGastos() {
-
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.item_descripcion.id);
+            datos_jsonData.append('cantidad_otros', this.jsonData.item_vigente);
+            datos_jsonData.append('monto_otros', this.jsonData.item_avance);
+            datos_jsonData.append('explicar_otros', this.jsonData.item_estimado);
+            const itemOtrosGastos = await axios.post('create_requerimiento_otros_gastos', datos_jsonData);
+            console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
         },
         async editarItemOtrosGastos() {
 
@@ -1186,6 +1193,11 @@ export default {
         },
         async eliminarItemOtrosGastos() {
 
+        },
+        async getAllItemOtrosGastos() {
+            const responseOtrosGastos = (await axios.get('requerimientos')).data;
+            this.combo_otros_gastos = responseOtrosGastos.filter(item => item.tipo_requerimiento_id === 4);
+            console.log('REQUERIMIENTO OTROS', this.combo_otros_gastos);
         },
         async seleccionar_cont_primario() {
             const respuesta = await axios.get('documents');
@@ -1359,6 +1371,7 @@ export default {
             requerimientoFirstFill: true,
             combo_requerimiento_recursos: [],
             combo_items_planilla: [],
+            combo_otros_gastos: [],
             memorySelected: '',
             memorySelectedRelacion: '',
             proyectos: [],
@@ -1582,7 +1595,8 @@ export default {
         this.getAllItemRelacion();
         this.getNameForItemRelacion();
         // this.listarItemRelacion();
-        //Otros
+        //Otros Gastos
+        this.getAllItemOtrosGastos();
     },
     components: {
         VueBootstrap4Table,
