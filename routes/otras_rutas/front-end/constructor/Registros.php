@@ -28,10 +28,13 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::get('update_requerimiento_item/{id}', 'RequerimientoController@updateRequerimientoItem')->name('update_requerimiento_item');
     Route::post('create_requerimiento_relacion', 'RequerimientoController@createRequerimientoRelacion')->name('create_requerimiento_relacion');
     Route::get('get_requerimiento_relacion', 'RequerimientoController@getRequerimientoRelacion')->name('get_requerimiento_relacion');
+    Route::post('create_requerimiento_otros_gastos', 'RequerimientoController@createRequerimientoOtrosGastos')->name('create_requerimiento_otros_gastos');
+    Route::get('get_requerimiento_otros_gastos', 'RequerimientoController@getRequerimientoOtrosGastos')->name('get_requerimiento_otros_gastos');
+    Route::delete('delete_requerimiento_otros_gastos/{id}', 'RequerimientoController@deleteRequerimientoOtrosGastos')->name('delete_requerimiento_otros_gastos');
     /*Route::apiResource('intervenciones', IntervencionesController::class);
     Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
     Route::get('proyectos', 'IntervencionesController@proyectos')->name('proyectos');
-
+//create_requerimiento_otros_gastos
     Route::get('intervencion_tipo', 'TipoIntervencionesController@inicio')->name('intervencion_tipo');
     Route::get('intervencions_tipo', 'TipoIntervencionesController@intervencionesTipoActivas')->name('intervencions_tipo');
     Route::apiResource('intervenciones_tipo', TipoIntervencionesController::class);

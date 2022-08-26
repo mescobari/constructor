@@ -681,9 +681,10 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
-                                    <label for="document_type">Gastos Generales:</label>
-                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                    <label for="nombre">Gastos Generales:</label>
+                                    <v-select label="descripcion_recurso" :options="combo_otros_gastos"
                                               v-model="jsonData.descripcion_otros"
+                                              @input="filterNameForOtrosGastos"
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
@@ -710,14 +711,14 @@
                                         <div class="form-group">
                                             <label for="nombre">Monto</label>
                                             <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas" v-model="jsonData.monto_otros">
+                                                   placeholder="Monto Requerido" v-model="jsonData.monto_otros">
                                         </div>
                                     </div>
                                     <div class="col-md-9">
                                         <div class="form-group">
                                             <label for="nombre">Detallar</label>
                                             <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.explicar_otros">
+                                                   placeholder="Detalle" v-model="jsonData.explicar_otros">
                                         </div>
                                     </div>
 
@@ -727,7 +728,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br>
-                                        <button type="submit" @input="listarRequerimientoItem" @click="guardar();"
+                                        <button type="submit" @click="guardarItemOtrosGastos();"
                                                 class="btn btn-danger">Agregar
                                         </button>
                                     </div>
@@ -1106,15 +1107,17 @@ export default {
         },
         async filterListItemRelacion(arrayRequerimientoRelacion) {
             const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
-
+            const getUnidades = (await axios.get('get_unidades')).data;
             let arrayItemsFiltered = [];
             for (let i = 0; i < arrayRequerimientoRelacion.length; i++) {
                 if (arrayRequerimientoRelacion[i].requerimiento_id === this.jsonData.requerimiento_id) {
                     for (let j = 0; j < responsePlanillaItem.length; j++) {
                         if (responsePlanillaItem[j].id === arrayRequerimientoRelacion[i].planilla_item_id) {
+                            // let currentUnidad = getUnidades.filter(unidad => unidad.id==responsePlanillaItem[j].unidad_id);
                             arrayItemsFiltered.push({
                                 ...arrayRequerimientoRelacion[i],
                                 ...responsePlanillaItem[j],
+                                // ...currentUnidad[0],
                                 // ...responseRecursos[j].codigo_recurso,
                                 // ...responseRecursos[j].descripcion_recurso
                             })
@@ -1172,11 +1175,44 @@ export default {
                 }
             }
         },
+        async filterListOtrosGastos(arrayReqOtrosGastos) {
+            const responseReqRecursos = (await axios.get('requerimientos')).data;
+            let arrayItemsFiltered = [];
+            for (let i = 0; i < arrayReqOtrosGastos.length; i++) {
+                if (arrayReqOtrosGastos[i].requerimiento_id === this.jsonData.requerimiento_id) {
+                    for (let j = 0; j < responseReqRecursos.length; j++) {
+                        if (responseReqRecursos[j].id === arrayReqOtrosGastos[i].requerimiento_recurso_id) {
+                            arrayItemsFiltered.push({
+                                ...arrayReqOtrosGastos[i],
+                                ...responseReqRecursos[j],
+                            });
+                            j = responseReqRecursos.length;
+                        }
+                    }
+                }
+            }
+            console.log('LIST CURRENT', arrayItemsFiltered);
+            return arrayItemsFiltered
+        },
         async listarItemOtrosGastos() {
-
+            const responseReqOtrosGastos = (await axios.get('get_requerimiento_otros_gastos')).data;
+            this.rows2 = await this.filterListOtrosGastos(responseReqOtrosGastos);
+            // this.rows2 = responseReqOtrosGastos;
+            console.log('LIST REQ OTROS GASTOS', this.rows2);
         },
         async guardarItemOtrosGastos() {
-
+            const response_req = (await axios.get('get_requerimientos')).data;
+            this.jsonData.requerimiento_id = response_req[response_req.length - 1].id;
+            console.log('REQ ID', this.jsonData.requerimiento_id);
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.descripcion_otros.id);
+            datos_jsonData.append('cantidad_otros', this.jsonData.cantidad_otros);
+            datos_jsonData.append('monto_otros', this.jsonData.monto_otros);
+            datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
+            const itemOtrosGastos = await axios.post('create_requerimiento_otros_gastos', datos_jsonData);
+            console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
+            await this.listarItemOtrosGastos()
         },
         async editarItemOtrosGastos() {
 
@@ -1184,8 +1220,20 @@ export default {
         async modificarItemOtrosGastos() {
 
         },
-        async eliminarItemOtrosGastos() {
-
+        async eliminarItemOtrosGastos(otro) {
+            const response = await axios.delete('delete_requerimiento_otros_gastos/'+otro);
+        },
+        async filterNameForOtrosGastos(){
+            const getUnidades = (await axios.get('get_unidades')).data;
+            const currentUnidad = getUnidades.filter(unidad => unidad.id == this.jsonData.descripcion_otros.unidad_id);
+            this.jsonData.codigo_otros = this.jsonData.descripcion_otros.codigo_recurso;
+            console.log('CURRENT UNIDAD', currentUnidad);
+            this.jsonData.simbolo_otros = currentUnidad[0].simbolo;
+        },
+        async getAllItemOtrosGastos() {
+            const responseOtrosGastos = (await axios.get('requerimientos')).data;
+            this.combo_otros_gastos = responseOtrosGastos.filter(item => item.tipo_requerimiento_id === 4);
+            console.log('REQUERIMIENTO OTROS', this.combo_otros_gastos);
         },
         async seleccionar_cont_primario() {
             const respuesta = await axios.get('documents');
@@ -1359,6 +1407,7 @@ export default {
             requerimientoFirstFill: true,
             combo_requerimiento_recursos: [],
             combo_items_planilla: [],
+            combo_otros_gastos: [],
             memorySelected: '',
             memorySelectedRelacion: '',
             proyectos: [],
@@ -1401,14 +1450,14 @@ export default {
                 item_precio_unitario: '',
                 planilla_item_id: '',
                 ///FIN RELACION
-                codigo_otros: 'yyyyyyy',
+                codigo_otros: '',
                 descripcion_otros: '',
                 fecha_requerimiento: '2022/01/01',
                 gastos_generales: 'se explica en que gatsos generales se trabajara',
-                simbolo_otros: 'abcde',
-                cantidad_otros: '10',
-                monto_otros: '20',
-                explicar_otros: '30',
+                simbolo_otros: '',
+                cantidad_otros: '',
+                monto_otros: '',
+                explicar_otros: '',
 
             },
             rows: [],
@@ -1519,18 +1568,18 @@ export default {
             columns2: [
                 {
                     label: "Codigo",
-                    name: "codigo_otros",
+                    name: "codigo_recurso",
                     filter: {type: "simple", placeholder: "Codigo",}, sort: true,
                 },
                 {
                     label: "Gastos Generales:",
-                    name: "descripcion_otros",
+                    name: "descripcion_recurso",
                     filter: {type: "simple", placeholder: "Gastos Generales",},
                     sort: true,
                 },
                 {
                     label: "Unidad",
-                    name: "simbolo_otros",
+                    name: "unidad_id",
                     filter: {type: "simple", placeholder: "Unidad"},
                     sort: true,
                 },
@@ -1582,7 +1631,9 @@ export default {
         this.getAllItemRelacion();
         this.getNameForItemRelacion();
         // this.listarItemRelacion();
-        //Otros
+        //Otros Gastos
+        this.getAllItemOtrosGastos();
+        // this.listarItemOtrosGastos();
     },
     components: {
         VueBootstrap4Table,
