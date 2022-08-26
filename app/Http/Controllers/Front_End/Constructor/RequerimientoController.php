@@ -174,12 +174,23 @@ class RequerimientoController extends Controller
     {
         //
     }
+
+    public function deleteItemObra(RequerimientoItem $requerimientoItemObra)
+    {
+        $requerimientoItemObra = RequerimientoItem::findOrFail($requerimientoItemObra->id);
+        $requerimientoItemObra->delete();
+    }
+
+    public function deleteItemRelacion(RequerimientoRelacion $requerimientoItemRelacion){
+        $requerimientoItemRelacion = RequerimientoRelacion::findOrFail($requerimientoItemRelacion->id);
+        $requerimientoItemRelacion->delete();
+    }
+
     public function deleteItemOtrosGastos(RequerimientoOtros $requerimientoOtros)
     {
         $requerimientoOtros = RequerimientoOtros::findOrFail($requerimientoOtros->id);
         $requerimientoOtros->delete();
     }
-
 
     public function updateItemRequerimiento(Request $request, $id)
     {

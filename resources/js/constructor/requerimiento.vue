@@ -1102,8 +1102,10 @@ export default {
             this.limpiar_formulario();
             document.getElementById("cerrarModal").click();
         },
-        async eliminar() {
-
+        async eliminar(obra) {
+            const response = await axios.delete('delete_requerimiento_obra/'+obra);
+            console.log('DELETE ITEM OBRA', response.data);
+            await this.listarRequerimientoItem();
         },
         async filterListItemRelacion(arrayRequerimientoRelacion) {
             const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
@@ -1157,8 +1159,10 @@ export default {
         async modificarItemRelacion() {
 
         },
-        async eliminarItemRelacion(id) {
-
+        async eliminarItemRelacion(relacion) {
+            const response = await axios.delete('delete_requerimiento_relacion/'+relacion);
+            console.log('DELETE ITEM RELACION', response.data);
+            await this.listarItemRelacion();
         },
         async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');
@@ -1222,6 +1226,8 @@ export default {
         },
         async eliminarItemOtrosGastos(otro) {
             const response = await axios.delete('delete_requerimiento_otros_gastos/'+otro);
+            console.log('DELETE ITEM OTROS GASTOS', response.data);
+            await this.listarItemOtrosGastos();
         },
         async filterNameForOtrosGastos(){
             const getUnidades = (await axios.get('get_unidades')).data;
