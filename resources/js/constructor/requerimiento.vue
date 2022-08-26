@@ -26,17 +26,17 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true"><h6> Requerimiento en Obra</h6></a>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento en Obra</h6></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill"
                                href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile"
-                               aria-selected="false"><h6>Relacion con el Contrato Principal</h6></a>
+                               aria-selected="false" v-on:click="detectActiveTab('profile')"><h6>Relacion con el Contrato Principal</h6></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill"
                                href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages"
-                               aria-selected="false"><h6>Otros Gastos</h6></a>
+                               aria-selected="false" v-on:click="detectActiveTab('messages')"><h6>Otros Gastos</h6></a>
                         </li>
                     </ul>
                 </div>
@@ -336,7 +336,7 @@
                                                     @click="editar(props.row);"><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="eliminar(props.row.id);"><span><i
+                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                                 class="fa fa-trash-alt"></i></span></button>
                                         </div>
                                     </template>
@@ -576,7 +576,7 @@
                                                     @click="editarItemRelacion(props.rows1);"><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="eliminarItemRelacion(props.rows1.id);"><span><i
+                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                                 class="fa fa-trash-alt"></i></span></button>
                                         </div>
                                     </template>
@@ -803,7 +803,7 @@
                                                     @click="editar(props.rows2);"><span><i class="fa fa-user-edit"></i></span>
                                             </button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="eliminar(props.row2.id);"><span><i
+                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                                 class="fa fa-trash-alt"></i></span></button>
                                         </div>
                                     </template>
@@ -868,6 +868,9 @@
         </div>
         <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
 
+        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
+                            ref="abrirAlerta">
+        </alert-confirmacion>
 
         <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"
                          @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>
@@ -881,6 +884,7 @@ import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
 import {VueEditor} from "vue2-editor";
+import {en, es} from 'vuejs-datepicker/dist/locale';
 
 Vue.component("v-select", vSelect);
 
@@ -905,8 +909,10 @@ export default {
                     for (let j = 0; j < responseRecursos.length; j++) {
                         if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
                             arrayItemsFiltered.push({
-                                ...arrayItems[i],
                                 ...responseRecursos[j],
+                                //here is the id object
+                                ...arrayItems[i],
+
                                 // ...responseRecursos[j].codigo_recurso,
                                 // ...responseRecursos[j].descripcion_recurso
                             })
@@ -1102,8 +1108,10 @@ export default {
             this.limpiar_formulario();
             document.getElementById("cerrarModal").click();
         },
-        async eliminar() {
-
+        async eliminar(id) {
+            const response = await axios.delete('delete_requerimiento_obra/' + id);
+            console.log('DELETE ITEM OBRA', response.data);
+            await this.listarRequerimientoItem();
         },
         async filterListItemRelacion(arrayRequerimientoRelacion) {
             const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
@@ -1115,8 +1123,9 @@ export default {
                         if (responsePlanillaItem[j].id === arrayRequerimientoRelacion[i].planilla_item_id) {
                             // let currentUnidad = getUnidades.filter(unidad => unidad.id==responsePlanillaItem[j].unidad_id);
                             arrayItemsFiltered.push({
-                                ...arrayRequerimientoRelacion[i],
                                 ...responsePlanillaItem[j],
+                                //here is the id object
+                                ...arrayRequerimientoRelacion[i],
                                 // ...currentUnidad[0],
                                 // ...responseRecursos[j].codigo_recurso,
                                 // ...responseRecursos[j].descripcion_recurso
@@ -1158,7 +1167,9 @@ export default {
 
         },
         async eliminarItemRelacion(id) {
-
+            const response = await axios.delete('delete_requerimiento_relacion/' + id);
+            console.log('DELETE ITEM RELACION', response.data);
+            await this.listarItemRelacion();
         },
         async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');
@@ -1183,8 +1194,10 @@ export default {
                     for (let j = 0; j < responseReqRecursos.length; j++) {
                         if (responseReqRecursos[j].id === arrayReqOtrosGastos[i].requerimiento_recurso_id) {
                             arrayItemsFiltered.push({
-                                ...arrayReqOtrosGastos[i],
                                 ...responseReqRecursos[j],
+                                //here is the id object
+                                ...arrayReqOtrosGastos[i],
+
                             });
                             j = responseReqRecursos.length;
                         }
@@ -1220,10 +1233,12 @@ export default {
         async modificarItemOtrosGastos() {
 
         },
-        async eliminarItemOtrosGastos(otro) {
-            const response = await axios.delete('delete_requerimiento_otros_gastos/'+otro);
+        async eliminarItemOtrosGastos(id) {
+            const response = await axios.delete('delete_requerimiento_otros_gastos/' + id);
+            console.log('DELETE ITEM OTROS GASTOS', response.data);
+            await this.listarItemOtrosGastos();
         },
-        async filterNameForOtrosGastos(){
+        async filterNameForOtrosGastos() {
             const getUnidades = (await axios.get('get_unidades')).data;
             const currentUnidad = getUnidades.filter(unidad => unidad.id == this.jsonData.descripcion_otros.unidad_id);
             this.jsonData.codigo_otros = this.jsonData.descripcion_otros.codigo_recurso;
@@ -1243,7 +1258,40 @@ export default {
             $("#seleccion_proyecto_doc_legales").modal("show");
 
         },
+        preguntarModalAlertaConfirmacionEliminar(id) {
+            this.mandarMensajesAlerta = {
+                titulo: "Mensajes del Sistema",//titulo del mensaje
+                contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
+                contenidoCuerpo: "La acción es irreversible",//contenido del mensaje
+                contenidoPie: "¿Esta seguro de eliminar el registro?",//contenido del mensaje
+                tipo: "ferdy-background-Primary-blak",//color danger warnin etc para header de modal
+                tituloBotonUno: "SI", //texto de primer boton el de true
+                tituloBotonDos: "NO", //texto segundo bocton del de false
+                respuesta: false,
+            };
+            this.id_eliminacion = id;
+            this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
+        },
+        detectActiveTab(currentTab){
+            this.tabSelected = currentTab;
+        },
+        respuestaModalAlertaConfirmacion(datos) {
+            // console.log(datos.respuesta);
+            console.log('eliminando', datos.respuesta);
+            if (datos.respuesta === true) {
+                if (this.tabSelected === "home") {
+                    this.eliminar(this.id_eliminacion);
 
+                } else if (this.tabSelected === "profile") {
+                    this.eliminarItemRelacion(this.id_eliminacion);
+
+                } else if(this.tabSelected === "messages"){
+                    this.eliminarItemOtrosGastos(this.id_eliminacion);
+                }
+                console.log('ID DOC', this.tabSelected);
+                // this.eliminar(this.id_eliminacion);
+            }
+        },
         async ver_planilla() {
             const vp = this.jsonData.proyectos.id;
             console.log('vplan--> ' + vp);
@@ -1385,6 +1433,9 @@ export default {
                 }
             }
         },
+        showSelected() {
+            console.log("NAV SELECTED", this.tabSelected)
+        },
         /*********** funciones de configuracion**************/
         funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
             this.configFechas = configuracion.configFechas;
@@ -1409,8 +1460,10 @@ export default {
             combo_items_planilla: [],
             combo_otros_gastos: [],
             memorySelected: '',
-            memorySelectedRelacion: '',
+            tabSelected: 'home',
             proyectos: [],
+            mandarMensajesAlerta: {},
+            id_eliminacion: null,
             jsonData: {
                 //REQUERIMIENTO OBRA
                 id: "",
