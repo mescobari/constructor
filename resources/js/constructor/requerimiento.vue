@@ -26,17 +26,17 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true"><h6> Requerimiento en Obra</h6></a>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento en Obra</h6></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill"
                                href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile"
-                               aria-selected="false"><h6>Relacion con el Contrato Principal</h6></a>
+                               aria-selected="false" v-on:click="detectActiveTab('profile')"><h6>Relacion con el Contrato Principal</h6></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill"
                                href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages"
-                               aria-selected="false"><h6>Otros Gastos</h6></a>
+                               aria-selected="false" v-on:click="detectActiveTab('messages')"><h6>Otros Gastos</h6></a>
                         </li>
                     </ul>
                 </div>
@@ -576,7 +576,7 @@
                                                     @click="editarItemRelacion(props.rows1);"><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="eliminarItemRelacion(props.rows1.id);"><span><i
+                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                                 class="fa fa-trash-alt"></i></span></button>
                                         </div>
                                     </template>
@@ -803,7 +803,7 @@
                                                     @click="editar(props.rows2);"><span><i class="fa fa-user-edit"></i></span>
                                             </button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="eliminar(props.row2.id);"><span><i
+                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                                 class="fa fa-trash-alt"></i></span></button>
                                         </div>
                                     </template>
@@ -868,7 +868,8 @@
         </div>
         <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
 
-        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion" ref="abrirAlerta">
+        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
+                            ref="abrirAlerta">
         </alert-confirmacion>
 
         <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"
@@ -1108,7 +1109,7 @@ export default {
             document.getElementById("cerrarModal").click();
         },
         async eliminar(id) {
-            const response = await axios.delete('delete_requerimiento_obra/'+id);
+            const response = await axios.delete('delete_requerimiento_obra/' + id);
             console.log('DELETE ITEM OBRA', response.data);
             await this.listarRequerimientoItem();
         },
@@ -1165,8 +1166,8 @@ export default {
         async modificarItemRelacion() {
 
         },
-        async eliminarItemRelacion(relacion) {
-            const response = await axios.delete('delete_requerimiento_relacion/'+relacion);
+        async eliminarItemRelacion(id) {
+            const response = await axios.delete('delete_requerimiento_relacion/' + id);
             console.log('DELETE ITEM RELACION', response.data);
             await this.listarItemRelacion();
         },
@@ -1232,12 +1233,12 @@ export default {
         async modificarItemOtrosGastos() {
 
         },
-        async eliminarItemOtrosGastos(otro) {
-            const response = await axios.delete('delete_requerimiento_otros_gastos/'+otro);
+        async eliminarItemOtrosGastos(id) {
+            const response = await axios.delete('delete_requerimiento_otros_gastos/' + id);
             console.log('DELETE ITEM OTROS GASTOS', response.data);
             await this.listarItemOtrosGastos();
         },
-        async filterNameForOtrosGastos(){
+        async filterNameForOtrosGastos() {
             const getUnidades = (await axios.get('get_unidades')).data;
             const currentUnidad = getUnidades.filter(unidad => unidad.id == this.jsonData.descripcion_otros.unidad_id);
             this.jsonData.codigo_otros = this.jsonData.descripcion_otros.codigo_recurso;
@@ -1271,12 +1272,24 @@ export default {
             this.id_eliminacion = id;
             this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
         },
-
+        detectActiveTab(currentTab){
+            this.tabSelected = currentTab;
+        },
         respuestaModalAlertaConfirmacion(datos) {
             // console.log(datos.respuesta);
+            console.log('eliminando', datos.respuesta);
             if (datos.respuesta === true) {
-                console.log('eliminando', datos.respuesta);
-                this.eliminar(this.id_eliminacion);
+                if (this.tabSelected === "home") {
+                    this.eliminar(this.id_eliminacion);
+
+                } else if (this.tabSelected === "profile") {
+                    this.eliminarItemRelacion(this.id_eliminacion);
+
+                } else if(this.tabSelected === "messages"){
+                    this.eliminarItemOtrosGastos(this.id_eliminacion);
+                }
+                console.log('ID DOC', this.tabSelected);
+                // this.eliminar(this.id_eliminacion);
             }
         },
         async ver_planilla() {
@@ -1420,6 +1433,9 @@ export default {
                 }
             }
         },
+        showSelected() {
+            console.log("NAV SELECTED", this.tabSelected)
+        },
         /*********** funciones de configuracion**************/
         funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
             this.configFechas = configuracion.configFechas;
@@ -1444,7 +1460,7 @@ export default {
             combo_items_planilla: [],
             combo_otros_gastos: [],
             memorySelected: '',
-            memorySelectedRelacion: '',
+            tabSelected: 'home',
             proyectos: [],
             mandarMensajesAlerta: {},
             id_eliminacion: null,
