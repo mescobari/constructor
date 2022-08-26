@@ -909,6 +909,7 @@ export default {
                         if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
                             arrayItemsFiltered.push({
                                 ...responseRecursos[j],
+                                //here is the id object
                                 ...arrayItems[i],
 
                                 // ...responseRecursos[j].codigo_recurso,
@@ -1121,8 +1122,9 @@ export default {
                         if (responsePlanillaItem[j].id === arrayRequerimientoRelacion[i].planilla_item_id) {
                             // let currentUnidad = getUnidades.filter(unidad => unidad.id==responsePlanillaItem[j].unidad_id);
                             arrayItemsFiltered.push({
-                                ...arrayRequerimientoRelacion[i],
                                 ...responsePlanillaItem[j],
+                                //here is the id object
+                                ...arrayRequerimientoRelacion[i],
                                 // ...currentUnidad[0],
                                 // ...responseRecursos[j].codigo_recurso,
                                 // ...responseRecursos[j].descripcion_recurso
@@ -1191,8 +1193,10 @@ export default {
                     for (let j = 0; j < responseReqRecursos.length; j++) {
                         if (responseReqRecursos[j].id === arrayReqOtrosGastos[i].requerimiento_recurso_id) {
                             arrayItemsFiltered.push({
-                                ...arrayReqOtrosGastos[i],
                                 ...responseReqRecursos[j],
+                                //here is the id object
+                                ...arrayReqOtrosGastos[i],
+
                             });
                             j = responseReqRecursos.length;
                         }
