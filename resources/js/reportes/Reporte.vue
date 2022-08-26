@@ -73,7 +73,7 @@
                         <div class="inner">
                             <br><br>
                             <!-- <h3>65</h3> -->
-                            <h4>Vencimientos</h4>
+                            <h4>Vigencia</h4>
                         </div>
                         <div class="icon">
                             <i class="far fa-star"></i>

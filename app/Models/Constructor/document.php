@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Models\FrontEnd\cofinanciadores\TipoDocumento;
 use App\Models\BackEnd\intervenciones\ClaInstitucional;
-
+use App\Models\Constructor\OrdenesProceder;
 
 class document extends Model
 {
@@ -42,11 +42,18 @@ class document extends Model
     {
         return $this->belongsTo(ClaInstitucional::class, 'contratado_id', 'id');
     }
+    public function ordenProceder()
+    {
+        return $this->hasOne(OrdenesProceder::class, 'document_id', 'id');
+    }
+
+
     public function getDocumento($id)
     {
         $documento = document::where('id',$id )
         ->with('contratante')->with('contratado')
         ->with('tipo_documento')
+        ->with('ordenProceder')
         ->first();
 
         return $documento;
@@ -94,11 +101,14 @@ class document extends Model
         $items[0]['contratante_sigla']=$documento->contratante->sigla;
         $items[0]['contratado']=$documento->contratado->nombre;
         $items[0]['contratado_sigla']=$documento->contratado->sigla;
+        $items[0]['fecha_orden_proceder']=$documento->ordenProceder->fecha_orden_proceder;
 
         $json=document::where('padre',$contrato_id )        
         ->where('document_types_id','!=','9')
+        ->where('document_types_id','!=','2')
         ->with('contratante')->with('contratado')
         ->with('tipo_documento')
+        ->with('ordenProceder')
         ->orderBy('fecha_firma')
         ->get();
 
@@ -121,7 +131,7 @@ class document extends Model
             $items[$i]['contratante_sigla']=$obj[$i-1]['contratante']['sigla']; 
             $items[$i]['contratado']=$obj[$i-1]['contratado']['nombre']; 
             $items[$i]['contratado_sigla']=$obj[$i-1]['contratado']['sigla'];
-
+            //$items[$i]['fecha_orden_proceder']=$obj[$i-1]['ordenProceder']['fecha_orden_proceder'];
            
         }
 
@@ -133,6 +143,45 @@ class document extends Model
 
     }
 
+    public function getSubContratos($contrato_id)
+    {
+        $items=[];
+        
+        $json=document::where('padre',$contrato_id )        
+        ->where('document_types_id','=','2')
+        ->with('contratante')->with('contratado')
+        ->with('tipo_documento')
+        ->with('ordenProceder')
+        ->orderBy('fecha_firma')
+        ->get();
+
+        $obj = json_decode($json, true);
+
+       for($i = 0; $i < count( $obj); $i++) {
+            $items[$i]['id']=$obj[$i]['id'];
+            $items[$i]['nombre']=$obj[$i]['nombre'];
+            $items[$i]['codigo']=$obj[$i]['codigo'];
+            $items[$i]['fecha_firma']=$obj[$i]['fecha_firma'];
+            $items[$i]['duracion_dias']=$obj[$i]['duracion_dias'];
+            $items[$i]['monto_bs']=$obj[$i]['monto_bs'];
+            $items[$i]['objeto']=$obj[$i]['objeto'];
+            $items[$i]['modifica']=$obj[$i]['modifica'];
+            $items[$i]['que_modifica']=$this->queModifica($obj[$i]['modifica']);
+            $items[$i]['tipo_doc_nombre']=$obj[$i]['tipo_documento']['nombre'];
+
+          
+            $items[$i]['contratante']=$obj[$i]['contratante']['nombre']; 
+            $items[$i]['contratante_sigla']=$obj[$i]['contratante']['sigla']; 
+            $items[$i]['contratado']=$obj[$i]['contratado']['nombre']; 
+            $items[$i]['contratado_sigla']=$obj[$i]['contratado']['sigla'];
+           // $items[$i]['fecha_orden_proceder']=$obj[$i-1]['ordenProceder']['fecha_orden_proceder'];
+           
+        }
+
+        return $items;
+
+
+    }
 
 
 }

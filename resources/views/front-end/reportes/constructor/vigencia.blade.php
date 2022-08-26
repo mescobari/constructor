@@ -34,100 +34,54 @@
                      <tr><td>modifica</td><td>{{$docs_modificatorios[0]['que_modifica']}}</td></tr>
                      <tr><td>monto_bs</td><td> {{$docs_modificatorios[0]['monto_bs']}}</td></tr>
                      <tr><td>duracion_dias</td><td>{{$docs_modificatorios[0]['duracion_dias']}}</td></tr>
+                     <tr><td>fecha_orden_proceder</td><td>{{$docs_modificatorios[0]['fecha_orden_proceder']}}</td></tr>
                 </tbody>
             </table>
 
-            <h4>DOCUMENTOS QUE MODIFICAN EL CONTRATO </h4>
-           @for ($i = 1; $i < count($docs_modificatorios); $i++)
-           <table class="styled-table" >
-                <thead>
+            <h4>PLAZOS Y VIGENCIA </h4>
+            <table class="styled-table" >
+            <thead>
                     <tr>
-                        <th  width="20%"><b>Item</b></th>  
-                        <th><b>Descripcion</b></th>
+                        <th  width="30%"><b>codigo - Descripcion</b></th>  
+                        <th><b>Monto Bs.</b></th>
+                        <th><b>Monto Vigente Bs.</b></th>
+                        <th><b>Plazo (Dias)</b></th>
+                        <th><b>Plazo Vigente (Dias)</b></th>
+                        <th><b>Fecha Conclusion*</b></th>
                     </tr>
                 </thead> 
 
                 <tbody>
-                     <tr><td>Tipo de Documento:</td><td>{{$docs_modificatorios[$i]['tipo_doc_nombre']}}</td></tr>
-                     <tr><td>codigo</td><td>{{$docs_modificatorios[$i]['codigo']}}</td></tr>
-                     <tr><td>nombre</td><td>{{$docs_modificatorios[$i]['nombre']}}</td></tr>
-                     <tr><td>objeto</td><td>{{$docs_modificatorios[$i]['objeto']}}</td></tr>
-                     <tr><td>contratante</td><td>{{$docs_modificatorios[$i]['contratante']}} - ({{$docs_modificatorios[$i]['contratante_sigla']}})</td></tr>
-                     <tr><td>contratado</td><td>{{$docs_modificatorios[$i]['contratado']}} - ({{$docs_modificatorios[$i]['contratado_sigla']}})</td></tr>                     
-                     <tr><td>fecha_firma</td><td>{{$docs_modificatorios[$i]['fecha_firma']}}</td></tr>
-                     <tr><td>modifica</td><td>{{$docs_modificatorios[$i]['que_modifica']}}</td></tr>
-                     <tr><td>monto_bs</td><td> {{$docs_modificatorios[$i]['monto_bs']}}</td></tr>
-                     <tr><td>duracion_dias</td><td>{{$docs_modificatorios[$i]['duracion_dias']}}</td></tr>
-                </tbody>
-            </table>
+
+
+           @for ($i = 0; $i < count($docs_modificatorios); $i++)
           
+                
+                     <tr>
+                     <td>{{$docs_modificatorios[$i]['tipo_doc_nombre']}}<br>
+                        {{$docs_modificatorios[$i]['codigo']}}<br>
+                        {{$docs_modificatorios[$i]['nombre']}}
+                        
+                    </td>
 
-
-           @endfor
-           <div class='page-break'></div>
-           <h4>DOCUMENTOS: PLANILLAS DE AVANCE </h4>
-
-           @for ($i = 0; $i < count($avance); $i++)
-           <table class="styled-table" >
-                <thead>
-                    <tr>
-                        <th  width="20%"><b>Item</b></th>  
-                        <th><b>Descripcion</b></th>
-                    </tr>
-                </thead> 
-
-                <tbody>
+                    <td> {{$docs_modificatorios[$i]['monto_bs']}}</td>
+                     <td>monto_bs</td>
+                     <td>{{$docs_modificatorios[$i]['duracion_dias']}}</td>
+                    <td>duracion_dias</td>
                     
-                     <tr><td>codigo</td><td>{{$avance[$i]['codigo']}}</td></tr>
-                     <tr><td>nombre</td><td>{{$avance[$i]['nombre']}}</td></tr>
-                     <tr><td>objeto</td><td>{{$avance[$i]['objeto']}}</td></tr>
-                     <tr><td>fecha_firma</td><td>{{$avance[$i]['fecha_firma']}}</td></tr>
-                     <tr><td>total_planilla</td><td>{{$avance[$i]['total_planilla']}}</td></tr>
-                     <tr><td>anticipo_planilla</td><td> {{$avance[$i]['anticipo_planilla']}}</td></tr>
-                     <tr><td>retencion_planilla</td><td>{{$avance[$i]['retencion_planilla']}}</td></tr>
-                </tbody>
-            </table>
-          
-           @endfor
-
-
-
-        </div>
-
-      
-
-        <div class="contenido">
-        <div class='page-break'></div>
-        <h4>DOCUMENTOS: SUB CONTRATOS</h4>
-
-        @for ($i = 0; $i < count($docs_sub); $i++)
-           <table class="styled-table" >
-                <thead>
                     <tr>
-                        <th  width="20%"><b>Item</b></th>  
-                        <th><b>Descripcion</b></th>
-                    </tr>
-                </thead> 
-
-                <tbody>
-                     <tr><td>Tipo de Documento:</td><td>{{$docs_sub[$i]['tipo_doc_nombre']}}</td></tr>
-                     <tr><td>codigo</td><td>{{$docs_sub[$i]['codigo']}}</td></tr>
-                     <tr><td>nombre</td><td>{{$docs_sub[$i]['nombre']}}</td></tr>
-                     <tr><td>objeto</td><td>{{$docs_sub[$i]['objeto']}}</td></tr>
-                     <tr><td>contratante</td><td>{{$docs_sub[$i]['contratante']}} - ({{$docs_sub[$i]['contratante_sigla']}})</td></tr>
-                     <tr><td>contratado</td><td>{{$docs_sub[$i]['contratado']}} - ({{$docs_sub[$i]['contratado_sigla']}})</td></tr>                     
-                     <tr><td>fecha_firma</td><td>{{$docs_sub[$i]['fecha_firma']}}</td></tr>
-                     <tr><td>modifica</td><td>{{$docs_sub[$i]['que_modifica']}}</td></tr>
-                     <tr><td>monto_bs</td><td> {{$docs_sub[$i]['monto_bs']}}</td></tr>
-                     <tr><td>duracion_dias</td><td>{{$docs_sub[$i]['duracion_dias']}}</td></tr>
+                    @endfor
                 </tbody>
             </table>
-          
-           @endfor
 
+          
+           <div class='page-break'></div>
+          
+         
 
         </div>
 
+ 
        
     </body>
     <style>
