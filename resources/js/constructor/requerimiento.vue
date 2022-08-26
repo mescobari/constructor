@@ -336,7 +336,7 @@
                                                     @click="editar(props.row);"><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="eliminar(props.row.id);"><span><i
+                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                                 class="fa fa-trash-alt"></i></span></button>
                                         </div>
                                     </template>
@@ -868,6 +868,8 @@
         </div>
         <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
 
+        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion" ref="abrirAlerta">
+        </alert-confirmacion>
 
         <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"
                          @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>
@@ -881,6 +883,7 @@ import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
 import {VueEditor} from "vue2-editor";
+import {en, es} from 'vuejs-datepicker/dist/locale';
 
 Vue.component("v-select", vSelect);
 
@@ -905,8 +908,9 @@ export default {
                     for (let j = 0; j < responseRecursos.length; j++) {
                         if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
                             arrayItemsFiltered.push({
-                                ...arrayItems[i],
                                 ...responseRecursos[j],
+                                ...arrayItems[i],
+
                                 // ...responseRecursos[j].codigo_recurso,
                                 // ...responseRecursos[j].descripcion_recurso
                             })
@@ -1102,8 +1106,8 @@ export default {
             this.limpiar_formulario();
             document.getElementById("cerrarModal").click();
         },
-        async eliminar(obra) {
-            const response = await axios.delete('delete_requerimiento_obra/'+obra);
+        async eliminar(id) {
+            const response = await axios.delete('delete_requerimiento_obra/'+id);
             console.log('DELETE ITEM OBRA', response.data);
             await this.listarRequerimientoItem();
         },
@@ -1249,7 +1253,28 @@ export default {
             $("#seleccion_proyecto_doc_legales").modal("show");
 
         },
+        preguntarModalAlertaConfirmacionEliminar(id) {
+            this.mandarMensajesAlerta = {
+                titulo: "Mensajes del Sistema",//titulo del mensaje
+                contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
+                contenidoCuerpo: "La acción es irreversible",//contenido del mensaje
+                contenidoPie: "¿Esta seguro de eliminar el registro?",//contenido del mensaje
+                tipo: "ferdy-background-Primary-blak",//color danger warnin etc para header de modal
+                tituloBotonUno: "SI", //texto de primer boton el de true
+                tituloBotonDos: "NO", //texto segundo bocton del de false
+                respuesta: false,
+            };
+            this.id_eliminacion = id;
+            this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
+        },
 
+        respuestaModalAlertaConfirmacion(datos) {
+            // console.log(datos.respuesta);
+            if (datos.respuesta === true) {
+                console.log('eliminando', datos.respuesta);
+                this.eliminar(this.id_eliminacion);
+            }
+        },
         async ver_planilla() {
             const vp = this.jsonData.proyectos.id;
             console.log('vplan--> ' + vp);
@@ -1417,6 +1442,8 @@ export default {
             memorySelected: '',
             memorySelectedRelacion: '',
             proyectos: [],
+            mandarMensajesAlerta: {},
+            id_eliminacion: null,
             jsonData: {
                 //REQUERIMIENTO OBRA
                 id: "",
