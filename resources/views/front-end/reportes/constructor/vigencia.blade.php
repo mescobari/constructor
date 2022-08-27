@@ -30,12 +30,12 @@
                      <tr><td>objeto</td><td>{{$docs_modificatorios[0]['objeto']}}</td></tr>
                      <tr><td>contratante</td><td>{{$docs_modificatorios[0]['contratante']}} - ({{$docs_modificatorios[0]['contratante_sigla']}})</td></tr>
                      <tr><td>contratado</td><td>{{$docs_modificatorios[0]['contratado']}} - ({{$docs_modificatorios[0]['contratado_sigla']}})</td></tr>                     
-                     <tr><td>fecha_firma</td><td>{{$docs_modificatorios[0]['fecha_firma']}}</td></tr>
+                     <tr><td>fecha_firma</td><td>{{ date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_firma']))}}</td></tr>
                      <tr><td>modifica</td><td>{{$docs_modificatorios[0]['que_modifica']}}</td></tr>
-                     <tr><td>monto_bs</td><td> {{$docs_modificatorios[0]['monto_bs']}}</td></tr>
-                     <tr><td>duracion_dias</td><td>{{$docs_modificatorios[0]['duracion_dias']}}</td></tr>
-                     <tr><td>fecha_orden_proceder</td><td>{{$docs_modificatorios[0]['fecha_orden_proceder']}}</td></tr>
-                </tbody>
+                     <tr><td>monto_bs</td><td> {{number_format($docs_modificatorios[0]['monto_bs'],2,",",".")}}</td></tr>
+                     <tr><td>duracion_dias</td><td>{{number_format($docs_modificatorios[0]['duracion_dias'],0,",",".")}}</td></tr>
+                     <tr><td>fecha_orden_proceder</td><td>{{date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_orden_proceder']))}}</td></tr>
+                     </tbody>
             </table>
 
             <h4>PLAZOS Y VIGENCIA </h4>
@@ -56,7 +56,7 @@
 
            @for ($i = 0; $i < count($docs_modificatorios); $i++)
           
-                
+           
                      <tr>
                      <td>{{$docs_modificatorios[$i]['tipo_doc_nombre']}}<br>
                         {{$docs_modificatorios[$i]['codigo']}}<br>
@@ -64,18 +64,19 @@
                         
                     </td>
 
-                    <td> {{$docs_modificatorios[$i]['monto_bs']}}</td>
-                     <td>monto_bs</td>
-                     <td>{{$docs_modificatorios[$i]['duracion_dias']}}</td>
-                    <td>duracion_dias</td>
+                    <td align="right"> {{number_format($docs_modificatorios[$i]['monto_bs'],2,",",".")}}</td>
+                     <td align="right">{{number_format($docs_modificatorios[$i]['monto_vigente'],2,",",".")}}</td>
+                     <td align="center">{{number_format($docs_modificatorios[$i]['duracion_dias'],0,",",".")}}</td>
+                    <td align="center">{{number_format($docs_modificatorios[$i]['plazo_vigente'],0,",",".")}}</td>
+                    <td align="center">{{$docs_modificatorios[$i]['fecha_estimada']}}</td>
                     
                     <tr>
                     @endfor
                 </tbody>
             </table>
 
+          <span>* Fecha estimada de conclusión</span>
           
-           <div class='page-break'></div>
           
          
 

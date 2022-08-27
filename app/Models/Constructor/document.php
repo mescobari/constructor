@@ -92,7 +92,9 @@ class document extends Model
         $items[0]['codigo']=$documento->codigo;
         $items[0]['fecha_firma']=$documento->fecha_firma;
         $items[0]['duracion_dias']=$documento->duracion_dias;
+        $items[0]['plazo_vigente']=$documento->duracion_dias;       
         $items[0]['monto_bs']=$documento->monto_bs;
+        $items[0]['monto_vigente']=$documento->monto_bs;
         $items[0]['objeto']=$documento->objeto;
         $items[0]['modifica']=$documento->modifica;
         $items[0]['que_modifica']=$this->queModifica($documento->modifica);
@@ -102,6 +104,8 @@ class document extends Model
         $items[0]['contratado']=$documento->contratado->nombre;
         $items[0]['contratado_sigla']=$documento->contratado->sigla;
         $items[0]['fecha_orden_proceder']=$documento->ordenProceder->fecha_orden_proceder;
+        $dias= $items[0]['duracion_dias'];
+        $items[0]['fecha_estimada']=date("d-m-Y",strtotime($items[0]['fecha_orden_proceder']."+ ".$dias." days"));
 
         $json=document::where('padre',$contrato_id )        
         ->where('document_types_id','!=','9')
@@ -113,7 +117,7 @@ class document extends Model
         ->get();
 
         $obj = json_decode($json, true);
-
+        
        for($i = 1; $i <= count( $obj); $i++) {
             $items[$i]['id']=$obj[$i-1]['id'];
             $items[$i]['nombre']=$obj[$i-1]['nombre'];
@@ -126,12 +130,18 @@ class document extends Model
             $items[$i]['que_modifica']=$this->queModifica($obj[$i-1]['modifica']);
             $items[$i]['tipo_doc_nombre']=$obj[$i-1]['tipo_documento']['nombre'];
 
+            $items[$i]['monto_vigente']=$items[$i-1]['monto_vigente']+$items[$i]['monto_bs'];
+            $items[$i]['plazo_vigente']=$items[$i-1]['plazo_vigente']+$items[$i]['duracion_dias'];
+            $dias= $items[$i]['plazo_vigente'];
+            $items[$i]['fecha_estimada']=date("d-m-Y",strtotime($items[0]['fecha_orden_proceder']."+ ".$dias." days"));
+
           
             $items[$i]['contratante']=$obj[$i-1]['contratante']['nombre']; 
             $items[$i]['contratante_sigla']=$obj[$i-1]['contratante']['sigla']; 
             $items[$i]['contratado']=$obj[$i-1]['contratado']['nombre']; 
             $items[$i]['contratado_sigla']=$obj[$i-1]['contratado']['sigla'];
             //$items[$i]['fecha_orden_proceder']=$obj[$i-1]['ordenProceder']['fecha_orden_proceder'];
+
            
         }
 
