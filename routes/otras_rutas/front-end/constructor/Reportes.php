@@ -15,5 +15,8 @@
         Route::get('ver_gra_fisico/{id}', 'PlanillaReportesController@graficos_ejecucion')->name('ver_gra_fisico');
         Route::get('lista_respaldos/{id}', 'PlanillaReportesController@documentos_respaldo')->name('lista_respaldos');
         
+        Route::get('ver_requerimientos/{id}', 'PlanillaReportesController@ver_requerimientos')->name('ver_requerimientos');
+        
+
     });     
 ?>

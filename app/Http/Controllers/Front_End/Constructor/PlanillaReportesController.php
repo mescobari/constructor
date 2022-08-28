@@ -38,7 +38,58 @@ class PlanillaReportesController extends Controller
     {
         return view('front-end.reportes.IndexReportesDocumentosLegales');
     }
-   
+
+
+/////*****************REPORTES REQUERIMIENTO EN OBRAS************************************ */
+
+public function ver_requerimientos(Request $request, $id){
+    $requerimiento_id=$id;
+    // debemos encontrar el contrato_id
+    $contrato_id=$requerimiento_id; // solo con fines de probar
+    $docs= new Document;
+    $documento = $docs->getDocumento($contrato_id );
+    $docs_modificatorios= $docs->getModificacion($contrato_id);
+ //datos para la cabecera del reportedel reporte
+ $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
+ $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
+ $siglas = "EL CONSTRUCTOR";
+ $documento_codigo = $documento->codigo;// codigo del contrato
+ $fecha_hora_emision = date('d-m-Y h:i:s a', time());
+ //$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
+ $nombre_reporte=  'REQUERIMEINTOS EN OBRA';
+ $documento_nombre= $documento->objeto;
+ $documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
+ $documento_monto= number_format($documento->monto_bs,2,",",".");
+
+
+ /* cargamos la vista  */
+
+ $pdf = PDF::loadView('front-end.reportes.constructor.requerimientos', [
+     'link_img'=>'img/sistema-front-end/logo-pdf.png',
+     'titulo_grande' => $titulo_grande,
+     'nombre_institucion' => $nombre_institucion,
+     'siglas' => $siglas,
+     'documento_codigo' => $documento_codigo,
+     'fecha_hora_emision' => $fecha_hora_emision,
+     'nombre_reporte' => $nombre_reporte,
+     'documento_nombre' => $documento_nombre,
+     'documento_firma' => $documento_firma,
+     'documento_monto' => $documento_monto,
+     'docs_modificatorios' => $docs_modificatorios,
+
+ ]);
+ $pdf->setPaper('letter', 'portrait');
+ return $pdf->stream('reporte_ficha_proyecto.pdf');
+
+
+   //  return $avance;
+
+
+
+
+}
+
+/////**************FINREPORTES REQUERIMIENTO EN OBRAS************************************ */   
 
     public function lista_documentos(Request $request, $id){
         // todos los documentos relacionados con u  contrato
