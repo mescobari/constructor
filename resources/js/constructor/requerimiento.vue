@@ -48,7 +48,7 @@
                     <!-- REQxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
                     <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-home-tab">
+                         aria-labelledby="custom-tabs-three-home-tab" v-bind:disabled="clickedAdd">
 
 
                         <div class="row">
@@ -164,12 +164,11 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="descripcion">descripcion_requerimiento:</label>
+                                    <label for="descripcion">Descripcion Requerimiento:</label>
                                     <vue-editor
                                         v-model="jsonData.descripcion_requerimiento"
                                         :editor-toolbar="configToolBarEditText"
                                     ></vue-editor>
-                                    <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                 </div>
                             </div>
 
@@ -333,6 +332,7 @@
                                     <template slot="acciones" slot-scope="props">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-outline-warning ml-1"
+                                                    data-toggle="modal" data-target="#modal-editar-item"
                                                     @click="editar(props.row);"><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
@@ -371,7 +371,7 @@
                                             <label for="nombre">Correlativo Requerimiento:</label>
                                             <input type="text" class="form-control" name="nombre"
                                                    placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento" disabled>
+                                                   v-model="jsonData.correlativo_requerimiento">
                                         </div>
                                     </div>
 
@@ -867,7 +867,103 @@
             </div>
         </div>
         <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
+<!--================================ MODAL MODIFICAR ITEM REQUERIMIENTO =============================================-->
+        <div class="modal fade" id="modal-editar-item" tabindex="-1" role="dialog"
+             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
+                            Principal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row bg-info">
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label for="codigo_recurso">Codigo:</label>
+                                    <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
+                                           v-model="jsonData.codigo_recurso" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <!-- Recursos  Spinner-->
+                                    <label for="document_type">Descripcion Recurso:</label>
+                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                              v-model="jsonData.descripcion_recurso"
+                                              placeholder="Selecione una opción"
+                                              @input="retrieveFromCurrentDescripcionRecurso">
+                                        <span slot="no-options">No hay data para cargar</span>
+                                    </v-select>
+                                </div>
 
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label for="nombre">Unidad</label>
+                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
+                                           v-model="jsonData.simbolo" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label for="nombre">Cantidad</label>
+                                    <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                           v-model="jsonData.cantidad_recurso">
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Horas Requeridas</label>
+                                            <input type="text" class="form-control" name="horas"
+                                                   placeholder="Horas Requeridas" v-model="jsonData.horas_recurso">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Dias Requeridos</label>
+                                            <input type="text" class="form-control" name="dias"
+                                                   placeholder="Dias Requeridos" v-model="jsonData.dias_recurso">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Plazo Ejecucion</label>
+                                            <input type="text" class="form-control" name="plazo"
+                                                   placeholder="dias de ejecucion"
+                                                   v-model="jsonData.tiempo_total_recurso">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Precio referencial</label>
+                                            <input type="text" class="form-control" name="referencial"
+                                                   placeholder="precio referencial"
+                                                   v-model="jsonData.precio_referencia_recurso">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificar">
+                            Modificar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--================================ FIN MODAL MODIFICAR ITEM REQUERIMIENTO =========================================-->
         <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
                             ref="abrirAlerta">
         </alert-confirmacion>
@@ -983,6 +1079,7 @@ export default {
             datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
             datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
             datos_jsonData.append('files', this.jsonData.files);
+            this.clickedAdd = true;
             let response = await axios.post('create_requerimiento', datos_jsonData);
             console.log('CREATE REQ', response.data);
         },
@@ -1006,13 +1103,13 @@ export default {
         async guardar() {
             console.log('=================================================')
             if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-                console.log('MEMORYSELECTED', this.memorySelected + ' ' + this.jsonData.tipo_requerimiento_id);
+                console.log('MEMORYSELECTED', this.memorySelected);
                 await this.reqItemSave();
                 console.log('TRUE WAY')
                 console.log('=================================================')
             } else {
                 this.memorySelected = this.jsonData.tipo_requerimiento_id;
-                console.log('MEMORYSELECTED', this.memorySelected + ' ' + this.jsonData.tipo_requerimiento_id);
+                console.log('MEMORYSELECTED', this.memorySelected);
                 await this.requerimientoFirstSave()
                 await this.reqItemSave();
                 console.log('FALSE WAY')
@@ -1027,86 +1124,32 @@ export default {
             this.jsonData.codigo_recurso = data.codigo_recurso;
             this.jsonData.descripcion_recursos = data.descripcion_recurso;
             this.jsonData.unidad_id = data.unidad_id;
-
+            //this object will be modified in the next step
             this.jsonData.cantidad_recurso = data.cantidad_recurso;
             this.jsonData.horas_recurso = data.horas_recurso;
             this.jsonData.dias_recurso = data.dias_recurso;
             this.jsonData.tiempo_total_recurso = data.tiempo_total_recurso;
             this.jsonData.precio_referencia_recurso = data.precio_referencia_recurso;
-
-            this.modificar_bottom = true;
-            this.guardar_bottom = false;
-            this.tituloDocLegalesModal = "Formulario de Modificaciones de Planillas";
-            // this.jsonData = data;
-            $('#doc_legales').modal('show');
+            //Behavior Modal Components
+            this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
+            console.log('EDITAR REQ ITEM', data);
         },
         async modificar() {
-            var modifica = "";
-            if ($('#modifica1').prop('checked')) {
-                modifica = "1";
-            }
-            if ($('#modifica2').prop('checked')) {
-                if (modifica != "") {
-                    modifica = modifica + ",";
-                }
-                modifica = modifica + "2";
-            }
-            if ($('#modifica3').prop('checked')) {
-                if (modifica != "") {
-                    modifica = modifica + ",";
-                }
-                modifica = modifica + "3";
-            }
-            var id_padre = 0;
-            if (this.jsonData.doc_legal != 'undefined' && this.jsonData.doc_legal != null && this.jsonData.doc_legal != undefined) {
-                if (this.jsonData.doc_legal.id != 'undefined' && this.jsonData.doc_legal.id != null && this.jsonData.doc_legal.id != undefined) {
-                    id_padre = this.jsonData.doc_legal.id;
-                }
-            }
+            const response_req = await axios.get('get_requerimientos');
+            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             let datos_jsonData = new FormData();
-            for (let key in this.jsonData) {
-                datos_jsonData.append(key, this.jsonData[key]);
-            }
-            datos_jsonData.append('id_doc_legal', this.jsonData.id);
-            datos_jsonData.append('id_proyecto', this.jsonData.proyectos.id);
-            datos_jsonData.append('id_intitucion', this.jsonData.institucion.id);
-            datos_jsonData.append('id_tipo_documento', this.jsonData.tipos_documento.id);
-            datos_jsonData.append('id_organismo', this.jsonData.cofinanciador.id);//organismo financiador
-            datos_jsonData.append('id_objetivo', this.jsonData.objetivo.id);
-            datos_jsonData.append('id_padre', id_padre);
-            datos_jsonData.append('modifica', modifica);
-            // datos_jsonData.append('fecha_firma_1', JSON.stringify(this.jsonData.fecha_firma));
-            var fecha_firma = new Date(this.jsonData.fecha_firma);
-            var fecha_inicio = new Date(this.jsonData.fecha_inicio);
-            var fecha_vencimiento = new Date(this.jsonData.fecha_vencimiento);
-            var dia1 = fecha_firma.getDate() + "";
-            var dia1 = fecha_inicio.getDate() + "";
-            var dia2 = fecha_vencimiento.getDate() + "";
-            if (dia1.length == 1) {
-                dia1 = "0" + fecha_firma.getDate();
-            } else {
-                dia1 = "" + fecha_firma.getDate();
-            }
-            if (dia1.length == 1) {
-                dia1 = "0" + fecha_inicio.getDate();
-            } else {
-                dia1 = "" + fecha_inicio.getDate();
-            }
-            if (dia2.length == 1) {
-                dia2 = "0" + fecha_vencimiento.getDate();
-            } else {
-                dia2 = "" + fecha_vencimiento.getDate();
-            }
-
-            datos_jsonData.append('id_fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + dia1);
-            datos_jsonData.append('id_fecha_inicio', fecha_inicio.getFullYear() + "-" + (fecha_inicio.getMonth() + 1) + "-" + dia1);
-            datos_jsonData.append('id_fecha_vencimiento', fecha_vencimiento.getFullYear() + "-" + (fecha_vencimiento.getMonth() + 1) + "-" + dia2);
-
-            var respuesta = await axios.post('documentos_legaleses_mod', datos_jsonData);
-            console.log(respuesta.data);
-            this.buscar_doc_legales();
-            this.limpiar_formulario();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
+            datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
+            datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
+            datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
+            datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
+            datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
+            datos_jsonData.append('id', this.jsonData.id);
+            const response = await axios.post('update_requerimiento_item' + this.jsonData.id, datos_jsonData);
+            console.log('UPDATE REQ ITEM', response.data);
             document.getElementById("cerrarModal").click();
+            // this.limpiar_formulario();
         },
         async eliminar(id) {
             const response = await axios.delete('delete_requerimiento_obra/' + id);
@@ -1432,9 +1475,6 @@ export default {
                     }
                 }
             }
-        },
-        showSelected() {
-            console.log("NAV SELECTED", this.tabSelected)
         },
         /*********** funciones de configuracion**************/
         funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
