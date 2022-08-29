@@ -1474,11 +1474,10 @@ export default {
             await this.listarItemOtrosGastos()
         },
         async editarItemOtrosGastos(data={}) {
-            this.jsonData.codigo_otros = data.codigo_otros;
-            this.jsonData.descripcion_otros = data.descripcion_otros;
-            this.jsonData.simbolo_otros = data.simbolo_otros;
+            this.jsonData.codigo_otros = data.codigo_recurso;
+            this.jsonData.descripcion_otros = data.descripcion_recurso;
+            this.jsonData.simbolo_otros = data.unidad_id;
             //Item Oros Gastos
-            this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.requerimiento_recurso_id = data.requerimiento_recurso_id;
             this.jsonData.cantidad_otros = data.cantidad_otros;
             this.jsonData.monto_otros = data.monto_otros;
@@ -1757,6 +1756,7 @@ export default {
                 avance: '',
                 estimado: '',
                 vigente: '',
+                precio_unitario: '',
                 ///FIN RELACION
                 codigo_otros: '',
                 descripcion_otros: '',
