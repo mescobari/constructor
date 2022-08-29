@@ -23,7 +23,9 @@ use App\Models\Constructor\PlanillaMovimiento;
 use App\Models\Constructor\PlanillaItem;
 use App\Models\Constructor\document;
 use App\Models\Constructor\PlanillaDocument;
-
+use App\Models\Constructor\Requerimiento;
+use App\Models\Constructor\RequerimientoItem;
+use App\Models\Constructor\RequerimientoRelacion;
 
 use PDF;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -44,11 +46,49 @@ class PlanillaReportesController extends Controller
 
 public function ver_requerimientos(Request $request, $id){
     $requerimiento_id=$id;
-    // debemos encontrar el contrato_id
-    $contrato_id=$requerimiento_id; // solo con fines de probar
+    $req=Requerimiento::find($id);
+
+    $contrato_id=$req->document_id;
+
     $docs= new Document;
     $documento = $docs->getDocumento($contrato_id );
     $docs_modificatorios= $docs->getModificacion($contrato_id);
+
+    $reqItems= new RequerimientoItem;
+    $requerimientos = $reqItems->getReqItems($requerimiento_id);
+
+    $plani= new RequerimientoRelacion;
+    $req_relacion = $plani->getReqPlanilla($requerimiento_id);
+
+    //tipo_requerimiento_id esta hardcodeado
+    $tipo_requerimiento_id=$req->tipo_requerimiento_id;
+
+    switch ($tipo_requerimiento_id) {
+        
+        case 1:
+            $tipo_requerimiento = 'Mano de Obra';
+            break;
+        case 2:
+            $tipo_requerimiento = 'Material';
+            break;
+        case 3:
+            $tipo_requerimiento = 'Equipo';
+            break;
+        case 4:
+            $tipo_requerimiento = 'Fondos en Avance';
+            break;
+        case 5:
+            $tipo_requerimiento = 'Llave en Mano';
+            break;
+        default:
+            $tipo_requerimiento = '';
+            break;
+    }
+
+
+
+// obtenemos informacion del requerimiento_items
+
  //datos para la cabecera del reportedel reporte
  $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
  $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
@@ -75,14 +115,17 @@ public function ver_requerimientos(Request $request, $id){
      'documento_nombre' => $documento_nombre,
      'documento_firma' => $documento_firma,
      'documento_monto' => $documento_monto,
+     'tipo_requerimiento' => $tipo_requerimiento,
+     'requerimiento' => $req,
      'docs_modificatorios' => $docs_modificatorios,
-
+     'requerimientos' => $requerimientos,
+     'req_relacion' => $req_relacion,
  ]);
  $pdf->setPaper('letter', 'portrait');
  return $pdf->stream('reporte_ficha_proyecto.pdf');
 
 
-   //  return $avance;
+    //return $req_relacion;
 
 
 
