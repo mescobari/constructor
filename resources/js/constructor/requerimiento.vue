@@ -887,8 +887,7 @@
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
-                            Principal</h5>
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento Item</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -984,8 +983,8 @@
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
-                            Principal</h5>
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Item Relacion con
+                            Contrato Principal</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -1398,17 +1397,16 @@ export default {
             await this.listarItemRelacion();
         },
         async editarItemRelacion(data = {}) {
-            const response_req = (await axios.get('get_requerimientos')).data;
+            this.jsonData.id = data.id;
             this.jsonData.item_codigo = data.item_codigo;
             this.jsonData.item_descripcion = data.item_descripcion;
             this.jsonData.item_simbolo = data.item_simbolo;
             //this object will be modified in the next step Item Relacion
-            this.jsonData.requerimiento_id = response_req[response_req.length - 1].id;
             this.jsonData.planilla_item_id = data.planilla_item_id;
-            this.jsonData.item_vigente = data.item_vigente;
-            this.jsonData.item_avance = data.item_avance;
-            this.jsonData.item_estimado = data.item_estimado;
-            this.jsonData.item_precio_unitario = data.item_precio_unitario;
+            this.jsonData.item_vigente = data.vigente;
+            this.jsonData.item_avance = data.avance;
+            this.jsonData.item_estimado = data.estimado;
+            this.jsonData.item_precio_unitario = data.precio_unitario;
             console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
@@ -1756,6 +1754,9 @@ export default {
                 item_estimado: '',
                 item_precio_unitario: '',
                 planilla_item_id: '',
+                avance: '',
+                estimado: '',
+                vigente: '',
                 ///FIN RELACION
                 codigo_otros: '',
                 descripcion_otros: '',
