@@ -1400,7 +1400,7 @@ export default {
             this.jsonData.id = data.id;
             this.jsonData.item_codigo = data.item_codigo;
             this.jsonData.item_descripcion = data.item_descripcion;
-            this.jsonData.item_simbolo = data.item_simbolo;
+            this.jsonData.item_simbolo = data.unidad_id;
             //this object will be modified in the next step Item Relacion
             this.jsonData.planilla_item_id = data.planilla_item_id;
             this.jsonData.item_vigente = data.vigente;
@@ -1473,7 +1473,7 @@ export default {
             console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
             await this.listarItemOtrosGastos()
         },
-        async editarItemOtrosGastos() {
+        async editarItemOtrosGastos(data={}) {
             this.jsonData.codigo_otros = data.codigo_otros;
             this.jsonData.descripcion_otros = data.descripcion_otros;
             this.jsonData.simbolo_otros = data.simbolo_otros;
@@ -1837,7 +1837,7 @@ export default {
                 },
                 {
                     label: "Unidad",
-                    name: "id",
+                    name: "unidad_id",
                     filter: {type: "simple", placeholder: "Unidad"},
                     sort: true,
                 },
