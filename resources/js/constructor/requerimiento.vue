@@ -48,44 +48,49 @@
                     <!-- REQxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
                     <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-home-tab" v-bind:disabled="clickedAdd">
+                         aria-labelledby="custom-tabs-three-home-tab">
 
 
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="form-group" @input="descripcionRecursoGetbyType">
+                                        <div class="form-group" @input="descripcionRecursoGetbyType" >
                                             <label for="nombre">Tipo de Requerimiento:</label>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio1"
-                                                       value="1" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="1" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio1"
                                                        class="custom-control-label font-weight-normal">Mano de
                                                     obra</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio2"
-                                                       value="2" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="2" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio2"
                                                        class="custom-control-label font-weight-normal">Material</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio3"
-                                                       value="3" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="3" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio3"
                                                        class="custom-control-label font-weight-normal">Equipo</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio4"
-                                                       value="4" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="4" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio4"
                                                        class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio5"
-                                                       value="5" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="5" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio5"
                                                        class="custom-control-label font-weight-normal">Llave en
                                                     Mano</label>
@@ -98,7 +103,8 @@
                                             <label for="nombre">Correlativo Requerimiento:</label>
                                             <input type="text" class="form-control" name="nombre"
                                                    placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento" disabled>
+                                                   v-model="jsonData.correlativo_requerimiento"
+                                                   v-bind:disabled="clickedAdd">
                                         </div>
                                     </div>
                                 </div>
@@ -130,6 +136,7 @@
                                                 :typeable="configFechas.typeable"
                                                 :value="jsonData.fecha_requerimiento"
                                                 v-model="jsonData.fecha_requerimiento"
+                                                v-bind:disabled="clickedAdd"
                                             >
                                             </datepicker>
                                         </div>
@@ -138,7 +145,8 @@
                                         <div class="form-group">
                                             <label for="nombre">NURI Correspondencia:</label>
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento">
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
+                                                   v-bind:disabled="clickedAdd">
                                         </div>
                                     </div>
                                 </div>
@@ -156,7 +164,7 @@
                                                     @click="borrar_file();"><span>&times;</span></button>
                                         </label>
                                         <input type="file" class="form-control" id="documento_res_aprobacion"
-                                               @change="cargar_file" style="display:none">
+                                               @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
                                     </div>
                                     <div class="col-md-3"></div>
                                 </div>
@@ -168,6 +176,7 @@
                                     <vue-editor
                                         v-model="jsonData.descripcion_requerimiento"
                                         :editor-toolbar="configToolBarEditText"
+                                        v-bind:disabled="clickedAdd"
                                     ></vue-editor>
                                 </div>
                             </div>
