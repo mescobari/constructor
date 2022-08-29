@@ -31,12 +31,12 @@
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill"
                                href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile"
-                               aria-selected="false" v-on:click="detectActiveTab('profile')"><h6>Relacion con el Contrato Principal</h6></a>
+                               aria-selected="false"  v-if="clickedAdd" v-on:click="detectActiveTab('profile')"><h6>Relacion con el Contrato Principal</h6></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill"
                                href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages"
-                               aria-selected="false" v-on:click="detectActiveTab('messages')"><h6>Otros Gastos</h6></a>
+                               aria-selected="false"  v-if="clickedAdd" v-on:click="detectActiveTab('messages')"><h6>Otros Gastos</h6></a>
                         </li>
                     </ul>
                 </div>
@@ -360,7 +360,7 @@
                     <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
                     <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-profile-tab">
+                         aria-labelledby="custom-tabs-three-profile-tab" >
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="row">
@@ -1736,6 +1736,9 @@ export default {
         //Otros Gastos
         this.getAllItemOtrosGastos();
         // this.listarItemOtrosGastos();
+
+        //tabs
+        console.log("CLICKED ADD", this.clickedAdd);
     },
     components: {
         VueBootstrap4Table,
