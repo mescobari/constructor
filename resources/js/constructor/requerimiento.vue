@@ -1191,7 +1191,7 @@ export default {
     methods: {
         async filterList(arrayItems) {
             const responseRecursos = (await axios.get('requerimientos')).data;
-
+            const getUnidades = (await axios.get('get_unidades')).data;
             let arrayItemsFiltered = [];
             for (let i = 0; i < arrayItems.length; i++) {
                 if (arrayItems[i].requerimiento_id === this.jsonData.requerimiento_id) {
@@ -1211,6 +1211,9 @@ export default {
                     }
                 }
             }
+            arrayItemsFiltered.map(item => {
+                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+            });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
         },
@@ -1371,6 +1374,9 @@ export default {
                     }
                 }
             }
+            arrayItemsFiltered.map(item => {
+                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+            });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
         },
@@ -1434,6 +1440,8 @@ export default {
         },
         async filterListOtrosGastos(arrayReqOtrosGastos) {
             const responseReqRecursos = (await axios.get('requerimientos')).data;
+            const getUnidades = (await axios.get('get_unidades')).data;
+
             let arrayItemsFiltered = [];
             for (let i = 0; i < arrayReqOtrosGastos.length; i++) {
                 if (arrayReqOtrosGastos[i].requerimiento_id === this.jsonData.requerimiento_id) {
@@ -1450,6 +1458,9 @@ export default {
                     }
                 }
             }
+            arrayItemsFiltered.map(item => {
+                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+            });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
         },
