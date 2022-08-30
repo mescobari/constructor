@@ -31,12 +31,12 @@
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill"
                                href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile"
-                               aria-selected="false" v-on:click="detectActiveTab('profile')"><h6>Relacion con el Contrato Principal</h6></a>
+                               aria-selected="false"  v-if="clickedAdd" v-on:click="detectActiveTab('profile')"><h6>Relacion con el Contrato Principal</h6></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill"
                                href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages"
-                               aria-selected="false" v-on:click="detectActiveTab('messages')"><h6>Otros Gastos</h6></a>
+                               aria-selected="false"  v-if="clickedAdd" v-on:click="detectActiveTab('messages')"><h6>Otros Gastos</h6></a>
                         </li>
                     </ul>
                 </div>
@@ -55,37 +55,42 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="form-group" @input="descripcionRecursoGetbyType">
+                                        <div class="form-group" @input="descripcionRecursoGetbyType" >
                                             <label for="nombre">Tipo de Requerimiento:</label>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio1"
-                                                       value="1" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="1" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio1"
                                                        class="custom-control-label font-weight-normal">Mano de
                                                     obra</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio2"
-                                                       value="2" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="2" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio2"
                                                        class="custom-control-label font-weight-normal">Material</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio3"
-                                                       value="3" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="3" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio3"
                                                        class="custom-control-label font-weight-normal">Equipo</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio4"
-                                                       value="4" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="4" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio4"
                                                        class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
                                             </div>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio5"
-                                                       value="5" v-model="jsonData.tipo_requerimiento_id"/>
+                                                       value="5" v-model="jsonData.tipo_requerimiento_id"
+                                                       v-bind:disabled="clickedAdd"/>
                                                 <label for="customRadio5"
                                                        class="custom-control-label font-weight-normal">Llave en
                                                     Mano</label>
@@ -98,7 +103,8 @@
                                             <label for="nombre">Correlativo Requerimiento:</label>
                                             <input type="text" class="form-control" name="nombre"
                                                    placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento" disabled>
+                                                   v-model="jsonData.correlativo_requerimiento"
+                                                   v-bind:disabled="clickedAdd">
                                         </div>
                                     </div>
                                 </div>
@@ -130,6 +136,7 @@
                                                 :typeable="configFechas.typeable"
                                                 :value="jsonData.fecha_requerimiento"
                                                 v-model="jsonData.fecha_requerimiento"
+                                                v-bind:disabled="clickedAdd"
                                             >
                                             </datepicker>
                                         </div>
@@ -138,7 +145,8 @@
                                         <div class="form-group">
                                             <label for="nombre">NURI Correspondencia:</label>
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento">
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
+                                                   v-bind:disabled="clickedAdd">
                                         </div>
                                     </div>
                                 </div>
@@ -156,7 +164,7 @@
                                                     @click="borrar_file();"><span>&times;</span></button>
                                         </label>
                                         <input type="file" class="form-control" id="documento_res_aprobacion"
-                                               @change="cargar_file" style="display:none">
+                                               @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
                                     </div>
                                     <div class="col-md-3"></div>
                                 </div>
@@ -164,12 +172,12 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="descripcion">descripcion_requerimiento:</label>
+                                    <label for="descripcion">Descripcion Requerimiento:</label>
                                     <vue-editor
                                         v-model="jsonData.descripcion_requerimiento"
                                         :editor-toolbar="configToolBarEditText"
+                                        v-bind:disabled="clickedAdd"
                                     ></vue-editor>
-                                    <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                 </div>
                             </div>
 
@@ -333,6 +341,7 @@
                                     <template slot="acciones" slot-scope="props">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-outline-warning ml-1"
+                                                    data-toggle="modal" data-target="#modal-editar-item"
                                                     @click="editar(props.row);"><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
@@ -351,7 +360,7 @@
                     <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
                     <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-profile-tab">
+                         aria-labelledby="custom-tabs-three-profile-tab" >
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="row">
@@ -371,7 +380,7 @@
                                             <label for="nombre">Correlativo Requerimiento:</label>
                                             <input type="text" class="form-control" name="nombre"
                                                    placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento" disabled>
+                                                   v-model="jsonData.correlativo_requerimiento">
                                         </div>
                                     </div>
 
@@ -573,8 +582,11 @@
                                     <template slot="acciones" slot-scope="props">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-outline-warning ml-1"
-                                                    @click="editarItemRelacion(props.rows1);"><span><i
-                                                class="fa fa-user-edit"></i></span></button>
+                                                    @click="editarItemRelacion(props.row);"
+                                                    data-toggle="modal"
+                                                    data-target="#modal-editar-relacion"><span><i
+                                                class="fa fa-user-edit"></i></span>
+                                            </button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
                                                     @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                                 class="fa fa-trash-alt"></i></span></button>
@@ -800,7 +812,9 @@
                                     <template slot="acciones" slot-scope="props">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-outline-warning ml-1"
-                                                    @click="editar(props.rows2);"><span><i class="fa fa-user-edit"></i></span>
+                                                    data-toggle="modal"
+                                                    data-target="#modal-editar-otros"
+                                                    @click="editarItemOtrosGastos(props.row);"><span><i class="fa fa-user-edit"></i></span>
                                             </button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
                                                     @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
@@ -867,7 +881,282 @@
             </div>
         </div>
         <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
+        <!--================================ MODAL MODIFICAR ITEM REQUERIMIENTO =============================================-->
+        <div class="modal fade" id="modal-editar-item" tabindex="-1" role="dialog"
+             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento Item</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row bg-info">
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label for="codigo_recurso">Codigo:</label>
+                                    <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
+                                           v-model="jsonData.codigo_recurso" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <!-- Recursos  Spinner-->
+                                    <label for="document_type">Descripcion Recurso:</label>
+                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                              v-model="jsonData.descripcion_recurso"
+                                              placeholder="Selecione una opción"
+                                              @input="retrieveFromCurrentDescripcionRecurso">
+                                        <span slot="no-options">No hay data para cargar</span>
+                                    </v-select>
+                                </div>
 
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label for="nombre">Unidad</label>
+                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
+                                           v-model="jsonData.simbolo" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label for="nombre">Cantidad</label>
+                                    <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                           v-model="jsonData.cantidad_recurso">
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Horas Requeridas</label>
+                                            <input type="text" class="form-control" name="horas"
+                                                   placeholder="Horas Requeridas" v-model="jsonData.horas_recurso">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Dias Requeridos</label>
+                                            <input type="text" class="form-control" name="dias"
+                                                   placeholder="Dias Requeridos" v-model="jsonData.dias_recurso">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Plazo Ejecucion</label>
+                                            <input type="text" class="form-control" name="plazo"
+                                                   placeholder="dias de ejecucion"
+                                                   v-model="jsonData.tiempo_total_recurso">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="nombre">Precio referencial</label>
+                                            <input type="text" class="form-control" name="referencial"
+                                                   placeholder="precio referencial"
+                                                   v-model="jsonData.precio_referencia_recurso">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificar">
+                            Modificar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--================================ FIN MODAL MODIFICAR ITEM REQUERIMIENTO =========================================-->
+        <!--=================================== MODAL MODIFICAR ITEM RELACION ===============================================-->
+        <div class="modal fade" id="modal-editar-relacion" tabindex="-1" role="dialog"
+             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Item Relacion con
+                            Contrato Principal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row bg-info">
+                            <div class="row bg-success">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="codigo">Codigo:</label>
+                                        <input type="text" class="form-control" name="codigo" placeholder="Codigo"
+                                               v-model="jsonData.item_codigo" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <!-- Recursos  Spinner-->
+                                        <label for="document_type">Item Relacionado:</label>
+                                        <v-select label="item_descripcion" :options="combo_items_planilla"
+                                                  v-model="jsonData.item_descripcion"
+                                                  placeholder="Selecione una opción"
+                                                  @input="getNameForItemRelacion">
+                                            <span slot="no-options">No hay data para cargar</span>
+                                        </v-select>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Unidad:</label>
+                                        <input type="text" class="form-control" name="unidad" placeholder="Unidad"
+                                               v-model="jsonData.item_simbolo" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Vigente</label>
+                                        <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                               v-model="jsonData.item_vigente">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Avance</label>
+                                                <input type="text" class="form-control" name="horas"
+                                                       placeholder="Horas Requeridas" v-model="jsonData.item_avance">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Saldo</label>
+                                                <input type="text" class="form-control" name="dias"
+                                                       placeholder="Dias Requeridos" v-model="jsonData.item_saldo">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Avance Estimado</label>
+                                                <input type="text" class="form-control" name="plazo"
+                                                       placeholder="dias de ejecucion" v-model="jsonData.item_estimado">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Precio Unitario</label>
+                                                <input type="text" class="form-control" name="plazo"
+                                                       placeholder="dias de ejecucion"
+                                                       v-model="jsonData.item_precio_unitario">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificarItemRelacion">
+                            Modificar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--=============================== FIN MODAL MODIFICAR ITEM RELACION ========================================-->
+        <!--=================================== MODAL MODIFICAR ITEM OTROS ===============================================-->
+        <div class="modal fade" id="modal-editar-otros" tabindex="-1" role="dialog"
+             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
+                            Principal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row bg-info">
+                            <div class="row bg-success">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Codigo:</label>
+                                        <input type="text" class="form-control" name="codigo" placeholder="Codigo"
+                                               v-model="jsonData.codigo_otros" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <!-- Recursos  Spinner-->
+                                        <label for="nombre">Gastos Generales:</label>
+                                        <v-select label="descripcion_recurso" :options="combo_otros_gastos"
+                                                  v-model="jsonData.descripcion_otros"
+                                                  @input="filterNameForOtrosGastos"
+                                                  placeholder="Selecione una opción">
+                                            <span slot="no-options">No hay data para cargar</span>
+                                        </v-select>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Unidad</label>
+                                        <input type="text" class="form-control" name="unidad" placeholder="Unidad"
+                                               v-model="jsonData.simbolo_otros" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="nombre">Cantidad</label>
+                                        <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                               v-model="jsonData.cantidad_otros">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="nombre">Monto</label>
+                                                <input type="text" class="form-control" name="horas"
+                                                       placeholder="Monto Requerido" v-model="jsonData.monto_otros">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <label for="nombre">Detallar</label>
+                                                <input type="text" class="form-control" name="dias"
+                                                       placeholder="Detalle" v-model="jsonData.explicar_otros">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificarItemOtrosGastos">
+                            Modificar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--=============================== FIN MODAL MODIFICAR ITEM OTROS ========================================-->
         <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
                             ref="abrirAlerta">
         </alert-confirmacion>
@@ -983,6 +1272,7 @@ export default {
             datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
             datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
             datos_jsonData.append('files', this.jsonData.files);
+            this.clickedAdd = true;
             let response = await axios.post('create_requerimiento', datos_jsonData);
             console.log('CREATE REQ', response.data);
         },
@@ -1006,13 +1296,13 @@ export default {
         async guardar() {
             console.log('=================================================')
             if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-                console.log('MEMORYSELECTED', this.memorySelected + ' ' + this.jsonData.tipo_requerimiento_id);
+                console.log('MEMORYSELECTED', this.memorySelected);
                 await this.reqItemSave();
                 console.log('TRUE WAY')
                 console.log('=================================================')
             } else {
                 this.memorySelected = this.jsonData.tipo_requerimiento_id;
-                console.log('MEMORYSELECTED', this.memorySelected + ' ' + this.jsonData.tipo_requerimiento_id);
+                console.log('MEMORYSELECTED', this.memorySelected);
                 await this.requerimientoFirstSave()
                 await this.reqItemSave();
                 console.log('FALSE WAY')
@@ -1027,86 +1317,32 @@ export default {
             this.jsonData.codigo_recurso = data.codigo_recurso;
             this.jsonData.descripcion_recursos = data.descripcion_recurso;
             this.jsonData.unidad_id = data.unidad_id;
-
+            //this object will be modified in the next step
             this.jsonData.cantidad_recurso = data.cantidad_recurso;
             this.jsonData.horas_recurso = data.horas_recurso;
             this.jsonData.dias_recurso = data.dias_recurso;
             this.jsonData.tiempo_total_recurso = data.tiempo_total_recurso;
             this.jsonData.precio_referencia_recurso = data.precio_referencia_recurso;
-
-            this.modificar_bottom = true;
-            this.guardar_bottom = false;
-            this.tituloDocLegalesModal = "Formulario de Modificaciones de Planillas";
-            // this.jsonData = data;
-            $('#doc_legales').modal('show');
+            //Behavior Modal Components
+            this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
+            console.log('EDITAR REQ ITEM', data);
         },
         async modificar() {
-            var modifica = "";
-            if ($('#modifica1').prop('checked')) {
-                modifica = "1";
-            }
-            if ($('#modifica2').prop('checked')) {
-                if (modifica != "") {
-                    modifica = modifica + ",";
-                }
-                modifica = modifica + "2";
-            }
-            if ($('#modifica3').prop('checked')) {
-                if (modifica != "") {
-                    modifica = modifica + ",";
-                }
-                modifica = modifica + "3";
-            }
-            var id_padre = 0;
-            if (this.jsonData.doc_legal != 'undefined' && this.jsonData.doc_legal != null && this.jsonData.doc_legal != undefined) {
-                if (this.jsonData.doc_legal.id != 'undefined' && this.jsonData.doc_legal.id != null && this.jsonData.doc_legal.id != undefined) {
-                    id_padre = this.jsonData.doc_legal.id;
-                }
-            }
+            const response_req = await axios.get('get_requerimientos');
+            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             let datos_jsonData = new FormData();
-            for (let key in this.jsonData) {
-                datos_jsonData.append(key, this.jsonData[key]);
-            }
-            datos_jsonData.append('id_doc_legal', this.jsonData.id);
-            datos_jsonData.append('id_proyecto', this.jsonData.proyectos.id);
-            datos_jsonData.append('id_intitucion', this.jsonData.institucion.id);
-            datos_jsonData.append('id_tipo_documento', this.jsonData.tipos_documento.id);
-            datos_jsonData.append('id_organismo', this.jsonData.cofinanciador.id);//organismo financiador
-            datos_jsonData.append('id_objetivo', this.jsonData.objetivo.id);
-            datos_jsonData.append('id_padre', id_padre);
-            datos_jsonData.append('modifica', modifica);
-            // datos_jsonData.append('fecha_firma_1', JSON.stringify(this.jsonData.fecha_firma));
-            var fecha_firma = new Date(this.jsonData.fecha_firma);
-            var fecha_inicio = new Date(this.jsonData.fecha_inicio);
-            var fecha_vencimiento = new Date(this.jsonData.fecha_vencimiento);
-            var dia1 = fecha_firma.getDate() + "";
-            var dia1 = fecha_inicio.getDate() + "";
-            var dia2 = fecha_vencimiento.getDate() + "";
-            if (dia1.length == 1) {
-                dia1 = "0" + fecha_firma.getDate();
-            } else {
-                dia1 = "" + fecha_firma.getDate();
-            }
-            if (dia1.length == 1) {
-                dia1 = "0" + fecha_inicio.getDate();
-            } else {
-                dia1 = "" + fecha_inicio.getDate();
-            }
-            if (dia2.length == 1) {
-                dia2 = "0" + fecha_vencimiento.getDate();
-            } else {
-                dia2 = "" + fecha_vencimiento.getDate();
-            }
-
-            datos_jsonData.append('id_fecha_firma', fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + dia1);
-            datos_jsonData.append('id_fecha_inicio', fecha_inicio.getFullYear() + "-" + (fecha_inicio.getMonth() + 1) + "-" + dia1);
-            datos_jsonData.append('id_fecha_vencimiento', fecha_vencimiento.getFullYear() + "-" + (fecha_vencimiento.getMonth() + 1) + "-" + dia2);
-
-            var respuesta = await axios.post('documentos_legaleses_mod', datos_jsonData);
-            console.log(respuesta.data);
-            this.buscar_doc_legales();
-            this.limpiar_formulario();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
+            datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
+            datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
+            datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
+            datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
+            datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
+            datos_jsonData.append('id', this.jsonData.id);
+            const response = await axios.post('update_requerimiento_item' + this.jsonData.id, datos_jsonData);
+            console.log('UPDATE REQ ITEM', response.data);
             document.getElementById("cerrarModal").click();
+            // this.limpiar_formulario();
         },
         async eliminar(id) {
             const response = await axios.delete('delete_requerimiento_obra/' + id);
@@ -1161,7 +1397,17 @@ export default {
             await this.listarItemRelacion();
         },
         async editarItemRelacion(data = {}) {
-
+            this.jsonData.id = data.id;
+            this.jsonData.item_codigo = data.item_codigo;
+            this.jsonData.item_descripcion = data.item_descripcion;
+            this.jsonData.item_simbolo = data.unidad_id;
+            //this object will be modified in the next step Item Relacion
+            this.jsonData.planilla_item_id = data.planilla_item_id;
+            this.jsonData.item_vigente = data.vigente;
+            this.jsonData.item_avance = data.avance;
+            this.jsonData.item_estimado = data.estimado;
+            this.jsonData.item_precio_unitario = data.precio_unitario;
+            console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
 
@@ -1227,8 +1473,16 @@ export default {
             console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
             await this.listarItemOtrosGastos()
         },
-        async editarItemOtrosGastos() {
-
+        async editarItemOtrosGastos(data={}) {
+            this.jsonData.codigo_otros = data.codigo_recurso;
+            this.jsonData.descripcion_otros = data.descripcion_recurso;
+            this.jsonData.simbolo_otros = data.unidad_id;
+            //Item Oros Gastos
+            this.jsonData.requerimiento_recurso_id = data.requerimiento_recurso_id;
+            this.jsonData.cantidad_otros = data.cantidad_otros;
+            this.jsonData.monto_otros = data.monto_otros;
+            this.jsonData.explicar_otros = data.explicar_otros;
+            this.jsonData.id = data.id;
         },
         async modificarItemOtrosGastos() {
 
@@ -1433,9 +1687,6 @@ export default {
                 }
             }
         },
-        showSelected() {
-            console.log("NAV SELECTED", this.tabSelected)
-        },
         /*********** funciones de configuracion**************/
         funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
             this.configFechas = configuracion.configFechas;
@@ -1502,6 +1753,10 @@ export default {
                 item_estimado: '',
                 item_precio_unitario: '',
                 planilla_item_id: '',
+                avance: '',
+                estimado: '',
+                vigente: '',
+                precio_unitario: '',
                 ///FIN RELACION
                 codigo_otros: '',
                 descripcion_otros: '',
@@ -1582,7 +1837,7 @@ export default {
                 },
                 {
                     label: "Unidad",
-                    name: "id",
+                    name: "unidad_id",
                     filter: {type: "simple", placeholder: "Unidad"},
                     sort: true,
                 },
@@ -1687,6 +1942,9 @@ export default {
         //Otros Gastos
         this.getAllItemOtrosGastos();
         // this.listarItemOtrosGastos();
+
+        //tabs
+        console.log("CLICKED ADD", this.clickedAdd);
     },
     components: {
         VueBootstrap4Table,
