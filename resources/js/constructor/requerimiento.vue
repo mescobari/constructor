@@ -395,7 +395,7 @@
                                             <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
                                             <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.fecha_requerimiento"
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
                                                    disabled>
 
 
@@ -641,7 +641,7 @@
                                             <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
                                             <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.fecha_requerimiento"
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
                                                    disabled>
 
 
@@ -1277,6 +1277,7 @@ export default {
             datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
             datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
             let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
+            this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
             datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
             datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
             datos_jsonData.append('descripcion_requerimiento', this.jsonData.descripcion_requerimiento)
@@ -1813,12 +1814,13 @@ export default {
                 ///FIN RELACION
                 codigo_otros: '',
                 descripcion_otros: '',
-                fecha_requerimiento: '2022/01/01',
                 gastos_generales: 'se explica en que gatsos generales se trabajara',
                 simbolo_otros: '',
                 cantidad_otros: '',
                 monto_otros: '',
                 explicar_otros: '',
+                fecha_requerimiento: '2022/01/01',
+                fechaFormatted: '',
 
             },
             rows: [],
