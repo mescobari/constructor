@@ -67,7 +67,9 @@
                             <template slot="filePath" slot-scope="props">
                                 <a :href="props.row.filePathFull" target="_blank" title="Ver el archivo digital">
                                     <span
-                                        class="badge badge-primary">Ver: {{ props.row.cofinanciador_documento.titulo }}</span>
+                                        class="badge badge-primary">Ver: {{
+                                            props.row.cofinanciador_documento.titulo
+                                        }}</span>
                                 </a>
                             </template>
                             <template slot="acciones" slot-scope="props">
@@ -126,7 +128,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="showTableRequerimiento();">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                @click="showTableRequerimiento();">
                             Seleccionar
                         </button>
                     </div>
@@ -172,7 +175,7 @@ export default {
                 document_id: '',
                 tipo_requerimiento_id: '',
                 correlativo_requerimiento: '',
-                fecha_requerimiento: '' ,
+                fecha_requerimiento: '',
                 nuri_requerimiento: '',
                 descripcion_requerimiento: '',
                 trabajos_encarados: '',
@@ -201,11 +204,25 @@ export default {
             },
             rows: [],
             columns: [
-                { label: "Tipo Requerimiento", name: "tipo_requerimiento_id", filter: {type: "simple", placeholder: "Tipo Requerimiento",}, sort: true,},
-                { label: "Fecha", name: "fecha_requerimiento", filter: {type: "simple", placeholder: "Fecha",}, sort: true,},
-                { label: "Nuri", name: "nuri_requerimiento", filter: {type: "simple", placeholder: "Nuri"}, sort: true,},
-                { label: "Descripcion Requerimiento", name: "descripcion_requerimiento", filter: {type: "simple", placeholder: "Descripcion Requerimiento"},},
-                { label: "Acciones", name: "acciones", sort: false,},
+                {
+                    label: "Tipo Requerimiento",
+                    name: "tipo_requerimiento_id",
+                    filter: {type: "simple", placeholder: "Tipo Requerimiento",},
+                    sort: true,
+                },
+                {
+                    label: "Fecha",
+                    name: "fecha_requerimiento",
+                    filter: {type: "simple", placeholder: "Fecha",},
+                    sort: true,
+                },
+                {label: "Nuri", name: "nuri_requerimiento", filter: {type: "simple", placeholder: "Nuri"}, sort: true,},
+                {
+                    label: "Descripcion Requerimiento",
+                    name: "descripcion_requerimiento",
+                    filter: {type: "simple", placeholder: "Descripcion Requerimiento"},
+                },
+                {label: "Acciones", name: "acciones", sort: false,},
             ],
 
             configFile: {
@@ -222,10 +239,20 @@ export default {
     },
     methods: {
 
-        async showTableRequerimiento(){
+        async showTableRequerimiento() {
             const getRequerimientos = (await axios.get('get_requerimientos')).data;
-            this.rows = getRequerimientos.filter((item) => item.document_id === this.jsonData.proyectos.id)
-            console .log('REQUERIMIENTOS', this.rows);
+
+            const tipoRequerimientos = [
+                {id: 1, nombre: 'Mano de Obra'},
+                {id: 2, nombre: 'Material'},
+                {id: 3, nombre: 'Equipo'},
+                {id: 3, nombre: 'Fondos de Avance'},
+            ]
+
+            let currentReq = getRequerimientos.filter((item) => item.document_id === this.jsonData.proyectos.id);
+            currentReq.map((item) => { item.tipo_requerimiento_id = tipoRequerimientos[item.tipo_requerimiento_id].nombre });
+            this.rows = currentReq
+            console.log('REQUERIMIENTOS', currentReq);
         },
         async eliminar() {
 
