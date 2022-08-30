@@ -26,17 +26,20 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento en Obra</h6></a>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento en Obra</h6>
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill"
                                href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile"
-                               aria-selected="false"  v-if="clickedAdd" v-on:click="detectActiveTab('profile')"><h6>Relacion con el Contrato Principal</h6></a>
+                               aria-selected="false" v-if="clickedAdd" v-on:click="detectActiveTab('profile')"><h6>
+                                Relacion con el Contrato Principal</h6></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill"
                                href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages"
-                               aria-selected="false"  v-if="clickedAdd" v-on:click="detectActiveTab('messages')"><h6>Otros Gastos</h6></a>
+                               aria-selected="false" v-if="clickedAdd" v-on:click="detectActiveTab('messages')"><h6>
+                                Otros Gastos</h6></a>
                         </li>
                     </ul>
                 </div>
@@ -55,7 +58,7 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="form-group" @input="descripcionRecursoGetbyType" >
+                                        <div class="form-group" @input="descripcionRecursoGetbyType">
                                             <label for="nombre">Tipo de Requerimiento:</label>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio1"
@@ -360,7 +363,7 @@
                     <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
                     <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-profile-tab" >
+                         aria-labelledby="custom-tabs-three-profile-tab">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="row">
@@ -814,7 +817,8 @@
                                             <button type="button" class="btn btn-outline-warning ml-1"
                                                     data-toggle="modal"
                                                     data-target="#modal-editar-otros"
-                                                    @click="editarItemOtrosGastos(props.row);"><span><i class="fa fa-user-edit"></i></span>
+                                                    @click="editarItemOtrosGastos(props.row);"><span><i
+                                                class="fa fa-user-edit"></i></span>
                                             </button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
                                                     @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
@@ -887,7 +891,8 @@
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento Item</h5>
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento
+                            Item</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -1066,7 +1071,8 @@
                         <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificarItemRelacion">
+                        <button type="submit" class="btn btn-success" data-dismiss="modal"
+                                @click="modificarItemRelacion">
                             Modificar
                         </button>
                     </div>
@@ -1149,7 +1155,8 @@
                         <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificarItemOtrosGastos">
+                        <button type="submit" class="btn btn-success" data-dismiss="modal"
+                                @click="modificarItemOtrosGastos">
                             Modificar
                         </button>
                     </div>
@@ -1212,7 +1219,7 @@ export default {
                 }
             }
             arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
             });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
@@ -1313,7 +1320,7 @@ export default {
                 console.log('=================================================')
             }
             await this.listarRequerimientoItem();
-            // this.limpiar_formulario();
+            await this.cleanFormReqItem();
         },
         // Editar Requerimiento en Obra
         editar(data = {}) {
@@ -1376,12 +1383,11 @@ export default {
                 }
             }
             arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
             });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
         },
-
         async listarItemRelacion() {
             const responseReqRelacion = (await axios.get('get_requerimiento_relacion')).data;
             this.rows1 = await this.filterListItemRelacion(responseReqRelacion);
@@ -1401,6 +1407,7 @@ export default {
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
             console.log('SAVE ITEM RELACION', itemRelacion.data);
+            await this.cleanFormItemRelacion()
             await this.listarItemRelacion();
         },
         async editarItemRelacion(data = {}) {
@@ -1460,7 +1467,7 @@ export default {
                 }
             }
             arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
             });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
@@ -1483,9 +1490,10 @@ export default {
             datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
             const itemOtrosGastos = await axios.post('create_requerimiento_otros_gastos', datos_jsonData);
             console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
-            await this.listarItemOtrosGastos()
+            await this.listarItemOtrosGastos();
+            await this.cleanFormOtrosGastos();
         },
-        async editarItemOtrosGastos(data={}) {
+        async editarItemOtrosGastos(data = {}) {
             this.jsonData.codigo_otros = data.codigo_recurso;
             this.jsonData.descripcion_otros = data.descripcion_recurso;
             this.jsonData.simbolo_otros = data.unidad_id;
@@ -1516,6 +1524,39 @@ export default {
             this.combo_otros_gastos = responseOtrosGastos.filter(item => item.tipo_requerimiento_id === 4);
             console.log('REQUERIMIENTO OTROS', this.combo_otros_gastos);
         },
+        async cleanFormReqItem() {
+            this.jsonData.requerimiento_recurso_id = '';
+            this.jsonData.cantidad_recurso = '';
+            this.jsonData.horas_recurso = '';
+            this.jsonData.dias_recurso = '';
+            this.jsonData.tiempo_total_recurso = '';
+            this.jsonData.precio_referencia_recurso = '';
+
+            this.jsonData.descripcion_recurso = '';
+            this.jsonData.simbolo = '';
+            this.jsonData.codigo_recurso = '';
+        },
+        async cleanFormItemRelacion() {
+            this.jsonData.item_codigo = '';
+            this.jsonData.item_descripcion = '';
+            this.jsonData.item_simbolo = '';
+
+            this.jsonData.item_vigente = '';
+            this.jsonData.item_avance = '';
+            this.jsonData.item_saldo = '';
+            this.jsonData.item_estimado = '';
+            this.jsonData.item_precio_unitario = '';
+        },
+        async cleanFormOtrosGastos() {
+            this.jsonData.codigo_otros = '';
+            this.jsonData.descripcion_otros = '';
+            this.jsonData.simbolo_otros = '';
+
+            this.jsonData.cantidad_otros = '';
+            this.jsonData.monto_otros = '';
+            this.jsonData.explicar_otros = '';
+        },
+
         async seleccionar_cont_primario() {
             const respuesta = await axios.get('documents');
             const principales = respuesta.data.filter((item) => item.document_types_id === 1)
@@ -1538,7 +1579,7 @@ export default {
             this.id_eliminacion = id;
             this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
         },
-        detectActiveTab(currentTab){
+        detectActiveTab(currentTab) {
             this.tabSelected = currentTab;
         },
         respuestaModalAlertaConfirmacion(datos) {
@@ -1551,7 +1592,7 @@ export default {
                 } else if (this.tabSelected === "profile") {
                     this.eliminarItemRelacion(this.id_eliminacion);
 
-                } else if(this.tabSelected === "messages"){
+                } else if (this.tabSelected === "messages") {
                     this.eliminarItemOtrosGastos(this.id_eliminacion);
                 }
                 console.log('ID DOC', this.tabSelected);
