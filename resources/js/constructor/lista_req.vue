@@ -246,7 +246,7 @@ export default {
                 {id: 1, nombre: 'Mano de Obra'},
                 {id: 2, nombre: 'Material'},
                 {id: 3, nombre: 'Equipo'},
-                {id: 3, nombre: 'Fondos de Avance'},
+                {id: 4, nombre: 'Fondos de Avance'},
             ]
 
             let currentReq = getRequerimientos.filter((item) => item.document_id === this.jsonData.proyectos.id);

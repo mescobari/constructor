@@ -1269,7 +1269,8 @@ export default {
             datos_jsonData.append('document_id', this.jsonData.document_id);
             datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
             datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
-            datos_jsonData.append('fecha_requerimiento', this.jsonData.fecha_requerimiento);
+            let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
+            datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
             datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
             datos_jsonData.append('descripcion_requerimiento', this.jsonData.descripcion_requerimiento)
             datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
