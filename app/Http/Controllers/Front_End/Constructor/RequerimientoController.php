@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\DB;
 
 class RequerimientoController extends Controller
 {
+
+    
+
     public function createRequerimiento(Request $request)
     {
         $path = "";
@@ -89,6 +92,11 @@ class RequerimientoController extends Controller
     public function inicio()
     {
         return view('front-end.constructor.IndexRequerimientos');
+    }
+
+    public function listaReq()
+    {
+        return view('front-end.constructor.ListaRequerimientos');
     }
 
     /**
