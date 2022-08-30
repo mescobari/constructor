@@ -99,6 +99,8 @@
                     </tbody>
             </table>
 
+            <div class='page-break'></div>
+
             <h4>II.- TRABAJOS A SER ENCARADOS</h4>
             <table class="styled-table" >
                     <thead>
@@ -121,29 +123,30 @@
                             <th ><b>Código</b></th>  
                             <th width="30%"><b>Descripcion</b></th>
                             <th ><b>Unidad</b></th>  
-                            <th><b>Cantidad</b></th>
+                            <th><b>Vigente</b></th>
 
-                            <th ><b>Horas Req.</b></th>  
-                            <th><b>Dias Req.</b></th>
-                            <th ><b>Plazo Ejecución</b></th>  
-                            <th><b>Prec. Referencial</b></th>
-
+                            <th ><b>Avance Acumulado</b></th>  
+                            <th><b>Por Ejecutar</b></th>
+                            <th ><b>Avance Req.</b></th>  
+                            <th><b>Pre. Unit.</b></th>
+                            <th><b>Por Facturar</b></th>
 
                         </tr>
                     </thead> 
 
                     <tbody>
-                    @for ($i = 0; $i < count($requerimientos); $i++)          
+                    @for ($i = 0; $i < count($req_relacion); $i++)          
            
                         <tr>
-                            <td>{{$requerimientos[$i]['codigo_recurso']}}</td>
-                            <td>{{$requerimientos[$i]['descripcion_recurso']}}</td>
-                            <td>{{$requerimientos[$i]['simbolo']}}</td>
-                            <td align="center">{{$requerimientos[$i]['cantidad_recurso']}}</td>
-                            <td align="center">{{$requerimientos[$i]['horas_recurso']}}</td>
-                            <td align="center">{{$requerimientos[$i]['dias_recurso']}}</td>
-                            <td align="center">{{$requerimientos[$i]['tiempo_total_recurso']}}</td>
-                            <td align="right">{{$requerimientos[$i]['precio_ref']}}</td>
+                            <td>{{$req_relacion[$i]['item_codigo']}}</td>
+                            <td>{{$req_relacion[$i]['item_descripcion']}}</td>
+                            <td>{{$req_relacion[$i]['simbolo']}}</td>
+                            <td align="right">{{$req_relacion[$i]['vigente']}}</td>
+                            <td align="right">{{$req_relacion[$i]['avance']}}</td>
+                            <td align="right">{{$req_relacion[$i]['saldo']}}</td>
+                            <td align="right">{{$req_relacion[$i]['estimado']}}</td>
+                            <td align="right">{{$req_relacion[$i]['precio_unitario']}}</td>
+                            <td align="right">{{$req_relacion[$i]['monto']}}</td>
 
                                                         
                         <tr>
@@ -155,6 +158,63 @@
 
                     </tbody>
             </table>
+
+
+            <h4>III.- GASTOS GENERALES</h4>
+            <table class="styled-table" >
+                    <thead>
+                        <tr>
+                            <th ><b>Descripcion</b></th>  
+
+                            </tr>
+                    </thead> 
+                    <tbody>
+                        
+                        <tr><td>{{$requerimiento->trabajos_encarados}}</td></tr>
+                   
+                    </tbody>
+
+            </table>
+            <h4>Detalle: Gastos Generales -Otros Gastos </h4>
+            <table class="styled-table" >
+                    <thead>
+                        <tr>
+                            <th ><b>Código</b></th>  
+                            <th width="20%"><b>Descripcion</b></th>
+                            <th ><b>Unidad</b></th>  
+                            <th><b>Cantidad</b></th>
+                            <th><b>Prec. Unit.</b></th>
+                            <th ><b>Prec. Total</b></th>  
+                            <th width="20%"><b>Justificación</b></th>
+
+                        </tr>
+                    </thead> 
+
+                    <tbody>
+                    @for ($i = 0; $i < count($req_otros); $i++)          
+           
+                        <tr>
+                            <td>{{$req_otros[$i]['codigo_recurso']}}</td>
+                            <td>{{$req_otros[$i]['descripcion_recurso']}}</td>
+                            <td align="center">{{$req_otros[$i]['simbolo']}}</td>
+                            <td align="right">{{$req_otros[$i]['cantidad_otros']}}</td>
+                            <td align="right">{{$req_otros[$i]['monto_otros']}}</td>
+                            <td align="right">{{$req_otros[$i]['total_otros']}}</td>
+                            <td>{{$req_otros[$i]['explicar_otros']}}</td>
+                                                        
+                        <tr>
+
+                    @endfor
+
+
+
+
+                    </tbody>
+            </table>
+
+
+
+
 
 
         </div>

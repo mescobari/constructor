@@ -44,7 +44,7 @@ class RequerimientoRelacion extends Model
        
      
 
-       for($i = 0; $i < count( $obj); $i++) {
+        for($i = 0; $i < count( $obj); $i++) {
         
                 $planilla_item_id=$obj[$i]['planilla_item_id'];
 
@@ -101,60 +101,34 @@ class RequerimientoRelacion extends Model
 
                         $items[$i]['estimado']=$obj[$i]['estimado'];
                         $items[$i]['monto']=$obj[$i]['estimado']*$items[$i]['precio_unitario'];
+                        // calcular total
+                        $total=$total+$items[$i]['monto'];
                         
-
-           /*     
-
- 
-                        
-                    $items[$i]['tipo_planilla_id']=$json->tipo_planilla_id;
-                    $items[$i]['cantidad']=$json->cantidad;
-                    $items[$i]['precio_unitario']=$json->precio_unitario;
-
-
-
-                    $items[$i]['id']=$obj[$i]['id'];
-                    $items[$i]['codigo_recurso']=$obj[$i]['recursos']['codigo_recurso'];
-                    $items[$i]['descripcion_recurso']=$obj[$i]['recursos']['descripcion_recurso'];
+                        $items[$i]['monto']=number_format($items[$i]['monto'],2,",",".");
+                        $items[$i]['vigente']=number_format($items[$i]['vigente'],2,",",".");
+                        $items[$i]['precio_unitario']=number_format($items[$i]['precio_unitario'],2,",",".");
+                        $items[$i]['avance']=number_format($items[$i]['avance'],2,",",".");
+                        $items[$i]['saldo']=number_format($items[$i]['saldo'],2,",",".");
+                        $items[$i]['estimado']=number_format($items[$i]['estimado'],2,",",".");
+                    
+        }
                 
-                    $simbolo=Unidad::find($obj[$i]['recursos']['unidad_id']);
-                    $items[$i]['simbolo']=$simbolo->simbolo;
-
-                    $items[$i]['cantidad_recurso']=$obj[$i]['cantidad_recurso'];
-                    $items[$i]['horas_recurso']=$obj[$i]['horas_recurso'];
-                    $items[$i]['dias_recurso']=$obj[$i]['dias_recurso'];
-                    $items[$i]['tiempo_total_recurso']=$obj[$i]['tiempo_total_recurso'];
-                    $items[$i]['precio_referencia_recurso']=$obj[$i]['precio_referencia_recurso'];
-                    $items[$i]['precio_ref']= number_format($obj[$i]['precio_referencia_recurso'],2,",",".");
-                // calcular total
-            
-                    $total=$total+$obj[$i]['precio_referencia_recurso'];
-                
-                }
                 
                 // creMOS L NE DE TOTAL
-                $items[$i]['id']=0;
-                $items[$i]['codigo_recurso']='';
-                $items[$i]['descripcion_recurso']='Monto total requerido:';
-            
-            
+                $items[$i]['planilla_item_id']=0;
+                $items[$i]['item_codigo']='-';
+                $items[$i]['item_descripcion']='Monto Total a ser Facturado:';
                 $items[$i]['simbolo']='Bs.';
+            
+                $items[$i]['vigente']='';
+                $items[$i]['precio_unitario']='';
 
-                $items[$i]['cantidad_recurso']='';
-                $items[$i]['horas_recurso']='';
-                $items[$i]['dias_recurso']='';
-                $items[$i]['tiempo_total_recurso']='';
-                $items[$i]['precio_referencia_recurso']=$total;
-                $items[$i]['precio_ref']= number_format($total,2,",",".");
+                $items[$i]['avance']='';
+                $items[$i]['precio_unitario1']='';
+                $items[$i]['saldo']='';
 
-
-
-             */
-           
-
-        }
-
-
+                $items[$i]['estimado']='';
+                $items[$i]['monto']=number_format($total,2,",",".");
 
        return $items;
    }

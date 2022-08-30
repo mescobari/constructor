@@ -26,6 +26,7 @@ use App\Models\Constructor\PlanillaDocument;
 use App\Models\Constructor\Requerimiento;
 use App\Models\Constructor\RequerimientoItem;
 use App\Models\Constructor\RequerimientoRelacion;
+use App\Models\Constructor\RequerimientoOtros;
 
 use PDF;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -59,6 +60,9 @@ public function ver_requerimientos(Request $request, $id){
 
     $plani= new RequerimientoRelacion;
     $req_relacion = $plani->getReqPlanilla($requerimiento_id);
+
+    $otros= new RequerimientoOtros;
+    $req_otros = $otros->getReqOtros($requerimiento_id);
 
     //tipo_requerimiento_id esta hardcodeado
     $tipo_requerimiento_id=$req->tipo_requerimiento_id;
@@ -120,12 +124,14 @@ public function ver_requerimientos(Request $request, $id){
      'docs_modificatorios' => $docs_modificatorios,
      'requerimientos' => $requerimientos,
      'req_relacion' => $req_relacion,
+     'req_otros' => $req_otros,
+
  ]);
  $pdf->setPaper('letter', 'portrait');
  return $pdf->stream('reporte_ficha_proyecto.pdf');
 
 
-    //return $req_relacion;
+    //return $req_otros;
 
 
 
