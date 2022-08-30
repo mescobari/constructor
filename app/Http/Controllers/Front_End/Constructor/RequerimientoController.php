@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 class RequerimientoController extends Controller
 {
 
-    
+
 
     public function createRequerimiento(Request $request)
     {
@@ -178,9 +178,11 @@ class RequerimientoController extends Controller
      * @param \App\Models\Constructor\Requerimiento $requerimiento
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Requerimiento $requerimiento)
+    public function destroy($id)
     {
-        //
+        $requerimiento = Requerimiento::findOrFail($id);
+        $requerimiento->delete();
+        return $requerimiento;
     }
 
     public function deleteItemObra($id)

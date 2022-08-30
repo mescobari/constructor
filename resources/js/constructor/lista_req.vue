@@ -84,9 +84,8 @@
                                         <button type="button" class="btn btn-outline-success ml-1"><span><i
                                             class="far fa-file-pdf"></i></span></button>
                                     </a>
-                                    <!--                                    <button type="button" class="btn btn-outline-warning ml-1" @click="editar(props.row);"><span><i class="fa fa-user-edit"></i></span></button>-->
                                     <button type="button" class="btn btn-outline-danger ml-1"
-                                            @click="eliminar(props.row.id);"><span><i
+                                            @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                         class="fa fa-trash-alt"></i></span></button>
                                 </div>
                             </template>
@@ -137,6 +136,9 @@
             </div>
         </div>
         <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
+        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
+                            ref="abrirAlerta">
+        </alert-confirmacion>
         <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"
                          @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>
     </div>
@@ -161,13 +163,13 @@ export default {
             guardar_bottom: false,
 
             tituloDocLegalesModal: '',
-
+            id_eliminacion: '',
             combo_tipos_documentos: [],
             combo_instituciones: [],
             combo_cofinanciadores: [],
             combo_documentos_legales: [],
             combo_objetivos: [],
-
+            mandarMensajesAlerta: {},
             proyectos: [],
             jsonData: {
                 //REQUERIMIENTOS
@@ -254,8 +256,31 @@ export default {
             this.rows = currentReq
             console.log('REQUERIMIENTOS', currentReq);
         },
-        async eliminar() {
-
+        async deleteRequerimiento(id) {
+            const response = await axios.delete('requerimientos/' + id);
+            console.log('DELETED REQUERIMIENTO', response.data);
+            await this.showTableRequerimiento();
+        },
+        preguntarModalAlertaConfirmacionEliminar(id) {
+            this.mandarMensajesAlerta = {
+                titulo: "Mensajes del Sistema",//titulo del mensaje
+                contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
+                contenidoCuerpo: "La acción es irreversible",//contenido del mensaje
+                contenidoPie: "¿Esta seguro de eliminar el registro?",//contenido del mensaje
+                tipo: "ferdy-background-Primary-blak",//color danger warnin etc para header de modal
+                tituloBotonUno: "SI", //texto de primer boton el de true
+                tituloBotonDos: "NO", //texto segundo bocton del de false
+                respuesta: false,
+            };
+            this.id_eliminacion = id;
+            this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
+        },
+        respuestaModalAlertaConfirmacion(datos) {
+            // console.log(datos.respuesta);
+            console.log('eliminando', datos.respuesta);
+            if (datos.respuesta === true) {
+                this.deleteRequerimiento(this.id_eliminacion);
+            }
         },
         async selectPrimaryContract() {
             var respuesta = await axios.get('documents');
