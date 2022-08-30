@@ -554,6 +554,7 @@ export default {
         },
         async listar() {
             const respuesta = await axios.get('documents');
+            let getDocumentTypes = (await axios.get('documentos_legaleses')).data;
             // console.log("listar");
             // this.intervenciones = respuesta.data;
             const contratos =
@@ -578,8 +579,9 @@ export default {
             });
 
             this.rows = respuesta.data.map(documento => {
-                documento.tipo_documento = contratosObjeto[documento.document_types_id];
+                // documento.tipo_documento = contratosObjeto[documento.document_types_id];
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
+                documento.tipo_documento = getDocumentTypes[documento.document_types_id-1].nombre;
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
