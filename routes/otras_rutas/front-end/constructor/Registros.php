@@ -35,6 +35,7 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::delete('delete_requerimiento_relacion/{id}', 'RequerimientoController@deleteItemRelacion')->name('delete_requerimiento_relacion');
     Route::delete('delete_requerimiento_otros_gastos/{id}', 'RequerimientoController@deleteItemOtrosGastos')->name('delete_requerimiento_otros_gastos');
     Route::post('update_requerimiento_item/{id}', 'RequerimientoController@updateRequerimientoItem')->name('update_requerimiento_item');
+    Route::get('download_requerimiento/{id}', 'RequerimientoController@downloadRequerimiento')->name('download_requerimiento');
     /*Route::apiResource('intervenciones', IntervencionesController::class);
     Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
     Route::get('proyectos', 'IntervencionesController@proyectos')->name('proyectos');

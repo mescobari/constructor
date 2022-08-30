@@ -13,6 +13,7 @@ use App\Models\Constructor\Unidad;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RequerimientoController extends Controller
 {
@@ -25,7 +26,7 @@ class RequerimientoController extends Controller
         if ($request->hasFile('files')) {
             $files = $request->file('files');
             $nombre_carpeta = "/constructor/documentos";
-            $nombre_archivo = $request->document_types_id . '-' . $_FILES['files']['name'];
+            $nombre_archivo = $_FILES['files']['name'];
             $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
         }
 
@@ -227,5 +228,13 @@ class RequerimientoController extends Controller
 //        $itemAndId->tiempo_total_recurso = $request->tiempo_total_recurso;
 //        $itemAndId->precio_referencia_recurso = $request->precio_referencia_recurso;
 //        $itemAndId->save();
+    }
+
+    public function downloadRequerimiento($id)
+    {
+        $requerimiento = Requerimiento::findOrFail($id);
+        $path = $requerimiento->path_requerimientos;
+        $file = Storage::disk('local')->get($path);
+        return response($file, 200)->header('Content-Type', 'octet-stream');
     }
 }

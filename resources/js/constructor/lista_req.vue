@@ -74,11 +74,9 @@
                             </template>
                             <template slot="acciones" slot-scope="props">
                                 <div class="btn-group">
-                                    <a :href="'ver_requerimientos/'+props.row.id" target="_blank"
-                                       rel="noopener noreferrer">
-                                        <button type="button" class="btn btn-file ml-1"><span><i
-                                            class="far fa-file-pdf"></i></span></button>
-                                    </a>
+                                    <button type="button" class="btn btn-outline-primary"
+                                            @click="downloadRequerimiento(props.row)"><span><i
+                                        class="far fa-file"></i> </span></button>
                                     <a :href="'ver_requerimientos/'+props.row.id" target="_blank"
                                        rel="noopener noreferrer">
                                         <button type="button" class="btn btn-outline-success ml-1"><span><i
@@ -288,6 +286,20 @@ export default {
             this.proyectos = principales;
             $("#seleccion_proyecto_doc_legales").modal("show");
 
+        },
+        async downloadRequerimiento(data = {}) {
+            const response = await axios.get(`download_requerimiento/${data.id}`,{responseType: 'blob'});
+            const blob = new Blob([response.data], {type: 'octet-stream'});
+            const href = URL.createObjectURL(blob);
+            const a = Object.assign(document.createElement('a'), {
+                href,
+                style: 'display: none',
+                download: data.path_requerimientos
+            });
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(href);
+            a.remove()
         },
         async tipos_documentos() {
             var respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
