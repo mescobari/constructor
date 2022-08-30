@@ -14,33 +14,148 @@
         
         <div class="contenido">
 
-        <h4>CONTRATO PRINCIPAL</h4>
-        <table class="styled-table" >
-                <thead>
-                    <tr>
-                        <th  width="20%"><b>Item</b></th>  
-                        <th><b>Descripcion</b></th>
-                    </tr>
-                </thead> 
+            <h4>CONTRATO PRINCIPAL</h4>
+            <table class="styled-table" >
+                    <thead>
+                        <tr>
+                            <th  width="20%"><b>Item</b></th>  
+                            <th><b>Descripcion</b></th>
+                        </tr>
+                    </thead> 
 
-                <tbody>
-                     <tr><td>Tipo de Documento:</td><td>{{$docs_modificatorios[0]['tipo_doc_nombre']}}</td></tr>
-                     <tr><td>codigo</td><td>{{$docs_modificatorios[0]['codigo']}}</td></tr>
-                     <tr><td>nombre</td><td>{{$docs_modificatorios[0]['nombre']}}</td></tr>
-                     <tr><td>objeto</td><td>{{$docs_modificatorios[0]['objeto']}}</td></tr>
-                     <tr><td>contratante</td><td>{{$docs_modificatorios[0]['contratante']}} - ({{$docs_modificatorios[0]['contratante_sigla']}})</td></tr>
-                     <tr><td>contratado</td><td>{{$docs_modificatorios[0]['contratado']}} - ({{$docs_modificatorios[0]['contratado_sigla']}})</td></tr>                     
-                     <tr><td>fecha_firma</td><td>{{ date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_firma']))}}</td></tr>
-                     <tr><td>modifica</td><td>{{$docs_modificatorios[0]['que_modifica']}}</td></tr>
-                     <tr><td>monto_bs</td><td> {{number_format($docs_modificatorios[0]['monto_bs'],2,",",".")}}</td></tr>
-                     <tr><td>duracion_dias</td><td>{{number_format($docs_modificatorios[0]['duracion_dias'],0,",",".")}}</td></tr>
-                     <tr><td>fecha_orden_proceder</td><td>{{date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_orden_proceder']))}}</td></tr>
-                     </tbody>
+                    <tbody>
+                        <tr><td>Tipo de Documento:</td><td>{{$docs_modificatorios[0]['tipo_doc_nombre']}}</td></tr>
+                        <tr><td>codigo</td><td>{{$docs_modificatorios[0]['codigo']}}</td></tr>
+                        <tr><td>nombre</td><td>{{$docs_modificatorios[0]['nombre']}}</td></tr>
+                        <tr><td>objeto</td><td>{{$docs_modificatorios[0]['objeto']}}</td></tr>
+                        <tr><td>contratante</td><td>{{$docs_modificatorios[0]['contratante']}} - ({{$docs_modificatorios[0]['contratante_sigla']}})</td></tr>
+                        <tr><td>contratado</td><td>{{$docs_modificatorios[0]['contratado']}} - ({{$docs_modificatorios[0]['contratado_sigla']}})</td></tr>                     
+                        <tr><td>fecha_firma</td><td>{{ date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_firma']))}}</td></tr>
+                        <tr><td>modifica</td><td>{{$docs_modificatorios[0]['que_modifica']}}</td></tr>
+                        <tr><td>monto_bs</td><td> {{number_format($docs_modificatorios[0]['monto_bs'],2,",",".")}}</td></tr>
+                        <tr><td>duracion_dias</td><td>{{number_format($docs_modificatorios[0]['duracion_dias'],0,",",".")}}</td></tr>
+                        <tr><td>fecha_orden_proceder</td><td>{{date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_orden_proceder']))}}</td></tr>
+                    </tbody>
             </table>
 
-            
-          
-         
+            <h4>I.- REQUERIMIENTO EN OBRA</h4>
+            <table class="styled-table" >
+                    <thead>
+                        <tr>
+                            <th  width="25%"><b>Item</b></th>  
+                            <th><b>Descripcion</b></th>
+                        </tr>
+                    </thead> 
+
+                    <tbody>
+                        <tr><td>Identificaciòn Requerimiento</td><td>{{$requerimiento->correlativo_requerimiento}}</td></tr>    
+                        <tr><td>Tipo de Documento:</td><td>Requerimiento de: {{$tipo_requerimiento}}</td></tr>
+                        <tr><td>fecha Requerimiento</td><td>{{date("d-m-Y",strtotime($requerimiento->fecha_requerimiento))}}</td></tr>
+                        <tr><td>NURI</td><td>{{$requerimiento->nuri_requerimiento}}</td></tr>
+                        <tr><td>Descripción</td><td>{{$requerimiento->descripcion_requerimiento}}</td></tr>
+                   
+                    </tbody>
+            </table>
+
+            <h4>Detalle: Items Solicitados</h4>
+            <table class="styled-table" >
+                    <thead>
+                        <tr>
+                            <th ><b>Código</b></th>  
+                            <th width="30%"><b>Descripcion</b></th>
+                            <th ><b>Unidad</b></th>  
+                            <th><b>Cantidad</b></th>
+
+                            <th ><b>Horas Req.</b></th>  
+                            <th><b>Dias Req.</b></th>
+                            <th ><b>Plazo Ejecución</b></th>  
+                            <th><b>Prec. Referencial</b></th>
+
+
+                        </tr>
+                    </thead> 
+
+                    <tbody>
+                    @for ($i = 0; $i < count($requerimientos); $i++)          
+           
+                        <tr>
+                            <td>{{$requerimientos[$i]['codigo_recurso']}}</td>
+                            <td>{{$requerimientos[$i]['descripcion_recurso']}}</td>
+                            <td>{{$requerimientos[$i]['simbolo']}}</td>
+                            <td align="center">{{$requerimientos[$i]['cantidad_recurso']}}</td>
+                            <td align="center">{{$requerimientos[$i]['horas_recurso']}}</td>
+                            <td align="center">{{$requerimientos[$i]['dias_recurso']}}</td>
+                            <td align="center">{{$requerimientos[$i]['tiempo_total_recurso']}}</td>
+                            <td align="right">{{$requerimientos[$i]['precio_ref']}}</td>
+
+                                                        
+                        <tr>
+
+                    @endfor
+
+
+
+
+                    </tbody>
+            </table>
+
+            <h4>II.- TRABAJOS A SER ENCARADOS</h4>
+            <table class="styled-table" >
+                    <thead>
+                        <tr>
+                            <th ><b>Descripcion</b></th>  
+
+                            </tr>
+                    </thead> 
+                    <tbody>
+                        
+                        <tr><td>{{$requerimiento->trabajos_encarados}}</td></tr>
+                   
+                    </tbody>
+
+            </table>
+            <h4>Detalle: Relacion con itemes del contrato principal</h4>
+            <table class="styled-table" >
+                    <thead>
+                        <tr>
+                            <th ><b>Código</b></th>  
+                            <th width="30%"><b>Descripcion</b></th>
+                            <th ><b>Unidad</b></th>  
+                            <th><b>Cantidad</b></th>
+
+                            <th ><b>Horas Req.</b></th>  
+                            <th><b>Dias Req.</b></th>
+                            <th ><b>Plazo Ejecución</b></th>  
+                            <th><b>Prec. Referencial</b></th>
+
+
+                        </tr>
+                    </thead> 
+
+                    <tbody>
+                    @for ($i = 0; $i < count($requerimientos); $i++)          
+           
+                        <tr>
+                            <td>{{$requerimientos[$i]['codigo_recurso']}}</td>
+                            <td>{{$requerimientos[$i]['descripcion_recurso']}}</td>
+                            <td>{{$requerimientos[$i]['simbolo']}}</td>
+                            <td align="center">{{$requerimientos[$i]['cantidad_recurso']}}</td>
+                            <td align="center">{{$requerimientos[$i]['horas_recurso']}}</td>
+                            <td align="center">{{$requerimientos[$i]['dias_recurso']}}</td>
+                            <td align="center">{{$requerimientos[$i]['tiempo_total_recurso']}}</td>
+                            <td align="right">{{$requerimientos[$i]['precio_ref']}}</td>
+
+                                                        
+                        <tr>
+
+                    @endfor
+
+
+
+
+                    </tbody>
+            </table>
+
 
         </div>
 

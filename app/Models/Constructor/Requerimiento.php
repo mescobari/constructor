@@ -19,4 +19,10 @@ class Requerimiento extends Model
         'gastos_generales',
         'path_requerimientos',
     ];
+
+   
+
+
+
+
 }
