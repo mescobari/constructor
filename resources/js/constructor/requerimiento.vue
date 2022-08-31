@@ -366,25 +366,11 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="nombre">Correlativo Requerimiento:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento">
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
                                             <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
                                             <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                             <input type="text" class="form-control" name="nombre"
                                                    placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
                                                    disabled>
-
-
                                         </div>
                                     </div>
 
@@ -410,8 +396,8 @@
                                     <vue-editor
                                         v-model="jsonData.trabajos_encarados"
                                         :editor-toolbar="configToolBarEditText"
+                                        placeholder="Explicacion de los trabajos a ser encarados"
                                     ></vue-editor>
-                                    <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                 </div>
                             </div>
 
@@ -609,23 +595,11 @@
                                         </center>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="nombre">Correlativo Requerimiento:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento" disabled>
-                                        </div>
-                                    </div>
-
-                                </div>
 
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
-                                            <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                             <input type="text" class="form-control" name="nombre"
                                                    placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
                                                    disabled>
@@ -657,6 +631,7 @@
                                     <vue-editor
                                         v-model="jsonData.gastos_generales"
                                         :editor-toolbar="configToolBarEditText"
+                                        placeholder="Explicar en que gastos generales se trabajará"
                                     ></vue-editor>
                                     <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                 </div>
@@ -1301,6 +1276,7 @@ export default {
                 this.jsonData.descripcion_requerimiento != null &&
                 this.jsonData.tipo_requerimiento_id != null &&
                 this.jsonData.fecha_requerimiento != null &&
+                this.jsonData.fecha_requerimiento !== "" &&
                 this.jsonData.files != null;
         },
         //Guardar Requerimiento en Obra
