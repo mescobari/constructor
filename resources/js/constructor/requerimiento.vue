@@ -100,13 +100,11 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="nombre">Correlativo Requerimiento:</label>
+                                            <label for="nombre">NURI Correspondencia:</label>
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento"
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
                                                    v-bind:disabled="clickedAdd">
                                         </div>
                                     </div>
@@ -116,7 +114,6 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
-                                            <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                             <datepicker
                                                 :language="configFechas.es"
                                                 :placeholder="configFechas.placeholder"
@@ -145,17 +142,6 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="nombre">NURI Correspondencia:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
-                                                   v-bind:disabled="clickedAdd">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3"></div>
-                                    <div class="col-md-6">
                                         <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
                                                class="bg-primary"
                                                style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
@@ -171,12 +157,12 @@
                                     </div>
                                     <div class="col-md-3"></div>
                                 </div>
-
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="descripcion">Descripcion Requerimiento:</label>
                                     <vue-editor
+                                        placeholder="Ingresar Descripcion en detalle del Requerimiento"
                                         v-model="jsonData.descripcion_requerimiento"
                                         :editor-toolbar="configToolBarEditText"
                                         v-bind:disabled="clickedAdd"
@@ -1304,24 +1290,41 @@ export default {
             const response = await axios.post('requerimientos', datos_jsonData);
             console.log("SAVE ITEM REQ", response.data);
         },
+        areAlltheFieldsFilled() {
+            return this.jsonData.descripcion_recurso.id != null &&
+                this.jsonData.cantidad_recurso != null &&
+                this.jsonData.horas_recurso != null &&
+                this.jsonData.dias_recurso != null &&
+                this.jsonData.tiempo_total_recurso != null &&
+                this.jsonData.precio_referencia_recurso != null &&
+                this.jsonData.nuri_requerimiento != null &&
+                this.jsonData.descripcion_requerimiento != null &&
+                this.jsonData.tipo_requerimiento_id != null &&
+                this.jsonData.fecha_requerimiento != null &&
+                this.jsonData.files != null;
+        },
         //Guardar Requerimiento en Obra
         async guardar() {
-            console.log('=================================================')
-            if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-                console.log('MEMORYSELECTED', this.memorySelected);
-                await this.reqItemSave();
-                console.log('TRUE WAY')
+            if(this.areAlltheFieldsFilled()) {
                 console.log('=================================================')
+                if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
+                    console.log('MEMORYSELECTED', this.memorySelected);
+                    await this.reqItemSave();
+                    console.log('TRUE WAY')
+                    console.log('=================================================')
+                } else {
+                    this.memorySelected = this.jsonData.tipo_requerimiento_id;
+                    console.log('MEMORYSELECTED', this.memorySelected);
+                    await this.requerimientoFirstSave()
+                    await this.reqItemSave();
+                    console.log('FALSE WAY')
+                    console.log('=================================================')
+                }
+                await this.listarRequerimientoItem();
+                await this.cleanFormReqItem();
             } else {
-                this.memorySelected = this.jsonData.tipo_requerimiento_id;
-                console.log('MEMORYSELECTED', this.memorySelected);
-                await this.requerimientoFirstSave()
-                await this.reqItemSave();
-                console.log('FALSE WAY')
-                console.log('=================================================')
+                alert('Por favor complete todos los campos');
             }
-            await this.listarRequerimientoItem();
-            await this.cleanFormReqItem();
         },
         // Editar Requerimiento en Obra
         editar(data = {}) {
@@ -1772,8 +1775,8 @@ export default {
             jsonData: {
                 //REQUERIMIENTO OBRA
                 id: "",
-                correlativo_requerimiento: '/2022',
-                nuri_requerimiento: '/2022',
+                correlativo_requerimiento: null,
+                nuri_requerimiento: '',
                 requerimiento_id: '',
                 tipo_requerimiento_id: 5,
                 codigo_recurso: '',
@@ -1785,7 +1788,7 @@ export default {
                 doc_legal: {},
                 objetivo: {},
                 document_id: '',
-                descripcion_requerimiento: '<p>prueba <b>planolla inicial si</b> carga file</p>',
+                descripcion_requerimiento: '',
                 requerimiento_recurso_id: '',
                 descripcion_recurso: '',
                 unidad_id: '',
@@ -1819,7 +1822,7 @@ export default {
                 cantidad_otros: '',
                 monto_otros: '',
                 explicar_otros: '',
-                fecha_requerimiento: '2022/01/01',
+                fecha_requerimiento: '',
                 fechaFormatted: '',
 
             },
