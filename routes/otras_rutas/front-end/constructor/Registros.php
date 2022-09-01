@@ -20,6 +20,7 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::get('get_planilla_item', 'PlanillaController@getPlanillaItem')->name('get_planilla_item');
 //requerimientos
     Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');
+    Route::get('req_llave_mano', 'RequerimientoController@llave_mano')->name('req_llave_mano');
     Route::get('lista_req', 'RequerimientoController@listaReq')->name('lista_req');
     Route::apiResource('requerimientos', RequerimientoController::class);
     Route::post('create_requerimiento', 'RequerimientoController@createRequerimiento')->name('create_requerimiento');

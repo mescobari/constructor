@@ -28,6 +28,8 @@ Vue.component('contrato-principal', require('./constructor/contrato_principal.vu
 Vue.component('documents', require('./constructor/documents.vue').default);
 Vue.component('planillas', require('./constructor/planillas.vue').default);
 Vue.component('requerimiento', require('./constructor/requerimiento.vue').default);
+
+Vue.component('llave_mano', require('./constructor/llave_mano.vue').default);
 Vue.component('lista_req', require('./constructor/lista_req.vue').default);
 
 

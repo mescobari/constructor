@@ -94,6 +94,11 @@ class RequerimientoController extends Controller
     {
         return view('front-end.constructor.IndexRequerimientos');
     }
+    public function llave_mano()
+    {
+        return view('front-end.constructor.IndexLlaveMano');
+    }
+
 
     public function listaReq()
     {
