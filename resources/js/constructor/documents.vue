@@ -569,8 +569,8 @@ export default {
             if (this.disablePadre === false &&
                 this.jsonData.document_types_id.id !== 1 &&
                 this.jsonData.document_types_id.id !== 2) {
-                this.jsonData.contratante_id = contratante;
-                this.jsonData.contratado_id = contratado;
+                this.jsonData.contratante_id = contratante[0];
+                this.jsonData.contratado_id = contratado[0];
             }
 
         },
