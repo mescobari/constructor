@@ -164,16 +164,16 @@
                                             </v-select>
                                         </div>
                                     </div>
-<!--                                    <div class="col-md-6">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>-->
-<!--                                            <v-select label="nombre" :options="unidades_ejecutoras"-->
-<!--                                                      v-model="jsonData.unidad_ejecutora_id"-->
-<!--                                                      placeholder="Selecione una opción">-->
-<!--                                                <span slot="no-options">No hay data para cargar</span>-->
-<!--                                            </v-select>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                                    <!--                                    <div class="col-md-6">-->
+                                    <!--                                        <div class="form-group">-->
+                                    <!--                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>-->
+                                    <!--                                            <v-select label="nombre" :options="unidades_ejecutoras"-->
+                                    <!--                                                      v-model="jsonData.unidad_ejecutora_id"-->
+                                    <!--                                                      placeholder="Selecione una opción">-->
+                                    <!--                                                <span slot="no-options">No hay data para cargar</span>-->
+                                    <!--                                            </v-select>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -553,7 +553,7 @@ export default {
                     this.disablePadre = false;
                     this.disableSub = true;
                     this.disableSub2 = true;
-                    if(this.jsonData.padre != null || this.jsonData.padre != ''){
+                    if (this.jsonData.padre != null || this.jsonData.padre != '') {
                         this.jsonData.contratado_id = '';
                         this.jsonData.contratante_id = '';
                     }
@@ -610,32 +610,49 @@ export default {
 
             // this.rows = documentos;
         },
+        areAlltheFieldsFilled() {
+            return this.jsonData.document_types_id !== null &&
+                this.jsonData.padre !== null &&
+                this.jsonData.contratante_id.id !== null &&
+                this.jsonData.contratado_id.id !== null &&
+                this.jsonData.duracion_dias !== null &&
+                this.jsonData.fecha_firma !== null &&
+                this.jsonData.codigo !== null &&
+                this.jsonData.nombre !== null &&
+                this.jsonData.monto_bs !== null &&
+                this.jsonData.objeto !== null &&
+                this.jsonData.modifica !== null &&
+                this.jsonData.files !== null;
+        },
         async guardar() {
-            console.log(this.jsonData);
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
-            if (this.jsonData.document_types_id.id === 1) {
-                datos_jsonData.append('padre', '0');
-            } else {
-                datos_jsonData.append('padre', this.jsonData.padre.id);
-            }
-            datos_jsonData.append('unidad_ejecutora_id', '1'/*this.jsonData.unidad_ejecutora_id.id*/);
-            datos_jsonData.append('nombre', this.jsonData.nombre);
-            datos_jsonData.append('codigo', this.jsonData.codigo);
-            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
-            datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
-            let fecha_firma = new Date(this.jsonData.fecha_firma);
-            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
-            datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
-            datos_jsonData.append('objeto', this.jsonData.objeto);
+            if(this.areAlltheFieldsFilled()) {
+                let datos_jsonData = new FormData();
+                datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
+                if (this.jsonData.document_types_id.id === 1) {
+                    datos_jsonData.append('padre', '0');
+                } else {
+                    datos_jsonData.append('padre', this.jsonData.padre.id);
+                }
+                datos_jsonData.append('unidad_ejecutora_id', '1'/*this.jsonData.unidad_ejecutora_id.id*/);
+                datos_jsonData.append('nombre', this.jsonData.nombre);
+                datos_jsonData.append('codigo', this.jsonData.codigo);
+                datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
+                datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
+                datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
+                let fecha_firma = new Date(this.jsonData.fecha_firma);
+                datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
+                datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
+                datos_jsonData.append('objeto', this.jsonData.objeto);
 
-            datos_jsonData.append('modifica', this.jsonData.modifica);
-            datos_jsonData.append('files', this.jsonData.files);
-            let respuesta = await axios.post('documents', datos_jsonData);
-            console.log("SAVE", respuesta.data);
-            document.getElementById("cerrarModal").click();
-            await this.listar();
+                datos_jsonData.append('modifica', this.jsonData.modifica);
+                datos_jsonData.append('files', this.jsonData.files);
+                let respuesta = await axios.post('documents', datos_jsonData);
+                console.log("SAVE", respuesta.data);
+                document.getElementById("cerrarModal").click();
+                await this.listar();
+            } else {
+                alert('Debe llenar todos campos');
+            }
         },
         async modificar() {
             let datos_jsonData = new FormData();
