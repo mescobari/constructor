@@ -90,14 +90,6 @@
                                                        class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
                                             </div>
-                                            <div class="custom-control custom-radio">
-                                                <input class="custom-control-input" type="radio" id="customRadio5"
-                                                       value="5" v-model="jsonData.tipo_requerimiento_id"
-                                                       v-bind:disabled="clickedAdd"/>
-                                                <label for="customRadio5"
-                                                       class="custom-control-label font-weight-normal">Llave en
-                                                    Mano</label>
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -1754,7 +1746,7 @@ export default {
                 correlativo_requerimiento: null,
                 nuri_requerimiento: '',
                 requerimiento_id: '',
-                tipo_requerimiento_id: 5,
+                tipo_requerimiento_id: 4,
                 codigo_recurso: '',
                 proyectos: '',
                 tipos_documento: {},
