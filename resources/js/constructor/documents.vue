@@ -158,6 +158,7 @@
                                             <v-select label="nombre" :options="combo_padres"
                                                       v-model="jsonData.padre"
                                                       placeholder="Seleccione una opción"
+                                                      @input="selectContratanteContratado"
                                                       v-bind:disabled="disablePadre">
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
@@ -187,7 +188,7 @@
                                         <v-select label="nombre" :options="cla_institucional"
                                                   v-model="jsonData.contratado_id"
                                                   placeholder="Selecione una opción"
-                                                  v-bind:disabled="disablePadre">
+                                                  v-bind:disabled="disableSub2">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -344,6 +345,7 @@ export default {
             modificar_bottom: false,
             disablePadre: false,
             disableSub: false,
+            disableSub2: false,
             combo_padres: [],
             tituloIntervencionModal: '',
             unidades_ejecutoras: [],
@@ -525,6 +527,7 @@ export default {
                     }];
                     this.jsonData.contratante_id = '';
                     this.disableSub = false;
+                    this.disableSub2 = true;
                     break;
                 case 2:
                     for (let i = 0; i < padresObjeto.length; i++) {
@@ -534,6 +537,7 @@ export default {
                         this.combo_padres = subPadres;
                         this.disablePadre = false;
                         this.disableSub = true;
+                        this.disableSub2 = false;
                         this.jsonData.contratante_id = [{
                             id: 271,
                             nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
@@ -542,10 +546,36 @@ export default {
                     }
                     break;
                 default:
+                    console.log("DEFAULT", this.jsonData.document_types_id.id);
+                    // this.jsonData.contratante_id = '';
+                    // this.jsonData.contratado_id = '';
                     this.combo_padres = padresObjeto;
-                    // this.cla_institucional =
                     this.disablePadre = false;
+                    this.disableSub = true;
+                    this.disableSub2 = true;
+                    if(this.jsonData.padre != null || this.jsonData.padre != ''){
+                        this.jsonData.contratado_id = '';
+                        this.jsonData.contratante_id = '';
+                    }
             }
+        },
+        async selectContratanteContratado() {
+            let contratanteContratado = (await axios.get('cla_institucional')).data;
+            console.log('PADRE', this.jsonData.padre);
+            const contratante = contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id);
+            const contratado = contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id);
+            console.log("CONTRATANTE", contratante);
+            console.log("CONTRATADO", contratado);
+            if (this.disablePadre === false &&
+                this.jsonData.document_types_id.id !== 1 &&
+                this.jsonData.document_types_id.id !== 2) {
+                this.jsonData.contratante_id = contratante;
+                this.jsonData.contratado_id = contratado;
+            } else {
+                this.jsonData.contratante_id = '';
+                this.jsonData.contratado_id = '';
+            }
+
         },
         preguntarModalAlertaConfirmacionEliminar(document) {
             this.mandarMensajesAlerta = {
