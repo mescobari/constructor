@@ -26,17 +26,20 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento en Obra</h6></a>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento en Obra</h6>
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill"
                                href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile"
-                               aria-selected="false"  v-if="clickedAdd" v-on:click="detectActiveTab('profile')"><h6>Relacion con el Contrato Principal</h6></a>
+                               aria-selected="false" v-if="clickedAdd" v-on:click="detectActiveTab('profile')"><h6>
+                                Relacion con el Contrato Principal</h6></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill"
                                href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages"
-                               aria-selected="false"  v-if="clickedAdd" v-on:click="detectActiveTab('messages')"><h6>Otros Gastos</h6></a>
+                               aria-selected="false" v-if="clickedAdd" v-on:click="detectActiveTab('messages')"><h6>
+                                Otros Gastos</h6></a>
                         </li>
                     </ul>
                 </div>
@@ -55,7 +58,7 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="form-group" @input="descripcionRecursoGetbyType" >
+                                        <div class="form-group" @input="descripcionRecursoGetbyType">
                                             <label for="nombre">Tipo de Requerimiento:</label>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio1"
@@ -97,13 +100,11 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="nombre">Correlativo Requerimiento:</label>
+                                            <label for="nombre">NURI Correspondencia:</label>
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento"
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
                                                    v-bind:disabled="clickedAdd">
                                         </div>
                                     </div>
@@ -113,7 +114,6 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
-                                            <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                             <datepicker
                                                 :language="configFechas.es"
                                                 :placeholder="configFechas.placeholder"
@@ -142,17 +142,6 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="nombre">NURI Correspondencia:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
-                                                   v-bind:disabled="clickedAdd">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3"></div>
-                                    <div class="col-md-6">
                                         <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
                                                class="bg-primary"
                                                style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
@@ -168,12 +157,12 @@
                                     </div>
                                     <div class="col-md-3"></div>
                                 </div>
-
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="descripcion">Descripcion Requerimiento:</label>
                                     <vue-editor
+                                        placeholder="Ingresar Descripcion en detalle del Requerimiento"
                                         v-model="jsonData.descripcion_requerimiento"
                                         :editor-toolbar="configToolBarEditText"
                                         v-bind:disabled="clickedAdd"
@@ -360,7 +349,7 @@
                     <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
                     <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-profile-tab" >
+                         aria-labelledby="custom-tabs-three-profile-tab">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="row">
@@ -377,25 +366,11 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="nombre">Correlativo Requerimiento:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento">
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
                                             <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
                                             <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.fecha_requerimiento"
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
                                                    disabled>
-
-
                                         </div>
                                     </div>
 
@@ -421,8 +396,8 @@
                                     <vue-editor
                                         v-model="jsonData.trabajos_encarados"
                                         :editor-toolbar="configToolBarEditText"
+                                        placeholder="Explicacion de los trabajos a ser encarados"
                                     ></vue-editor>
-                                    <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                 </div>
                             </div>
 
@@ -620,25 +595,13 @@
                                         </center>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="nombre">Correlativo Requerimiento:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre"
-                                                   v-model="jsonData.correlativo_requerimiento" disabled>
-                                        </div>
-                                    </div>
-
-                                </div>
 
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
-                                            <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.fecha_requerimiento"
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
                                                    disabled>
 
 
@@ -668,6 +631,7 @@
                                     <vue-editor
                                         v-model="jsonData.gastos_generales"
                                         :editor-toolbar="configToolBarEditText"
+                                        placeholder="Explicar en que gastos generales se trabajará"
                                     ></vue-editor>
                                     <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
                                 </div>
@@ -814,7 +778,8 @@
                                             <button type="button" class="btn btn-outline-warning ml-1"
                                                     data-toggle="modal"
                                                     data-target="#modal-editar-otros"
-                                                    @click="editarItemOtrosGastos(props.row);"><span><i class="fa fa-user-edit"></i></span>
+                                                    @click="editarItemOtrosGastos(props.row);"><span><i
+                                                class="fa fa-user-edit"></i></span>
                                             </button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
                                                     @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
@@ -887,7 +852,8 @@
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento Item</h5>
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento
+                            Item</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -1066,7 +1032,8 @@
                         <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificarItemRelacion">
+                        <button type="submit" class="btn btn-success" data-dismiss="modal"
+                                @click="modificarItemRelacion">
                             Modificar
                         </button>
                     </div>
@@ -1149,7 +1116,8 @@
                         <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificarItemOtrosGastos">
+                        <button type="submit" class="btn btn-success" data-dismiss="modal"
+                                @click="modificarItemOtrosGastos">
                             Modificar
                         </button>
                     </div>
@@ -1212,7 +1180,7 @@ export default {
                 }
             }
             arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
             });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
@@ -1270,6 +1238,7 @@ export default {
             datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
             datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
             let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
+            this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
             datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
             datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
             datos_jsonData.append('descripcion_requerimiento', this.jsonData.descripcion_requerimiento)
@@ -1296,24 +1265,42 @@ export default {
             const response = await axios.post('requerimientos', datos_jsonData);
             console.log("SAVE ITEM REQ", response.data);
         },
+        areAlltheFieldsFilled() {
+            return this.jsonData.descripcion_recurso.id != null &&
+                this.jsonData.cantidad_recurso != null &&
+                this.jsonData.horas_recurso != null &&
+                this.jsonData.dias_recurso != null &&
+                this.jsonData.tiempo_total_recurso != null &&
+                this.jsonData.precio_referencia_recurso != null &&
+                this.jsonData.nuri_requerimiento != null &&
+                this.jsonData.descripcion_requerimiento != null &&
+                this.jsonData.tipo_requerimiento_id != null &&
+                this.jsonData.fecha_requerimiento != null &&
+                this.jsonData.fecha_requerimiento !== "" &&
+                this.jsonData.files != null;
+        },
         //Guardar Requerimiento en Obra
         async guardar() {
-            console.log('=================================================')
-            if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-                console.log('MEMORYSELECTED', this.memorySelected);
-                await this.reqItemSave();
-                console.log('TRUE WAY')
+            if(this.areAlltheFieldsFilled()) {
                 console.log('=================================================')
+                if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
+                    console.log('MEMORYSELECTED', this.memorySelected);
+                    await this.reqItemSave();
+                    console.log('TRUE WAY')
+                    console.log('=================================================')
+                } else {
+                    this.memorySelected = this.jsonData.tipo_requerimiento_id;
+                    console.log('MEMORYSELECTED', this.memorySelected);
+                    await this.requerimientoFirstSave()
+                    await this.reqItemSave();
+                    console.log('FALSE WAY')
+                    console.log('=================================================')
+                }
+                await this.listarRequerimientoItem();
+                await this.cleanFormReqItem();
             } else {
-                this.memorySelected = this.jsonData.tipo_requerimiento_id;
-                console.log('MEMORYSELECTED', this.memorySelected);
-                await this.requerimientoFirstSave()
-                await this.reqItemSave();
-                console.log('FALSE WAY')
-                console.log('=================================================')
+                alert('Por favor complete todos los campos');
             }
-            await this.listarRequerimientoItem();
-            // this.limpiar_formulario();
         },
         // Editar Requerimiento en Obra
         editar(data = {}) {
@@ -1376,12 +1363,11 @@ export default {
                 }
             }
             arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
             });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
         },
-
         async listarItemRelacion() {
             const responseReqRelacion = (await axios.get('get_requerimiento_relacion')).data;
             this.rows1 = await this.filterListItemRelacion(responseReqRelacion);
@@ -1401,6 +1387,7 @@ export default {
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
             console.log('SAVE ITEM RELACION', itemRelacion.data);
+            await this.cleanFormItemRelacion()
             await this.listarItemRelacion();
         },
         async editarItemRelacion(data = {}) {
@@ -1460,7 +1447,7 @@ export default {
                 }
             }
             arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
             });
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
@@ -1483,9 +1470,10 @@ export default {
             datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
             const itemOtrosGastos = await axios.post('create_requerimiento_otros_gastos', datos_jsonData);
             console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
-            await this.listarItemOtrosGastos()
+            await this.listarItemOtrosGastos();
+            await this.cleanFormOtrosGastos();
         },
-        async editarItemOtrosGastos(data={}) {
+        async editarItemOtrosGastos(data = {}) {
             this.jsonData.codigo_otros = data.codigo_recurso;
             this.jsonData.descripcion_otros = data.descripcion_recurso;
             this.jsonData.simbolo_otros = data.unidad_id;
@@ -1516,6 +1504,39 @@ export default {
             this.combo_otros_gastos = responseOtrosGastos.filter(item => item.tipo_requerimiento_id === 4);
             console.log('REQUERIMIENTO OTROS', this.combo_otros_gastos);
         },
+        async cleanFormReqItem() {
+            this.jsonData.requerimiento_recurso_id = '';
+            this.jsonData.cantidad_recurso = '';
+            this.jsonData.horas_recurso = '';
+            this.jsonData.dias_recurso = '';
+            this.jsonData.tiempo_total_recurso = '';
+            this.jsonData.precio_referencia_recurso = '';
+
+            this.jsonData.descripcion_recurso = '';
+            this.jsonData.simbolo = '';
+            this.jsonData.codigo_recurso = '';
+        },
+        async cleanFormItemRelacion() {
+            this.jsonData.item_codigo = '';
+            this.jsonData.item_descripcion = '';
+            this.jsonData.item_simbolo = '';
+
+            this.jsonData.item_vigente = '';
+            this.jsonData.item_avance = '';
+            this.jsonData.item_saldo = '';
+            this.jsonData.item_estimado = '';
+            this.jsonData.item_precio_unitario = '';
+        },
+        async cleanFormOtrosGastos() {
+            this.jsonData.codigo_otros = '';
+            this.jsonData.descripcion_otros = '';
+            this.jsonData.simbolo_otros = '';
+
+            this.jsonData.cantidad_otros = '';
+            this.jsonData.monto_otros = '';
+            this.jsonData.explicar_otros = '';
+        },
+
         async seleccionar_cont_primario() {
             const respuesta = await axios.get('documents');
             const principales = respuesta.data.filter((item) => item.document_types_id === 1)
@@ -1538,7 +1559,7 @@ export default {
             this.id_eliminacion = id;
             this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
         },
-        detectActiveTab(currentTab){
+        detectActiveTab(currentTab) {
             this.tabSelected = currentTab;
         },
         respuestaModalAlertaConfirmacion(datos) {
@@ -1551,7 +1572,7 @@ export default {
                 } else if (this.tabSelected === "profile") {
                     this.eliminarItemRelacion(this.id_eliminacion);
 
-                } else if(this.tabSelected === "messages"){
+                } else if (this.tabSelected === "messages") {
                     this.eliminarItemOtrosGastos(this.id_eliminacion);
                 }
                 console.log('ID DOC', this.tabSelected);
@@ -1730,8 +1751,8 @@ export default {
             jsonData: {
                 //REQUERIMIENTO OBRA
                 id: "",
-                correlativo_requerimiento: '/2022',
-                nuri_requerimiento: '/2022',
+                correlativo_requerimiento: null,
+                nuri_requerimiento: '',
                 requerimiento_id: '',
                 tipo_requerimiento_id: 5,
                 codigo_recurso: '',
@@ -1743,7 +1764,7 @@ export default {
                 doc_legal: {},
                 objetivo: {},
                 document_id: '',
-                descripcion_requerimiento: '<p>prueba <b>planolla inicial si</b> carga file</p>',
+                descripcion_requerimiento: '',
                 requerimiento_recurso_id: '',
                 descripcion_recurso: '',
                 unidad_id: '',
@@ -1772,12 +1793,13 @@ export default {
                 ///FIN RELACION
                 codigo_otros: '',
                 descripcion_otros: '',
-                fecha_requerimiento: '2022/01/01',
                 gastos_generales: 'se explica en que gatsos generales se trabajara',
                 simbolo_otros: '',
                 cantidad_otros: '',
                 monto_otros: '',
                 explicar_otros: '',
+                fecha_requerimiento: '',
+                fechaFormatted: '',
 
             },
             rows: [],
