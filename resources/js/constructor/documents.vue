@@ -571,9 +571,6 @@ export default {
                 this.jsonData.document_types_id.id !== 2) {
                 this.jsonData.contratante_id = contratante;
                 this.jsonData.contratado_id = contratado;
-            } else {
-                this.jsonData.contratante_id = '';
-                this.jsonData.contratado_id = '';
             }
 
         },
