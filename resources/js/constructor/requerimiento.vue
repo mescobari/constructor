@@ -89,6 +89,16 @@
                                                 <label for="customRadio4"
                                                        class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
+                                                <div>
+<!--                                                    <input type="checkbox" class="custom-control-input" id="customCheck1"-->
+<!--                                                           value="1" v-model="jsonData.modifica">-->
+<!--                                                    <label class="custom-control-label" for="customCheck1">TODO</label>-->
+                                                    <input class="form-check-input" v-if="jsonData.tipo_requerimiento_id==4" type="checkbox" value="5"
+                                                           id="flexCheckDefault">
+                                                    <label class="form-check-label"  for="flexCheckDefault">
+                                                        TODO
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1273,7 +1283,7 @@ export default {
         },
         //Guardar Requerimiento en Obra
         async guardar() {
-            if(this.areAlltheFieldsFilled()) {
+            if (this.areAlltheFieldsFilled()) {
                 console.log('=================================================')
                 if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
                     console.log('MEMORYSELECTED', this.memorySelected);
