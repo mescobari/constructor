@@ -121,7 +121,9 @@
                                     <div class="form-group">
                                         <label for="descripcion">Contratante:</label>
                                         <v-select label="nombre" :options="cla_institucional"
-                                                  v-model="jsonData.contratante_id" placeholder="Selecione una opción">
+                                                  v-model="jsonData.contratante_id"
+                                                  placeholder="Selecione una opción"
+                                                  v-bind:disabled="disableSub">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -150,29 +152,28 @@
 
                             <div class="col-md-8">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="tipo_intervencion">Documento Padre:</label>
                                             <v-select label="nombre" :options="combo_padres"
                                                       v-model="jsonData.padre"
                                                       placeholder="Seleccione una opción"
+                                                      @input="selectContratanteContratado"
                                                       v-bind:disabled="disablePadre">
-                                                <!--                                                        <span  v-if="disablePadre===true">v-bind:aria-disabled="tipo_intervenciones"</span>-->
-                                                <!--                                                      v-on:disabled="computed.disabled"-->
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>
-                                            <v-select label="nombre" :options="unidades_ejecutoras"
-                                                      v-model="jsonData.unidad_ejecutora_id"
-                                                      placeholder="Selecione una opción">
-                                                <span slot="no-options">No hay data para cargar</span>
-                                            </v-select>
-                                        </div>
-                                    </div>
+                                    <!--                                    <div class="col-md-6">-->
+                                    <!--                                        <div class="form-group">-->
+                                    <!--                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>-->
+                                    <!--                                            <v-select label="nombre" :options="unidades_ejecutoras"-->
+                                    <!--                                                      v-model="jsonData.unidad_ejecutora_id"-->
+                                    <!--                                                      placeholder="Selecione una opción">-->
+                                    <!--                                                <span slot="no-options">No hay data para cargar</span>-->
+                                    <!--                                            </v-select>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -185,7 +186,9 @@
                                     <div class="form-group col-md-6">
                                         <label for="institucion_contratado">Contratado:</label>
                                         <v-select label="nombre" :options="cla_institucional"
-                                                  v-model="jsonData.contratado_id" placeholder="Selecione una opción">
+                                                  v-model="jsonData.contratado_id"
+                                                  placeholder="Selecione una opción"
+                                                  v-bind:disabled="disableSub2">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -341,6 +344,8 @@ export default {
             guardar_bottom: false,
             modificar_bottom: false,
             disablePadre: false,
+            disableSub: false,
+            disableSub2: false,
             combo_padres: [],
             tituloIntervencionModal: '',
             unidades_ejecutoras: [],
@@ -512,24 +517,62 @@ export default {
         async cambioTipoDocumento() {
             let padresObjeto = await this.padreGetAll()
             let subPadres = []
-            switch(this.jsonData.document_types_id.id) {
+            switch (this.jsonData.document_types_id.id) {
                 case 1:
                     this.disablePadre = true;
                     this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
+                    this.jsonData.contratado_id = [{
+                        id: 271,
+                        nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+                    }];
+                    this.jsonData.contratante_id = '';
+                    this.disableSub = false;
+                    this.disableSub2 = true;
                     break;
                 case 2:
-                    for (let i=0; i < padresObjeto.length; i++) {
+                    for (let i = 0; i < padresObjeto.length; i++) {
                         if (padresObjeto[i].padre === 0) {
                             subPadres.push(padresObjeto[i]);
                         }
                         this.combo_padres = subPadres;
                         this.disablePadre = false;
+                        this.disableSub = true;
+                        this.disableSub2 = false;
+                        this.jsonData.contratante_id = [{
+                            id: 271,
+                            nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+                        }];
+                        this.jsonData.contratado_id = '';
                     }
                     break;
                 default:
+                    console.log("DEFAULT", this.jsonData.document_types_id.id);
+                    // this.jsonData.contratante_id = '';
+                    // this.jsonData.contratado_id = '';
                     this.combo_padres = padresObjeto;
                     this.disablePadre = false;
+                    this.disableSub = true;
+                    this.disableSub2 = true;
+                    if (this.jsonData.padre != null || this.jsonData.padre != '') {
+                        this.jsonData.contratado_id = '';
+                        this.jsonData.contratante_id = '';
+                    }
             }
+        },
+        async selectContratanteContratado() {
+            let contratanteContratado = (await axios.get('cla_institucional')).data;
+            console.log('PADRE', this.jsonData.padre);
+            const contratante = contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id);
+            const contratado = contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id);
+            console.log("CONTRATANTE", contratante);
+            console.log("CONTRATADO", contratado);
+            if (this.disablePadre === false &&
+                this.jsonData.document_types_id.id !== 1 &&
+                this.jsonData.document_types_id.id !== 2) {
+                this.jsonData.contratante_id = contratante[0];
+                this.jsonData.contratado_id = contratado[0];
+            }
+
         },
         preguntarModalAlertaConfirmacionEliminar(document) {
             this.mandarMensajesAlerta = {
@@ -558,7 +601,7 @@ export default {
             this.rows = respuesta.data.map(documento => {
 
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
-                documento.tipo_documento = getDocumentTypes[documento.document_types_id-1].nombre;
+                documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
@@ -567,8 +610,21 @@ export default {
 
             // this.rows = documentos;
         },
-        async guardar() {
-            console.log(this.jsonData);
+        areAlltheFieldsFilled() {
+            return this.jsonData.document_types_id !== null &&
+                this.jsonData.padre !== null &&
+                this.jsonData.contratante_id.id !== null &&
+                this.jsonData.contratado_id.id !== null &&
+                this.jsonData.duracion_dias !== null &&
+                this.jsonData.fecha_firma !== null &&
+                this.jsonData.codigo !== null &&
+                this.jsonData.nombre !== null &&
+                this.jsonData.monto_bs !== null &&
+                this.jsonData.objeto !== null &&
+                this.jsonData.modifica !== null &&
+                this.jsonData.files !== null;
+        },
+        async contratoSave(){
             let datos_jsonData = new FormData();
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             if (this.jsonData.document_types_id.id === 1) {
@@ -576,7 +632,7 @@ export default {
             } else {
                 datos_jsonData.append('padre', this.jsonData.padre.id);
             }
-            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
+            datos_jsonData.append('unidad_ejecutora_id', '1'/*this.jsonData.unidad_ejecutora_id.id*/);
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
             datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
@@ -591,8 +647,15 @@ export default {
             datos_jsonData.append('files', this.jsonData.files);
             let respuesta = await axios.post('documents', datos_jsonData);
             console.log("SAVE", respuesta.data);
-            document.getElementById("cerrarModal").click();
-            await this.listar();
+        },
+        async guardar() {
+            if(this.areAlltheFieldsFilled()) {
+                await this.contratoSave()
+                document.getElementById("cerrarModal").click();
+                await this.listar();
+            } else {
+                alert('Debe llenar todos campos');
+            }
         },
         async modificar() {
             let datos_jsonData = new FormData();

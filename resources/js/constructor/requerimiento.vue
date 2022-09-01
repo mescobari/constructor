@@ -89,14 +89,16 @@
                                                 <label for="customRadio4"
                                                        class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
-                                            </div>
-                                            <div class="custom-control custom-radio">
-                                                <input class="custom-control-input" type="radio" id="customRadio5"
-                                                       value="5" v-model="jsonData.tipo_requerimiento_id"
-                                                       v-bind:disabled="clickedAdd"/>
-                                                <label for="customRadio5"
-                                                       class="custom-control-label font-weight-normal">Llave en
-                                                    Mano</label>
+                                                <div>
+<!--                                                    <input type="checkbox" class="custom-control-input" id="customCheck1"-->
+<!--                                                           value="1" v-model="jsonData.modifica">-->
+<!--                                                    <label class="custom-control-label" for="customCheck1">TODO</label>-->
+                                                    <input class="form-check-input" v-if="jsonData.tipo_requerimiento_id==5" type="checkbox" value="5"
+                                                           id="flexCheckDefault">
+                                                    <label class="form-check-label"  for="flexCheckDefault">
+                                                        TODO
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1281,7 +1283,7 @@ export default {
         },
         //Guardar Requerimiento en Obra
         async guardar() {
-            if(this.areAlltheFieldsFilled()) {
+            if (this.areAlltheFieldsFilled()) {
                 console.log('=================================================')
                 if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
                     console.log('MEMORYSELECTED', this.memorySelected);
@@ -1754,7 +1756,7 @@ export default {
                 correlativo_requerimiento: null,
                 nuri_requerimiento: '',
                 requerimiento_id: '',
-                tipo_requerimiento_id: 5,
+                tipo_requerimiento_id: 4,
                 codigo_recurso: '',
                 proyectos: '',
                 tipos_documento: {},
