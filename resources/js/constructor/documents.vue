@@ -152,7 +152,7 @@
 
                             <div class="col-md-8">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="tipo_intervencion">Documento Padre:</label>
                                             <v-select label="nombre" :options="combo_padres"
@@ -164,16 +164,16 @@
                                             </v-select>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>
-                                            <v-select label="nombre" :options="unidades_ejecutoras"
-                                                      v-model="jsonData.unidad_ejecutora_id"
-                                                      placeholder="Selecione una opción">
-                                                <span slot="no-options">No hay data para cargar</span>
-                                            </v-select>
-                                        </div>
-                                    </div>
+<!--                                    <div class="col-md-6">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>-->
+<!--                                            <v-select label="nombre" :options="unidades_ejecutoras"-->
+<!--                                                      v-model="jsonData.unidad_ejecutora_id"-->
+<!--                                                      placeholder="Selecione una opción">-->
+<!--                                                <span slot="no-options">No hay data para cargar</span>-->
+<!--                                            </v-select>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -619,7 +619,7 @@ export default {
             } else {
                 datos_jsonData.append('padre', this.jsonData.padre.id);
             }
-            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
+            datos_jsonData.append('unidad_ejecutora_id', '1'/*this.jsonData.unidad_ejecutora_id.id*/);
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
             datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
