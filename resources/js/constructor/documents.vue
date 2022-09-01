@@ -121,7 +121,9 @@
                                     <div class="form-group">
                                         <label for="descripcion">Contratante:</label>
                                         <v-select label="nombre" :options="cla_institucional"
-                                                  v-model="jsonData.contratante_id" placeholder="Selecione una opción">
+                                                  v-model="jsonData.contratante_id"
+                                                  placeholder="Selecione una opción"
+                                                  v-bind:disabled="disableSub">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -157,8 +159,6 @@
                                                       v-model="jsonData.padre"
                                                       placeholder="Seleccione una opción"
                                                       v-bind:disabled="disablePadre">
-                                                <!--                                                        <span  v-if="disablePadre===true">v-bind:aria-disabled="tipo_intervenciones"</span>-->
-                                                <!--                                                      v-on:disabled="computed.disabled"-->
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
                                         </div>
@@ -185,7 +185,9 @@
                                     <div class="form-group col-md-6">
                                         <label for="institucion_contratado">Contratado:</label>
                                         <v-select label="nombre" :options="cla_institucional"
-                                                  v-model="jsonData.contratado_id" placeholder="Selecione una opción">
+                                                  v-model="jsonData.contratado_id"
+                                                  placeholder="Selecione una opción"
+                                                  v-bind:disabled="disablePadre">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -341,6 +343,7 @@ export default {
             guardar_bottom: false,
             modificar_bottom: false,
             disablePadre: false,
+            disableSub: false,
             combo_padres: [],
             tituloIntervencionModal: '',
             unidades_ejecutoras: [],
@@ -512,22 +515,35 @@ export default {
         async cambioTipoDocumento() {
             let padresObjeto = await this.padreGetAll()
             let subPadres = []
-            switch(this.jsonData.document_types_id.id) {
+            switch (this.jsonData.document_types_id.id) {
                 case 1:
                     this.disablePadre = true;
                     this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
+                    this.jsonData.contratado_id = [{
+                        id: 271,
+                        nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+                    }];
+                    this.jsonData.contratante_id = '';
+                    this.disableSub = false;
                     break;
                 case 2:
-                    for (let i=0; i < padresObjeto.length; i++) {
+                    for (let i = 0; i < padresObjeto.length; i++) {
                         if (padresObjeto[i].padre === 0) {
                             subPadres.push(padresObjeto[i]);
                         }
                         this.combo_padres = subPadres;
                         this.disablePadre = false;
+                        this.disableSub = true;
+                        this.jsonData.contratante_id = [{
+                            id: 271,
+                            nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+                        }];
+                        this.jsonData.contratado_id = '';
                     }
                     break;
                 default:
                     this.combo_padres = padresObjeto;
+                    // this.cla_institucional =
                     this.disablePadre = false;
             }
         },
@@ -558,7 +574,7 @@ export default {
             this.rows = respuesta.data.map(documento => {
 
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
-                documento.tipo_documento = getDocumentTypes[documento.document_types_id-1].nombre;
+                documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
