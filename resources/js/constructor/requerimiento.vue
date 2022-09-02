@@ -1227,7 +1227,10 @@ export default {
             reqArraybyId = response.data.filter(item => item.tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id)
 
             if (this.jsonData.tipo_requerimiento_id == 4) this.todos = false;
-            else this.todos = true;
+            else {
+                this.todos = true;
+                this.wasChecked = false;
+            }
 
             if (this.wasChecked) reqArraybyId = response.data
 
