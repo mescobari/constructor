@@ -26,7 +26,7 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento en Obra</h6>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Item Relacion</h6>
                             </a>
                         </li>
                     </ul>
@@ -41,7 +41,7 @@
                     <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel"
                          aria-labelledby="custom-tabs-three-home-tab">
                         <!-- hasta aqui el row span> -->
-                        <h4 class="text-danger font-weight-bold">AGREGAR RECURSO SOLICITADOS</h4>
+                        <h4 class="text-danger font-weight-bold">AGREGAR ITEMS RELACIONADOS SOLICITADOS</h4>
 
                         <hr>
 
@@ -122,7 +122,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <br>
-                                        <button type="submit" @click="guardar();"
+                                        <button type="submit" @click="guardarItemRelacion();"
                                                 class="btn btn-success">
                                             Agregar
                                         </button>
@@ -198,7 +198,7 @@
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-outline-warning ml-1"
                                                     data-toggle="modal" data-target="#modal-editar-item"
-                                                    @click="editar(props.row);"><span><i
+                                                    @click="editarItemRelacion(props.row);"><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
                                                     @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
@@ -275,8 +275,8 @@
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento
-                            Item</h5>
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">
+                            Modificar Item Relacionado</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
