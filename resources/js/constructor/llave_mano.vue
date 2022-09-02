@@ -358,7 +358,7 @@
                         <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificar">
+                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificarItemRelacion">
                             Modificar
                         </button>
                     </div>
@@ -402,189 +402,189 @@ export default {
         }
     },
     methods: {
-        async filterList(arrayItems) {
-            const responseRecursos = (await axios.get('requerimientos')).data;
-            const getUnidades = (await axios.get('get_unidades')).data;
-            let arrayItemsFiltered = [];
-            for (let i = 0; i < arrayItems.length; i++) {
-                if (arrayItems[i].requerimiento_id === this.jsonData.requerimiento_id) {
-                    for (let j = 0; j < responseRecursos.length; j++) {
-                        if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
-                            arrayItemsFiltered.push({
-                                ...responseRecursos[j],
-                                //here is the id object
-                                ...arrayItems[i],
-
-                                // ...responseRecursos[j].codigo_recurso,
-                                // ...responseRecursos[j].descripcion_recurso
-                            })
-                            j = responseRecursos.length;
-                        }
-
-                    }
-                }
-            }
-            arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
-            });
-            console.log('LIST CURRENT', arrayItemsFiltered);
-            return arrayItemsFiltered
-        },
-
-        async listarRequerimientoItem() {
-            const response = await axios.get('get_requerimiento_items');
-            const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
-            console.log('ITEM RECURSOS', response.data);
-            this.rows = await this.filterList(response.data);
-            // this.rows = items
-        },
-        async retrieveFromCurrentDescripcionRecurso() {
-
-            const descripcion_recurso = await this.descripcionRecursoGetAll();
-            for (let i = 0; i < descripcion_recurso.length; i++) {
-                if (descripcion_recurso[i].id == this.jsonData.descripcion_recurso.id) {
-                    this.jsonData.codigo_recurso = descripcion_recurso[i].codigo_recurso;
-                    break;
-                }
-            }
-            const responseUnidades = await axios.get('get_unidades');
-            for (let i = 0; i < responseUnidades.data.length; i++) {
-                if (responseUnidades.data[i].id == this.jsonData.descripcion_recurso.unidad_id) {
-                    this.jsonData.simbolo = responseUnidades.data[i].simbolo;
-                    break;
-                }
-            }
-        },
-        async descripcionRecursoGetAll() {
-            let response = await axios.get('requerimientos')
-            return response.data
-        },
-        async descripcionRecursoGetbyType() {
-            let response = await axios.get('requerimientos')
-            let reqArraybyId = []
-
-            for (let i = 0; i < response.data.length; i++) {
-                if (response.data[i].tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id) {
-                    reqArraybyId.push(response.data[i]);
-                }
-            }
-            this.combo_requerimiento_recursos = reqArraybyId;
-        },
-        async tipoDocumentoGetAll() {
-            let respuesta = await axios.get('documentos_legaleses');
-            // this.combo_requerimiento_recursos = respuesta.data;
-            console.log('DOCUMENTOS TIPO', respuesta.data);
-        },
-        async requerimientoFirstSave() {
-            this.jsonData.document_id = this.jsonData.proyectos.id
-            console.log('DOCUMENT ID', this.jsonData.document_id);
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('document_id', this.jsonData.document_id);
-            datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
-            datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
-            let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
-            this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
-            datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
-            datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
-            datos_jsonData.append('descripcion_requerimiento', this.jsonData.descripcion_requerimiento)
-            datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
-            datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
-            datos_jsonData.append('files', this.jsonData.files);
-            this.clickedAdd = true;
-            let response = await axios.post('create_requerimiento', datos_jsonData);
-            console.log('CREATE REQ', response.data);
-        },
-        async reqItemSave() {
-            const response_req = await axios.get('get_requerimientos');
-            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-            this.jsonData.requerimiento_recurso_id = this.jsonData.descripcion_recurso.id;
-
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
-            datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
-            datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
-            datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
-            datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
-            datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
-            const response = await axios.post('requerimientos', datos_jsonData);
-            console.log("SAVE ITEM REQ", response.data);
-        },
-        areAlltheFieldsFilled() {
-            return this.jsonData.descripcion_recurso.id != null &&
-                this.jsonData.cantidad_recurso != null &&
-                this.jsonData.horas_recurso != null &&
-                this.jsonData.dias_recurso != null &&
-                this.jsonData.tiempo_total_recurso != null &&
-                this.jsonData.precio_referencia_recurso != null &&
-                this.jsonData.nuri_requerimiento != null &&
-                this.jsonData.descripcion_requerimiento != null &&
-                this.jsonData.tipo_requerimiento_id != null &&
-                this.jsonData.fecha_requerimiento != null &&
-                this.jsonData.fecha_requerimiento !== "" &&
-                this.jsonData.files != null;
-        },
-        //Guardar Requerimiento en Obra
-        async guardar() {
-            if(this.areAlltheFieldsFilled()) {
-                console.log('=================================================')
-                if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-                    console.log('MEMORYSELECTED', this.memorySelected);
-                    await this.reqItemSave();
-                    console.log('TRUE WAY')
-                    console.log('=================================================')
-                } else {
-                    this.memorySelected = this.jsonData.tipo_requerimiento_id;
-                    console.log('MEMORYSELECTED', this.memorySelected);
-                    await this.requerimientoFirstSave()
-                    await this.reqItemSave();
-                    console.log('FALSE WAY')
-                    console.log('=================================================')
-                }
-                await this.listarRequerimientoItem();
-                await this.cleanFormReqItem();
-            } else {
-                alert('Por favor complete todos los campos');
-            }
-        },
+        // async filterList(arrayItems) {
+        //     const responseRecursos = (await axios.get('requerimientos')).data;
+        //     const getUnidades = (await axios.get('get_unidades')).data;
+        //     let arrayItemsFiltered = [];
+        //     for (let i = 0; i < arrayItems.length; i++) {
+        //         if (arrayItems[i].requerimiento_id === this.jsonData.requerimiento_id) {
+        //             for (let j = 0; j < responseRecursos.length; j++) {
+        //                 if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
+        //                     arrayItemsFiltered.push({
+        //                         ...responseRecursos[j],
+        //                         //here is the id object
+        //                         ...arrayItems[i],
+        //
+        //                         // ...responseRecursos[j].codigo_recurso,
+        //                         // ...responseRecursos[j].descripcion_recurso
+        //                     })
+        //                     j = responseRecursos.length;
+        //                 }
+        //
+        //             }
+        //         }
+        //     }
+        //     arrayItemsFiltered.map(item => {
+        //         item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
+        //     });
+        //     console.log('LIST CURRENT', arrayItemsFiltered);
+        //     return arrayItemsFiltered
+        // },
+        //
+        // async listarRequerimientoItem() {
+        //     const response = await axios.get('get_requerimiento_items');
+        //     const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
+        //     console.log('ITEM RECURSOS', response.data);
+        //     this.rows = await this.filterList(response.data);
+        //     // this.rows = items
+        // },
+        // async retrieveFromCurrentDescripcionRecurso() {
+        //
+        //     const descripcion_recurso = await this.descripcionRecursoGetAll();
+        //     for (let i = 0; i < descripcion_recurso.length; i++) {
+        //         if (descripcion_recurso[i].id == this.jsonData.descripcion_recurso.id) {
+        //             this.jsonData.codigo_recurso = descripcion_recurso[i].codigo_recurso;
+        //             break;
+        //         }
+        //     }
+        //     const responseUnidades = await axios.get('get_unidades');
+        //     for (let i = 0; i < responseUnidades.data.length; i++) {
+        //         if (responseUnidades.data[i].id == this.jsonData.descripcion_recurso.unidad_id) {
+        //             this.jsonData.simbolo = responseUnidades.data[i].simbolo;
+        //             break;
+        //         }
+        //     }
+        // },
+        // async descripcionRecursoGetAll() {
+        //     let response = await axios.get('requerimientos')
+        //     return response.data
+        // },
+        // async descripcionRecursoGetbyType() {
+        //     let response = await axios.get('requerimientos')
+        //     let reqArraybyId = []
+        //
+        //     for (let i = 0; i < response.data.length; i++) {
+        //         if (response.data[i].tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id) {
+        //             reqArraybyId.push(response.data[i]);
+        //         }
+        //     }
+        //     this.combo_requerimiento_recursos = reqArraybyId;
+        // },
+        // async tipoDocumentoGetAll() {
+        //     let respuesta = await axios.get('documentos_legaleses');
+        //     // this.combo_requerimiento_recursos = respuesta.data;
+        //     console.log('DOCUMENTOS TIPO', respuesta.data);
+        // },
+        // async requerimientoFirstSave() {
+        //     this.jsonData.document_id = this.jsonData.proyectos.id
+        //     console.log('DOCUMENT ID', this.jsonData.document_id);
+        //     let datos_jsonData = new FormData();
+        //     datos_jsonData.append('document_id', this.jsonData.document_id);
+        //     datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
+        //     datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
+        //     let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
+        //     this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
+        //     datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
+        //     datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
+        //     datos_jsonData.append('descripcion_requerimiento', this.jsonData.descripcion_requerimiento)
+        //     datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
+        //     datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
+        //     datos_jsonData.append('files', this.jsonData.files);
+        //     this.clickedAdd = true;
+        //     let response = await axios.post('create_requerimiento', datos_jsonData);
+        //     console.log('CREATE REQ', response.data);
+        // },
+        // async reqItemSave() {
+        //     const response_req = await axios.get('get_requerimientos');
+        //     this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
+        //     this.jsonData.requerimiento_recurso_id = this.jsonData.descripcion_recurso.id;
+        //
+        //     let datos_jsonData = new FormData();
+        //     datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+        //     datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
+        //     datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
+        //     datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
+        //     datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
+        //     datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
+        //     datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
+        //     const response = await axios.post('requerimientos', datos_jsonData);
+        //     console.log("SAVE ITEM REQ", response.data);
+        // },
+        // areAlltheFieldsFilled() {
+        //     return this.jsonData.descripcion_recurso.id != null &&
+        //         this.jsonData.cantidad_recurso != null &&
+        //         this.jsonData.horas_recurso != null &&
+        //         this.jsonData.dias_recurso != null &&
+        //         this.jsonData.tiempo_total_recurso != null &&
+        //         this.jsonData.precio_referencia_recurso != null &&
+        //         this.jsonData.nuri_requerimiento != null &&
+        //         this.jsonData.descripcion_requerimiento != null &&
+        //         this.jsonData.tipo_requerimiento_id != null &&
+        //         this.jsonData.fecha_requerimiento != null &&
+        //         this.jsonData.fecha_requerimiento !== "" &&
+        //         this.jsonData.files != null;
+        // },
+        // //Guardar Requerimiento en Obra
+        // async guardar() {
+        //     if(this.areAlltheFieldsFilled()) {
+        //         console.log('=================================================')
+        //         if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
+        //             console.log('MEMORYSELECTED', this.memorySelected);
+        //             await this.reqItemSave();
+        //             console.log('TRUE WAY')
+        //             console.log('=================================================')
+        //         } else {
+        //             this.memorySelected = this.jsonData.tipo_requerimiento_id;
+        //             console.log('MEMORYSELECTED', this.memorySelected);
+        //             await this.requerimientoFirstSave()
+        //             await this.reqItemSave();
+        //             console.log('FALSE WAY')
+        //             console.log('=================================================')
+        //         }
+        //         await this.listarRequerimientoItem();
+        //         await this.cleanFormReqItem();
+        //     } else {
+        //         alert('Por favor complete todos los campos');
+        //     }
+        // },
         // Editar Requerimiento en Obra
-        editar(data = {}) {
-            this.jsonData.id = data.id;
-            this.jsonData.codigo_recurso = data.codigo_recurso;
-            this.jsonData.descripcion_recursos = data.descripcion_recurso;
-            this.jsonData.unidad_id = data.unidad_id;
-            //this object will be modified in the next step
-            this.jsonData.cantidad_recurso = data.cantidad_recurso;
-            this.jsonData.horas_recurso = data.horas_recurso;
-            this.jsonData.dias_recurso = data.dias_recurso;
-            this.jsonData.tiempo_total_recurso = data.tiempo_total_recurso;
-            this.jsonData.precio_referencia_recurso = data.precio_referencia_recurso;
-            //Behavior Modal Components
-            this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
-            console.log('EDITAR REQ ITEM', data);
-        },
-        async modificar() {
-            const response_req = await axios.get('get_requerimientos');
-            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
-            datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
-            datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
-            datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
-            datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
-            datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
-            datos_jsonData.append('id', this.jsonData.id);
-            const response = await axios.post('update_requerimiento_item' + this.jsonData.id, datos_jsonData);
-            console.log('UPDATE REQ ITEM', response.data);
-            document.getElementById("cerrarModal").click();
-            // this.limpiar_formulario();
-        },
-        async eliminar(id) {
-            const response = await axios.delete('delete_requerimiento_obra/' + id);
-            console.log('DELETE ITEM OBRA', response.data);
-            await this.listarRequerimientoItem();
-        },
+        // editar(data = {}) {
+        //     this.jsonData.id = data.id;
+        //     this.jsonData.codigo_recurso = data.codigo_recurso;
+        //     this.jsonData.descripcion_recursos = data.descripcion_recurso;
+        //     this.jsonData.unidad_id = data.unidad_id;
+        //     //this object will be modified in the next step
+        //     this.jsonData.cantidad_recurso = data.cantidad_recurso;
+        //     this.jsonData.horas_recurso = data.horas_recurso;
+        //     this.jsonData.dias_recurso = data.dias_recurso;
+        //     this.jsonData.tiempo_total_recurso = data.tiempo_total_recurso;
+        //     this.jsonData.precio_referencia_recurso = data.precio_referencia_recurso;
+        //     //Behavior Modal Components
+        //     this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
+        //     console.log('EDITAR REQ ITEM', data);
+        // },
+        // async modificar() {
+        //     const response_req = await axios.get('get_requerimientos');
+        //     this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
+        //     let datos_jsonData = new FormData();
+        //     datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+        //     datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
+        //     datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
+        //     datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
+        //     datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
+        //     datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
+        //     datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
+        //     datos_jsonData.append('id', this.jsonData.id);
+        //     const response = await axios.post('update_requerimiento_item' + this.jsonData.id, datos_jsonData);
+        //     console.log('UPDATE REQ ITEM', response.data);
+        //     document.getElementById("cerrarModal").click();
+        //     // this.limpiar_formulario();
+        // },
+        // async eliminar(id) {
+        //     const response = await axios.delete('delete_requerimiento_obra/' + id);
+        //     console.log('DELETE ITEM OBRA', response.data);
+        //     await this.listarRequerimientoItem();
+        // },
         async filterListItemRelacion(arrayRequerimientoRelacion) {
             const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
             const getUnidades = (await axios.get('get_unidades')).data;
