@@ -105,7 +105,7 @@
                                             <label for="nombre">Avance Contratado:</label>
                                             <input type="text" class="form-control" name="plazo"
                                                    placeholder="dias de ejecucion"
-                                                   v-model="jsonData.item_avance_contratado">
+                                                   v-model="jsonData.item_estimado">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -285,7 +285,7 @@
                         <div class="row bg-info">
                             <div class="col-md-1">
                                 <div class="form-group">
-                                    <label for="codigo_recurso">Codigo:</label>
+                                    <label for="item_codigo">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
                                            v-model="jsonData.item_codigo" disabled>
                                 </div>
@@ -294,10 +294,10 @@
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Item Relacionado:</label>
-                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                    <v-select label="item_descripcion" :options="combo_items_planilla"
                                               v-model="jsonData.item_descripcion"
                                               placeholder="Selecione una opción"
-                                              @input="retrieveFromCurrentDescripcionRecurso">
+                                              @input="getNameForItemRelacion">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
                                 </div>
@@ -324,14 +324,16 @@
                                         <div class="form-group">
                                             <label for="nombre">Avance Acumulado</label>
                                             <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas" v-model="jsonData.item_avance">
+                                                   placeholder="Horas Requeridas"
+                                                   v-model="jsonData.item_avance">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="nombre">Saldo</label>
                                             <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.item_saldo">
+                                                   placeholder="Dias Requeridos"
+                                                   v-model="jsonData.item_saldo">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -339,15 +341,17 @@
                                             <label for="nombre">Avance Contratado</label>
                                             <input type="text" class="form-control" name="plazo"
                                                    placeholder="dias de ejecucion"
-                                                   v-model="jsonData.item_avance_contratado">
+                                                   v-model="jsonData.item_estimado">
+                                            <!--este es el avance contratado-->
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label for="nombre">Precio Unitario</label>
+                                            <label for="nombre">Precio Contratado</label>
                                             <input type="text" class="form-control" name="referencial"
                                                    placeholder="precio referencial"
                                                    v-model="jsonData.item_precio_unitario">
+                                            <!--este es el avance contratado-->
                                         </div>
                                     </div>
                                 </div>
@@ -403,189 +407,7 @@ export default {
         }
     },
     methods: {
-        // async filterList(arrayItems) {
-        //     const responseRecursos = (await axios.get('requerimientos')).data;
-        //     const getUnidades = (await axios.get('get_unidades')).data;
-        //     let arrayItemsFiltered = [];
-        //     for (let i = 0; i < arrayItems.length; i++) {
-        //         if (arrayItems[i].requerimiento_id === this.jsonData.requerimiento_id) {
-        //             for (let j = 0; j < responseRecursos.length; j++) {
-        //                 if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
-        //                     arrayItemsFiltered.push({
-        //                         ...responseRecursos[j],
-        //                         //here is the id object
-        //                         ...arrayItems[i],
-        //
-        //                         // ...responseRecursos[j].codigo_recurso,
-        //                         // ...responseRecursos[j].descripcion_recurso
-        //                     })
-        //                     j = responseRecursos.length;
-        //                 }
-        //
-        //             }
-        //         }
-        //     }
-        //     arrayItemsFiltered.map(item => {
-        //         item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
-        //     });
-        //     console.log('LIST CURRENT', arrayItemsFiltered);
-        //     return arrayItemsFiltered
-        // },
-        //
-        // async listarRequerimientoItem() {
-        //     const response = await axios.get('get_requerimiento_items');
-        //     const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
-        //     console.log('ITEM RECURSOS', response.data);
-        //     this.rows = await this.filterList(response.data);
-        //     // this.rows = items
-        // },
-        // async retrieveFromCurrentDescripcionRecurso() {
-        //
-        //     const descripcion_recurso = await this.descripcionRecursoGetAll();
-        //     for (let i = 0; i < descripcion_recurso.length; i++) {
-        //         if (descripcion_recurso[i].id == this.jsonData.descripcion_recurso.id) {
-        //             this.jsonData.codigo_recurso = descripcion_recurso[i].codigo_recurso;
-        //             break;
-        //         }
-        //     }
-        //     const responseUnidades = await axios.get('get_unidades');
-        //     for (let i = 0; i < responseUnidades.data.length; i++) {
-        //         if (responseUnidades.data[i].id == this.jsonData.descripcion_recurso.unidad_id) {
-        //             this.jsonData.simbolo = responseUnidades.data[i].simbolo;
-        //             break;
-        //         }
-        //     }
-        // },
-        // async descripcionRecursoGetAll() {
-        //     let response = await axios.get('requerimientos')
-        //     return response.data
-        // },
-        // async descripcionRecursoGetbyType() {
-        //     let response = await axios.get('requerimientos')
-        //     let reqArraybyId = []
-        //
-        //     for (let i = 0; i < response.data.length; i++) {
-        //         if (response.data[i].tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id) {
-        //             reqArraybyId.push(response.data[i]);
-        //         }
-        //     }
-        //     this.combo_requerimiento_recursos = reqArraybyId;
-        // },
-        // async tipoDocumentoGetAll() {
-        //     let respuesta = await axios.get('documentos_legaleses');
-        //     // this.combo_requerimiento_recursos = respuesta.data;
-        //     console.log('DOCUMENTOS TIPO', respuesta.data);
-        // },
-        // async requerimientoFirstSave() {
-        //     this.jsonData.document_id = this.jsonData.proyectos.id
-        //     console.log('DOCUMENT ID', this.jsonData.document_id);
-        //     let datos_jsonData = new FormData();
-        //     datos_jsonData.append('document_id', this.jsonData.document_id);
-        //     datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
-        //     datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
-        //     let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
-        //     this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
-        //     datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
-        //     datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
-        //     datos_jsonData.append('descripcion_requerimiento', this.jsonData.descripcion_requerimiento)
-        //     datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
-        //     datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
-        //     datos_jsonData.append('files', this.jsonData.files);
-        //     this.clickedAdd = true;
-        //     let response = await axios.post('create_requerimiento', datos_jsonData);
-        //     console.log('CREATE REQ', response.data);
-        // },
-        // async reqItemSave() {
-        //     const response_req = await axios.get('get_requerimientos');
-        //     this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-        //     this.jsonData.requerimiento_recurso_id = this.jsonData.descripcion_recurso.id;
-        //
-        //     let datos_jsonData = new FormData();
-        //     datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-        //     datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
-        //     datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
-        //     datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
-        //     datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
-        //     datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
-        //     datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
-        //     const response = await axios.post('requerimientos', datos_jsonData);
-        //     console.log("SAVE ITEM REQ", response.data);
-        // },
-        // areAlltheFieldsFilled() {
-        //     return this.jsonData.descripcion_recurso.id != null &&
-        //         this.jsonData.cantidad_recurso != null &&
-        //         this.jsonData.horas_recurso != null &&
-        //         this.jsonData.dias_recurso != null &&
-        //         this.jsonData.tiempo_total_recurso != null &&
-        //         this.jsonData.precio_referencia_recurso != null &&
-        //         this.jsonData.nuri_requerimiento != null &&
-        //         this.jsonData.descripcion_requerimiento != null &&
-        //         this.jsonData.tipo_requerimiento_id != null &&
-        //         this.jsonData.fecha_requerimiento != null &&
-        //         this.jsonData.fecha_requerimiento !== "" &&
-        //         this.jsonData.files != null;
-        // },
-        // //Guardar Requerimiento en Obra
-        // async guardar() {
-        //     if(this.areAlltheFieldsFilled()) {
-        //         console.log('=================================================')
-        //         if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-        //             console.log('MEMORYSELECTED', this.memorySelected);
-        //             await this.reqItemSave();
-        //             console.log('TRUE WAY')
-        //             console.log('=================================================')
-        //         } else {
-        //             this.memorySelected = this.jsonData.tipo_requerimiento_id;
-        //             console.log('MEMORYSELECTED', this.memorySelected);
-        //             await this.requerimientoFirstSave()
-        //             await this.reqItemSave();
-        //             console.log('FALSE WAY')
-        //             console.log('=================================================')
-        //         }
-        //         await this.listarRequerimientoItem();
-        //         await this.cleanFormReqItem();
-        //     } else {
-        //         alert('Por favor complete todos los campos');
-        //     }
-        // },
-        // Editar Requerimiento en Obra
-        // editar(data = {}) {
-        //     this.jsonData.id = data.id;
-        //     this.jsonData.codigo_recurso = data.codigo_recurso;
-        //     this.jsonData.descripcion_recursos = data.descripcion_recurso;
-        //     this.jsonData.unidad_id = data.unidad_id;
-        //     //this object will be modified in the next step
-        //     this.jsonData.cantidad_recurso = data.cantidad_recurso;
-        //     this.jsonData.horas_recurso = data.horas_recurso;
-        //     this.jsonData.dias_recurso = data.dias_recurso;
-        //     this.jsonData.tiempo_total_recurso = data.tiempo_total_recurso;
-        //     this.jsonData.precio_referencia_recurso = data.precio_referencia_recurso;
-        //     //Behavior Modal Components
-        //     this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
-        //     console.log('EDITAR REQ ITEM', data);
-        // },
-        // async modificar() {
-        //     const response_req = await axios.get('get_requerimientos');
-        //     this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-        //     let datos_jsonData = new FormData();
-        //     datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-        //     datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
-        //     datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
-        //     datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
-        //     datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
-        //     datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
-        //     datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
-        //     datos_jsonData.append('id', this.jsonData.id);
-        //     const response = await axios.post('update_requerimiento_item' + this.jsonData.id, datos_jsonData);
-        //     console.log('UPDATE REQ ITEM', response.data);
-        //     document.getElementById("cerrarModal").click();
-        //     // this.limpiar_formulario();
-        // },
-        // async eliminar(id) {
-        //     const response = await axios.delete('delete_requerimiento_obra/' + id);
-        //     console.log('DELETE ITEM OBRA', response.data);
-        //     await this.listarRequerimientoItem();
-        // },
+
         async filterListItemRelacion(arrayRequerimientoRelacion) {
             const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
             const getUnidades = (await axios.get('get_unidades')).data;
@@ -616,24 +438,39 @@ export default {
         },
         async listarItemRelacion() {
             const responseReqRelacion = (await axios.get('get_requerimiento_relacion')).data;
-            this.rows1 = await this.filterListItemRelacion(responseReqRelacion);
-            // this.rows1 = responseReqRelacion;
+            this.rows = await this.filterListItemRelacion(responseReqRelacion);
+            // this.rows = responseReqRelacion;
             console.log('LIST REQ REL', responseReqRelacion);
+        },
+        areAlltheFieldsFilled() {
+            return this.jsonData.requerimiento_id &&
+                this.jsonData.item_vigente &&
+                this.jsonData.item_avance &&
+                this.jsonData.item_estimado &&
+                this.jsonData.item_precio_unitario &&
+
+                this.jsonData.item_saldo &&
+                this.jsonData.item_descripcion
         },
         async guardarItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
-            datos_jsonData.append('vigente', this.jsonData.item_vigente);
-            datos_jsonData.append('avance', this.jsonData.item_avance);
-            datos_jsonData.append('estimado', this.jsonData.item_estimado);
-            datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
-            const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
-            console.log('SAVE ITEM RELACION', itemRelacion.data);
-            await this.cleanFormItemRelacion()
-            await this.listarItemRelacion();
+            // if (this.areAlltheFieldsFilled()) {
+                let datos_jsonData = new FormData();
+                datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+                datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
+                datos_jsonData.append('vigente', this.jsonData.item_vigente);
+                datos_jsonData.append('avance', this.jsonData.item_avance);
+                datos_jsonData.append('estimado', this.jsonData.item_estimado);
+                datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
+                const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
+                console.log('SAVE ITEM RELACION', itemRelacion.data);
+                await this.cleanFormItemRelacion()
+                await this.listarItemRelacion();
+            // }
+            // else {
+            //     alert('Por favor llene todos los campos');
+            // }
         },
         async editarItemRelacion(data = {}) {
             this.jsonData.id = data.id;
@@ -671,96 +508,6 @@ export default {
                 }
             }
         },
-        async filterListOtrosGastos(arrayReqOtrosGastos) {
-            const responseReqRecursos = (await axios.get('requerimientos')).data;
-            const getUnidades = (await axios.get('get_unidades')).data;
-
-            let arrayItemsFiltered = [];
-            for (let i = 0; i < arrayReqOtrosGastos.length; i++) {
-                if (arrayReqOtrosGastos[i].requerimiento_id === this.jsonData.requerimiento_id) {
-                    for (let j = 0; j < responseReqRecursos.length; j++) {
-                        if (responseReqRecursos[j].id === arrayReqOtrosGastos[i].requerimiento_recurso_id) {
-                            arrayItemsFiltered.push({
-                                ...responseReqRecursos[j],
-                                //here is the id object
-                                ...arrayReqOtrosGastos[i],
-
-                            });
-                            j = responseReqRecursos.length;
-                        }
-                    }
-                }
-            }
-            arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
-            });
-            console.log('LIST CURRENT', arrayItemsFiltered);
-            return arrayItemsFiltered
-        },
-        async listarItemOtrosGastos() {
-            const responseReqOtrosGastos = (await axios.get('get_requerimiento_otros_gastos')).data;
-            this.rows2 = await this.filterListOtrosGastos(responseReqOtrosGastos);
-            // this.rows2 = responseReqOtrosGastos;
-            console.log('LIST REQ OTROS GASTOS', this.rows2);
-        },
-        async guardarItemOtrosGastos() {
-            const response_req = (await axios.get('get_requerimientos')).data;
-            this.jsonData.requerimiento_id = response_req[response_req.length - 1].id;
-            console.log('REQ ID', this.jsonData.requerimiento_id);
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.descripcion_otros.id);
-            datos_jsonData.append('cantidad_otros', this.jsonData.cantidad_otros);
-            datos_jsonData.append('monto_otros', this.jsonData.monto_otros);
-            datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
-            const itemOtrosGastos = await axios.post('create_requerimiento_otros_gastos', datos_jsonData);
-            console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
-            await this.listarItemOtrosGastos();
-            await this.cleanFormOtrosGastos();
-        },
-        async editarItemOtrosGastos(data = {}) {
-            this.jsonData.codigo_otros = data.codigo_recurso;
-            this.jsonData.descripcion_otros = data.descripcion_recurso;
-            this.jsonData.simbolo_otros = data.unidad_id;
-            //Item Oros Gastos
-            this.jsonData.requerimiento_recurso_id = data.requerimiento_recurso_id;
-            this.jsonData.cantidad_otros = data.cantidad_otros;
-            this.jsonData.monto_otros = data.monto_otros;
-            this.jsonData.explicar_otros = data.explicar_otros;
-            this.jsonData.id = data.id;
-        },
-        async modificarItemOtrosGastos() {
-
-        },
-        async eliminarItemOtrosGastos(id) {
-            const response = await axios.delete('delete_requerimiento_otros_gastos/' + id);
-            console.log('DELETE ITEM OTROS GASTOS', response.data);
-            await this.listarItemOtrosGastos();
-        },
-        async filterNameForOtrosGastos() {
-            const getUnidades = (await axios.get('get_unidades')).data;
-            const currentUnidad = getUnidades.filter(unidad => unidad.id == this.jsonData.descripcion_otros.unidad_id);
-            this.jsonData.codigo_otros = this.jsonData.descripcion_otros.codigo_recurso;
-            console.log('CURRENT UNIDAD', currentUnidad);
-            this.jsonData.simbolo_otros = currentUnidad[0].simbolo;
-        },
-        async getAllItemOtrosGastos() {
-            const responseOtrosGastos = (await axios.get('requerimientos')).data;
-            this.combo_otros_gastos = responseOtrosGastos.filter(item => item.tipo_requerimiento_id === 4);
-            console.log('REQUERIMIENTO OTROS', this.combo_otros_gastos);
-        },
-        async cleanFormReqItem() {
-            this.jsonData.requerimiento_recurso_id = '';
-            this.jsonData.cantidad_recurso = '';
-            this.jsonData.horas_recurso = '';
-            this.jsonData.dias_recurso = '';
-            this.jsonData.tiempo_total_recurso = '';
-            this.jsonData.precio_referencia_recurso = '';
-
-            this.jsonData.descripcion_recurso = '';
-            this.jsonData.simbolo = '';
-            this.jsonData.codigo_recurso = '';
-        },
         async cleanFormItemRelacion() {
             this.jsonData.item_codigo = '';
             this.jsonData.item_descripcion = '';
@@ -772,16 +519,6 @@ export default {
             this.jsonData.item_estimado = '';
             this.jsonData.item_precio_unitario = '';
         },
-        async cleanFormOtrosGastos() {
-            this.jsonData.codigo_otros = '';
-            this.jsonData.descripcion_otros = '';
-            this.jsonData.simbolo_otros = '';
-
-            this.jsonData.cantidad_otros = '';
-            this.jsonData.monto_otros = '';
-            this.jsonData.explicar_otros = '';
-        },
-
         async seleccionar_cont_primario() {
             const respuesta = await axios.get('documents');
             const principales = respuesta.data.filter((item) => item.document_types_id === 1)
@@ -1027,7 +764,6 @@ export default {
                 item_simbolo: '',
                 item_vigente: '',
                 item_avance: '',
-                item_avance_contratado: '',
                 item_saldo: '',
                 item_estimado: '',
                 item_precio_unitario: '',
@@ -1048,62 +784,10 @@ export default {
                 fechaFormatted: '',
 
             },
+
+
             rows: [],
             columns: [
-                {
-                    label: "Codigo",
-                    name: "codigo_recurso",
-                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
-                },
-                {
-                    label: "Descripcion Recurso:",
-                    name: "descripcion_recurso",
-                    filter: {type: "simple", placeholder: "descripcion_recurso",},
-                    sort: true,
-                },
-                {
-                    label: "Unidad",
-                    name: "unidad_id",
-                    filter: {type: "simple", placeholder: "Simbolo"},
-                    sort: true,
-                },
-                {
-                    label: "Cantidad",
-                    name: "cantidad_recurso",
-                    filter: {type: "simple", placeholder: "Cantidad"},
-                },
-                {
-                    label: "Horas Requeridas",
-                    name: "horas_recurso",
-                    filter: {type: "simple", placeholder: "Horas Requeridas"},
-                },
-                {
-                    label: "Dias Requeridos",
-                    name: "dias_recurso",
-                    filter: {type: "simple", placeholder: "Dias Requeridos"},
-                },
-                {
-                    label: "Plazo Ejecucion",
-                    name: "tiempo_total_recurso",
-                    filter: {type: "simple", placeholder: "Plazo Ejecucion"},
-                    sort: true,
-                },
-                {
-                    label: "Precio referencial",
-                    name: "precio_referencia_recurso",
-                    filter: {type: "simple", placeholder: "Precio referencial"},
-                    sort: true,
-                },
-
-                {
-                    label: "Acciones",
-                    name: "acciones",
-                    sort: false,
-                },
-            ],
-
-            rows1: [],
-            columns1: [
                 {
                     label: "Codigo",
                     name: "item_codigo",
@@ -1127,65 +811,28 @@ export default {
                     filter: {type: "simple", placeholder: "Cantidad Vigente"},
                 },
                 {
-                    label: "Avance",
+                    label: "Avance Acumulado",
                     name: "avance",
                     filter: {type: "simple", placeholder: "Avance"},
                 },
+                // {
+                //     label: "Avance Contratado",
+                //     name: "avance",
+                //     filter: {type: "simple", placeholder: "Avance"},
+                // },
                 {
-                    label: "Por Ejecutar",
+                    label: "precio_contratado",
                     name: "precio_unitario",
                     filter: {type: "simple", placeholder: "Por Ejecutar"},
                 },
                 {
                     label: "Avance Estimado",
+                    //es el avance contratado
                     name: "estimado",
                     filter: {type: "simple", placeholder: "Avance Estimado"},
                 },
 
 
-                {
-                    label: "Acciones",
-                    name: "acciones",
-                    sort: false,
-                },
-
-
-            ],
-
-            rows2: [],
-            columns2: [
-                {
-                    label: "Codigo",
-                    name: "codigo_recurso",
-                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
-                },
-                {
-                    label: "Gastos Generales:",
-                    name: "descripcion_recurso",
-                    filter: {type: "simple", placeholder: "Gastos Generales",},
-                    sort: true,
-                },
-                {
-                    label: "Unidad",
-                    name: "unidad_id",
-                    filter: {type: "simple", placeholder: "Unidad"},
-                    sort: true,
-                },
-                {
-                    label: "Cantidad",
-                    name: "cantidad_otros",
-                    filter: {type: "simple", placeholder: "Cantidad"},
-                },
-                {
-                    label: "Monto",
-                    name: "monto_otros",
-                    filter: {type: "simple", placeholder: "Monto"},
-                },
-                {
-                    label: "Uso",
-                    name: "explicar_otros",
-                    filter: {type: "simple", placeholder: "Uso"},
-                },
                 {
                     label: "Acciones",
                     name: "acciones",
@@ -1217,7 +864,6 @@ export default {
         this.getNameForItemRelacion();
         // this.listarItemRelacion();
         //Otros Gastos
-        this.getAllItemOtrosGastos();
         // this.listarItemOtrosGastos();
 
         //tabs
