@@ -481,6 +481,8 @@ export default {
         async seleccionar_cont_primario(){
             var respuesta = await axios.get('documents');
             const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
+            console.log('=========================');
+            console.log(principales);
             this.proyectos = principales;
             $("#seleccion_proyecto_doc_legales").modal("show");
             
