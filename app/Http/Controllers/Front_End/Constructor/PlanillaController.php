@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Constructor\PlanillaItem;
 use Illuminate\Http\Request;
 
@@ -20,11 +22,76 @@ class PlanillaController extends Controller
         return view('front-end.constructor.IndexPlanillas');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function getValoresItem($id){
+
+        $json=PlanillaItem::where('id',$id )->with('Unidad')->first();
+        $contrato_id=$json->contrato_id;
+        $planilla_item_id=$id;
+
+        $obj = json_decode($json, true);
+
+        $items[0]['id']=$id;
+        $items[0]['item_codigo']=$json->item_codigo;
+        $items[0]['item_descripcion']=$json->item_descripcion;
+        $items[0]['simbolo']=$json->unidad->simbolo;
+
+
+            // vigente
+                $json=DB::table('planillas')
+                    ->join('planilla_movimientos','planilla_movimientos.planilla_id','planillas.id')
+                    ->where('planillas.contrato_id', $contrato_id)
+                    ->where('planillas.tipo_planilla_id', '2')
+                    ->where('planilla_movimientos.planilla_item_id', $planilla_item_id)
+                    ->orderBy('planillas.fecha_planilla')
+                    ->get();
+
+                    
+                        $json=DB::table('planillas')
+                        ->join('planilla_movimientos','planilla_movimientos.planilla_id','planillas.id')
+                        ->where('planillas.contrato_id', $contrato_id)
+                        ->where('planillas.tipo_planilla_id', '1')
+                        ->where('planilla_movimientos.planilla_item_id', $planilla_item_id)
+                        ->orderBy('planillas.fecha_planilla')
+                        ->get();
+
+                    
+                    $obj1 = json_decode($json, true);
+                
+                    $items[0]['vigente']=$obj1[0]['cantidad'];
+                    $items[0]['precio_unitario']=$obj1[0]['precio_unitario'];
+
+                    // avance
+                    $json=DB::table('planillas')
+                    ->join('planilla_movimientos','planilla_movimientos.planilla_id','planillas.id')
+                    ->select(DB::raw("SUM(cantidad) as avance"), 'precio_unitario')
+                    ->where('planillas.contrato_id', $contrato_id)
+                    ->where('planillas.tipo_planilla_id', '3')
+                    ->where('planilla_movimientos.planilla_item_id', $planilla_item_id)
+                    ->groupBy('planillas.tipo_planilla_id', 'precio_unitario')
+                    ->orderBy('planillas.fecha_planilla')
+                    ->get();
+                    $obj1 = json_decode($json, true);
+
+                    $items[0]['avance']=$obj1[0]['avance'];
+                    $items[0]['precio_unit_avance']=$obj1[0]['precio_unitario'];
+
+                    // calculamos el saldo
+                    $items[0]['saldo']=$items[0]['vigente']- $items[0]['avance'];
+                    $items[0]['monto_por_cobrar']=$items[0]['saldo']*$items[0]['precio_unitario'];
+                    
+                    
+                    $items[0]['fvigente']=number_format($items[0]['vigente'],2,",",".");
+                    $items[0]['fprecio_unitario']=number_format($items[0]['precio_unitario'],2,",",".");
+                    $items[0]['favance']=number_format($items[0]['avance'],2,",",".");
+                    $items[0]['fprecio_unit_avance']=number_format($items[0]['precio_unit_avance'],2,",",".");
+                    $items[0]['fsaldo']=number_format($items[0]['saldo'],2,",",".");
+                    $items[0]['fmonto_por_cobrar']=number_format($items[0]['monto_por_cobrar'],2,",",".");
+                
+    
+        return $items;
+    }
+
+
     public function index()
     {
         //
@@ -131,4 +198,5 @@ class PlanillaController extends Controller
     {
         //
     }
+
 }

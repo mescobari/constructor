@@ -106,7 +106,7 @@ public function ver_requerimientos(Request $request, $id){
  $documento_monto= number_format($documento->monto_bs,2,",",".");
 
 
- /* cargamos la vista  */
+ /* cargamos la vista */
 
  $pdf = PDF::loadView('front-end.reportes.constructor.requerimientos', [
      'link_img'=>'img/sistema-front-end/logo-pdf.png',
@@ -129,9 +129,9 @@ public function ver_requerimientos(Request $request, $id){
  ]);
  $pdf->setPaper('letter', 'portrait');
  return $pdf->stream('reporte_ficha_proyecto.pdf');
+ 
 
-
-    //return $req_otros;
+    //return $req_relacion;
 
 
 

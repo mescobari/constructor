@@ -2,11 +2,11 @@
     <div>
         <div class="card">
             <div class="card-header ferdy-background-Primary-blak">
-                <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA</h3>
+                <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
                 <div class="card-tools">
-                    <!--  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales" @click="ModalCrear();">
-                          Adicionar Planilla
-                      </button>-->
+                      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales" @click="ModalCrear();">
+                          Imprimir Requerimiento
+                      </button>
                 </div>
             </div>
             <br>
