@@ -4,9 +4,10 @@
             <div class="card-header ferdy-background-Primary-blak">
                 <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
                 <div class="card-tools">
-                      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales" @click="ModalCrear();">
-                          Imprimir Requerimiento
-                      </button>
+                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
+                            @click="ModalCrear();">
+                        Imprimir Requerimiento
+                    </button>
                 </div>
             </div>
             <br>
@@ -59,10 +60,10 @@
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Item Relacionado:</label>
-                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                    <v-select label="item_descripcion" :options="combo_items_planilla"
                                               v-model="jsonData.item_descripcion"
                                               placeholder="Selecione una opción"
-                                              @input="retrieveFromCurrentDescripcionRecurso">
+                                              @input="getNameForItemRelacion">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
                                 </div>
@@ -216,7 +217,6 @@
                     <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
 
-
                     <!-- Otrosxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
                     <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
@@ -358,7 +358,8 @@
                         <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificarItemRelacion">
+                        <button type="submit" class="btn btn-success" data-dismiss="modal"
+                                @click="modificarItemRelacion">
                             Modificar
                         </button>
                     </div>
@@ -628,7 +629,6 @@ export default {
             datos_jsonData.append('vigente', this.jsonData.item_vigente);
             datos_jsonData.append('avance', this.jsonData.item_avance);
             datos_jsonData.append('estimado', this.jsonData.item_estimado);
-
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
             console.log('SAVE ITEM RELACION', itemRelacion.data);
@@ -658,7 +658,7 @@ export default {
         },
         async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');
-            // responseItemPlanilla.data.filter(this.jsonData.item_descripcion.padre === );
+            console.log("ITEMS PLANILLA", responseItemPlanilla.data);
             this.combo_items_planilla = responseItemPlanilla.data;
         },
         async getNameForItemRelacion() {
@@ -1212,9 +1212,6 @@ export default {
         this.seleccionar_cont_primario();
     },
     created() {
-        //Requerimiento
-        this.descripcionRecursoGetAll();
-        this.descripcionRecursoGetbyType();
         //Item Relacionado
         this.getAllItemRelacion();
         this.getNameForItemRelacion();
