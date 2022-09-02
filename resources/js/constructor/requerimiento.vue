@@ -90,12 +90,14 @@
                                                        class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
                                                 <div>
-<!--                                                    <input type="checkbox" class="custom-control-input" id="customCheck1"-->
-<!--                                                           value="1" v-model="jsonData.modifica">-->
-<!--                                                    <label class="custom-control-label" for="customCheck1">TODO</label>-->
-                                                    <input class="form-check-input" v-if="jsonData.tipo_requerimiento_id==5" type="checkbox" value="5"
-                                                           id="flexCheckDefault">
-                                                    <label class="form-check-label"  for="flexCheckDefault">
+                                                    <!--                                                    <input type="checkbox" class="custom-control-input" id="customCheck1"-->
+                                                    <!--                                                           value="1" v-model="jsonData.modifica">-->
+                                                    <!--                                                    <label class="custom-control-label" for="customCheck1">TODO</label>-->
+                                                    <input class="form-check-input" type="checkbox"
+                                                           v-model="wasChecked"
+                                                           id="flexCheckDefault"
+                                                           v-bind:disabled="todos">
+                                                    <label class="form-check-label" for="flexCheckDefault">
                                                         TODO
                                                     </label>
                                                 </div>
@@ -1143,7 +1145,6 @@ import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
 import {VueEditor} from "vue2-editor";
-import {en, es} from 'vuejs-datepicker/dist/locale';
 
 Vue.component("v-select", vSelect);
 
@@ -1187,12 +1188,15 @@ export default {
             console.log('LIST CURRENT', arrayItemsFiltered);
             return arrayItemsFiltered
         },
-
         async listarRequerimientoItem() {
             const response = await axios.get('get_requerimiento_items');
             const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
             console.log('ITEM RECURSOS', response.data);
-            this.rows = await this.filterList(response.data);
+            if (this.jsonData.tipo_requerimiento_id == 4) {
+                this.rows = response.data
+            } else {
+                this.rows = await this.filterList(response.data);
+            }
             // this.rows = items
         },
         async retrieveFromCurrentDescripcionRecurso() {
@@ -1220,12 +1224,23 @@ export default {
             let response = await axios.get('requerimientos')
             let reqArraybyId = []
 
-            for (let i = 0; i < response.data.length; i++) {
-                if (response.data[i].tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id) {
-                    reqArraybyId.push(response.data[i]);
-                }
-            }
+            reqArraybyId = response.data.filter(item => item.tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id)
+
+            if (this.jsonData.tipo_requerimiento_id == 4) this.todos = false;
+            else this.todos = true;
+
+            if (this.wasChecked) reqArraybyId = response.data
+
+            console.log('WAS CHECKED', this.wasChecked);
+            console.log('tipo requerimiento', this.jsonData.tipo_requerimiento_id)
             this.combo_requerimiento_recursos = reqArraybyId;
+            // }
+            // for (let i = 0; i < response.data.length; i++) {
+            //     if (response.data[i].tipo_requerimiento_id == this.jsonData.tipo_requerimiento_id && this.jsonData.tipo_requerimiento_id != 4) {
+            //         reqArraybyId.push(response.data[i]);
+            //     }
+            // }
+
         },
         async tipoDocumentoGetAll() {
             let respuesta = await axios.get('documentos_legaleses');
@@ -1748,6 +1763,8 @@ export default {
             memorySelected: '',
             tabSelected: 'home',
             proyectos: [],
+            todos: false,
+            wasChecked: false,
             mandarMensajesAlerta: {},
             id_eliminacion: null,
             jsonData: {
