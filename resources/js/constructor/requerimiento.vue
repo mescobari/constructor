@@ -93,8 +93,9 @@
 <!--                                                    <input type="checkbox" class="custom-control-input" id="customCheck1"-->
 <!--                                                           value="1" v-model="jsonData.modifica">-->
 <!--                                                    <label class="custom-control-label" for="customCheck1">TODO</label>-->
-                                                    <input class="form-check-input" v-if="jsonData.tipo_requerimiento_id==4" type="checkbox" value="5"
-                                                           id="flexCheckDefault">
+                                                    <input class="form-check-input" type="checkbox" value="5"
+                                                           id="flexCheckDefault"
+                                                           v-bind:disabled="todos">
                                                     <label class="form-check-label"  for="flexCheckDefault">
                                                         TODO
                                                     </label>
@@ -1192,7 +1193,12 @@ export default {
             const response = await axios.get('get_requerimiento_items');
             const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
             console.log('ITEM RECURSOS', response.data);
-            this.rows = await this.filterList(response.data);
+            if(this.jsonData.tipo_requerimiento_id==4){
+              this.todos = true;
+              this.rows = response.data
+            } else{
+                this.rows = await this.filterList(response.data);
+            }
             // this.rows = items
         },
         async retrieveFromCurrentDescripcionRecurso() {
@@ -1748,6 +1754,7 @@ export default {
             memorySelected: '',
             tabSelected: 'home',
             proyectos: [],
+            todos: false,
             mandarMensajesAlerta: {},
             id_eliminacion: null,
             jsonData: {
