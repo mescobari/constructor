@@ -27,7 +27,7 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Item Relacion</h6>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento Llave en mano</h6>
                             </a>
                         </li>
                     </ul>
@@ -41,6 +41,85 @@
 
                     <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel"
                          aria-labelledby="custom-tabs-three-home-tab">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <center class="text-danger font-weight-bold">
+                                            <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
+                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
+                                            <h3 v-else> LLave en Mano</h3>
+                                        </center>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
+                                            <datepicker
+                                                :language="configFechas.es"
+                                                :placeholder="configFechas.placeholder"
+
+
+                                                :calendar-class="configFechas.nombreClaseParaModal"
+                                                :input-class="configFechas.nombreClaseParaInput"
+                                                :monday-first="true"
+                                                :clear-button="true"
+                                                :clear-button-icon="configFechas.IconoBotonBorrar"
+                                                :calendar-button="true"
+
+                                                :calendar-button-icon="configFechas.IconoBotonAbrir"
+                                                calendar-button-icon-content=""
+                                                :format="configFechas.DatePickerFormat"
+                                                :full-month-name="true"
+
+                                                :bootstrap-styling="true"
+                                                :disabled-dates="configFechas.disabledDates"
+                                                :typeable="configFechas.typeable"
+                                                :value="jsonData.fecha_requerimiento"
+                                                v-model="jsonData.fecha_requerimiento"
+                                                v-bind:disabled="clickedAdd"
+                                            >
+                                            </datepicker>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="nombre">NURI Correspondencia:</label>
+                                            <input type="text" class="form-control" name="nombre"
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
+                                               class="bg-primary"
+                                               style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
+                                            <span id="contenido_documento_res_aprobacion"><i
+                                                class="fas fa-download fa-1x"></i><br> <span> {{
+                                                    configFile.contenidoDefault
+                                                }}</span></span>
+                                            <button type="button" class="close" v-if="configFile.cerrar"
+                                                    @click="borrar_file();"><span>&times;</span></button>
+                                        </label>
+                                        <input type="file" class="form-control" id="documento_res_aprobacion"
+                                               @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="descripcion">Trabajos a ser encarados, con este requerimiento:</label>
+                                    <vue-editor
+                                        v-model="jsonData.trabajos_encarados"
+                                        :editor-toolbar="configToolBarEditText"
+                                        placeholder="Explicacion de los trabajos a ser encarados"
+                                    ></vue-editor>
+                                </div>
+                            </div>
+
+                        </div>
                         <!-- hasta aqui el row span> -->
                         <h4 class="text-danger font-weight-bold">AGREGAR ITEMS RELACIONADOS SOLICITADOS</h4>
 
@@ -456,17 +535,17 @@ export default {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             // if (this.areAlltheFieldsFilled()) {
-                let datos_jsonData = new FormData();
-                datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-                datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
-                datos_jsonData.append('vigente', this.jsonData.item_vigente);
-                datos_jsonData.append('avance', this.jsonData.item_avance);
-                datos_jsonData.append('estimado', this.jsonData.item_estimado);
-                datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
-                const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
-                console.log('SAVE ITEM RELACION', itemRelacion.data);
-                await this.cleanFormItemRelacion()
-                await this.listarItemRelacion();
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
+            datos_jsonData.append('vigente', this.jsonData.item_vigente);
+            datos_jsonData.append('avance', this.jsonData.item_avance);
+            datos_jsonData.append('estimado', this.jsonData.item_estimado);
+            datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
+            const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
+            console.log('SAVE ITEM RELACION', itemRelacion.data);
+            await this.cleanFormItemRelacion()
+            await this.listarItemRelacion();
             // }
             // else {
             //     alert('Por favor llene todos los campos');
@@ -756,7 +835,7 @@ export default {
                 dias_recurso: '',
                 tiempo_total_recurso: '',
                 precio_referencia_recurso: '',
-                trabajos_encarados: 'trabajos a ser encarados explicacion de ello',
+                trabajos_encarados: '',
                 files: null,
                 //RELACION CON EL CONTRATO PRINCIPAL
                 item_codigo: '',
@@ -775,7 +854,6 @@ export default {
                 ///FIN RELACION
                 codigo_otros: '',
                 descripcion_otros: '',
-                gastos_generales: 'se explica en que gatsos generales se trabajara',
                 simbolo_otros: '',
                 cantidad_otros: '',
                 monto_otros: '',
