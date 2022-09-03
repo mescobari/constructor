@@ -80,8 +80,7 @@
                                                 :typeable="configFechas.typeable"
                                                 :value="jsonData.fecha_requerimiento"
                                                 v-model="jsonData.fecha_requerimiento"
-                                                v-bind:disabled="clickedAdd"
-                                            >
+                                                v-bind:disabled="clickedAdd">
                                             </datepicker>
                                         </div>
                                     </div>
@@ -89,7 +88,8 @@
                                         <div class="form-group">
                                             <label for="nombre">NURI Correspondencia:</label>
                                             <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento">
+                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
+                                                   v-bind:disabled="clickedAdd">
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -101,7 +101,8 @@
                                                     configFile.contenidoDefault
                                                 }}</span></span>
                                             <button type="button" class="close" v-if="configFile.cerrar"
-                                                    @click="borrar_file();"><span>&times;</span></button>
+                                                    @click="borrar_file();"
+                                                    v-bind:disabled="clickedAdd"><span>&times;</span></button>
                                         </label>
                                         <input type="file" class="form-control" id="documento_res_aprobacion"
                                                @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
@@ -115,7 +116,9 @@
                                         v-model="jsonData.trabajos_encarados"
                                         :editor-toolbar="configToolBarEditText"
                                         placeholder="Explicacion de los trabajos a ser encarados"
-                                    ></vue-editor>
+                                        v-bind:disabled="clickedAdd">
+
+                                    </vue-editor>
                                 </div>
                             </div>
 
@@ -158,7 +161,8 @@
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Vigente</label>
-                                    <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                    <input type="text" class="form-control" name="cantidad"
+                                           placeholder="Cantidad"
                                            v-model="jsonData.item_vigente">
                                 </div>
                             </div>
@@ -169,7 +173,8 @@
                                         <div class="form-group">
                                             <label for="nombre">Avance Acumulado</label>
                                             <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas" v-model="jsonData.item_avance">
+                                                   placeholder="Horas Requeridas"
+                                                   v-model="jsonData.item_avance">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -534,7 +539,7 @@ export default {
         async guardarItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-            // if (this.areAlltheFieldsFilled()) {
+            if (this.areAlltheFieldsFilled()) {
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
@@ -546,10 +551,10 @@ export default {
             console.log('SAVE ITEM RELACION', itemRelacion.data);
             await this.cleanFormItemRelacion()
             await this.listarItemRelacion();
-            // }
-            // else {
-            //     alert('Por favor llene todos los campos');
-            // }
+            }
+            else {
+                alert('Por favor llene todos los campos');
+            }
         },
         async editarItemRelacion(data = {}) {
             this.jsonData.id = data.id;
