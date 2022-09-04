@@ -27,7 +27,8 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento Llave en mano</h6>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento Llave en
+                                mano</h6>
                             </a>
                         </li>
                     </ul>
@@ -527,19 +528,46 @@ export default {
             console.log('LIST REQ REL', responseReqRelacion);
         },
         areAlltheFieldsFilled() {
-            return this.jsonData.requerimiento_id &&
-                this.jsonData.item_vigente &&
-                this.jsonData.item_avance &&
-                this.jsonData.item_estimado &&
-                this.jsonData.item_precio_unitario &&
-
-                this.jsonData.item_saldo &&
-                this.jsonData.item_descripcion
+            return this.jsonData.requerimiento_id != null &&
+                //lineal form
+                this.jsonData.item_descripcion != null &&
+                this.jsonData.item_vigente != null &&
+                this.jsonData.item_avance != null &&
+                this.jsonData.item_saldo != null &&
+                this.jsonData.item_estimado != null &&
+                this.jsonData.item_precio_unitario != null &&
+                //panel
+                this.jsonData.fecha_requerimiento != null &&
+                this.jsonData.files != null &&
+                this.jsonData.trabajos_encarados != null &&
+                this.jsonData.nuri_requerimiento;
         },
-        async guardarItemRelacion() {
-            const response_req = await axios.get('get_requerimientos');
-            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
+        async guardar() {
             if (this.areAlltheFieldsFilled()) {
+                console.log('=================================================')
+                if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
+                    console.log('MEMORYSELECTED', this.memorySelected);
+                    await this.reqItemSave();
+                    console.log('TRUE WAY')
+                    console.log('=================================================')
+                } else {
+                    this.memorySelected = this.jsonData.tipo_requerimiento_id;
+                    console.log('MEMORYSELECTED', this.memorySelected);
+                    await this.requerimientoFirstSave()
+                    await this.reqItemSave();
+                    console.log('FALSE WAY')
+                    console.log('=================================================')
+                }
+                await this.listarRequerimientoItem();
+                await this.cleanFormReqItem();
+            } else {
+                alert('Por favor complete todos los campos');
+            }
+        },
+        async saveItemRelacion() {
+            const response_req = await axios.get('get_requerimientos');
+            this.jsonData.requerimiento_id = response_req.data[response_req.data.length -1].id;
+            console.log('REQ ID', this.jsonData.requerimiento_id)
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
@@ -549,10 +577,39 @@ export default {
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
             console.log('SAVE ITEM RELACION', itemRelacion.data);
-            await this.cleanFormItemRelacion()
-            await this.listarItemRelacion();
-            }
-            else {
+        },
+        async saveFirstRequerimiento() {
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('document_id', this.jsonData.proyectos.id);
+            datos_jsonData.append('tipo_requerimiento_id', '5');
+            datos_jsonData.append('correlativo_requerimiento', this.jsonData.nuri_requerimiento)
+            let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
+            this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
+            datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
+            datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
+
+            datos_jsonData.append('descripcion_requerimiento', this.jsonData.trabajos_encarados);
+            datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
+            datos_jsonData.append('gastos_generales', this.jsonData.trabajos_encarados);
+            datos_jsonData.append('files', this.jsonData.files);
+            this.clickedAdd = true;
+            let response = await axios.post('create_requerimiento', datos_jsonData);
+            console.log('CREATE REQ', response.data);
+        },
+        async guardarItemRelacion() {
+
+            if (this.areAlltheFieldsFilled()) {
+                if (this.clickedAdd) {
+                    console.log('MEMORYSELECTED - True', this.memorySelected);
+                    await this.saveItemRelacion()
+                } else {
+                    console.log('MEMORYSELECTED - False', this.memorySelected);
+                    await this.saveFirstRequerimiento()
+                    await this.saveItemRelacion()
+                }
+                await this.cleanFormItemRelacion();
+                await this.listarItemRelacion();
+            } else {
                 alert('Por favor llene todos los campos');
             }
         },
@@ -809,7 +866,7 @@ export default {
             combo_requerimiento_recursos: [],
             combo_items_planilla: [],
             combo_otros_gastos: [],
-            memorySelected: '',
+            memorySelected: true,
             tabSelected: 'home',
             proyectos: [],
             mandarMensajesAlerta: {},
