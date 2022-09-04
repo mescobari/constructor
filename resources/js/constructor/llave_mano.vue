@@ -1,11 +1,12 @@
-<template>
+<template slot-scope="props">
     <div>
         <div class="card">
             <div class="card-header ferdy-background-Primary-blak">
                 <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
-                            @click="ModalCrear();">
+                            v-if="current_id!=null"
+                            @click="showRequerimiento();">
                         Imprimir Requerimiento
                     </button>
                 </div>
@@ -492,7 +493,12 @@ export default {
         }
     },
     methods: {
-
+        async showRequerimiento() {
+            if(this.current_id!=null) {
+                const showReq = await axios.get('ver_requerimientos/' + this.current_id);
+                console.log('SHOW REQ', showReq.data);
+            }
+        },
         async filterListItemRelacion(arrayRequerimientoRelacion) {
             const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
             const getUnidades = (await axios.get('get_unidades')).data;
@@ -506,9 +512,6 @@ export default {
                                 ...responsePlanillaItem[j],
                                 //here is the id object
                                 ...arrayRequerimientoRelacion[i],
-                                // ...currentUnidad[0],
-                                // ...responseRecursos[j].codigo_recurso,
-                                // ...responseRecursos[j].descripcion_recurso
                             })
                             j = responsePlanillaItem.length;
                         }
@@ -542,31 +545,9 @@ export default {
                 this.jsonData.trabajos_encarados != null &&
                 this.jsonData.nuri_requerimiento;
         },
-        async guardar() {
-            if (this.areAlltheFieldsFilled()) {
-                console.log('=================================================')
-                if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-                    console.log('MEMORYSELECTED', this.memorySelected);
-                    await this.reqItemSave();
-                    console.log('TRUE WAY')
-                    console.log('=================================================')
-                } else {
-                    this.memorySelected = this.jsonData.tipo_requerimiento_id;
-                    console.log('MEMORYSELECTED', this.memorySelected);
-                    await this.requerimientoFirstSave()
-                    await this.reqItemSave();
-                    console.log('FALSE WAY')
-                    console.log('=================================================')
-                }
-                await this.listarRequerimientoItem();
-                await this.cleanFormReqItem();
-            } else {
-                alert('Por favor complete todos los campos');
-            }
-        },
         async saveItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
-            this.jsonData.requerimiento_id = response_req.data[response_req.data.length -1].id;
+            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             console.log('REQ ID', this.jsonData.requerimiento_id)
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
@@ -606,6 +587,8 @@ export default {
                     console.log('MEMORYSELECTED - False', this.memorySelected);
                     await this.saveFirstRequerimiento()
                     await this.saveItemRelacion()
+                    console.log('REQ ID FOR CURRENT', this.jsonData.requerimiento_id);
+                    this.current_id = this.jsonData.requerimiento_id;
                 }
                 await this.cleanFormItemRelacion();
                 await this.listarItemRelacion();
@@ -688,7 +671,7 @@ export default {
         respuestaModalAlertaConfirmacion(datos) {
             console.log('eliminando', datos.respuesta);
             if (datos.respuesta === true) {
-                    this.eliminarItemRelacion(this.id_eliminacion);
+                this.eliminarItemRelacion(this.id_eliminacion);
             }
         },
         async ver_planilla() {
@@ -858,6 +841,7 @@ export default {
             memorySelected: true,
             tabSelected: 'home',
             proyectos: [],
+            current_id: null,
             mandarMensajesAlerta: {},
             id_eliminacion: null,
             jsonData: {
