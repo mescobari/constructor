@@ -686,20 +686,9 @@ export default {
             this.tabSelected = currentTab;
         },
         respuestaModalAlertaConfirmacion(datos) {
-            // console.log(datos.respuesta);
             console.log('eliminando', datos.respuesta);
             if (datos.respuesta === true) {
-                if (this.tabSelected === "home") {
-                    this.eliminar(this.id_eliminacion);
-
-                } else if (this.tabSelected === "profile") {
                     this.eliminarItemRelacion(this.id_eliminacion);
-
-                } else if (this.tabSelected === "messages") {
-                    this.eliminarItemOtrosGastos(this.id_eliminacion);
-                }
-                console.log('ID DOC', this.tabSelected);
-                // this.eliminar(this.id_eliminacion);
             }
         },
         async ver_planilla() {
