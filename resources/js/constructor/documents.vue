@@ -594,7 +594,7 @@ export default {
         async uploadOrdenProceder(id){
             let formData = new FormData();
             formData.append('files', this.jsonData.files);
-            const uploadFiles = await axios.put('upload_orden_files')
+            const uploadFiles = await axios.put('upload_orden_files/'+id, formData)
             console.log(uploadFiles);
         },
         //modify the value of the input in real time from v-select document_types_id and padre
