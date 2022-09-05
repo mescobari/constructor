@@ -4,15 +4,15 @@
             <div class="card-header ferdy-background-Primary-blak">
                 <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
                 <div class="card-tools">
-
-                </div>
-                <a :href="'ver_requerimientos/'+this.current_id" target="_blank" rel="noopener noreferrer">
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
                             @click="showRequerimiento();">
                         Imprimir Requerimiento
                     </button>
-<!--                    <button type="button" class="btn btn-outline-success ml-1" ><span><i class="far fa-file-pdf"></i></span></button>-->
-                </a>
+                    <!--                                <a :href="'ver_requerimientos/'+this.current_id" target="_blank" rel="noopener noreferrer">-->
+                    <!--                                    <button type="button"  ><span><i class="far fa-file-pdf"></i></span></button>-->
+                    <!--                                </a>-->
+                </div>
+
             </div>
             <br>
             <div class="card-body">
@@ -168,7 +168,8 @@
                                     <label for="nombre">Vigente</label>
                                     <input type="text" class="form-control" name="cantidad"
                                            placeholder="Cantidad"
-                                           v-model="jsonData.item_vigente">
+                                           v-model="jsonData.item_vigente"
+                                           disabled>
                                 </div>
                             </div>
 
@@ -179,14 +180,16 @@
                                             <label for="nombre">Avance Acumulado</label>
                                             <input type="text" class="form-control" name="horas"
                                                    placeholder="Horas Requeridas"
-                                                   v-model="jsonData.item_avance">
+                                                   v-model="jsonData.item_avance"
+                                                   disabled>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="nombre">Saldo</label>
                                             <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.item_saldo">
+                                                   placeholder="Dias Requeridos" v-model="jsonData.item_saldo"
+                                                   disabled>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -459,11 +462,6 @@
                 </div>
             </div>
         </div>
-        <!--================================ FIN MODAL MODIFICAR ITEM REQUERIMIENTO =========================================-->
-        <!--=================================== MODAL MODIFICAR ITEM RELACION ===============================================-->
-        <!--=============================== FIN MODAL MODIFICAR ITEM RELACION ========================================-->
-        <!--=================================== MODAL MODIFICAR ITEM OTROS ===============================================-->
-        <!--=============================== FIN MODAL MODIFICAR ITEM OTROS ========================================-->
         <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
                             ref="abrirAlerta">
         </alert-confirmacion>
@@ -498,7 +496,7 @@ export default {
     methods: {
 
         async showRequerimiento() {
-            if(this.current_id!=null) {
+            if (this.current_id != null) {
                 const showReq = await axios.get('ver_requerimientos/' + this.current_id);
                 console.log('SHOW REQ', showReq.data);
             } else {
@@ -513,11 +511,9 @@ export default {
                 if (arrayRequerimientoRelacion[i].requerimiento_id === this.jsonData.requerimiento_id) {
                     for (let j = 0; j < responsePlanillaItem.length; j++) {
                         if (responsePlanillaItem[j].id === arrayRequerimientoRelacion[i].planilla_item_id) {
-                            // let currentUnidad = getUnidades.filter(unidad => unidad.id==responsePlanillaItem[j].unidad_id);
                             arrayItemsFiltered.push({
                                 ...responsePlanillaItem[j],
-                                //here is the id object
-                                ...arrayRequerimientoRelacion[i],
+                                ...arrayRequerimientoRelacion[i], //here is the id object
                             })
                             j = responsePlanillaItem.length;
                         }
@@ -554,12 +550,21 @@ export default {
         async saveItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-            console.log('REQ ID', this.jsonData.requerimiento_id)
+            console.log('REQ ID', this.jsonData.requerimiento_id);
+            console.log('ITEM RELACION ID', this.jsonData.item_descripcion.id)
+            let getValoresItem = await axios.get('get_valores_item/'+this.jsonData.item_descripcion.id);
+            const arrayValoresItem = getValoresItem.data;
+            // console.log('GET VALORES ITEM', getValoresItem);
+            // this.jsonData.item_vigente = getValoresItem[0].vigente;
+            // this.jsonData.item_avance = getValoresItem[0].avance;
+            // this.jsonData.item_saldo = getValoresItem[0].saldo;
+            // console.log('ITEMS')
+
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
-            datos_jsonData.append('vigente', this.jsonData.item_vigente);
-            datos_jsonData.append('avance', this.jsonData.item_avance);
+            datos_jsonData.append('vigente', /*this.jsonData.item_vigente*/ arrayValoresItem[0].vigente);
+            datos_jsonData.append('avance', /*this.jsonData.item_avance*/ arrayValoresItem[0].avance);
             datos_jsonData.append('estimado', this.jsonData.item_estimado);
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
@@ -637,6 +642,12 @@ export default {
                     break;
                 }
             }
+            //get Vigente, Avance, Estimado, Saldo
+            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id)).data;
+            console.log('GET VALORES ITEM', getValoresItem);
+            this.jsonData.item_vigente = getValoresItem[0].fvigente;
+            this.jsonData.item_avance = getValoresItem[0].favance;
+            this.jsonData.item_saldo = getValoresItem[0].fsaldo;
         },
         async cleanFormItemRelacion() {
             this.jsonData.item_codigo = '';
@@ -850,6 +861,11 @@ export default {
             current_id: null,
             mandarMensajesAlerta: {},
             id_eliminacion: null,
+            ///ITEM PLANILLA CON ITEM RELACIONADO VARS
+            fvigente: '',
+            favance: '',
+            fsaldo: '',
+            ///FIN PLANILLA RELACIONADO
             jsonData: {
                 //REQUERIMIENTO OBRA
                 id: "",
@@ -891,6 +907,7 @@ export default {
                 avance: '',
                 estimado: '',
                 vigente: '',
+                saldo: '',
                 precio_unitario: '',
                 ///FIN RELACION
                 codigo_otros: '',

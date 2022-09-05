@@ -414,7 +414,7 @@
 
                         <!-- INICIO fORMULARIO EN FILA relacion items contrato principal-->
 
-                        <div class="row bg-success">
+                        <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="codigo">Codigo:</label>
@@ -650,7 +650,7 @@
 
                         <!-- INICIO fORMULARIO EN FILA relacion otros gastos-->
 
-                        <div class="row bg-success">
+                        <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Codigo:</label>
