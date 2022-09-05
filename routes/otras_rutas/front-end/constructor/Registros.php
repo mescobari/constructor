@@ -13,8 +13,9 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::get('documents_ini', 'DocumentController@inicio')->name('documents_ini');
     Route::get('download_document/{id}', 'DocumentController@downloadDocument')->name('download_document');
     Route::apiResource('documents', DocumentController::class);
+    Route::get('get_ordenes_proceder', 'DocumentController@getOrdenesProceder')->name('get_ordenes_proceder');
 
-//         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');
+    //         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');
     Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');
     Route::apiResource('planillas', PlanillaController::class);
     Route::get('get_planilla_item', 'PlanillaController@getPlanillaItem')->name('get_planilla_item');

@@ -65,12 +65,28 @@
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
                             <!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
-                            <button type="button" class="btn btn-outline-primary ml-1"
-                                    data-toggle="modal"
-                                    data-target="#contrato"
-                                    v-if="props.row.document_types_id === 1"
-                                    @click="editarModal(props.row);"><span><i
-                                class="fa fa-adn"></i></span></button>
+                            <!--                            <button type="button" class="btn btn-outline-primary ml-1"-->
+                            <!--                                    data-toggle="modal"-->
+                            <!--                                    data-target="#contrato"-->
+                            <!--                                    v-if="props.row.document_types_id === 1"-->
+                            <!--                                    @click="cargar_file();"><span><i-->
+                            <!--                                class="fa fa-adn"></i></span></button>-->
+                            <!--                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"-->
+                            <!--                                   @change="cargar_file" style="display:none">-->
+                            <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
+                                   class="bg-primary" v-if="props.row.document_types_id === 1"
+                                   style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
+                                        <span id="contenido_documento_res_aprobacion"><i
+                                            class="fas fa-download fa-1x"></i><br>
+<!--                                            <span> {{-->
+<!--                                                configFile.defaultProceder-->
+<!--                                            }}</span>-->
+                                        </span>
+<!--                                <button type="button" class="close" v-if="configFile.cerrar"-->
+<!--                                        @click="borrar_file();"><span>&times;</span></button>-->
+                            </label>
+                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"
+                                   @change="cargar_file" style="display:none">
                             <button type="button" class="btn btn-outline-success ml-1"
                                     @click="downloadDocument(props.row)"><span><i
                                 class="far fa-file-pdf"></i> </span></button>
@@ -300,6 +316,7 @@ export default {
             configFile: {
                 cerrar: false,
                 contenidoDefault: "DOCUMENTOS",
+                defaultProceder: "Orden Proceder"
             },
             mandarMensajesAlerta: {},
             configToolBarEditText: [
@@ -601,17 +618,26 @@ export default {
                 this.deleteItem(this.id_eliminacion);
             }
         },
+        async ordenProcederExist() {
+            const getOrdenes = (await axios.get('get_ordenes_proceder')).data;
+            const getDocuments = (await axios.get('documents')).data;
+            for (let i = 0; i < getDocuments.length; i++) {
+                if (getDocuments[i].id == getOrdenes[i].document_id) {
+                    return true
+                }
+            }
+        },
         async listar() {
             const respuesta = await axios.get('documents');
-            let getDocumentTypes = (await axios.get('documentos_legaleses')).data;
+            const getOrdenesProceder = await axios.get('get_ordenes_proceder');
+            const getDocumentTypes = (await axios.get('documentos_legaleses')).data;
+            console.log("ORDENES PROCEDER", getOrdenesProceder.data);
             this.rows = respuesta.data.map(documento => {
-
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
                 documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
-
             console.log('documentos', this.rows)
 
             // this.rows = documentos;
@@ -630,7 +656,7 @@ export default {
                 this.jsonData.modifica !== null &&
                 this.jsonData.files !== null;
         },
-        async contratoSave(){
+        async contratoSave() {
             let datos_jsonData = new FormData();
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             if (this.jsonData.document_types_id.id === 1) {
@@ -655,7 +681,7 @@ export default {
             console.log("SAVE", respuesta.data);
         },
         async guardar() {
-            if(this.areAlltheFieldsFilled()) {
+            if (this.areAlltheFieldsFilled()) {
                 await this.contratoSave()
                 document.getElementById("cerrarModal").click();
                 await this.listar();
