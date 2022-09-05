@@ -551,11 +551,20 @@ export default {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             console.log('REQ ID', this.jsonData.requerimiento_id);
+            console.log('ITEM RELACION ID', this.jsonData.item_descripcion.id)
+            let getValoresItem = await axios.get('get_valores_item/'+this.jsonData.item_descripcion.id);
+            const arrayValoresItem = getValoresItem.data;
+            // console.log('GET VALORES ITEM', getValoresItem);
+            // this.jsonData.item_vigente = getValoresItem[0].vigente;
+            // this.jsonData.item_avance = getValoresItem[0].avance;
+            // this.jsonData.item_saldo = getValoresItem[0].saldo;
+            // console.log('ITEMS')
+
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
-            datos_jsonData.append('vigente', this.jsonData.item_vigente);
-            datos_jsonData.append('avance', this.jsonData.item_avance);
+            datos_jsonData.append('vigente', /*this.jsonData.item_vigente*/ arrayValoresItem[0].vigente);
+            datos_jsonData.append('avance', /*this.jsonData.item_avance*/ arrayValoresItem[0].avance);
             datos_jsonData.append('estimado', this.jsonData.item_estimado);
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
@@ -636,20 +645,9 @@ export default {
             //get Vigente, Avance, Estimado, Saldo
             let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id)).data;
             console.log('GET VALORES ITEM', getValoresItem);
-            for (let i = 0; i < getValoresItem.length; i++) {
-                if (getValoresItem[i].fvigente == 'fvigente') {
-                    this.jsonData.item_vigente = getValoresItem.data[i].fvigente;
-                } else if (getValoresItem[i].favance == 'favance') {
-                    this.jsonData.item_avance = getValoresItem.data[i].favance;
-                } else if (getValoresItem[i].fsaldo == 'fsaldo') {
-                    this.jsonData.item_saldo = getValoresItem.data[i].fsaldo;
-                }
-            }
-            // this.jsonData.item_vigente = getValoresItem.data.fvigente;
-            // this.jsonData.item_avance = getValoresItem.data.favance;
-            // this.jsonData.item_saldo = getValoresItem.data.saldo;
-            console.log('fvalores', this.jsonData.item_vigente, this.jsonData.item_avance, this.jsonData.item_saldo);
-
+            this.jsonData.item_vigente = getValoresItem[0].fvigente;
+            this.jsonData.item_avance = getValoresItem[0].favance;
+            this.jsonData.item_saldo = getValoresItem[0].fsaldo;
         },
         async cleanFormItemRelacion() {
             this.jsonData.item_codigo = '';
@@ -909,6 +907,7 @@ export default {
                 avance: '',
                 estimado: '',
                 vigente: '',
+                saldo: '',
                 precio_unitario: '',
                 ///FIN RELACION
                 codigo_otros: '',
