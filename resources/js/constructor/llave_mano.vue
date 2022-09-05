@@ -1,15 +1,18 @@
-<template slot-scope="props">
+<template>
     <div>
         <div class="card">
             <div class="card-header ferdy-background-Primary-blak">
                 <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
                 <div class="card-tools">
+
+                </div>
+                <a :href="'ver_requerimientos/'+this.current_id" target="_blank" rel="noopener noreferrer">
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
-                            v-if="current_id!=null"
                             @click="showRequerimiento();">
                         Imprimir Requerimiento
                     </button>
-                </div>
+<!--                    <button type="button" class="btn btn-outline-success ml-1" ><span><i class="far fa-file-pdf"></i></span></button>-->
+                </a>
             </div>
             <br>
             <div class="card-body">
@@ -493,10 +496,13 @@ export default {
         }
     },
     methods: {
+
         async showRequerimiento() {
             if(this.current_id!=null) {
                 const showReq = await axios.get('ver_requerimientos/' + this.current_id);
                 console.log('SHOW REQ', showReq.data);
+            } else {
+                alert("Debe llenar un requerimiento");
             }
         },
         async filterListItemRelacion(arrayRequerimientoRelacion) {
