@@ -65,7 +65,13 @@
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
                             <!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
-                            <button type="button" class="btn btn-outline-success"
+                            <button type="button" class="btn btn-outline-primary ml-1"
+                                    data-toggle="modal"
+                                    data-target="#contrato"
+                                    v-if="props.row.document_types_id === 1"
+                                    @click="editarModal(props.row);"><span><i
+                                class="fa fa-adn"></i></span></button>
+                            <button type="button" class="btn btn-outline-success ml-1"
                                     @click="downloadDocument(props.row)"><span><i
                                 class="far fa-file-pdf"></i> </span></button>
                             <!--                            </a>-->
