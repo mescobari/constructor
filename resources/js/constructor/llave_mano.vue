@@ -4,11 +4,15 @@
             <div class="card-header ferdy-background-Primary-blak">
                 <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
                 <div class="card-tools">
+
+                </div>
+                <a :href="'ver_requerimientos/'+this.current_id" target="_blank" rel="noopener noreferrer">
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
-                            @click="ModalCrear();">
+                            @click="showRequerimiento();">
                         Imprimir Requerimiento
                     </button>
-                </div>
+<!--                    <button type="button" class="btn btn-outline-success ml-1" ><span><i class="far fa-file-pdf"></i></span></button>-->
+                </a>
             </div>
             <br>
             <div class="card-body">
@@ -27,7 +31,8 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento Llave en mano</h6>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento Llave en
+                                mano</h6>
                             </a>
                         </li>
                     </ul>
@@ -492,6 +497,14 @@ export default {
     },
     methods: {
 
+        async showRequerimiento() {
+            if(this.current_id!=null) {
+                const showReq = await axios.get('ver_requerimientos/' + this.current_id);
+                console.log('SHOW REQ', showReq.data);
+            } else {
+                alert("Debe llenar un requerimiento");
+            }
+        },
         async filterListItemRelacion(arrayRequerimientoRelacion) {
             const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
             const getUnidades = (await axios.get('get_unidades')).data;
@@ -505,9 +518,6 @@ export default {
                                 ...responsePlanillaItem[j],
                                 //here is the id object
                                 ...arrayRequerimientoRelacion[i],
-                                // ...currentUnidad[0],
-                                // ...responseRecursos[j].codigo_recurso,
-                                // ...responseRecursos[j].descripcion_recurso
                             })
                             j = responsePlanillaItem.length;
                         }
@@ -527,19 +537,24 @@ export default {
             console.log('LIST REQ REL', responseReqRelacion);
         },
         areAlltheFieldsFilled() {
-            return this.jsonData.requerimiento_id &&
-                this.jsonData.item_vigente &&
-                this.jsonData.item_avance &&
-                this.jsonData.item_estimado &&
-                this.jsonData.item_precio_unitario &&
-
-                this.jsonData.item_saldo &&
-                this.jsonData.item_descripcion
+            return this.jsonData.requerimiento_id != null &&
+                //lineal form
+                this.jsonData.item_descripcion != null &&
+                this.jsonData.item_vigente != null &&
+                this.jsonData.item_avance != null &&
+                this.jsonData.item_saldo != null &&
+                this.jsonData.item_estimado != null &&
+                this.jsonData.item_precio_unitario != null &&
+                //panel
+                this.jsonData.fecha_requerimiento != null &&
+                this.jsonData.files != null &&
+                this.jsonData.trabajos_encarados != null &&
+                this.jsonData.nuri_requerimiento;
         },
-        async guardarItemRelacion() {
+        async saveItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-            if (this.areAlltheFieldsFilled()) {
+            console.log('REQ ID', this.jsonData.requerimiento_id)
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
@@ -549,10 +564,41 @@ export default {
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
             const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
             console.log('SAVE ITEM RELACION', itemRelacion.data);
-            await this.cleanFormItemRelacion()
-            await this.listarItemRelacion();
-            }
-            else {
+        },
+        async saveFirstRequerimiento() {
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('document_id', this.jsonData.proyectos.id);
+            datos_jsonData.append('tipo_requerimiento_id', '5');
+            datos_jsonData.append('correlativo_requerimiento', this.jsonData.nuri_requerimiento)
+            let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
+            this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
+            datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
+            datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
+
+            datos_jsonData.append('descripcion_requerimiento', this.jsonData.trabajos_encarados);
+            datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
+            datos_jsonData.append('gastos_generales', this.jsonData.trabajos_encarados);
+            datos_jsonData.append('files', this.jsonData.files);
+            this.clickedAdd = true;
+            let response = await axios.post('create_requerimiento', datos_jsonData);
+            console.log('CREATE REQ', response.data);
+        },
+        async guardarItemRelacion() {
+
+            if (this.areAlltheFieldsFilled()) {
+                if (this.clickedAdd) {
+                    console.log('MEMORYSELECTED - True', this.memorySelected);
+                    await this.saveItemRelacion()
+                } else {
+                    console.log('MEMORYSELECTED - False', this.memorySelected);
+                    await this.saveFirstRequerimiento()
+                    await this.saveItemRelacion()
+                    console.log('REQ ID FOR CURRENT', this.jsonData.requerimiento_id);
+                    this.current_id = this.jsonData.requerimiento_id;
+                }
+                await this.cleanFormItemRelacion();
+                await this.listarItemRelacion();
+            } else {
                 alert('Por favor llene todos los campos');
             }
         },
@@ -629,20 +675,9 @@ export default {
             this.tabSelected = currentTab;
         },
         respuestaModalAlertaConfirmacion(datos) {
-            // console.log(datos.respuesta);
             console.log('eliminando', datos.respuesta);
             if (datos.respuesta === true) {
-                if (this.tabSelected === "home") {
-                    this.eliminar(this.id_eliminacion);
-
-                } else if (this.tabSelected === "profile") {
-                    this.eliminarItemRelacion(this.id_eliminacion);
-
-                } else if (this.tabSelected === "messages") {
-                    this.eliminarItemOtrosGastos(this.id_eliminacion);
-                }
-                console.log('ID DOC', this.tabSelected);
-                // this.eliminar(this.id_eliminacion);
+                this.eliminarItemRelacion(this.id_eliminacion);
             }
         },
         async ver_planilla() {
@@ -809,9 +844,10 @@ export default {
             combo_requerimiento_recursos: [],
             combo_items_planilla: [],
             combo_otros_gastos: [],
-            memorySelected: '',
+            memorySelected: true,
             tabSelected: 'home',
             proyectos: [],
+            current_id: null,
             mandarMensajesAlerta: {},
             id_eliminacion: null,
             jsonData: {
