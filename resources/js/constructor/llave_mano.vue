@@ -4,15 +4,15 @@
             <div class="card-header ferdy-background-Primary-blak">
                 <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
                 <div class="card-tools">
-
+                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
+                            @click="showRequerimiento();">
+                        Imprimir Requerimiento
+                    </button>
+                    <!--                                <a :href="'ver_requerimientos/'+this.current_id" target="_blank" rel="noopener noreferrer">-->
+                    <!--                                    <button type="button"  ><span><i class="far fa-file-pdf"></i></span></button>-->
+                    <!--                                </a>-->
                 </div>
-                <!--                <a :href="'ver_requerimientos/'+this.current_id" target="_blank" rel="noopener noreferrer">-->
-                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
-                        @click="showRequerimiento();">
-                    Imprimir Requerimiento
-                </button>
-                <!--                    <button type="button" class="btn btn-outline-success ml-1" ><span><i class="far fa-file-pdf"></i></span></button>-->
-                <!--                </a>-->
+
             </div>
             <br>
             <div class="card-body">
