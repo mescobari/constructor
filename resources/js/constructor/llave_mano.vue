@@ -636,7 +636,7 @@ export default {
             //get Vigente, Avance, Estimado, Saldo
             let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id)).data;
             console.log('GET VALORES ITEM', getValoresItem);
-            for (let i = 0; i < getValoresItem.data.length; i++) {
+            for (let i = 0; i < getValoresItem.length; i++) {
                 if (getValoresItem[i].fvigente == 'fvigente') {
                     this.jsonData.item_vigente = getValoresItem.data[i].fvigente;
                 } else if (getValoresItem[i].favance == 'favance') {
