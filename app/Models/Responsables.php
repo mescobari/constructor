@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Responsables extends Model
 {
     use HasFactory;
-    protected $fillable = ['intervenciones_id', 'funcionario_id', 'fecha_inicial', 'fecha_final', 'motivo' ];
-	protected $table = 'intervenciones_funcionarios';
+    protected $fillable = ['funcionario_id','unidad_ejecutora_id','documents_id', 'fecha_inicial', 'fecha_final', 'motivo' ];
+	protected $table = 'funcionario_proyectos';
 }
 

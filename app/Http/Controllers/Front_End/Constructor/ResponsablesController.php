@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Front_End\Paginas;
+namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -53,14 +53,14 @@ class ResponsablesController extends Controller
     {
         //
         $responsable = new Responsables;
-       
-        $responsable->intervenciones_id = $request->intervenciones_id;
-        $responsable->funcionarios_id = $request->funcionarios_id;
+
+        $responsable->funcionario_id = $request->funcionario_id;
+        $responsable->unidad_ejecutora_id = $request->unidad_ejecutora_id;
+        $responsable->documents_id = $request->documents_id;
         $responsable->fecha_inicial = $request->fecha_inicial;
         $responsable->fecha_final = $request->fecha_final;
         $responsable->motivo = $request->motivo;
-
-       // $responsable->save($request->all());
+        
         $responsable->save();
         
         $respuesta = 'Responsable successfully created';
@@ -141,22 +141,24 @@ class ResponsablesController extends Controller
     public function buscar_responsables(Request $request){
 
        
-        $intervenciones_id=$request->proyecto['id'];
+        $institucion_id=$request->institucion_id;
         
-        /*
-        $respuesta = DB::raw("SELECT r.id, r.fecha_inicial, r.fecha_final, r.motivo, p.nombres, p.paterno, p.materno 
-       FROM intervenciones_funcionarios r, funcionarios f, personas p 
-        where r.funcionarios_id=f.id and f.persona_id= p.id and r.intervenciones_id=$intervenciones_id");
-*/
-$respuesta = DB::table('intervenciones_funcionarios')
-            ->join('funcionarios', 'intervenciones_funcionarios.funcionarios_id', '=', 'funcionarios.id')
+       
+$respuesta = DB::table('funcionario_proyectos')
+            ->join('funcionarios', 'funcionario_proyectos.funcionario_id', '=', 'funcionarios.id')
             ->join('personas', 'funcionarios.persona_id', '=', 'personas.id')
-            ->where('intervenciones_funcionarios.intervenciones_id','=',$intervenciones_id)
-            ->select('intervenciones_funcionarios.*', 'personas.nombres', 'personas.paterno', 'personas.materno')
+            ->join('documents', 'funcionario_proyectos.documents_id', '=', 'documents.id')
+            ->join('unidades_ejecutoras', 'funcionario_proyectos.unidad_ejecutora_id', '=', 'unidades_ejecutoras.id')
+            ->where('funcionarios.institucion_id','=',$institucion_id)
+            ->select(  DB::raw('CONCAT(personas.nombres, " ", personas.paterno, " " , personas.paterno) as persona') , 
+            'documents.nombre as contrato', 'unidades_ejecutoras.nombre as uni_eje', 
+            DB::raw('date_format(funcionario_proyectos.fecha_inicial, "%d-%m-%Y") as fecha_inicial'),
+            DB::raw('date_format(funcionario_proyectos.fecha_final, "%d-%m-%Y") as fecha_final'),
+            'funcionario_proyectos.motivo','funcionario_proyectos.id')
             ->get();
 
 
-        //$respuesta = 'estamos listos '. $intervenciones_id;
+        //$respuesta = 'estamos listos '. $institucion_id;
         return $respuesta;
     }    
     

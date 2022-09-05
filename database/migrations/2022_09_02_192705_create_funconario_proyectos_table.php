@@ -13,11 +13,14 @@ class CreateFunconarioProyectosTable extends Migration
      */
     public function up()
     {
-        Schema::create('funconario_proyectos', function (Blueprint $table) {
+        Schema::create('funcionario_proyectos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('funcionario_id');
             $table->unsignedBigInteger('unidad_ejecutora_id');
             $table->unsignedBigInteger('documents_id');
+            $table->date('fecha_inicial');
+            $table->date('fecha_final')->nullable();
+            $table->text('motivo')->nullable();
 
             $table->timestamps();
             $table->foreign('funcionario_id')->references('id')->on('funcionarios');

@@ -7,6 +7,8 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Constructor\document;
+use App\Models\Constructor\UnidadEjecutora;
+
 use Illuminate\Support\Facades\Storage;
 
 
@@ -29,6 +31,11 @@ class DocumentController extends Controller
         return document::all();
     }
 
+ public function listar_ue()
+    {
+        //
+        return UnidadEjecutora::all();
+    }
     /**
      * Show the form for creating a new resource.
      *

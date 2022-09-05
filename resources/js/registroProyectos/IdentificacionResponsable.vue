@@ -12,25 +12,21 @@
             <br>
             <div class="card-body"> 
                 <div class="row">
-                    <div class="col-md-4">          
-                        <div class="form-group">
-                            <label for="codsisin">Codsisin:</label>
-                            <input type="text" class="form-control" v-model="jsonData.proyectos.codsisin" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-8">          
-                        <div class="form-group">
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" class="form-control" v-model="jsonData.proyectos.nombre" readonly>
+                    <div class="col-md-12">
+                        <div style="text-align: center;">
+                            <h3> {{ jsonData.nombreInstitucion }} ({{ this.jsonData.institucion_id }})</h3>
                         </div>
                     </div>
                 </div>
-                <div class="container p-3 border rounded">
+
+                <hr>
+               
+              
                     <div class="row">
 
-                        <div class="col-md-5">          
+                        <div class="col-md-2">          
                             <div class="form-group">
-                                <label for="codsisin">Fecha de Asignacion (inicial):</label>
+                                <label for="codsisin">Fecha de Asignacion</label>
                                 <datepicker             
                                     :language="configFechas.es"
                                     :placeholder="configFechas.placeholder"
@@ -54,7 +50,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-5">          
+                        <div class="col-md-2">          
                             <div class="form-group">
                                 <label for="codsisin">Seleccione Funcionario:</label>
                                 <v-select label="nombresAP" :options="funcionarios" v-model="jsonData.funcionario" placeholder="Selecione un funcionario">
@@ -62,6 +58,24 @@
                                 </v-select>
                             </div>
                         </div>
+                        <div class="col-md-3">          
+                            <div class="form-group">
+                                <label for="codsisin">Seleccione Unidad Ejecutora:</label>
+                                <v-select label="nombre" :options="unidad_ejecutoras" v-model="jsonData.ue" placeholder="Selecione Unidad Ejecutora">
+                                    <span slot="no-options">No hay datos para cargar</span>
+                                </v-select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">          
+                            <div class="form-group">
+                                <label for="codsisin">Seleccione Contrato:</label>
+                                <v-select label="nombre" :options="contratos" v-model="jsonData.cp" placeholder="Selecione Contrato">
+                                    <span slot="no-options">No hay datos para cargar</span>
+                                </v-select>
+                            </div>
+                        </div>
+
+
                         <div class="col-md-2">          
                             <div class="form-group">
                                 <label for="" class="text-white"> Boton Buscar</label>
@@ -113,7 +127,7 @@
                      </div>
 
 
-                </div>
+                
                 <hr>
                 <!-- tabla -->
                 <div class="table-responsive">
@@ -221,27 +235,35 @@ export default {
         return{
             proyectos:[],
             funcionarios:[],
-            ubicaciones:[],
-             btnguardar:true,
+            unidad_ejecutoras:[],
+            contratos:[],
+            btnguardar:true,
             editar:false,
             jsonData:{
                 nombreBuscar:"",
                 nombreInstitucion:null,
-                proyectos:[],
+                proyectos:[],                
                 codsisin:"",
                 nombre:"",
-                funcionario:null,
-                ubicaciones:[],
+                funcionario:null,  
+                ue:null,
+                cp:null,             
                 fecha_inicial:'',
                 fecha_final:'',
                 motivo:null,
             },
             rows: [],
             columns: [
-                { label: "#",               name: "id",                   filter: { type: "simple", placeholder: "#", },                sort: true, uniqueId: true, },
-                { label: "Nombre",    name: "nombres",            filter: { type: "simple", placeholder: "Nombre", },              sort: true, },
-                { label: "Paterno",       name: "paterno",    filter: { type: "simple", placeholder: "Apellidos" },            sort: true, },
-                { label: "Materno",       name: "materno",          filter: { type: "simple", placeholder: "Materno" },       sort: true, },
+                { label: "Funcionario",    name: "persona",
+                   filter: { type: "simple", placeholder: "funcionario", },
+                   sort: true, 
+                },
+
+                { label: "Contrato",       name: "contrato",    filter: { type: "simple", placeholder: "Apellidos" },            sort: true, },
+                { label: "Uni. Ejecutora",       name: "uni_eje",          
+                  filter: { type: "simple", placeholder: "Unidad Ejecutora" },       
+                  sort: true, 
+                },
                 { label: "Fecha inicial",       name: "fecha_inicial",     filter: { type: "simple", placeholder: "Fecha inicial" },  sort: true, },
                 { label: "Fecha Final",       name: "fecha_final",        filter: { type: "simple", placeholder: "Fecha Final" },     sort: true, },
                 { label: "Observaciones",       name: "motivo",        filter: { type: "simple", placeholder: "Observaciones" },     sort: true, },
@@ -256,37 +278,59 @@ export default {
     },    
     methods: {        
         async verificar_un_solo_proyecto(){
+            //en el caso EBC se debe verificar 
             var respuesta = await axios.get('proyectos_de_institucion');
+            
             if(respuesta.data.cantidad > 1){
                 this.jsonData.nombreInstitucion = respuesta.data.institucion.nombre;
+                this.jsonData.institucion_id = respuesta.data.institucion.id;
                 this.proyectos = respuesta.data.proyectos;
-                $("#ubicacion_modal_seleccion_proyecto").modal("show");
+                // no es necesario mostrar el modal, solo mostramos un titulo la institucion
+                //$("#ubicacion_modal_seleccion_proyecto").modal("show");
             }else{
                 if(respuesta.data.cantidad == 1){
                     this.jsonData.proyectos = respuesta.data.proyectos[0];
                 }else{
                     alert("usted no tiene proyectos");
                 }
-            }              
+            } 
+            this.buscarResponsables();             
         },
 
         async listar_funcionarios(){
             var respuesta = await axios.get('funcionarios_de_institucion');
             this.funcionarios = respuesta.data;
-            console.log(respuesta.data);
+           
+        },
+
+        async listar_UE(){
+            var respuesta = await axios.get('listar_ue');
+            const principales = respuesta.data.map((item) =>{
+                item.nombre=item.nombre.substr(15);
+                return item;
+            });          
+            this.unidad_ejecutoras = principales;           
+        },
+
+        async listar_CP(){
+            var respuesta = await axios.get('documents');
+            const principales = respuesta.data.filter((item) => item.document_types_id === 1)
+            console.log('Documentos Principales', principales);
+            this.contratos = principales;
+            
         },
 
          async guardar(){
               if ( this.jsonData.funcionario.id != null ){
-                    var intervenciones_id = this.jsonData.proyectos.id;
+                    var institucion_id = this.jsonData.institucion_id ;
                     var funcionario_id = this.jsonData.funcionario.id;
+                    var unidad_ejecutora_id = this.jsonData.ue.id;                    
+                    var contrato_id = this.jsonData.cp.id;
 
-                    var fecha = this.jsonData.fecha_inicial;
-
-                    var fecha_vencimiento = new Date(this.jsonData.fecha_vencimiento);
+                    var fecha = this.jsonData.fecha_inicial;                  
                     var fecha_inicial =  fecha.getFullYear() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getDate();
-                                
                 
+                   
 
                     var fecha = this.jsonData.fecha_final;
                     
@@ -299,22 +343,22 @@ export default {
                     var motivo = this.jsonData.motivo;
                     
                     var datos_jsonData = {
-                            "intervenciones_id": intervenciones_id,
-                            "funcionarios_id": funcionario_id,
+                            "institucion_id": institucion_id,
+                            "funcionario_id": funcionario_id,
+                            "unidad_ejecutora_id": unidad_ejecutora_id,
+                            "documents_id": contrato_id,
                             "fecha_inicial": fecha_inicial,
                             "fecha_final": fecha_final,
                             "motivo": motivo
                             
                             }
-
-                    console.log(datos_jsonData);
-
-                    var respuesta = await axios.post('responsables', datos_jsonData);
-                        console.log(respuesta.data);
-                        this.buscarResponsables();
+                   var respuesta = await axios.post('responsables', datos_jsonData);
+                   
+                   console.log(respuesta.data);
+                 this.buscarResponsables();
 
 
-            }
+                 }
                    
         },
 
@@ -332,14 +376,20 @@ export default {
         
         async buscarResponsables(){
             var data = {
-                'proyecto':this.jsonData.proyectos,
+                'institucion_id':this.jsonData.institucion_id,
             }
-            var respuesta = await axios.post("buscar_responsables", data);
-            console.log(respuesta);
 
+            console.log('=======lista inicial========');
+            console.log(data);
+            
+            var respuesta = await axios.post("buscar_responsables", data);
+
+            console.log('=======voviendo del back========');
             console.log(respuesta.data);
+
+           // console.log(respuesta.data);
            // this.ubicaciones = respuesta.data.respuesta;
-            this.rows = respuesta.data;
+           this.rows = respuesta.data;
         },
 
         /*********** funciones de configuracion**************/
@@ -355,10 +405,15 @@ export default {
     },
     mounted() {
         this.funcionRecuperaConfig();
+       
     },
     created(){
         this.verificar_un_solo_proyecto();
         this.listar_funcionarios();
+        this.listar_UE();
+        this.listar_CP();
+       
+
     },
     components: {
         VueBootstrap4Table,
