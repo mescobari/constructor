@@ -216,4 +216,11 @@ class DocumentController extends Controller
     public function getOrdenesProceder(){
         return OrdenesProceder::all();
     }
+    public function uploadOrdenFiles(){
+        $files = request()->file('files');
+        $nombre_carpeta = "constructor/ordenes_proceder";
+        $nombre_archivo = $_FILES['files']['name'];
+        $path = $files->storeAs( $nombre_carpeta, $nombre_archivo);
+        return $path;
+    }
 }

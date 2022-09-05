@@ -73,22 +73,28 @@
                             <!--                                class="fa fa-adn"></i></span></button>-->
                             <!--                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"-->
                             <!--                                   @change="cargar_file" style="display:none">-->
-                            <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
-                                   class="bg-primary" v-if="props.row.document_types_id === 1"
-                                   style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
-                                        <span id="contenido_documento_res_aprobacion"><i
-                                            class="fas fa-download fa-1x"></i><br>
+
+<!--                            <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"-->
+<!--                                   class="bg-primary" v-if="props.row.document_types_id === 1"-->
+<!--                                   style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">-->
+<!--                                        <span id="contenido_documento_res_aprobacion"><i-->
+<!--                                            class="fas fa-download fa-1x"></i><br>-->
 <!--                                            <span> {{-->
 <!--                                                configFile.defaultProceder-->
 <!--                                            }}</span>-->
-                                        </span>
+<!--                                        </span>-->
 <!--                                <button type="button" class="close" v-if="configFile.cerrar"-->
 <!--                                        @click="borrar_file();"><span>&times;</span></button>-->
-                            </label>
-                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"
-                                   @change="cargar_file" style="display:none">
+<!--                            </label>-->
+<!--                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"-->
+<!--                                   @change="cargar_file" style="display:none">-->
+                            <button type="button" class="btn btn-outline-primary ml-1"
+                                    data-toggle="modal"
+                                    data-target="#orden"
+                                    @click="modalCurrentDoc(props.row.id)"><span><i
+                                class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
-                                    @click="downloadDocument(props.row)"><span><i
+                                    @click="downloadDocument(props.row.id)"><span><i
                                 class="far fa-file-pdf"></i> </span></button>
                             <!--                            </a>-->
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
@@ -292,6 +298,47 @@
             </div>
         </div>
         <!----------------------------------------Fin Modal Crear Contrato---------------------------------------->
+
+        <!----------------------------------------MODAL ORDEN PROCEDER---------------------------------------->
+        <div class="modal fade" id="orden" tabindex="-1" role="dialog" style="overflow-y: scroll;"
+             aria-labelledby="intervencionTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <!--modal header, close button-->
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="intervencionTitle">{{ tituloIntervencionModal }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <H1>
+                                <vue-dropzone
+                                    ref="myVueDropzone"
+                                    :useCustomSlot="true"
+                                    id="dropzone"
+                                    @vdropzone-upload-progress="uploadProgress"
+                                    :options="dropzoneOptions"
+                                    @vdropzone-file-added="fileAdded"
+                                    @vdropzone-sending-multiple="sendingFiles"
+                                    @vdropzone-success-multiple="success"
+                                ></vue-dropzone>
+                            </H1>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
+                        </button>
+                        <button type="submit" @click="uploadOrdenProceder(props.row.id);" class="btn btn-success" id="guardarModal">
+                            <slot>
+                                Guardar
+                            </slot>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
                             ref="abrirAlerta"></alert-confirmacion>
     </div>
@@ -304,10 +351,13 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
+import vue2Dropzone from 'vue2-dropzone';
+import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
 
 Vue.component("v-select", vSelect);
+Vue.component('vueDropzone', vue2Dropzone);
 
 export default {
     props: ['url', 'csrf', 'ast', 'operations', 'user'],
@@ -370,6 +420,11 @@ export default {
             disableSub: false,
             disableSub2: false,
             combo_padres: [],
+            uploadProgress: '',
+            dropzoneOptions:[],
+            fileAdded: '',
+            sendingFiles: '',
+            success: '',
             tituloIntervencionModal: '',
             unidades_ejecutoras: [],
             combo_tipos_documentos: [],
@@ -536,6 +591,12 @@ export default {
         }
     },
     methods: {
+        async uploadOrdenProceder(id){
+            let formData = new FormData();
+            formData.append('files', this.jsonData.files);
+            const uploadFiles = await axios.put('upload_orden_files')
+            console.log(uploadFiles);
+        },
         //modify the value of the input in real time from v-select document_types_id and padre
         async cambioTipoDocumento() {
             let padresObjeto = await this.padreGetAll()
