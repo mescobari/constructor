@@ -223,15 +223,6 @@ class RequerimientoController extends Controller
             'tiempo_total_recurso' => $request->tiempo_total_recurso,
             'precio_referencia_recurso' => $request->precio_referencia_recurso,
         ]);
-
-//        $itemAndId->requerimiento_id = $request->requerimiento_id;
-//        $itemAndId->requerimiento_recurso_id = $request->requerimiento_recurso_id;
-//        $itemAndId->cantidad_recurso = $request->cantidad_recurso;
-//        $itemAndId->horas_recurso = $request->horas_recurso;
-//        $itemAndId->dias_recurso = $request->dias_recurso;
-//        $itemAndId->tiempo_total_recurso = $request->tiempo_total_recurso;
-//        $itemAndId->precio_referencia_recurso = $request->precio_referencia_recurso;
-//        $itemAndId->save();
     }
 
     public function downloadRequerimiento($id)
