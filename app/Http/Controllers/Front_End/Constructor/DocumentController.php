@@ -7,7 +7,12 @@ use App\Models\Constructor\OrdenesProceder;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 use App\Models\Constructor\document;
+use App\Models\Constructor\UnidadEjecutora;
+use App\Models\FrontEnd\usuarios\Funcionario;
+use App\Models\Responsables;
+
 use Illuminate\Support\Facades\Storage;
 
 
@@ -26,10 +31,25 @@ class DocumentController extends Controller
 
     public function index()
     {
-        //
-        return document::all();
+        //verificar para que contratos esta habilitado el usuario
+        $users_id = auth()->user()->id;
+        if ( $users_id >2) {
+            // obtenemo ahora el funcionario_id
+            $funcionario_id=Funcionario::find($users_id)->id;
+            // ahora debemos encontrar el id del responsable, un funcionario puede estar asignado a mas de un proyecto.
+            $resp=Responsables::select('documents_id')->where('funcionario_id' ,'=' ,$funcionario_id)->get()->toarray();
+
+            return document::whereIn('id', $resp)->get();
+        } else { 
+            return document::all();
+        }
     }
 
+ public function listar_ue()
+    {
+        //
+        return UnidadEjecutora::all();
+    }
     /**
      * Show the form for creating a new resource.
      *

@@ -1,5 +1,5 @@
 <?php
-    Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Paginas'], function () {
+    Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], function () {
         Route::get('responsable', 'ResponsablesController@inicio')->name('responsable');  //menu
         Route::apiResource('responsables', ResponsablesController::class);
         Route::post('buscar_responsables', 'ResponsablesController@buscar_responsables')->name('buscar_responsables');

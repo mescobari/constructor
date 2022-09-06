@@ -64,30 +64,8 @@
                     </template>
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
-                            <!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
-                            <!--                            <button type="button" class="btn btn-outline-primary ml-1"-->
-                            <!--                                    data-toggle="modal"-->
-                            <!--                                    data-target="#contrato"-->
-                            <!--                                    v-if="props.row.document_types_id === 1"-->
-                            <!--                                    @click="cargar_file();"><span><i-->
-                            <!--                                class="fa fa-adn"></i></span></button>-->
-                            <!--                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"-->
-                            <!--                                   @change="cargar_file" style="display:none">-->
 
-<!--                            <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"-->
-<!--                                   class="bg-primary" v-if="props.row.document_types_id === 1"-->
-<!--                                   style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">-->
-<!--                                        <span id="contenido_documento_res_aprobacion"><i-->
-<!--                                            class="fas fa-download fa-1x"></i><br>-->
-<!--                                            <span> {{-->
-<!--                                                configFile.defaultProceder-->
-<!--                                            }}</span>-->
-<!--                                        </span>-->
-<!--                                <button type="button" class="close" v-if="configFile.cerrar"-->
-<!--                                        @click="borrar_file();"><span>&times;</span></button>-->
-<!--                            </label>-->
-<!--                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"-->
-<!--                                   @change="cargar_file" style="display:none">-->
+
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
                                     data-target="#orden"
