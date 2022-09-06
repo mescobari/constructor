@@ -159,7 +159,6 @@
                                         <input type="file" class="form-control" id="documento_res_aprobacion"
                                                @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
                                     </div>
-                                    <div class="col-md-3"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -1171,15 +1170,10 @@ export default {
                         if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
                             arrayItemsFiltered.push({
                                 ...responseRecursos[j],
-                                //here is the id object
-                                ...arrayItems[i],
-
-                                // ...responseRecursos[j].codigo_recurso,
-                                // ...responseRecursos[j].descripcion_recurso
+                                ...arrayItems[i], //here is the id object
                             })
                             j = responseRecursos.length;
                         }
-
                     }
                 }
             }
@@ -1193,12 +1187,8 @@ export default {
             const response = await axios.get('get_requerimiento_items');
             const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
             console.log('ITEM RECURSOS', response.data);
-            if (this.jsonData.tipo_requerimiento_id == 4) {
-                this.rows = response.data
-            } else {
+
                 this.rows = await this.filterList(response.data);
-            }
-            // this.rows = items
         },
         async retrieveFromCurrentDescripcionRecurso() {
 
@@ -1267,6 +1257,7 @@ export default {
             datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
             datos_jsonData.append('files', this.jsonData.files);
             this.clickedAdd = true;
+            this.configFile.cerrar = false;
             let response = await axios.post('create_requerimiento', datos_jsonData);
             console.log('CREATE REQ', response.data);
         },
