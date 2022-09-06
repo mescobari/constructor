@@ -1340,10 +1340,7 @@ export default {
             console.log('EDITAR REQ ITEM', data);
         },
         async modificar() {
-            // const response_req = await axios.get('get_requerimientos');
-            // this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             let datos_jsonData = new FormData();
-            // datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('requerimiento_recurso_id', this.jsonData.descripcion_recurso.id);
             datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
             datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
