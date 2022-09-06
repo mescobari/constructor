@@ -64,7 +64,7 @@
                     </template>
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
-                            <!--                            <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
+                            <!-- <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
                                     data-target="#contrato"

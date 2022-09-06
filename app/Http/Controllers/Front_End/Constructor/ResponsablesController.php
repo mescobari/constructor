@@ -110,6 +110,12 @@ class ResponsablesController extends Controller
     public function destroy($id)
     {
         //
+        $resp = Responsables::find($id);
+
+        $resp->delete();
+
+        
+        return $resp;
     }
 
     public function funcionarios(){

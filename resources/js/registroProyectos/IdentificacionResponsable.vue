@@ -50,7 +50,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2">          
+                        <div class="col-md-3">          
                             <div class="form-group">
                                 <label for="codsisin">Seleccione Funcionario:</label>
                                 <v-select label="nombresAP" :options="funcionarios" v-model="jsonData.funcionario" placeholder="Selecione un funcionario">
@@ -66,7 +66,7 @@
                                 </v-select>
                             </div>
                         </div>
-                        <div class="col-md-3">          
+                        <div class="col-md-4">          
                             <div class="form-group">
                                 <label for="codsisin">Seleccione Contrato:</label>
                                 <v-select label="nombre" :options="contratos" v-model="jsonData.cp" placeholder="Selecione Contrato">
@@ -76,17 +76,10 @@
                         </div>
 
 
-                        <div class="col-md-2">          
-                            <div class="form-group">
-                                <label for="" class="text-white"> Boton Buscar</label>
-                                <!-- <button type="button" class="form-control btn btn-success btn-md"  @click="guardar();">Grabar</button>-->
-                                <button type="button" class="form-control btn btn-success btn-md" @click="guardar();" v-if="btnguardar"><i class="fas fa-list"></i> Grabar Responsable</button>
-                            </div>
-                        </div>
+                       
 
                     </div>
                      <div class="row" v-show="editar">
-
                         <div class="col-md-5">          
                             <div class="form-group">
                                 <label for="codsisin">Fecha de Baja (final):{{editar}}</label>
@@ -121,12 +114,18 @@
                                     ></vue-editor>
                                 </div>
                             </div>
-
-                       
-
                      </div>
 
-
+                     <div class="row">
+                        <div class="col-md-10"></div> 
+                        <div class="col-md-2">          
+                            <div class="form-group">
+                                <label for="" class="text-white"> Boton Buscar</label>
+                                <!-- <button type="button" class="form-control btn btn-success btn-md"  @click="guardar();">Grabar</button>-->
+                                <button type="button" class="form-control btn btn-success btn-md" @click="guardar();" v-if="btnguardar"><i class="fas fa-list"></i> Grabar Responsable</button>
+                            </div>
+                        </div>
+                    </div> 
                 
                 <hr>
                 <!-- tabla -->
@@ -176,8 +175,20 @@
                         </template>
                         <template slot="acciones" slot-scope="props">
                             <div class="btn-group">
-                                <!-- <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#intervencion" @click="ModalModificar(props.row);"><span><i class="fa fa-user-edit"></i></span></button> -->
-                                <button type="button" class="btn btn-outline-danger ml-1" @click="eliminarUbicacion(props.row.id);"><span><i class="fa fa-trash-alt"></i></span></button>                
+                                
+                                <button type="button" class="btn btn-outline-success ml-1"
+                                    @click="downloadDocument(props.row)"><span><i
+                                class="far fa-file-pdf"></i> </span></button>
+                                <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
+                                    data-target="#contrato" @click="bajaResponsable(props.row);"><span><i
+                                class="fa fa-user-edit"></i></span></button>
+                            <button type="button" class="btn btn-outline-danger ml-1"
+                                    @click="deleteResponsable(props.row);"><span><i
+                                class="fa fa-trash-alt"></i></span></button>
+                           
+                           
+                           
+                           
                             </div>
                         </template>
                     </vue-bootstrap4-table>
@@ -217,6 +228,8 @@
 
         
         <configuraciones :configuracion="datosEnviarConfiguracion" @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>
+   
+        
     </div>
      
 </template>
@@ -353,42 +366,48 @@ export default {
                             
                             }
                    var respuesta = await axios.post('responsables', datos_jsonData);
-                   
-                   console.log(respuesta.data);
+
+                 } else {
+                    // damos de baja 
+
+                    console.log('estamos aqui listos para dar de baja');
+                 }  
+
+                 console.log(respuesta.data);
                  this.buscarResponsables();
-
-
-                 }
-                   
         },
 
-       
-       
-        async eliminarUbicacion(id){
-            var data = {
-                'localizaciones_id':id,
-                'intervenciones_id':this.jsonData.proyectos.id,
-            }
-            var respuesta = await axios.post('eliminar_ubicacion', data);
-            console.log(respuesta.data);
-            //this.buscarResponsables();
+        async deleteResponsable(responsable) {
+            //se debe poner una funcion de alerta y confirmacion del borrado
+            console.log('delte responsabele  '+responsable.id);
+            const respuesta = await axios.delete('responsables/' + responsable.id);
+            
+            await this.buscarResponsables();
         },
         
+        async bajaResponsable(responsable) {
+            //se debe poner una funcion de alerta y confirmacion del borrado
+            console.log('dar de baja responsabele  '+responsable.id);
+           
+            if ( this.editar == true) {
+                    this.editar = false;
+                    
+                }else {
+                    this.editar = true;
+                }
+
+           // const respuesta = await axios.put('responsables/' + responsable.id);
+            
+            //await this.buscarResponsables();
+        },
+
+     
         async buscarResponsables(){
             var data = {
                 'institucion_id':this.jsonData.institucion_id,
             }
 
-            console.log('=======lista inicial========');
-            console.log(data);
-            
             var respuesta = await axios.post("buscar_responsables", data);
-
-            console.log('=======voviendo del back========');
-            console.log(respuesta.data);
-
-           // console.log(respuesta.data);
-           // this.ubicaciones = respuesta.data.respuesta;
            this.rows = respuesta.data;
         },
 
