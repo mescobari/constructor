@@ -431,6 +431,7 @@ export default {
                 objeto: null,
                 modifica: [],
                 files: null,
+                path_contrato: null,
             },
             rows: [],
             columns: [
@@ -725,8 +726,8 @@ export default {
             }
         },
         async modificar() {
-            let datos_jsonData = new FormData();
 
+            let datos_jsonData = new FormData();
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
             if (this.jsonData.document_types_id.id === 1) {
@@ -744,7 +745,9 @@ export default {
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            datos_jsonData.append('files', this.jsonData.files);
+            if(this.jsonData.files === null || this.jsonData.files === ''){
+                datos_jsonData.append('files', '');
+            } else datos_jsonData.append('files', this.jsonData.files);
             datos_jsonData.append('id', this.jsonData.id);
             console.log('APPEND', datos_jsonData);
             const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
@@ -768,6 +771,7 @@ export default {
             this.jsonData.modifica = [];
             this.jsonData.padre = null;
             this.jsonData.files = '';
+            this.jsonData.path_contrato = '';
             this.jsonData.objeto = '';
         },
         async editarModal(data = {}) {
@@ -775,7 +779,6 @@ export default {
             const response_doc_types = await axios.get('documentos_legaleses');
             const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
             const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
-
 
             $('#customCheck1').removeAttr('checked');
             $('#customCheck2').removeAttr('checked');
@@ -812,7 +815,7 @@ export default {
             this.jsonData.objeto = data.objeto;
             this.jsonData.fecha_firma = new Date(data.fecha_firma)
             this.jsonData.files = data.files;
-
+            this.jsonData.path_contrato = data.path_contrato;
             //set data to v-select contratante_id
             for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
                 if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
