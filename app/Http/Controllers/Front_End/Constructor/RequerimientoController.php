@@ -216,7 +216,6 @@ class RequerimientoController extends Controller
         $itemAndId = RequerimientoItem::findOrFail($id);
 
         return $itemAndId->update([
-            'requerimiento_id' => $request->requerimiento_id,
             'requerimiento_recurso_id' => $request->requerimiento_recurso_id,
             'cantidad_recurso' => $request->cantidad_recurso,
             'horas_recurso' => $request->horas_recurso,

@@ -335,7 +335,8 @@
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-outline-warning ml-1"
                                                     data-toggle="modal" data-target="#modal-editar-item"
-                                                    @click="editar(props.row);"><span><i
+                                                    @click="editar(props.row);"
+                                            ><span><i
                                                 class="fa fa-user-edit"></i></span></button>
                                             <button type="button" class="btn btn-outline-danger ml-1"
                                                     @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
@@ -1326,7 +1327,7 @@ export default {
         editar(data = {}) {
             this.jsonData.id = data.id;
             this.jsonData.codigo_recurso = data.codigo_recurso;
-            this.jsonData.descripcion_recursos = data.descripcion_recurso;
+            this.jsonData.descripcion_recurso = data.descripcion_recurso;
             this.jsonData.unidad_id = data.unidad_id;
             //this object will be modified in the next step
             this.jsonData.cantidad_recurso = data.cantidad_recurso;
@@ -1339,21 +1340,22 @@ export default {
             console.log('EDITAR REQ ITEM', data);
         },
         async modificar() {
-            const response_req = await axios.get('get_requerimientos');
-            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
+            // const response_req = await axios.get('get_requerimientos');
+            // this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
+            // datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.descripcion_recurso.id);
             datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
             datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
             datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
             datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
             datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
             datos_jsonData.append('id', this.jsonData.id);
-            const response = await axios.post('update_requerimiento_item' + this.jsonData.id, datos_jsonData);
+            const response = await axios.post('update_requerimiento_item/' + this.jsonData.id, datos_jsonData);
             console.log('UPDATE REQ ITEM', response.data);
             document.getElementById("cerrarModal").click();
-            // this.limpiar_formulario();
+            this.limpiar_formulario();
+            await this.listarRequerimientoItem();
         },
         async eliminar(id) {
             const response = await axios.delete('delete_requerimiento_obra/' + id);
