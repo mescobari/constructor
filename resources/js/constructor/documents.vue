@@ -91,6 +91,7 @@
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
                                     data-target="#orden"
+                                    v-if="jsonData.document_types_id===1"
                                     @click="modalCurrentDoc(props.row.id)"><span><i
                                 class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
@@ -357,7 +358,7 @@ import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
 
 Vue.component("v-select", vSelect);
-Vue.component('vueDropzone', vue2Dropzone);
+// Vue.component('vueDropzone', vue2Dropzone);
 
 export default {
     props: ['url', 'csrf', 'ast', 'operations', 'user'],
@@ -677,15 +678,6 @@ export default {
             if (datos.respuesta === true) {
                 console.log('eliminando', datos.respuesta);
                 this.deleteItem(this.id_eliminacion);
-            }
-        },
-        async ordenProcederExist() {
-            const getOrdenes = (await axios.get('get_ordenes_proceder')).data;
-            const getDocuments = (await axios.get('documents')).data;
-            for (let i = 0; i < getDocuments.length; i++) {
-                if (getDocuments[i].id == getOrdenes[i].document_id) {
-                    return true
-                }
             }
         },
         async listar() {
@@ -1077,6 +1069,7 @@ export default {
         VueBootstrap4Table,
         Datepicker,
         VueEditor,
+        vueDropzone: vue2Dropzone
     }
 }
 ;
