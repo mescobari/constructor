@@ -224,6 +224,19 @@ class RequerimientoController extends Controller
             'precio_referencia_recurso' => $request->precio_referencia_recurso,
         ]);
     }
+    public function updateRequerimientoRelacion(Request $request, $id)
+    {
+        $itemAndId = RequerimientoRelacion::findOrFail($id);
+
+        return $itemAndId->update([
+            'requerimiento_id' => $request->requerimiento_id,
+            'planilla_item_id' => $request->planilla_item_id,
+            'vigente' => $request->vigente,
+            'avance' => $request->avance,
+            'estimado' => $request->estimado,
+            'precio_unitario' => $request->precio_unitario,
+        ]);
+    }
 
     public function downloadRequerimiento($id)
     {

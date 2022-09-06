@@ -1247,7 +1247,7 @@ export default {
             let datos_jsonData = new FormData();
             datos_jsonData.append('document_id', this.jsonData.document_id);
             datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
-            datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
+            datos_jsonData.append('correlativo_requerimiento', this.jsonData.nuri_requerimiento/*this.jsonData.correlativo_requerimiento*/);
             let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
             this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
             datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
@@ -1400,7 +1400,9 @@ export default {
             this.jsonData.item_codigo = data.item_codigo;
             this.jsonData.item_descripcion = data.item_descripcion;
             this.jsonData.item_simbolo = data.unidad_id;
+
             //this object will be modified in the next step Item Relacion
+            this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.planilla_item_id = data.planilla_item_id;
             this.jsonData.item_vigente = data.vigente;
             this.jsonData.item_avance = data.avance;
@@ -1409,7 +1411,17 @@ export default {
             console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
-
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('planilla_item_id', this.jsonData.planilla_item_id);
+            datos_jsonData.append('vigente', this.jsonData.item_vigente);
+            datos_jsonData.append('avance', this.jsonData.item_avance);
+            datos_jsonData.append('estimado', this.jsonData.item_estimado);
+            datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
+            const response = await axios.post('update_requerimiento_relacion/' + this.jsonData.id, datos_jsonData);
+            console.log('UPDATE ITEM RELACION', response.data);
+            document.getElementById("cerrarModal").click();
+            await this.listarItemRelacion();
         },
         async eliminarItemRelacion(id) {
             const response = await axios.delete('delete_requerimiento_relacion/' + id);
