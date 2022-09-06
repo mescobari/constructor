@@ -864,7 +864,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row bg-info">
+                        <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="codigo_recurso">Codigo:</label>
@@ -961,7 +961,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row bg-info">
+                        <div class="row bg-warning">
                             <div class="row bg-success">
                                 <div class="col-md-1">
                                     <div class="form-group">
@@ -1059,7 +1059,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row bg-info">
+                        <div class="row bg-warning">
                             <div class="row bg-success">
                                 <div class="col-md-1">
                                     <div class="form-group">
