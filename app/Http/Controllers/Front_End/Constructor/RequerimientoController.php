@@ -237,6 +237,18 @@ class RequerimientoController extends Controller
             'precio_unitario' => $request->precio_unitario,
         ]);
     }
+    public function updateRequerimientoOtrosGastos(Request $request, $id)
+    {
+        $itemAndId = RequerimientoOtros::findOrFail($id);
+
+        return $itemAndId->update([
+            'requerimiento_id' => $request->requerimiento_id,
+            'descripcion_recurso_id' => $request->descripcion_recurso_id,
+            'cantidad_otros' => $request->cantidad_otros,
+            'monto_otros' => $request->monto_otros,
+            'explicar_otros' => $request->explicar_otros,
+        ]);
+    }
 
     public function downloadRequerimiento($id)
     {

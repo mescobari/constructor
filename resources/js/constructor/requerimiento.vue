@@ -1489,10 +1489,12 @@ export default {
             await this.cleanFormOtrosGastos();
         },
         async editarItemOtrosGastos(data = {}) {
+            this.jsonData.id = data.id;
             this.jsonData.codigo_otros = data.codigo_recurso;
             this.jsonData.descripcion_otros = data.descripcion_recurso;
             this.jsonData.simbolo_otros = data.unidad_id;
             //Item Oros Gastos
+            this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.requerimiento_recurso_id = data.requerimiento_recurso_id;
             this.jsonData.cantidad_otros = data.cantidad_otros;
             this.jsonData.monto_otros = data.monto_otros;
@@ -1500,7 +1502,16 @@ export default {
             this.jsonData.id = data.id;
         },
         async modificarItemOtrosGastos() {
-
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
+            datos_jsonData.append('cantidad_otros', this.jsonData.cantidad_otros);
+            datos_jsonData.append('monto_otros', this.jsonData.monto_otros);
+            datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
+            const response = await axios.post('update_requerimiento_otros_gastos/' + this.jsonData.id, datos_jsonData);
+            console.log('UPDATE ITEM OTROS GASTOS', response.data);
+            document.getElementById("cerrarModal").click();
+            await this.listarItemOtrosGastos();
         },
         async eliminarItemOtrosGastos(id) {
             const response = await axios.delete('delete_requerimiento_otros_gastos/' + id);
