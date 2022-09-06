@@ -14,10 +14,16 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::get('download_document/{id}', 'DocumentController@downloadDocument')->name('download_document');
     Route::apiResource('documents', DocumentController::class);
 
+    Route::get('get_ordenes_proceder', 'DocumentController@getOrdenesProceder')->name('get_ordenes_proceder');
+    Route::put('upload_orden_files/{id}', 'DocumentController@uploadOrdenFiles')->name('upload_orden_files');
+    //         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');
+
+
     //esta es un aruta que deberia tener su propio conrolador
     Route::get('listar_ue', 'DocumentController@listar_ue')->name('listar_ue');
 
 //         Route::post('document_save', 'DocumentController@documentSave')->name('document_save');
+
     Route::get('planillas_ini', 'PlanillaController@inicio')->name('planillas_ini');
     Route::apiResource('planillas', PlanillaController::class);
     Route::get('get_planilla_item', 'PlanillaController@getPlanillaItem')->name('get_planilla_item');

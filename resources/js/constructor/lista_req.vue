@@ -247,10 +247,11 @@ export default {
                 {id: 2, nombre: 'Material'},
                 {id: 3, nombre: 'Equipo'},
                 {id: 4, nombre: 'Fondos de Avance'},
+                {id: 5, nombre: 'Llave en Mano'},
             ]
 
             let currentReq = getRequerimientos.filter((item) => item.document_id === this.jsonData.proyectos.id);
-            currentReq.map((item) => { item.tipo_requerimiento_id = tipoRequerimientos[item.tipo_requerimiento_id].nombre });
+            currentReq.map((item) => { item.tipo_requerimiento_id = tipoRequerimientos[item.tipo_requerimiento_id-1].nombre });
             this.rows = currentReq
             console.log('REQUERIMIENTOS', currentReq);
         },
@@ -285,7 +286,6 @@ export default {
             const principales = respuesta.data.filter((item) => item.document_types_id === 1)
             this.proyectos = principales;
             $("#seleccion_proyecto_doc_legales").modal("show");
-
         },
         async downloadRequerimiento(data = {}) {
             const response = await axios.get(`download_requerimiento/${data.id}`,{responseType: 'blob'});

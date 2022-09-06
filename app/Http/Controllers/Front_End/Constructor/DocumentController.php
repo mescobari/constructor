@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Constructor\OrdenesProceder;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -230,5 +231,16 @@ class DocumentController extends Controller
         $path = $document->path_contrato;
         $file = Storage::disk('local')->get($path);
         return response($file, 200)->header('Content-Type', 'octet-stream');
+    }
+
+    public function getOrdenesProceder(){
+        return OrdenesProceder::all();
+    }
+    public function uploadOrdenFiles(){
+        $files = request()->file('files');
+        $nombre_carpeta = "constructor/ordenes_proceder";
+        $nombre_archivo = $_FILES['files']['name'];
+        $path = $files->storeAs( $nombre_carpeta, $nombre_archivo);
+        return $path;
     }
 }

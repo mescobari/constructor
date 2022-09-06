@@ -64,15 +64,16 @@
                     </template>
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
-                            <!-- <a :href="props.row.id" target="_blank" rel="noopener noreferrer">-->
+
+
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
-                                    data-target="#contrato"
-                                    v-if="props.row.document_types_id === 1"
-                                    @click="editarModal(props.row);"><span><i
-                                class="fa fa-adn"></i></span></button>
+                                    data-target="#orden"
+                                    v-if="jsonData.document_types_id===1"
+                                    @click="modalCurrentDoc(props.row.id)"><span><i
+                                class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
-                                    @click="downloadDocument(props.row)"><span><i
+                                    @click="downloadDocument(props.row.id)"><span><i
                                 class="far fa-file-pdf"></i> </span></button>
                             <!--                            </a>-->
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
@@ -276,6 +277,47 @@
             </div>
         </div>
         <!----------------------------------------Fin Modal Crear Contrato---------------------------------------->
+
+        <!----------------------------------------MODAL ORDEN PROCEDER---------------------------------------->
+        <div class="modal fade" id="orden" tabindex="-1" role="dialog" style="overflow-y: scroll;"
+             aria-labelledby="intervencionTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <!--modal header, close button-->
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="intervencionTitle">{{ tituloIntervencionModal }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <H1>
+                                <vue-dropzone
+                                    ref="myVueDropzone"
+                                    :useCustomSlot="true"
+                                    id="dropzone"
+                                    @vdropzone-upload-progress="uploadProgress"
+                                    :options="dropzoneOptions"
+                                    @vdropzone-file-added="fileAdded"
+                                    @vdropzone-sending-multiple="sendingFiles"
+                                    @vdropzone-success-multiple="success"
+                                ></vue-dropzone>
+                            </H1>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
+                        </button>
+                        <button type="submit" @click="uploadOrdenProceder(props.row.id);" class="btn btn-success" id="guardarModal">
+                            <slot>
+                                Guardar
+                            </slot>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
                             ref="abrirAlerta"></alert-confirmacion>
     </div>
@@ -288,10 +330,13 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
+import vue2Dropzone from 'vue2-dropzone';
+import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
 
 Vue.component("v-select", vSelect);
+// Vue.component('vueDropzone', vue2Dropzone);
 
 export default {
     props: ['url', 'csrf', 'ast', 'operations', 'user'],
@@ -300,6 +345,7 @@ export default {
             configFile: {
                 cerrar: false,
                 contenidoDefault: "DOCUMENTOS",
+                defaultProceder: "Orden Proceder"
             },
             mandarMensajesAlerta: {},
             configToolBarEditText: [
@@ -353,6 +399,11 @@ export default {
             disableSub: false,
             disableSub2: false,
             combo_padres: [],
+            uploadProgress: '',
+            dropzoneOptions:[],
+            fileAdded: '',
+            sendingFiles: '',
+            success: '',
             tituloIntervencionModal: '',
             unidades_ejecutoras: [],
             combo_tipos_documentos: [],
@@ -519,6 +570,12 @@ export default {
         }
     },
     methods: {
+        async uploadOrdenProceder(id){
+            let formData = new FormData();
+            formData.append('files', this.jsonData.files);
+            const uploadFiles = await axios.put('upload_orden_files/'+id, formData)
+            console.log(uploadFiles);
+        },
         //modify the value of the input in real time from v-select document_types_id and padre
         async cambioTipoDocumento() {
             let padresObjeto = await this.padreGetAll()
@@ -603,15 +660,15 @@ export default {
         },
         async listar() {
             const respuesta = await axios.get('documents');
-            let getDocumentTypes = (await axios.get('documentos_legaleses')).data;
+            const getOrdenesProceder = await axios.get('get_ordenes_proceder');
+            const getDocumentTypes = (await axios.get('documentos_legaleses')).data;
+            console.log("ORDENES PROCEDER", getOrdenesProceder.data);
             this.rows = respuesta.data.map(documento => {
-
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
                 documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
-
             console.log('documentos', this.rows)
 
             // this.rows = documentos;
@@ -630,7 +687,7 @@ export default {
                 this.jsonData.modifica !== null &&
                 this.jsonData.files !== null;
         },
-        async contratoSave(){
+        async contratoSave() {
             let datos_jsonData = new FormData();
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             if (this.jsonData.document_types_id.id === 1) {
@@ -655,7 +712,7 @@ export default {
             console.log("SAVE", respuesta.data);
         },
         async guardar() {
-            if(this.areAlltheFieldsFilled()) {
+            if (this.areAlltheFieldsFilled()) {
                 await this.contratoSave()
                 document.getElementById("cerrarModal").click();
                 await this.listar();
@@ -990,6 +1047,7 @@ export default {
         VueBootstrap4Table,
         Datepicker,
         VueEditor,
+        vueDropzone: vue2Dropzone
     }
 }
 ;
