@@ -619,8 +619,8 @@ export default {
                     this.disableSub = true;
                     this.disableSub2 = true;
                     if (this.jsonData.padre != null || this.jsonData.padre != '') {
-                        this.jsonData.contratado_id = '';
-                        this.jsonData.contratante_id = '';
+                        this.jsonData.contratado_id = 'Seleccione documento padre';
+                        this.jsonData.contratante_id = 'Seleccione documento padre';
                     }
             }
         },
