@@ -558,7 +558,7 @@ export default {
             // this.jsonData.item_vigente = getValoresItem[0].vigente;
             // this.jsonData.item_avance = getValoresItem[0].avance;
             // this.jsonData.item_saldo = getValoresItem[0].saldo;
-            // console.log('ITEMS')
+            console.log('ITEMS', arrayValoresItem)
 
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);

@@ -290,22 +290,33 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <!--                    <div class="modal-body">-->
-                    <!--                        <div class="row">-->
+
+                                        <div class="modal-body">
+
+                                            <div class="row">
+                                                <div class="form-group col-md-6">
+                                                <h3>UpdateFile</h3>
+                                                    <vue-dropzone
+                                                        ref="myVueDropzone"
+                                                        id="dropzone"
+                                                        :options="dropzoneOptions">
+                                                        @vdropzone-complete="vdropzone-complete"
+                                                    </vue-dropzone>
+                                                </div>
                     <!--                            <H1>-->
-                    <!--                                <vue-dropzone-->
-                    <!--                                    ref="myVueDropzone"-->
-                    <!--                                    :useCustomSlot="true"-->
-                    <!--                                    id="dropzone"-->
-                    <!--                                    @vdropzone-upload-progress="uploadProgress"-->
-                    <!--                                    :options="dropzoneOptions"-->
-                    <!--                                    @vdropzone-file-added="fileAdded"-->
-                    <!--                                    @vdropzone-sending-multiple="sendingFiles"-->
-                    <!--                                    @vdropzone-success-multiple="success"-->
-                    <!--                                ></vue-dropzone>-->
+<!--                                                    <vue-dropzone-->
+<!--                                                        ref="myVueDropzone"-->
+<!--                                                        :useCustomSlot="true"-->
+<!--                                                        id="dropzone"-->
+<!--                                                        @vdropzone-upload-progress="uploadProgress"-->
+<!--                                                        :options="dropzoneOptions"-->
+<!--                                                        @vdropzone-file-added="fileAdded"-->
+<!--                                                        @vdropzone-sending-multiple="sendingFiles"-->
+<!--                                                        @vdropzone-success-multiple="success"-->
+<!--                                                    ></vue-dropzone>-->
                     <!--                            </H1>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
+                                            </div>
+                                        </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
@@ -343,6 +354,12 @@ export default {
     props: ['url', 'csrf', 'ast', 'operations', 'user'],
     data() {
         return {
+            dropzoneOptions: {
+                url: 'https://httpbin.org/post',
+                thumbnailWidth: 150,
+                maxFilesize: 0.5,
+                headers: { "My-Awesome-Header": "header value" }
+            },
             configFile: {
                 cerrar: false,
                 contenidoDefault: "DOCUMENTOS",
@@ -388,10 +405,6 @@ export default {
                 disabledDates: {},
             },
             computed: {
-                //format thousand separator to input in real time (v-model)
-                verify_document_types_id() {
-                    return this.jsonData.document_types_id.id === 1;
-                },
             },
             optionsSelect: [{label: 'Favor de Seleccionar su opción', code: "fer"}],
             guardar_bottom: false,
@@ -402,7 +415,6 @@ export default {
             disabledForEdit: false,
             combo_padres: [],
             uploadProgress: '',
-            dropzoneOptions: [],
             fileAdded: '',
             sendingFiles: '',
             success: '',
@@ -690,7 +702,7 @@ export default {
                 this.jsonData.files !== '';
         },
         async contratoSave() {
-
+            console.log('guardando', this.jsonData);
             let datos_jsonData = new FormData();
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             if (this.jsonData.document_types_id.id === 1) {
