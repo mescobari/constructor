@@ -71,6 +71,8 @@
                             </template>
                             <template slot="acciones" slot-scope="props">
                                 <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-primary ml-1" data-toggle="modal" data-target="#doc_legales" @click="planillaCSV(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
+                                   
                                     <a :href="'ver_planilla/'+props.row.id" target="_blank" rel="noopener noreferrer">
                                     <button type="button" class="btn btn-outline-success ml-1" ><span><i class="far fa-file-pdf"></i></span></button>
                                     </a>
