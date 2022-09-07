@@ -69,11 +69,10 @@
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
                                     data-target="#orden"
-                                    v-if="jsonData.document_types_id===1"
-                                    @click="modalCurrentDoc(props.row.id)"><span><i
-                                class="fas fa-upload"></i> </span></button>
+                                    v-if="props.row.document_types_id === 1">
+                                <span><i class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
-                                    @click="downloadDocument(props.row.id)"><span><i
+                                    @click="downloadDocument(props.row)"><span><i
                                 class="far fa-file-pdf"></i> </span></button>
                             <!--                            </a>-->
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
@@ -111,6 +110,7 @@
                                         <v-select label="nombre" :options="combo_tipos_documentos"
                                                   v-model="jsonData.document_types_id"
                                                   @input="cambioTipoDocumento()"
+                                                  v-bind:disabled="disabledForEdit"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
@@ -130,7 +130,7 @@
                                         <v-select label="nombre" :options="cla_institucional"
                                                   v-model="jsonData.contratante_id"
                                                   placeholder="Selecione una opción"
-                                                  v-bind:disabled="disableSub">
+                                                  v-bind:disabled="disableSub || disabledForEdit">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -138,7 +138,6 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="fecha-firma">Fecha de Firma:</label>
-                                        <!-- <input type="date" class="form-control" name="fecha_inicial_programada" id="fecha_inicial_programada" v-model="jsonData.fecha_inicial_programada"> -->
                                         <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
                                                     :calendar-class="configFechas.nombreClaseParaModal"
                                                     :input-class="configFechas.nombreClaseParaInput"
@@ -151,7 +150,8 @@
                                                     :format="configFechas.DatePickerFormat"
                                                     :full-month-name="true" :bootstrap-styling="true"
                                                     :disabled-dates="configFechas.disabledDates"
-                                                    :typeable="configFechas.typeable" v-model="jsonData.fecha_firma">
+                                                    :typeable="configFechas.typeable"
+                                                    v-model="jsonData.fecha_firma">
                                         </datepicker>
                                     </div>
                                 </div>
@@ -166,7 +166,7 @@
                                                       v-model="jsonData.padre"
                                                       placeholder="Seleccione una opción"
                                                       @input="selectContratanteContratado"
-                                                      v-bind:disabled="disablePadre">
+                                                      v-bind:disabled="disablePadre || disabledForEdit">
                                                 <span slot="no-options">No hay data para cargar</span>
                                             </v-select>
                                         </div>
@@ -195,7 +195,7 @@
                                         <v-select label="nombre" :options="cla_institucional"
                                                   v-model="jsonData.contratado_id"
                                                   placeholder="Selecione una opción"
-                                                  v-bind:disabled="disableSub2">
+                                                  v-bind:disabled="disableSub2 || disabledForEdit">
                                             <span slot="no-options">No hay data para cargar</span>
                                         </v-select>
                                     </div>
@@ -290,22 +290,22 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <H1>
-                                <vue-dropzone
-                                    ref="myVueDropzone"
-                                    :useCustomSlot="true"
-                                    id="dropzone"
-                                    @vdropzone-upload-progress="uploadProgress"
-                                    :options="dropzoneOptions"
-                                    @vdropzone-file-added="fileAdded"
-                                    @vdropzone-sending-multiple="sendingFiles"
-                                    @vdropzone-success-multiple="success"
-                                ></vue-dropzone>
-                            </H1>
-                        </div>
-                    </div>
+<!--                    <div class="modal-body">-->
+<!--                        <div class="row">-->
+<!--                            <H1>-->
+<!--                                <vue-dropzone-->
+<!--                                    ref="myVueDropzone"-->
+<!--                                    :useCustomSlot="true"-->
+<!--                                    id="dropzone"-->
+<!--                                    @vdropzone-upload-progress="uploadProgress"-->
+<!--                                    :options="dropzoneOptions"-->
+<!--                                    @vdropzone-file-added="fileAdded"-->
+<!--                                    @vdropzone-sending-multiple="sendingFiles"-->
+<!--                                    @vdropzone-success-multiple="success"-->
+<!--                                ></vue-dropzone>-->
+<!--                            </H1>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
@@ -398,6 +398,7 @@ export default {
             disablePadre: false,
             disableSub: false,
             disableSub2: false,
+            disabledForEdit: false,
             combo_padres: [],
             uploadProgress: '',
             dropzoneOptions:[],
@@ -430,6 +431,7 @@ export default {
                 objeto: null,
                 modifica: [],
                 files: null,
+                path_contrato: null,
             },
             rows: [],
             columns: [
@@ -570,6 +572,7 @@ export default {
         }
     },
     methods: {
+
         async uploadOrdenProceder(id){
             let formData = new FormData();
             formData.append('files', this.jsonData.files);
@@ -625,8 +628,10 @@ export default {
         async selectContratanteContratado() {
             let contratanteContratado = (await axios.get('cla_institucional')).data;
             console.log('PADRE', this.jsonData.padre);
-            const contratante = contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id);
-            const contratado = contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id);
+            let contratante = [];
+            let contratado = [];
+            contratante = contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id);
+            contratado = contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id);
             console.log("CONTRATANTE", contratante);
             console.log("CONTRATADO", contratado);
             if (this.disablePadre === false &&
@@ -721,8 +726,8 @@ export default {
             }
         },
         async modificar() {
-            let datos_jsonData = new FormData();
 
+            let datos_jsonData = new FormData();
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
             if (this.jsonData.document_types_id.id === 1) {
@@ -740,7 +745,9 @@ export default {
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            datos_jsonData.append('files', this.jsonData.files);
+            if(this.jsonData.files === null || this.jsonData.files === ''){
+                datos_jsonData.append('files', '');
+            } else datos_jsonData.append('files', this.jsonData.files);
             datos_jsonData.append('id', this.jsonData.id);
             console.log('APPEND', datos_jsonData);
             const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
@@ -764,6 +771,7 @@ export default {
             this.jsonData.modifica = [];
             this.jsonData.padre = null;
             this.jsonData.files = '';
+            this.jsonData.path_contrato = '';
             this.jsonData.objeto = '';
         },
         async editarModal(data = {}) {
@@ -771,7 +779,6 @@ export default {
             const response_doc_types = await axios.get('documentos_legaleses');
             const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
             const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
-
 
             $('#customCheck1').removeAttr('checked');
             $('#customCheck2').removeAttr('checked');
@@ -785,7 +792,7 @@ export default {
             if (data.modifica[2] === '3') {
                 $('#customCheck3').attr('checked', 'checked');
             }
-
+            this. disabledForEdit = true;
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
@@ -808,7 +815,7 @@ export default {
             this.jsonData.objeto = data.objeto;
             this.jsonData.fecha_firma = new Date(data.fecha_firma)
             this.jsonData.files = data.files;
-
+            this.jsonData.path_contrato = data.path_contrato;
             //set data to v-select contratante_id
             for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
                 if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
@@ -856,7 +863,7 @@ export default {
                 }
             }
         },
-        async downloadDocument(data = {}) {
+        async downloadDocument(data={}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
             const blob = new Blob([response.data], {type: 'octet-stream'});
             const href = URL.createObjectURL(blob);

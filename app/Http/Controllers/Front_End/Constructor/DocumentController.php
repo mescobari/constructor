@@ -33,23 +33,24 @@ class DocumentController extends Controller
     {
         //verificar para que contratos esta habilitado el usuario
         $users_id = auth()->user()->id;
-        if ( $users_id >2) {
+        if ($users_id > 2) {
             // obtenemo ahora el funcionario_id
-            $funcionario_id=Funcionario::find($users_id)->id;
+            $funcionario_id = Funcionario::find($users_id)->id;
             // ahora debemos encontrar el id del responsable, un funcionario puede estar asignado a mas de un proyecto.
-            $resp=Responsables::select('documents_id')->where('funcionario_id' ,'=' ,$funcionario_id)->get()->toarray();
+            $resp = Responsables::select('documents_id')->where('funcionario_id', '=', $funcionario_id)->get()->toarray();
 
             return document::whereIn('id', $resp)->get();
-        } else { 
+        } else {
             return document::all();
         }
     }
 
- public function listar_ue()
+    public function listar_ue()
     {
         //
         return UnidadEjecutora::all();
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -121,7 +122,6 @@ class DocumentController extends Controller
         $doc_edit = document::find($document->id);
 
 
-
         return response()->json($doc_edit);
     }
 
@@ -132,7 +132,7 @@ class DocumentController extends Controller
      * @param \App\Models\Constructor\document $document
      * @return document
      */
-    public function update(Request $request,  $id)
+    public function update(Request $request, $id)
     {
 //        $documentId = document::findOrFail($document->id);
         $documentId = document::findOrFail($id);
@@ -156,7 +156,7 @@ class DocumentController extends Controller
         $documentId->padre = $request->padre;
         $documentId->unidad_ejecutora_id = $request->unidad_ejecutora_id;
 //        $document->path_contrato = $file;
-        $documentId -> save();
+        $documentId->save();
 
 //        return $document;
 //        $updateDoc = document::update([
@@ -203,7 +203,9 @@ class DocumentController extends Controller
             $files = $request->file('files');
             $nombre_carpeta = "constructor/documentos";
             $nombre_archivo = $request->document_types_id . '-' . $_FILES['files']['name'];
-            $path = $files->storeAs( $nombre_carpeta, $nombre_archivo);
+            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+        } else {
+            $path = $documentId->path_contrato;
         }
         return $documentId->update([
             'document_types_id' => $request->document_types_id,
@@ -233,14 +235,17 @@ class DocumentController extends Controller
         return response($file, 200)->header('Content-Type', 'octet-stream');
     }
 
-    public function getOrdenesProceder(){
+    public function getOrdenesProceder()
+    {
         return OrdenesProceder::all();
     }
-    public function uploadOrdenFiles(){
+
+    public function uploadOrdenFiles()
+    {
         $files = request()->file('files');
         $nombre_carpeta = "constructor/ordenes_proceder";
         $nombre_archivo = $_FILES['files']['name'];
-        $path = $files->storeAs( $nombre_carpeta, $nombre_archivo);
+        $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
         return $path;
     }
 }

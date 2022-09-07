@@ -159,7 +159,6 @@
                                         <input type="file" class="form-control" id="documento_res_aprobacion"
                                                @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
                                     </div>
-                                    <div class="col-md-3"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -1171,15 +1170,10 @@ export default {
                         if (responseRecursos[j].id === arrayItems[i].requerimiento_recurso_id) {
                             arrayItemsFiltered.push({
                                 ...responseRecursos[j],
-                                //here is the id object
-                                ...arrayItems[i],
-
-                                // ...responseRecursos[j].codigo_recurso,
-                                // ...responseRecursos[j].descripcion_recurso
+                                ...arrayItems[i], //here is the id object
                             })
                             j = responseRecursos.length;
                         }
-
                     }
                 }
             }
@@ -1193,12 +1187,8 @@ export default {
             const response = await axios.get('get_requerimiento_items');
             const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
             console.log('ITEM RECURSOS', response.data);
-            if (this.jsonData.tipo_requerimiento_id == 4) {
-                this.rows = response.data
-            } else {
+
                 this.rows = await this.filterList(response.data);
-            }
-            // this.rows = items
         },
         async retrieveFromCurrentDescripcionRecurso() {
 
@@ -1257,7 +1247,7 @@ export default {
             let datos_jsonData = new FormData();
             datos_jsonData.append('document_id', this.jsonData.document_id);
             datos_jsonData.append('tipo_requerimiento_id', this.jsonData.tipo_requerimiento_id);
-            datos_jsonData.append('correlativo_requerimiento', this.jsonData.correlativo_requerimiento);
+            datos_jsonData.append('correlativo_requerimiento', this.jsonData.nuri_requerimiento/*this.jsonData.correlativo_requerimiento*/);
             let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
             this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
             datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
@@ -1267,6 +1257,7 @@ export default {
             datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
             datos_jsonData.append('files', this.jsonData.files);
             this.clickedAdd = true;
+            this.configFile.cerrar = false;
             let response = await axios.post('create_requerimiento', datos_jsonData);
             console.log('CREATE REQ', response.data);
         },
@@ -1409,7 +1400,9 @@ export default {
             this.jsonData.item_codigo = data.item_codigo;
             this.jsonData.item_descripcion = data.item_descripcion;
             this.jsonData.item_simbolo = data.unidad_id;
+
             //this object will be modified in the next step Item Relacion
+            this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.planilla_item_id = data.planilla_item_id;
             this.jsonData.item_vigente = data.vigente;
             this.jsonData.item_avance = data.avance;
@@ -1418,7 +1411,17 @@ export default {
             console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
-
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('planilla_item_id', this.jsonData.planilla_item_id);
+            datos_jsonData.append('vigente', this.jsonData.item_vigente);
+            datos_jsonData.append('avance', this.jsonData.item_avance);
+            datos_jsonData.append('estimado', this.jsonData.item_estimado);
+            datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
+            const response = await axios.post('update_requerimiento_relacion/' + this.jsonData.id, datos_jsonData);
+            console.log('UPDATE ITEM RELACION', response.data);
+            document.getElementById("cerrarModal").click();
+            await this.listarItemRelacion();
         },
         async eliminarItemRelacion(id) {
             const response = await axios.delete('delete_requerimiento_relacion/' + id);
@@ -1486,10 +1489,12 @@ export default {
             await this.cleanFormOtrosGastos();
         },
         async editarItemOtrosGastos(data = {}) {
+            this.jsonData.id = data.id;
             this.jsonData.codigo_otros = data.codigo_recurso;
             this.jsonData.descripcion_otros = data.descripcion_recurso;
             this.jsonData.simbolo_otros = data.unidad_id;
             //Item Oros Gastos
+            this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.requerimiento_recurso_id = data.requerimiento_recurso_id;
             this.jsonData.cantidad_otros = data.cantidad_otros;
             this.jsonData.monto_otros = data.monto_otros;
@@ -1497,7 +1502,16 @@ export default {
             this.jsonData.id = data.id;
         },
         async modificarItemOtrosGastos() {
-
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
+            datos_jsonData.append('cantidad_otros', this.jsonData.cantidad_otros);
+            datos_jsonData.append('monto_otros', this.jsonData.monto_otros);
+            datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
+            const response = await axios.post('update_requerimiento_otros_gastos/' + this.jsonData.id, datos_jsonData);
+            console.log('UPDATE ITEM OTROS GASTOS', response.data);
+            document.getElementById("cerrarModal").click();
+            await this.listarItemOtrosGastos();
         },
         async eliminarItemOtrosGastos(id) {
             const response = await axios.delete('delete_requerimiento_otros_gastos/' + id);
