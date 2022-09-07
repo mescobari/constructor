@@ -612,8 +612,6 @@ export default {
                     break;
                 default:
                     console.log("DEFAULT", this.jsonData.document_types_id.id);
-                    // this.jsonData.contratante_id = '';
-                    // this.jsonData.contratado_id = '';
                     this.combo_padres = padresObjeto;
                     this.disablePadre = false;
                     this.disableSub = true;
