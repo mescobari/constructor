@@ -290,26 +290,27 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-<!--                    <div class="modal-body">-->
-<!--                        <div class="row">-->
-<!--                            <H1>-->
-<!--                                <vue-dropzone-->
-<!--                                    ref="myVueDropzone"-->
-<!--                                    :useCustomSlot="true"-->
-<!--                                    id="dropzone"-->
-<!--                                    @vdropzone-upload-progress="uploadProgress"-->
-<!--                                    :options="dropzoneOptions"-->
-<!--                                    @vdropzone-file-added="fileAdded"-->
-<!--                                    @vdropzone-sending-multiple="sendingFiles"-->
-<!--                                    @vdropzone-success-multiple="success"-->
-<!--                                ></vue-dropzone>-->
-<!--                            </H1>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <!--                    <div class="modal-body">-->
+                    <!--                        <div class="row">-->
+                    <!--                            <H1>-->
+                    <!--                                <vue-dropzone-->
+                    <!--                                    ref="myVueDropzone"-->
+                    <!--                                    :useCustomSlot="true"-->
+                    <!--                                    id="dropzone"-->
+                    <!--                                    @vdropzone-upload-progress="uploadProgress"-->
+                    <!--                                    :options="dropzoneOptions"-->
+                    <!--                                    @vdropzone-file-added="fileAdded"-->
+                    <!--                                    @vdropzone-sending-multiple="sendingFiles"-->
+                    <!--                                    @vdropzone-success-multiple="success"-->
+                    <!--                                ></vue-dropzone>-->
+                    <!--                            </H1>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" @click="uploadOrdenProceder(props.row.id);" class="btn btn-success" id="guardarModal">
+                        <button type="submit" @click="uploadOrdenProceder(props.row.id);" class="btn btn-success"
+                                id="guardarModal">
                             <slot>
                                 Guardar
                             </slot>
@@ -401,7 +402,7 @@ export default {
             disabledForEdit: false,
             combo_padres: [],
             uploadProgress: '',
-            dropzoneOptions:[],
+            dropzoneOptions: [],
             fileAdded: '',
             sendingFiles: '',
             success: '',
@@ -573,24 +574,25 @@ export default {
     },
     methods: {
 
-        async uploadOrdenProceder(id){
+        async uploadOrdenProceder(id) {
             let formData = new FormData();
             formData.append('files', this.jsonData.files);
-            const uploadFiles = await axios.put('upload_orden_files/'+id, formData)
+            const uploadFiles = await axios.put('upload_orden_files/' + id, formData)
             console.log(uploadFiles);
         },
         //modify the value of the input in real time from v-select document_types_id and padre
         async cambioTipoDocumento() {
             let padresObjeto = await this.padreGetAll()
             let subPadres = []
+            const contratoDefault = [{
+                id: 271,
+                nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+            }];
             switch (this.jsonData.document_types_id.id) {
                 case 1:
                     this.disablePadre = true;
                     this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
-                    this.jsonData.contratado_id = [{
-                        id: 271,
-                        nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
-                    }];
+                    this.jsonData.contratado_id = contratoDefault
                     this.jsonData.contratante_id = '';
                     this.disableSub = false;
                     this.disableSub2 = true;
@@ -604,10 +606,7 @@ export default {
                         this.disablePadre = false;
                         this.disableSub = true;
                         this.disableSub2 = false;
-                        this.jsonData.contratante_id = [{
-                            id: 271,
-                            nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
-                        }];
+                        this.jsonData.contratante_id = contratoDefault
                         this.jsonData.contratado_id = '';
                     }
                     break;
@@ -693,6 +692,7 @@ export default {
                 this.jsonData.files !== null;
         },
         async contratoSave() {
+
             let datos_jsonData = new FormData();
             datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
             if (this.jsonData.document_types_id.id === 1) {
@@ -703,8 +703,16 @@ export default {
             datos_jsonData.append('unidad_ejecutora_id', '1'/*this.jsonData.unidad_ejecutora_id.id*/);
             datos_jsonData.append('nombre', this.jsonData.nombre);
             datos_jsonData.append('codigo', this.jsonData.codigo);
-            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            if (this.jsonData.document_types_id.id === 1) {
+                datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
+                datos_jsonData.append('contratado_id', "271");
+            } else if (this.jsonData.document_types_id.id === 2) {
+                datos_jsonData.append('contratante_id', '271');
+                datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            } else {
+                datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
+                datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            }
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
             datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
@@ -745,7 +753,7 @@ export default {
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            if(this.jsonData.files === null || this.jsonData.files === ''){
+            if (this.jsonData.files === null || this.jsonData.files === '') {
                 datos_jsonData.append('files', '');
             } else datos_jsonData.append('files', this.jsonData.files);
             datos_jsonData.append('id', this.jsonData.id);
@@ -792,7 +800,7 @@ export default {
             if (data.modifica[2] === '3') {
                 $('#customCheck3').attr('checked', 'checked');
             }
-            this. disabledForEdit = true;
+            this.disabledForEdit = true;
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
@@ -863,7 +871,7 @@ export default {
                 }
             }
         },
-        async downloadDocument(data={}) {
+        async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
             const blob = new Blob([response.data], {type: 'octet-stream'});
             const href = URL.createObjectURL(blob);
