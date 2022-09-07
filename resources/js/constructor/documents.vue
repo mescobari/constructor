@@ -678,18 +678,18 @@ export default {
             // this.rows = documentos;
         },
         areAlltheFieldsFilled() {
-            return this.jsonData.document_types_id != null &&
-                this.jsonData.padre != null &&
-                this.jsonData.contratante_id.id != null &&
-                this.jsonData.contratado_id.id != null &&
-                this.jsonData.duracion_dias != null &&
-                this.jsonData.fecha_firma != null &&
-                this.jsonData.codigo != null &&
-                this.jsonData.nombre != null &&
-                this.jsonData.monto_bs != null &&
-                this.jsonData.objeto != null &&
-                this.jsonData.modifica != null &&
-                this.jsonData.files != null;
+            return this.jsonData.document_types_id !== "" &&
+                this.jsonData.padre !== '' &&
+                this.jsonData.contratante_id !== '' &&
+                this.jsonData.contratado_id !==  '' &&
+                this.jsonData.duracion_dias !== '' &&
+                this.jsonData.fecha_firma !== '' &&
+                this.jsonData.codigo !== '' &&
+                this.jsonData.nombre !== '' &&
+                this.jsonData.monto_bs !== '' &&
+                this.jsonData.objeto !== '' &&
+                this.jsonData.modifica !== '' &&
+                this.jsonData.files !== '';
         },
         async contratoSave() {
 
