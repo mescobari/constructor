@@ -678,18 +678,18 @@ export default {
             // this.rows = documentos;
         },
         areAlltheFieldsFilled() {
-            return this.jsonData.document_types_id !== null &&
-                this.jsonData.padre !== null &&
-                this.jsonData.contratante_id.id !== null &&
-                this.jsonData.contratado_id.id !== null &&
-                this.jsonData.duracion_dias !== null &&
-                this.jsonData.fecha_firma !== null &&
-                this.jsonData.codigo !== null &&
-                this.jsonData.nombre !== null &&
-                this.jsonData.monto_bs !== null &&
-                this.jsonData.objeto !== null &&
-                this.jsonData.modifica !== null &&
-                this.jsonData.files !== null;
+            return this.jsonData.document_types_id != null &&
+                this.jsonData.padre != null &&
+                this.jsonData.contratante_id.id != null &&
+                this.jsonData.contratado_id.id != null &&
+                this.jsonData.duracion_dias != null &&
+                this.jsonData.fecha_firma != null &&
+                this.jsonData.codigo != null &&
+                this.jsonData.nombre != null &&
+                this.jsonData.monto_bs != null &&
+                this.jsonData.objeto != null &&
+                this.jsonData.modifica != null &&
+                this.jsonData.files != null;
         },
         async contratoSave() {
 
@@ -763,7 +763,7 @@ export default {
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
             await this.listar();
-            // this.limpiar_formulario();
+            this.limpiar_formulario();
         },
         limpiar_formulario() {
             this.jsonData.id = null;
