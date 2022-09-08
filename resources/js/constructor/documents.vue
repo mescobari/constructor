@@ -290,26 +290,27 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-<!--                    <div class="modal-body">-->
-<!--                        <div class="row">-->
-<!--                            <H1>-->
-<!--                                <vue-dropzone-->
-<!--                                    ref="myVueDropzone"-->
-<!--                                    :useCustomSlot="true"-->
-<!--                                    id="dropzone"-->
-<!--                                    @vdropzone-upload-progress="uploadProgress"-->
-<!--                                    :options="dropzoneOptions"-->
-<!--                                    @vdropzone-file-added="fileAdded"-->
-<!--                                    @vdropzone-sending-multiple="sendingFiles"-->
-<!--                                    @vdropzone-success-multiple="success"-->
-<!--                                ></vue-dropzone>-->
-<!--                            </H1>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <!--                    <div class="modal-body">-->
+                    <!--                        <div class="row">-->
+                    <!--                            <H1>-->
+                    <!--                                <vue-dropzone-->
+                    <!--                                    ref="myVueDropzone"-->
+                    <!--                                    :useCustomSlot="true"-->
+                    <!--                                    id="dropzone"-->
+                    <!--                                    @vdropzone-upload-progress="uploadProgress"-->
+                    <!--                                    :options="dropzoneOptions"-->
+                    <!--                                    @vdropzone-file-added="fileAdded"-->
+                    <!--                                    @vdropzone-sending-multiple="sendingFiles"-->
+                    <!--                                    @vdropzone-success-multiple="success"-->
+                    <!--                                ></vue-dropzone>-->
+                    <!--                            </H1>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" @click="uploadOrdenProceder(props.row.id);" class="btn btn-success" id="guardarModal">
+                        <button type="submit" @click="uploadOrdenProceder(props.row.id);" class="btn btn-success"
+                                id="guardarModal">
                             <slot>
                                 Guardar
                             </slot>
@@ -401,7 +402,7 @@ export default {
             disabledForEdit: false,
             combo_padres: [],
             uploadProgress: '',
-            dropzoneOptions:[],
+            dropzoneOptions: [],
             fileAdded: '',
             sendingFiles: '',
             success: '',
@@ -573,10 +574,10 @@ export default {
     },
     methods: {
 
-        async uploadOrdenProceder(id){
+        async uploadOrdenProceder(id) {
             let formData = new FormData();
             formData.append('files', this.jsonData.files);
-            const uploadFiles = await axios.put('upload_orden_files/'+id, formData)
+            const uploadFiles = await axios.put('upload_orden_files/' + id, formData)
             console.log(uploadFiles);
         },
         //modify the value of the input in real time from v-select document_types_id and padre
@@ -584,13 +585,14 @@ export default {
             let padresObjeto = await this.padreGetAll()
             let subPadres = []
             const defaultValue = Object.assign({},
-                { id: 271,
-                nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
-            });
+                {
+                    id: 271,
+                    nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+                });
             switch (this.jsonData.document_types_id.id) {
                 case 1:
                     this.disablePadre = true;
-                    this.jsonData.padre = Object.assign({},{id: 0, nombre: 'Ninguno'});
+                    this.jsonData.padre = Object.assign({}, {id: 0, nombre: 'Ninguno'});
                     this.jsonData.contratado_id = defaultValue
                     this.jsonData.contratante_id = '';
                     this.disableSub = false;
@@ -689,7 +691,7 @@ export default {
                 this.jsonData.modifica !== '' &&
                 this.jsonData.files !== '';
         },
-        async contratoSave2(){
+        async contratoSave() {
             console.log('contratoSave2', this.jsonData);
             let document_types_id = this.jsonData.document_types_id.id;
             let padre = this.jsonData.padre.id;
@@ -724,34 +726,9 @@ export default {
             let saved = await axios.post('documents', dataJson)
             console.log('SAVED', saved.data);
         },
-        async contratoSave() {
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
-            if (this.jsonData.document_types_id.id === 1) {
-                datos_jsonData.append('padre', '0');
-            } else {
-                datos_jsonData.append('padre', this.jsonData.padre.id);
-            }
-            datos_jsonData.append('unidad_ejecutora_id', '1'/*this.jsonData.unidad_ejecutora_id.id*/);
-            datos_jsonData.append('nombre', this.jsonData.nombre);
-            datos_jsonData.append('codigo', this.jsonData.codigo);
-            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
-            datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
-            let fecha_firma = new Date(this.jsonData.fecha_firma);
-            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
-            datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
-            datos_jsonData.append('objeto', this.jsonData.objeto);
-
-            datos_jsonData.append('modifica', this.jsonData.modifica);
-            datos_jsonData.append('files', this.jsonData.files);
-            let respuesta = await axios.post('documents', datos_jsonData);
-            console.log("SAVE", respuesta.data);
-        },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
-                // await this.contratoSave()
-                await this.contratoSave2()
+                await this.contratoSave()
                 document.getElementById("cerrarModal").click();
                 await this.listar();
             } else {
@@ -778,7 +755,7 @@ export default {
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            if(this.jsonData.files === null || this.jsonData.files === ''){
+            if (this.jsonData.files === null || this.jsonData.files === '') {
                 datos_jsonData.append('files', '');
             } else datos_jsonData.append('files', this.jsonData.files);
             datos_jsonData.append('id', this.jsonData.id);
@@ -825,7 +802,7 @@ export default {
             if (data.modifica[2] === '3') {
                 $('#customCheck3').attr('checked', 'checked');
             }
-            this. disabledForEdit = true;
+            this.disabledForEdit = true;
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
@@ -887,7 +864,7 @@ export default {
                 }
             }
         },
-        async downloadDocument(data={}) {
+        async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
             const blob = new Blob([response.data], {type: 'octet-stream'});
             const href = URL.createObjectURL(blob);
@@ -922,6 +899,7 @@ export default {
             const respuesta = await axios.delete('documents/' + doc);
             // this.id_eliminacion = null;
             console.log(respuesta.data);
+            this.limpiar_formulario()
             await this.listar();
         },
         async tipoDocumentoGetAll() {
@@ -955,6 +933,7 @@ export default {
         ModalCrear() {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
+            this.disabledForEdit = false;
             this.limpiar_formulario();
             this.tituloIntervencionModal = "Formulario de Creación de Contratos";
         },
