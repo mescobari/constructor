@@ -72,6 +72,7 @@
                                     v-if="props.row.document_types_id === 1">
                                 <span><i class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
+                                    v-if="props.row.path_contrato!==''"
                                     @click="downloadDocument(props.row)"><span><i
                                 class="far fa-file-pdf"></i> </span></button>
                             <!--                            </a>-->
@@ -290,6 +291,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+
                     <!--                    <div class="modal-body">-->
                     <!--                        <div class="row">-->
                     <!--                            <H1>-->
@@ -415,7 +417,6 @@ export default {
             sectoriales: [],
             tipo_intervenciones: [],
             intervenciones: [],
-            path_contrato: '',
             jsonData: {
                 //required to CRUD
                 id: 0,
@@ -613,8 +614,6 @@ export default {
                     break;
                 default:
                     console.log("DEFAULT", this.jsonData.document_types_id.id);
-                    // this.jsonData.contratante_id = '';
-                    // this.jsonData.contratado_id = '';
                     this.combo_padres = padresObjeto;
                     this.disablePadre = false;
                     this.disableSub = true;
@@ -726,9 +725,29 @@ export default {
             let saved = await axios.post('documents', dataJson)
             console.log('SAVED', saved.data);
         },
+        async contratoSave2(){
+          let datosJsonData = new FormData();
+          datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
+            datosJsonData.append('padre', this.jsonData.padre.id);
+            datosJsonData.append('unidad_ejecutora_id', 1/*this.jsonData.unidad_ejecutora_id.id*/);
+            datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            datosJsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            datosJsonData.append('duracion_dias', this.jsonData.duracion_dias);
+            const fecha = new Date(this.jsonData.fecha_firma);
+            datosJsonData.append('fecha_firma', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
+            datosJsonData.append('codigo', this.jsonData.codigo);
+            datosJsonData.append('nombre', this.jsonData.nombre);
+            datosJsonData.append('monto_bs', this.jsonData.monto_bs);
+            datosJsonData.append('objeto', this.jsonData.objeto);
+            datosJsonData.append('modifica', this.jsonData.modifica.toString());
+            datosJsonData.append('files', this.jsonData.files);
+            let saved = await axios.post('documents', datosJsonData)
+            console.log('SAVED', saved.data);
+        },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
-                await this.contratoSave()
+                await this.contratoSave2();
+                // await this.contratoSave()
                 document.getElementById("cerrarModal").click();
                 await this.listar();
             } else {
@@ -755,9 +774,7 @@ export default {
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            if (this.jsonData.files === null || this.jsonData.files === '') {
-                datos_jsonData.append('files', '');
-            } else datos_jsonData.append('files', this.jsonData.files);
+            datos_jsonData.append('files', this.jsonData.files);
             datos_jsonData.append('id', this.jsonData.id);
             console.log('APPEND', datos_jsonData);
             const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
@@ -899,7 +916,6 @@ export default {
             const respuesta = await axios.delete('documents/' + doc);
             // this.id_eliminacion = null;
             console.log(respuesta.data);
-            this.limpiar_formulario()
             await this.listar();
         },
         async tipoDocumentoGetAll() {
@@ -934,6 +950,7 @@ export default {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
             this.disabledForEdit = false;
+            this.disablePadre = false;
             this.limpiar_formulario();
             this.tituloIntervencionModal = "Formulario de Creación de Contratos";
         },
@@ -1001,6 +1018,8 @@ export default {
                         $(id).addClass(clase_adicionar[key]);
                     }
                 }
+            } else {
+                console.log("no se encontro el id");
             }
         },
         cargar_file(event) {
@@ -1020,7 +1039,7 @@ export default {
             this.configFile.cerrar = true;
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
-        },
+            },
         async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
             var respuesta = await axios.get('tipo_cambio_bs_sus');
             console.log(respuesta.data);
