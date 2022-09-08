@@ -583,14 +583,15 @@ export default {
         async cambioTipoDocumento() {
             let padresObjeto = await this.padreGetAll()
             let subPadres = []
+            const defaultValue = Object.assign({},
+                { id: 271,
+                nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+            });
             switch (this.jsonData.document_types_id.id) {
                 case 1:
                     this.disablePadre = true;
-                    this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
-                    this.jsonData.contratado_id = [{
-                        id: 271,
-                        nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
-                    }];
+                    this.jsonData.padre = Object.assign({},{id: 0, nombre: 'Ninguno'});
+                    this.jsonData.contratado_id = defaultValue
                     this.jsonData.contratante_id = '';
                     this.disableSub = false;
                     this.disableSub2 = true;
@@ -604,10 +605,7 @@ export default {
                         this.disablePadre = false;
                         this.disableSub = true;
                         this.disableSub2 = false;
-                        this.jsonData.contratante_id = [{
-                            id: 271,
-                            nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
-                        }];
+                        this.jsonData.contratante_id = defaultValue
                         this.jsonData.contratado_id = '';
                     }
                     break;
@@ -630,17 +628,17 @@ export default {
             console.log('PADRE', this.jsonData.padre);
             let contratante = [];
             let contratado = [];
-            contratante = contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id);
-            contratado = contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id);
+            contratante = Object.assign(contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id));
+            contratado = Object.assign(contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id));
+
             console.log("CONTRATANTE", contratante);
             console.log("CONTRATADO", contratado);
             if (this.disablePadre === false &&
                 this.jsonData.document_types_id.id !== 1 &&
                 this.jsonData.document_types_id.id !== 2) {
-                this.jsonData.contratante_id = contratante[0];
-                this.jsonData.contratado_id = contratado[0];
+                this.jsonData.contratante_id = contratante;
+                this.jsonData.contratado_id = contratado;
             }
-
         },
         preguntarModalAlertaConfirmacionEliminar(document) {
             this.mandarMensajesAlerta = {
@@ -675,22 +673,56 @@ export default {
                 return documento;
             });
             console.log('documentos', this.rows)
-
             // this.rows = documentos;
         },
         areAlltheFieldsFilled() {
-            return this.jsonData.document_types_id !== null &&
-                this.jsonData.padre !== null &&
-                this.jsonData.contratante_id.id !== null &&
-                this.jsonData.contratado_id.id !== null &&
-                this.jsonData.duracion_dias !== null &&
-                this.jsonData.fecha_firma !== null &&
-                this.jsonData.codigo !== null &&
-                this.jsonData.nombre !== null &&
-                this.jsonData.monto_bs !== null &&
-                this.jsonData.objeto !== null &&
-                this.jsonData.modifica !== null &&
-                this.jsonData.files !== null;
+            return this.jsonData.document_types_id !== '' &&
+                this.jsonData.padre !== '' &&
+                this.jsonData.contratante_id.id !== '' &&
+                this.jsonData.contratado_id.id !== '' &&
+                this.jsonData.duracion_dias !== '' &&
+                this.jsonData.fecha_firma !== '' &&
+                this.jsonData.codigo !== '' &&
+                this.jsonData.nombre !== '' &&
+                this.jsonData.monto_bs !== '' &&
+                this.jsonData.objeto !== '' &&
+                this.jsonData.modifica !== '' &&
+                this.jsonData.files !== '';
+        },
+        async contratoSave2(){
+            console.log('contratoSave2', this.jsonData);
+            let document_types_id = this.jsonData.document_types_id.id;
+            let padre = this.jsonData.padre.id;
+            let unidad_ejecutora_id = 1/*this.jsonData.unidad_ejecutora_id.id*/;
+            let contratante_id = this.jsonData.contratante_id.id;
+            let contratado_id = this.jsonData.contratado_id.id;
+            let duracion_dias = this.jsonData.duracion_dias;
+            let fecha = new Date(this.jsonData.fecha_firma);
+            let fecha_firma = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
+            let codigo = this.jsonData.codigo;
+            let nombre = this.jsonData.nombre;
+            let monto_bs = this.jsonData.monto_bs;
+            let objeto = this.jsonData.objeto;
+            let modifica = this.jsonData.modifica.toString();
+            let files = this.jsonData.files;
+
+            const dataJson = {
+                'document_types_id': document_types_id,
+                'padre': padre,
+                'unidad_ejecutora_id': unidad_ejecutora_id,
+                'contratante_id': contratante_id,
+                'contratado_id': contratado_id,
+                'duracion_dias': duracion_dias,
+                'fecha_firma': fecha_firma,
+                'codigo': codigo,
+                'nombre': nombre,
+                'monto_bs': monto_bs,
+                'objeto': objeto,
+                'modifica': modifica,
+                'files': files
+            }
+            let saved = await axios.post('documents', dataJson)
+            console.log('SAVED', saved.data);
         },
         async contratoSave() {
             let datos_jsonData = new FormData();
@@ -718,7 +750,8 @@ export default {
         },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
-                await this.contratoSave()
+                // await this.contratoSave()
+                await this.contratoSave2()
                 document.getElementById("cerrarModal").click();
                 await this.listar();
             } else {
@@ -800,15 +833,6 @@ export default {
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
             this.jsonData.modifica = data.modifica.split(',');
-            // if (data.modifica[0] ===)
-            // let firstModifica = this.jsonData.modifica[0];
-            // let secondModifica = this.jsonData.modifica[1];
-            // let thirdModifica = this.jsonData.modifica[2];
-            // this.jsonData.modifica = firstModifica + "," + secondModifica + "," + thirdModifica;
-
-            this.jsonData.modifica[0] = data.modifica[0];
-            this.jsonData.modifica[1] = data.modifica[1];
-            this.jsonData.modifica[2] = data.modifica[2];
             console.log("MODIFICA", this.jsonData.modifica);
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
