@@ -69,7 +69,8 @@
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
                                     data-target="#orden"
-                                    v-if="props.row.document_types_id === 1">
+                                    v-if="props.row.document_types_id === 1"
+                                    @click="openModalOrden(props.row)">
                                 <span><i class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
                                     v-if="props.row.path_contrato!==''"
@@ -291,7 +292,51 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="fecha-firma">Fecha de Orden:</label>
+                                <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
+                                            :calendar-class="configFechas.nombreClaseParaModal"
+                                            :input-class="configFechas.nombreClaseParaInput"
+                                            :monday-first="true"
+                                            :clear-button="true"
+                                            :clear-button-icon="configFechas.IconoBotonBorrar"
+                                            :calendar-button="true"
+                                            :calendar-button-icon="configFechas.IconoBotonAbrir"
+                                            calendar-button-icon-content=""
+                                            :format="configFechas.DatePickerFormat"
+                                            :full-month-name="true" :bootstrap-styling="true"
+                                            :disabled-dates="configFechas.disabledDates"
+                                            :typeable="configFechas.typeable"
+                                            v-model="jsonData.fecha_orden_proceder">
+                                </datepicker>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="descripcion">Descripcion de la Orden:</label>
+                                <vue-editor v-model="jsonData.desc_orden_proceder"
+                                            :editor-toolbar="configToolBarEditText">
+                                </vue-editor>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="descripcion">Orden de Proceder:</label>
+                            <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
+                                   class="bg-primary"
+                                   style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
+                                        <span id="contenido_documento_res_aprobacion"><i
+                                            class="fas fa-download fa-1x"></i><br> <span> {{
+                                                configFile.contenidoDefault
+                                            }}</span></span>
+                                <button type="button" class="close" v-if="configFile.cerrar"
+                                        @click="borrar_file();"><span>&times;</span></button>
+                            </label>
+                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"
+                                   @change="cargar_file" style="display:none">
+                        </div>
+                    </div>
                     <!--                    <div class="modal-body">-->
                     <!--                        <div class="row">-->
                     <!--                            <H1>-->
@@ -311,10 +356,10 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" @click="uploadOrdenProceder(props.row.id);" class="btn btn-success"
+                        <button type="submit" @click="saveOrdenProceder();" class="btn btn-success"
                                 id="guardarModal">
                             <slot>
-                                Guardar
+                                Guardar Orden
                             </slot>
                         </button>
                     </div>
@@ -345,6 +390,13 @@ export default {
     props: ['url', 'csrf', 'ast', 'operations', 'user'],
     data() {
         return {
+            dropzoneOptions: {
+                url: 'https://httpbin.org/post',
+                thumbnailWidth: 150,
+                maxFilesize: 1,
+                headers: {"My-Awesome-Header": "header value"},
+                paralleleUploads: 1,
+            },
             configFile: {
                 cerrar: false,
                 contenidoDefault: "DOCUMENTOS",
@@ -404,7 +456,6 @@ export default {
             disabledForEdit: false,
             combo_padres: [],
             uploadProgress: '',
-            dropzoneOptions: [],
             fileAdded: '',
             sendingFiles: '',
             success: '',
@@ -434,6 +485,13 @@ export default {
                 modifica: [],
                 files: null,
                 path_contrato: null,
+
+                //required to Orden Proceder
+                document_id: null,
+                fecha_orden_proceder: null,
+                desc_orden_proceder: null,
+                path_orden_proceder: null,
+
             },
             rows: [],
             columns: [
@@ -574,12 +632,42 @@ export default {
         }
     },
     methods: {
+        openModalOrden(data={}) {
+            this.jsonData.document_id = data.id;
+            this.tituloIntervencionModal = data.nombre;
+            console.log(data);
+            console.log('documents_id: ' + this.jsonData.document_id);
+        },
+        async saveOrdenProceder2(){
+            const document_id = this.jsonData.document_id;
+            const fecha = new Date(this.jsonData.fecha_orden_proceder);
+            const fecha_orden_proceder = fecha;
+            const desc_orden_proceder = this.jsonData.desc_orden_proceder;
+            const files = this.jsonData.files;
 
-        async uploadOrdenProceder(id) {
-            let formData = new FormData();
-            formData.append('files', this.jsonData.files);
-            const uploadFiles = await axios.put('upload_orden_files/' + id, formData)
-            console.log(uploadFiles);
+            const jsonData = {
+                'document_id': document_id,
+                'fecha_orden_proceder': fecha_orden_proceder,
+                'desc_orden_proceder': desc_orden_proceder,
+                'files': files
+            }
+
+            const uploadFile = await axios.post('upload_orden_file', jsonData)
+            console.log(uploadFile.data);
+            document.getElementById("cerrarModal").click();
+        },
+        async saveOrdenProceder() {
+            console.log('JSON DATA', this.jsonData.document_id);
+            let jsonData = new FormData();
+            jsonData.append('d_id', this.jsonData.document_id);
+            const fecha = new Date(this.jsonData.fecha_orden_proceder);
+            jsonData.append('fecha_orden_proceder', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
+            jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
+            jsonData.append('files', this.jsonData.files);
+            const uploadFile = await axios.post('upload_orden_file', jsonData)
+            console.log(uploadFile.data);
+            document.getElementById("cerrarModal").click();
+
         },
         //modify the value of the input in real time from v-select document_types_id and padre
         async cambioTipoDocumento() {
@@ -725,9 +813,9 @@ export default {
             let saved = await axios.post('documents', dataJson)
             console.log('SAVED', saved.data);
         },
-        async contratoSave2(){
-          let datosJsonData = new FormData();
-          datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
+        async contratoSave2() {
+            let datosJsonData = new FormData();
+            datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datosJsonData.append('padre', this.jsonData.padre.id);
             datosJsonData.append('unidad_ejecutora_id', 1/*this.jsonData.unidad_ejecutora_id.id*/);
             datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
@@ -1039,7 +1127,7 @@ export default {
             this.configFile.cerrar = true;
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
-            },
+        },
         async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
             var respuesta = await axios.get('tipo_cambio_bs_sus');
             console.log(respuesta.data);
@@ -1076,7 +1164,7 @@ export default {
         VueBootstrap4Table,
         Datepicker,
         VueEditor,
-        vueDropzone: vue2Dropzone
+        vue2Dropzone
     }
 }
 ;

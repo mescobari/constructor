@@ -240,12 +240,20 @@ class DocumentController extends Controller
         return OrdenesProceder::all();
     }
 
-    public function uploadOrdenFiles()
+    public function uploadOrdenFile(Request $request)
     {
-        $files = request()->file('files');
-        $nombre_carpeta = "constructor/ordenes_proceder";
-        $nombre_archivo = $_FILES['files']['name'];
-        $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
-        return $path;
+        if($request->hasFile('files')){
+
+            $files = request()->file('files');
+            $nombre_carpeta = "constructor/ordenes_proceder";
+            $nombre_archivo = $_FILES['files']['name'];
+            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+        }
+        return OrdenesProceder::create([
+            'document_id' => $request->document_id,
+            'fecha_orden_proceder' => $request->fecha_orden_proceder,
+            'desc_orden_proceder' => $request->desc_orden_proceder,
+            'path_orden_proceder' => $path,
+        ]);
     }
 }
