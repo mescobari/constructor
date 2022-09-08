@@ -27,6 +27,7 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::apiResource('planillas', PlanillaController::class);
     Route::get('get_planilla_item', 'PlanillaController@getPlanillaItem')->name('get_planilla_item');
     Route::get('get_valores_item/{id}', 'PlanillaController@getValoresItem')->name('get_valores_item');
+    Route::post('planilla_csv', 'PlanillaController@planillaCSV')->name('planilla_csv');
 
 //requerimientos
     Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');

@@ -71,7 +71,7 @@
                             </template>
                             <template slot="acciones" slot-scope="props">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-primary ml-1" data-toggle="modal" data-target="#doc_legales" @click="planillaCSV(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
+                                    <button type="button" class="btn btn-outline-primary ml-1" data-toggle="modal" data-target="#planillaCSV" @click="planillaCSV(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
                                    
                                     <a :href="'ver_planilla/'+props.row.id" target="_blank" rel="noopener noreferrer">
                                     <button type="button" class="btn btn-outline-success ml-1" ><span><i class="far fa-file-pdf"></i></span></button>
@@ -90,6 +90,83 @@
             </div>
             
         </div>
+
+<!--  modal para la scargar planilla CSV //////////--> 
+<div class="modal fade" id="planillaCSV" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="carga_planillaCSV" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+               
+                    
+                
+                <div class="modal-content">
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="carga_planillaCSV">Cargar Planilla Detalle de Items</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body"> 
+                        <div class="row">
+                            <div class="col-md-12">
+                               
+                                <h5>  {{ jsonData.proyectos.nombre }}</h5>
+                               
+                                
+                            </div>
+                        </div> 
+                        
+                        <div class="row">
+                            <div class="col-md-3">          
+                                <div class="form-group">
+                                    <label for="nombre">Tipo Planilla</label>
+                                    <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="cargarData.tipo" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-6">          
+                                <div class="form-group">
+                                    <label for="nombre">Referencia</label>
+                                    <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="cargarData.referencia" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-3">          
+                                <div class="form-group">
+                                    <label for="nombre">Fecha Emision</label>
+                                    <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="cargarData.fecha_planilla" disabled>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="row" v-if="cargar==true">
+                            <div class="col-md-12">   
+                                <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFileLang" lang="es">
+                                <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+                                </div>   
+                            </div>                             
+                        </div>           
+                    </div>
+
+
+
+                    <div class="modal-footer">
+                           
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" v-if="cargar==true"
+                            @click="ver_planilla();">Seleccionar</button>
+
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" v-if="cargar==false"
+                            @click="ver_planilla();">Cancelar</button>
+                       
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    <!-- ///////////  FIN mmodal para la scargar planilla CSV //////////-->
+
+
 
     <!--  modal para la seleccion de contratos //////////--> 
         <div class="modal fade" id="seleccion_proyecto_doc_legales" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="seleccion_proyecto_doc_legalesTitle" aria-hidden="true">
@@ -284,7 +361,7 @@ export default {
         return{
             modificar_bottom:false,
             guardar_bottom:false,
-
+            cargar:true,
             tituloDocLegalesModal:'',
 
             combo_tipos_documentos:[],
@@ -315,6 +392,11 @@ export default {
                 referencia:'',               
                 funcionario:'',                
                 files:null,
+            },
+            cargarData:{
+                tipo:'',
+                referencia:'',
+                fecha_planilla:'',
             },
             rows:[],
             columns:[
@@ -350,15 +432,38 @@ export default {
     },
     methods:{
         
-       
+        async planillaCSV(data={}){
+           
+            console.log('ya estoy en planillaCSV');
+            console.log(data);
+            this.cargarData.tipo=data.tipo;
+            this.cargarData.referencia=data.referencia;
+            this.cargarData.fecha_planilla=data.fecha_planilla;
+
+            // debemos verificar si tiene planilla inicial
+            var respuesta = await axios.post('planilla_csv', data);
+            console.log('===================');
+            console.log(respuesta.data);
+            if(respuesta.data==1){
+                //$('#modifica3').attr('checked','checked');
+                console.log('no puede cargar otra planilla que no se ala inicial desahabilitar todo');
+                this.cargar=false;
+            }else {
+                this.cargar=true; 
+
+            
+            }
+
+
+        }, 
         async guardar(){
-            console.log('estamos en guardar contrato_id');
+            
             this.jsonData.contrato_id = this.jsonData.proyectos.id;
             console.log(this.jsonData.tipo_planilla_id);
             const fecha = new Date(this.jsonData.fecha_planilla);
              this.jsonData.fecha1 = fecha.getFullYear() + "-" + (fecha.getMonth()+1) + "-" + fecha.getDate();
            
-            console.log('===================');
+           
            
            let datos_jsonData = new FormData();
            
