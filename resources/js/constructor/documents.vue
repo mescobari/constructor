@@ -69,7 +69,7 @@
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
                                     data-target="#orden"
-                                    v-if="props.row.document_types_id === 1"
+                                    v-if="props.row.document_types_id === 1 || props.row.document_types_id === 2"
                                     @click="openModalOrden(props.row)">
                                 <span><i class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
@@ -535,6 +535,15 @@ export default {
                     },
                 },
                 {
+                    label: "Orden Proceder",
+                    name: "fecha_orden_proceder",
+                    sort: false,
+                    filter: {
+                        type: "simple",
+                        placeholder: "Dias",
+                    },
+                },
+                {
                     label: "Acciones",
                     name: "acciones",
                     sort: false,
@@ -616,12 +625,12 @@ export default {
         }
     },
     methods: {
-        openModalOrden(data={}) {
+        openModalOrden(data = {}) {
             this.jsonData.document_id = data.id;
             this.tituloIntervencionModal = data.nombre;
             console.log(data);
         },
-        async saveOrdenProceder2(){
+        async saveOrdenProceder2() {
             const document_id = this.jsonData.document_id;
             const fecha = new Date(this.jsonData.fecha_orden_proceder);
             const fecha_orden_proceder = fecha;
@@ -647,12 +656,13 @@ export default {
             jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
             jsonData.append('files', this.jsonData.files);
             const uploadFile = await axios.post('upload_orden_file', jsonData)
-            console.log('SAVE ORDEN',uploadFile.data);
+            console.log('SAVE ORDEN', uploadFile.data);
 
             document.getElementById("closeModal").click();
             document.getElementById("closeOr").click();
             this.cleanProceder();
         },
+
         cleanProceder() {
             this.jsonData.document_id = '';
             this.jsonData.fecha_orden_proceder = '';
@@ -741,19 +751,40 @@ export default {
                 this.deleteItem(this.id_eliminacion);
             }
         },
+        async filterList(documentsResult){
+            const getOrdenesProceder = (await axios.get('get_ordenes_proceder')).data;
+            console.log("ORDENES PROCEDER", getOrdenesProceder);
+            let arrayList = [];
+            for (let i in documentsResult) {
+                if (documentsResult[i].id === 1 || documentsResult[i].id === 2) {
+                    for (let j in getOrdenesProceder) {
+                        if (documentsResult[i].id === getOrdenesProceder[j].document_id) {
+                            arrayList.push({
+                                ...getOrdenesProceder[j],
+                                ...documentsResult[i]
+
+                            });
+                        }
+                    }
+                }
+                else {
+                    arrayList.push(documentsResult[i]);
+                }
+            }
+            return arrayList;
+        },
         async listar() {
             const respuesta = await axios.get('documents');
-            const getOrdenesProceder = await axios.get('get_ordenes_proceder');
             const getDocumentTypes = (await axios.get('documentos_legaleses')).data;
-            console.log("ORDENES PROCEDER", getOrdenesProceder.data);
-            this.rows = respuesta.data.map(documento => {
+
+
+            const documentsResult = respuesta.data.map(documento => {
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
                 documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
-            console.log('documentos', this.rows)
-            // this.rows = documentos;
+            this.rows = await this.filterList(documentsResult);
         },
         areAlltheFieldsFilled() {
             return this.jsonData.document_types_id !== '' &&
