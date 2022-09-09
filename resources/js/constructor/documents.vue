@@ -253,7 +253,7 @@
                                             class="fas fa-download fa-1x"></i><br> <span> {{
                                                 configFile.contenidoDefault
                                             }}</span></span>
-                                        <button type="button" class="close" v-if="configFile.cerrar"
+                                        <button type="button" class="close" id="closeDoc" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
                                     <input type="file" multiple class="form-control" id="documento_res_aprobacion"
@@ -330,31 +330,15 @@
                                             class="fas fa-download fa-1x"></i><br> <span> {{
                                                 configFile.contenidoDefault
                                             }}</span></span>
-                                <button type="button" class="close" v-if="configFile.cerrar"
+                                <button type="button" class="close" id="closeOr" v-if="configFile.cerrar"
                                         @click="borrar_file();"><span>&times;</span></button>
                             </label>
                             <input type="file" multiple class="form-control" id="documento_res_aprobacion"
                                    @change="cargar_file" style="display:none">
                         </div>
                     </div>
-                    <!--                    <div class="modal-body">-->
-                    <!--                        <div class="row">-->
-                    <!--                            <H1>-->
-                    <!--                                <vue-dropzone-->
-                    <!--                                    ref="myVueDropzone"-->
-                    <!--                                    :useCustomSlot="true"-->
-                    <!--                                    id="dropzone"-->
-                    <!--                                    @vdropzone-upload-progress="uploadProgress"-->
-                    <!--                                    :options="dropzoneOptions"-->
-                    <!--                                    @vdropzone-file-added="fileAdded"-->
-                    <!--                                    @vdropzone-sending-multiple="sendingFiles"-->
-                    <!--                                    @vdropzone-success-multiple="success"-->
-                    <!--                                ></vue-dropzone>-->
-                    <!--                            </H1>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
+                        <button type="button" class="btn btn-danger" id="closeModal" data-dismiss="modal">Cancelar
                         </button>
                         <button type="submit" @click="saveOrdenProceder();" class="btn btn-success"
                                 id="guardarModal">
@@ -637,6 +621,7 @@ export default {
             this.tituloIntervencionModal = data.nombre;
             console.log(data);
             console.log('documents_id: ' + this.jsonData.document_id);
+            document.getElementById("closeOr").click();
         },
         async saveOrdenProceder2(){
             const document_id = this.jsonData.document_id;
@@ -666,7 +651,14 @@ export default {
             jsonData.append('files', this.jsonData.files);
             const uploadFile = await axios.post('upload_orden_file', jsonData)
             console.log(uploadFile.data);
-            document.getElementById("cerrarModal").click();
+            document.getElementById("closeModal").click();
+            this.cleanProceder();
+        },
+        cleanProceder() {
+            this.jsonData.document_id = '';
+            this.jsonData.fecha_orden_proceder = '';
+            this.jsonData.desc_orden_proceder = '';
+            this.jsonData.files = '';
 
         },
         //modify the value of the input in real time from v-select document_types_id and padre
@@ -869,6 +861,7 @@ export default {
             // const respuesta = await axios.put(`documents/` + this.jsonData.id, datos_jsonData);
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
+            document.getElementById("closeDoc").click();
             await this.listar();
             // this.limpiar_formulario();
         },
@@ -895,18 +888,6 @@ export default {
             const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
             const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
 
-            $('#customCheck1').removeAttr('checked');
-            $('#customCheck2').removeAttr('checked');
-            $('#customCheck3').removeAttr('checked');
-            if (data.modifica[0] === '1') {
-                $('#customCheck1').attr('checked', 'checked');
-            }
-            if (data.modifica[1] === '2') {
-                $('#customCheck2').attr('checked', 'checked');
-            }
-            if (data.modifica[2] === '3') {
-                $('#customCheck3').attr('checked', 'checked');
-            }
             this.disabledForEdit = true;
             this.modificar_bottom = true;
             this.guardar_bottom = false;
