@@ -620,7 +620,6 @@ export default {
             this.jsonData.document_id = data.id;
             this.tituloIntervencionModal = data.nombre;
             console.log(data);
-            console.log('documents_id: ' + this.jsonData.document_id);
         },
         async saveOrdenProceder2(){
             const document_id = this.jsonData.document_id;
@@ -641,7 +640,6 @@ export default {
             document.getElementById("cerrarModal").click();
         },
         async saveOrdenProceder() {
-            console.log('JSON DATA', this.jsonData.document_id);
             let jsonData = new FormData();
             jsonData.append('document_id', this.jsonData.document_id);
             const fecha = new Date(this.jsonData.fecha_orden_proceder);
@@ -649,7 +647,8 @@ export default {
             jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
             jsonData.append('files', this.jsonData.files);
             const uploadFile = await axios.post('upload_orden_file', jsonData)
-            console.log(uploadFile.data);
+            console.log('SAVE ORDEN',uploadFile.data);
+
             document.getElementById("closeModal").click();
             document.getElementById("closeOr").click();
             this.cleanProceder();
