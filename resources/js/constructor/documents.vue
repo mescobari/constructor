@@ -621,7 +621,6 @@ export default {
             this.tituloIntervencionModal = data.nombre;
             console.log(data);
             console.log('documents_id: ' + this.jsonData.document_id);
-            document.getElementById("closeOr").click();
         },
         async saveOrdenProceder2(){
             const document_id = this.jsonData.document_id;
@@ -652,6 +651,7 @@ export default {
             const uploadFile = await axios.post('upload_orden_file', jsonData)
             console.log(uploadFile.data);
             document.getElementById("closeModal").click();
+            document.getElementById("closeOr").click();
             this.cleanProceder();
         },
         cleanProceder() {
