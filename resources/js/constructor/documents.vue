@@ -69,9 +69,11 @@
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
                                     data-target="#orden"
-                                    v-if="props.row.document_types_id === 1">
+                                    v-if="props.row.document_types_id === 1"
+                                    @click="openModalOrden(props.row)">
                                 <span><i class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
+                                    v-if="props.row.path_contrato!==''"
                                     @click="downloadDocument(props.row)"><span><i
                                 class="far fa-file-pdf"></i> </span></button>
                             <!--                            </a>-->
@@ -251,7 +253,7 @@
                                             class="fas fa-download fa-1x"></i><br> <span> {{
                                                 configFile.contenidoDefault
                                             }}</span></span>
-                                        <button type="button" class="close" v-if="configFile.cerrar"
+                                        <button type="button" class="close" id="closeDoc" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
                                     <input type="file" multiple class="form-control" id="documento_res_aprobacion"
@@ -290,28 +292,58 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-<!--                    <div class="modal-body">-->
-<!--                        <div class="row">-->
-<!--                            <H1>-->
-<!--                                <vue-dropzone-->
-<!--                                    ref="myVueDropzone"-->
-<!--                                    :useCustomSlot="true"-->
-<!--                                    id="dropzone"-->
-<!--                                    @vdropzone-upload-progress="uploadProgress"-->
-<!--                                    :options="dropzoneOptions"-->
-<!--                                    @vdropzone-file-added="fileAdded"-->
-<!--                                    @vdropzone-sending-multiple="sendingFiles"-->
-<!--                                    @vdropzone-success-multiple="success"-->
-<!--                                ></vue-dropzone>-->
-<!--                            </H1>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="fecha-firma">Fecha de Orden:</label>
+                                <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
+                                            :calendar-class="configFechas.nombreClaseParaModal"
+                                            :input-class="configFechas.nombreClaseParaInput"
+                                            :monday-first="true"
+                                            :clear-button="true"
+                                            :clear-button-icon="configFechas.IconoBotonBorrar"
+                                            :calendar-button="true"
+                                            :calendar-button-icon="configFechas.IconoBotonAbrir"
+                                            calendar-button-icon-content=""
+                                            :format="configFechas.DatePickerFormat"
+                                            :full-month-name="true" :bootstrap-styling="true"
+                                            :disabled-dates="configFechas.disabledDates"
+                                            :typeable="configFechas.typeable"
+                                            v-model="jsonData.fecha_orden_proceder">
+                                </datepicker>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="descripcion">Descripcion de la Orden:</label>
+                                <vue-editor v-model="jsonData.desc_orden_proceder"
+                                            :editor-toolbar="configToolBarEditText">
+                                </vue-editor>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="descripcion">Orden de Proceder:</label>
+                            <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
+                                   class="bg-primary"
+                                   style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
+                                        <span id="contenido_documento_res_aprobacion"><i
+                                            class="fas fa-download fa-1x"></i><br> <span> {{
+                                                configFile.contenidoDefault
+                                            }}</span></span>
+                                <button type="button" class="close" id="closeOr" v-if="configFile.cerrar"
+                                        @click="borrar_file();"><span>&times;</span></button>
+                            </label>
+                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"
+                                   @change="cargar_file" style="display:none">
+                        </div>
+                    </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
+                        <button type="button" class="btn btn-danger" id="closeModal" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" @click="uploadOrdenProceder(props.row.id);" class="btn btn-success" id="guardarModal">
+                        <button type="submit" @click="saveOrdenProceder();" class="btn btn-success"
+                                id="guardarModal">
                             <slot>
-                                Guardar
+                                Guardar Orden
                             </slot>
                         </button>
                     </div>
@@ -342,6 +374,13 @@ export default {
     props: ['url', 'csrf', 'ast', 'operations', 'user'],
     data() {
         return {
+            dropzoneOptions: {
+                url: 'https://httpbin.org/post',
+                thumbnailWidth: 150,
+                maxFilesize: 1,
+                headers: {"My-Awesome-Header": "header value"},
+                paralleleUploads: 1,
+            },
             configFile: {
                 cerrar: false,
                 contenidoDefault: "DOCUMENTOS",
@@ -401,7 +440,6 @@ export default {
             disabledForEdit: false,
             combo_padres: [],
             uploadProgress: '',
-            dropzoneOptions:[],
             fileAdded: '',
             sendingFiles: '',
             success: '',
@@ -414,7 +452,6 @@ export default {
             sectoriales: [],
             tipo_intervenciones: [],
             intervenciones: [],
-            path_contrato: '',
             jsonData: {
                 //required to CRUD
                 id: 0,
@@ -432,6 +469,13 @@ export default {
                 modifica: [],
                 files: null,
                 path_contrato: null,
+
+                //required to Orden Proceder
+                document_id: null,
+                fecha_orden_proceder: null,
+                desc_orden_proceder: null,
+                path_orden_proceder: null,
+
             },
             rows: [],
             columns: [
@@ -572,25 +616,65 @@ export default {
         }
     },
     methods: {
+        openModalOrden(data={}) {
+            this.jsonData.document_id = data.id;
+            this.tituloIntervencionModal = data.nombre;
+            console.log(data);
+            console.log('documents_id: ' + this.jsonData.document_id);
+        },
+        async saveOrdenProceder2(){
+            const document_id = this.jsonData.document_id;
+            const fecha = new Date(this.jsonData.fecha_orden_proceder);
+            const fecha_orden_proceder = fecha;
+            const desc_orden_proceder = this.jsonData.desc_orden_proceder;
+            const files = this.jsonData.files;
 
-        async uploadOrdenProceder(id){
-            let formData = new FormData();
-            formData.append('files', this.jsonData.files);
-            const uploadFiles = await axios.put('upload_orden_files/'+id, formData)
-            console.log(uploadFiles);
+            const jsonData = {
+                'document_id': document_id,
+                'fecha_orden_proceder': fecha_orden_proceder,
+                'desc_orden_proceder': desc_orden_proceder,
+                'files': files
+            }
+
+            const uploadFile = await axios.post('upload_orden_file', jsonData)
+            console.log(uploadFile.data);
+            document.getElementById("cerrarModal").click();
+        },
+        async saveOrdenProceder() {
+            console.log('JSON DATA', this.jsonData.document_id);
+            let jsonData = new FormData();
+            jsonData.append('d_id', this.jsonData.document_id);
+            const fecha = new Date(this.jsonData.fecha_orden_proceder);
+            jsonData.append('fecha_orden_proceder', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
+            jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
+            jsonData.append('files', this.jsonData.files);
+            const uploadFile = await axios.post('upload_orden_file', jsonData)
+            console.log(uploadFile.data);
+            document.getElementById("closeModal").click();
+            document.getElementById("closeOr").click();
+            this.cleanProceder();
+        },
+        cleanProceder() {
+            this.jsonData.document_id = '';
+            this.jsonData.fecha_orden_proceder = '';
+            this.jsonData.desc_orden_proceder = '';
+            this.jsonData.files = '';
+
         },
         //modify the value of the input in real time from v-select document_types_id and padre
         async cambioTipoDocumento() {
             let padresObjeto = await this.padreGetAll()
             let subPadres = []
+            const defaultValue = Object.assign({},
+                {
+                    id: 271,
+                    nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+                });
             switch (this.jsonData.document_types_id.id) {
                 case 1:
                     this.disablePadre = true;
-                    this.jsonData.padre = [{id: 0, nombre: 'Ninguno'}];
-                    this.jsonData.contratado_id = [{
-                        id: 271,
-                        nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
-                    }];
+                    this.jsonData.padre = Object.assign({}, {id: 0, nombre: 'Ninguno'});
+                    this.jsonData.contratado_id = defaultValue
                     this.jsonData.contratante_id = '';
                     this.disableSub = false;
                     this.disableSub2 = true;
@@ -604,17 +688,12 @@ export default {
                         this.disablePadre = false;
                         this.disableSub = true;
                         this.disableSub2 = false;
-                        this.jsonData.contratante_id = [{
-                            id: 271,
-                            nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
-                        }];
+                        this.jsonData.contratante_id = defaultValue
                         this.jsonData.contratado_id = '';
                     }
                     break;
                 default:
                     console.log("DEFAULT", this.jsonData.document_types_id.id);
-                    // this.jsonData.contratante_id = '';
-                    // this.jsonData.contratado_id = '';
                     this.combo_padres = padresObjeto;
                     this.disablePadre = false;
                     this.disableSub = true;
@@ -630,17 +709,17 @@ export default {
             console.log('PADRE', this.jsonData.padre);
             let contratante = [];
             let contratado = [];
-            contratante = contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id);
-            contratado = contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id);
+            contratante = Object.assign(contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id));
+            contratado = Object.assign(contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id));
+
             console.log("CONTRATANTE", contratante);
             console.log("CONTRATADO", contratado);
             if (this.disablePadre === false &&
                 this.jsonData.document_types_id.id !== 1 &&
                 this.jsonData.document_types_id.id !== 2) {
-                this.jsonData.contratante_id = contratante[0];
-                this.jsonData.contratado_id = contratado[0];
+                this.jsonData.contratante_id = contratante;
+                this.jsonData.contratado_id = contratado;
             }
-
         },
         preguntarModalAlertaConfirmacionEliminar(document) {
             this.mandarMensajesAlerta = {
@@ -675,50 +754,80 @@ export default {
                 return documento;
             });
             console.log('documentos', this.rows)
-
             // this.rows = documentos;
         },
         areAlltheFieldsFilled() {
-            return this.jsonData.document_types_id !== null &&
-                this.jsonData.padre !== null &&
-                this.jsonData.contratante_id.id !== null &&
-                this.jsonData.contratado_id.id !== null &&
-                this.jsonData.duracion_dias !== null &&
-                this.jsonData.fecha_firma !== null &&
-                this.jsonData.codigo !== null &&
-                this.jsonData.nombre !== null &&
-                this.jsonData.monto_bs !== null &&
-                this.jsonData.objeto !== null &&
-                this.jsonData.modifica !== null &&
-                this.jsonData.files !== null;
+            return this.jsonData.document_types_id !== '' &&
+                this.jsonData.padre !== '' &&
+                this.jsonData.contratante_id.id !== '' &&
+                this.jsonData.contratado_id.id !== '' &&
+                this.jsonData.duracion_dias !== '' &&
+                this.jsonData.fecha_firma !== '' &&
+                this.jsonData.codigo !== '' &&
+                this.jsonData.nombre !== '' &&
+                this.jsonData.monto_bs !== '' &&
+                this.jsonData.objeto !== '' &&
+                this.jsonData.modifica !== '' &&
+                this.jsonData.files !== '';
         },
         async contratoSave() {
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
-            if (this.jsonData.document_types_id.id === 1) {
-                datos_jsonData.append('padre', '0');
-            } else {
-                datos_jsonData.append('padre', this.jsonData.padre.id);
-            }
-            datos_jsonData.append('unidad_ejecutora_id', '1'/*this.jsonData.unidad_ejecutora_id.id*/);
-            datos_jsonData.append('nombre', this.jsonData.nombre);
-            datos_jsonData.append('codigo', this.jsonData.codigo);
-            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
-            datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
-            let fecha_firma = new Date(this.jsonData.fecha_firma);
-            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
-            datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
-            datos_jsonData.append('objeto', this.jsonData.objeto);
+            console.log('contratoSave2', this.jsonData);
+            let document_types_id = this.jsonData.document_types_id.id;
+            let padre = this.jsonData.padre.id;
+            let unidad_ejecutora_id = 1/*this.jsonData.unidad_ejecutora_id.id*/;
+            let contratante_id = this.jsonData.contratante_id.id;
+            let contratado_id = this.jsonData.contratado_id.id;
+            let duracion_dias = this.jsonData.duracion_dias;
+            let fecha = new Date(this.jsonData.fecha_firma);
+            let fecha_firma = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
+            let codigo = this.jsonData.codigo;
+            let nombre = this.jsonData.nombre;
+            let monto_bs = this.jsonData.monto_bs;
+            let objeto = this.jsonData.objeto;
+            let modifica = this.jsonData.modifica.toString();
+            let files = this.jsonData.files;
 
-            datos_jsonData.append('modifica', this.jsonData.modifica);
-            datos_jsonData.append('files', this.jsonData.files);
-            let respuesta = await axios.post('documents', datos_jsonData);
-            console.log("SAVE", respuesta.data);
+            const dataJson = {
+                'document_types_id': document_types_id,
+                'padre': padre,
+                'unidad_ejecutora_id': unidad_ejecutora_id,
+                'contratante_id': contratante_id,
+                'contratado_id': contratado_id,
+                'duracion_dias': duracion_dias,
+                'fecha_firma': fecha_firma,
+                'codigo': codigo,
+                'nombre': nombre,
+                'monto_bs': monto_bs,
+                'objeto': objeto,
+                'modifica': modifica,
+                'files': files
+            }
+            let saved = await axios.post('documents', dataJson)
+            console.log('SAVED', saved.data);
+        },
+        async contratoSave2() {
+            let datosJsonData = new FormData();
+            datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
+            datosJsonData.append('padre', this.jsonData.padre.id);
+            datosJsonData.append('unidad_ejecutora_id', 1/*this.jsonData.unidad_ejecutora_id.id*/);
+            datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            datosJsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            datosJsonData.append('duracion_dias', this.jsonData.duracion_dias);
+            const fecha = new Date(this.jsonData.fecha_firma);
+            datosJsonData.append('fecha_firma', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
+            datosJsonData.append('codigo', this.jsonData.codigo);
+            datosJsonData.append('nombre', this.jsonData.nombre);
+            datosJsonData.append('monto_bs', this.jsonData.monto_bs);
+            datosJsonData.append('objeto', this.jsonData.objeto);
+            datosJsonData.append('modifica', this.jsonData.modifica.toString());
+            datosJsonData.append('files', this.jsonData.files);
+            let saved = await axios.post('documents', datosJsonData)
+            console.log('SAVED', saved.data);
         },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
-                await this.contratoSave()
+                await this.contratoSave2();
+                // await this.contratoSave()
                 document.getElementById("cerrarModal").click();
                 await this.listar();
             } else {
@@ -745,15 +854,14 @@ export default {
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
-            if(this.jsonData.files === null || this.jsonData.files === ''){
-                datos_jsonData.append('files', '');
-            } else datos_jsonData.append('files', this.jsonData.files);
+            datos_jsonData.append('files', this.jsonData.files);
             datos_jsonData.append('id', this.jsonData.id);
             console.log('APPEND', datos_jsonData);
             const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
             // const respuesta = await axios.put(`documents/` + this.jsonData.id, datos_jsonData);
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
+            document.getElementById("closeDoc").click();
             await this.listar();
             // this.limpiar_formulario();
         },
@@ -780,19 +888,7 @@ export default {
             const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
             const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
 
-            $('#customCheck1').removeAttr('checked');
-            $('#customCheck2').removeAttr('checked');
-            $('#customCheck3').removeAttr('checked');
-            if (data.modifica[0] === '1') {
-                $('#customCheck1').attr('checked', 'checked');
-            }
-            if (data.modifica[1] === '2') {
-                $('#customCheck2').attr('checked', 'checked');
-            }
-            if (data.modifica[2] === '3') {
-                $('#customCheck3').attr('checked', 'checked');
-            }
-            this. disabledForEdit = true;
+            this.disabledForEdit = true;
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
@@ -800,15 +896,6 @@ export default {
             this.jsonData.codigo = data.codigo;
             this.jsonData.nombre = data.nombre;
             this.jsonData.modifica = data.modifica.split(',');
-            // if (data.modifica[0] ===)
-            // let firstModifica = this.jsonData.modifica[0];
-            // let secondModifica = this.jsonData.modifica[1];
-            // let thirdModifica = this.jsonData.modifica[2];
-            // this.jsonData.modifica = firstModifica + "," + secondModifica + "," + thirdModifica;
-
-            this.jsonData.modifica[0] = data.modifica[0];
-            this.jsonData.modifica[1] = data.modifica[1];
-            this.jsonData.modifica[2] = data.modifica[2];
             console.log("MODIFICA", this.jsonData.modifica);
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
@@ -863,7 +950,7 @@ export default {
                 }
             }
         },
-        async downloadDocument(data={}) {
+        async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
             const blob = new Blob([response.data], {type: 'octet-stream'});
             const href = URL.createObjectURL(blob);
@@ -931,6 +1018,8 @@ export default {
         ModalCrear() {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
+            this.disabledForEdit = false;
+            this.disablePadre = false;
             this.limpiar_formulario();
             this.tituloIntervencionModal = "Formulario de Creación de Contratos";
         },
@@ -998,6 +1087,8 @@ export default {
                         $(id).addClass(clase_adicionar[key]);
                     }
                 }
+            } else {
+                console.log("no se encontro el id");
             }
         },
         cargar_file(event) {
@@ -1054,7 +1145,7 @@ export default {
         VueBootstrap4Table,
         Datepicker,
         VueEditor,
-        vueDropzone: vue2Dropzone
+        vue2Dropzone
     }
 }
 ;
