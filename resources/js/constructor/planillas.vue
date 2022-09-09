@@ -142,14 +142,15 @@
                         <div class="row" v-if="cargar==true">
                             <div class="col-md-12">   
                                 <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="customFileLang" lang="es">
-                                <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+                                <input type="file" class="custom-file-input"  lang="es"
+                                accept=".csv" id="csv" name="csv" @change="handleFiles()">
+                                <label class="custom-file-label" for="csv">Seleccionar Archivo</label>
                                 </div>   
                             </div>                             
                         </div>           
                     </div>
 
-
+                    
 
                     <div class="modal-footer">
                            
@@ -456,6 +457,17 @@ export default {
 
 
         }, 
+
+        
+        async handleFiles(){
+            const file = document.getElementById('csv').files[0];
+
+            console.log('========handleFiles===========');
+            console.log(file);
+
+        },
+
+
         async guardar(){
             
             this.jsonData.contrato_id = this.jsonData.proyectos.id;
