@@ -144,7 +144,7 @@
                                 <div class="custom-file">
                                 <input type="file" class="custom-file-input"  lang="es"
                                 accept=".csv" id="csv" name="csv" @change="handleFiles()">
-                                <label class="custom-file-label" for="csv">Seleccionar Archivo</label>
+                                <label id="csvPath" class="custom-file-label" for="csv">Seleccionar Archivo</label>
                                 </div>   
                             </div>                             
                         </div>           
@@ -460,16 +460,17 @@ export default {
 
         
         async handleFiles(){
-            const file = document.getElementById('csv').files[0];
-            const  filePath=$('#csv').val(); 
-            console.log('========handleFiles===========');
-            console.log(file);
-            console.log('filePath  ' +filePath);
-            console.log(file.mozFullPath);
+                       
             let formData = new FormData(); 
-            formData.append("file", csv.files[0]);
-            console.log('========FormData===========');
-            console.log(formData);
+            formData.append("files", csv.files[0]);
+                        
+            
+            const uploadFile = await axios.post('up_load_csv', formData)
+            console.log('========up_load_csv===uploadFile========');
+            console.log(uploadFile.data);
+            var span = document.getElementById("csvPath");
+            span.textContent = uploadFile.data;
+            // ahora ler el archivo
 
         },
 

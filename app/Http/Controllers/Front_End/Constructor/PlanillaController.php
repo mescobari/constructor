@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Constructor\PlanillaItem;
 use App\Models\Constructor\PlanillaMovimiento;
@@ -59,6 +60,23 @@ class PlanillaController extends Controller
     }
 
     // ahora veamos el archivo no encuetro path
+    public function upLoadCSV(Request $request)
+    {
+        $path='ni mod';
+        if ($request->hasFile('files')) {
+            $files = $request->file('files');
+            $nombre_carpeta = "/constructor/planillacsv";
+            $nombre_archivo = $_FILES['files']['name'];
+            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+            //$documentId->path_contrato = $path;
+        }
+
+       return $path;
+
+
+    }
+
+
 
     public function getValoresItem($id){
 
