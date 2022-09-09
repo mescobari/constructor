@@ -90,9 +90,6 @@
                                                        class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
                                                 <div>
-                                                    <!--                                                    <input type="checkbox" class="custom-control-input" id="customCheck1"-->
-                                                    <!--                                                           value="1" v-model="jsonData.modifica">-->
-                                                    <!--                                                    <label class="custom-control-label" for="customCheck1">TODO</label>-->
                                                     <input class="form-check-input" type="checkbox"
                                                            v-model="wasChecked"
                                                            id="flexCheckDefault"
@@ -126,7 +123,7 @@
                                                 :calendar-class="configFechas.nombreClaseParaModal"
                                                 :input-class="configFechas.nombreClaseParaInput"
                                                 :monday-first="true"
-                                                :clear-button="true"
+                                                :clear-button="!clickedAdd"
                                                 :clear-button-icon="configFechas.IconoBotonBorrar"
                                                 :calendar-button="true"
 
