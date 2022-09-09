@@ -751,8 +751,13 @@ export default {
                 this.deleteItem(this.id_eliminacion);
             }
         },
-        async filterList(documentsResult){
+        async filterList(documentsResult) {
             const getOrdenesProceder = (await axios.get('get_ordenes_proceder')).data;
+            const fechaEmpty = {
+                fecha_orden_proceder: '',
+                desc_orden_proceder: '',
+                files: ''
+            }
             console.log("ORDENES PROCEDER", getOrdenesProceder);
             let arrayList = [];
             for (let i in documentsResult) {
@@ -762,13 +767,14 @@ export default {
                             arrayList.push({
                                 ...getOrdenesProceder[j],
                                 ...documentsResult[i]
-
                             });
                         }
                     }
-                }
-                else {
-                    arrayList.push(documentsResult[i]);
+                } else {
+                    arrayList.push({
+                        ...documentsResult[i],
+                        ...fechaEmpty
+                    });
                 }
             }
             return arrayList;
