@@ -643,7 +643,7 @@ export default {
         async saveOrdenProceder() {
             console.log('JSON DATA', this.jsonData.document_id);
             let jsonData = new FormData();
-            jsonData.append('d_id', this.jsonData.document_id);
+            jsonData.append('document_id', this.jsonData.document_id);
             const fecha = new Date(this.jsonData.fecha_orden_proceder);
             jsonData.append('fecha_orden_proceder', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
             jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
