@@ -58,6 +58,8 @@ class PlanillaController extends Controller
 
     }
 
+    // ahora veamos el archivo no encuetro path
+
     public function getValoresItem($id){
 
         $json=PlanillaItem::where('id',$id )->with('Unidad')->first();

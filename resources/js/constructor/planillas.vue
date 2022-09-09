@@ -461,9 +461,15 @@ export default {
         
         async handleFiles(){
             const file = document.getElementById('csv').files[0];
-
+            const  filePath=$('#csv').val(); 
             console.log('========handleFiles===========');
             console.log(file);
+            console.log('filePath  ' +filePath);
+            console.log(file.mozFullPath);
+            let formData = new FormData(); 
+            formData.append("file", csv.files[0]);
+            console.log('========FormData===========');
+            console.log(formData);
 
         },
 
