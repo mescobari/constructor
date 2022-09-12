@@ -761,7 +761,7 @@ export default {
             console.log("ORDENES PROCEDER", getOrdenesProceder);
             let arrayList = [];
             for (let i in documentsResult) {
-                if (documentsResult[i].id === 1 || documentsResult[i].id === 2) {
+                if (documentsResult[i].document_types_id === 1 || documentsResult[i].document_types_id === 2) {
                     for (let j in getOrdenesProceder) {
                         if (documentsResult[i].id === getOrdenesProceder[j].document_id) {
                             arrayList.push({
