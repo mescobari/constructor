@@ -902,14 +902,16 @@
                                         <div class="form-group">
                                             <label for="nombre">Horas Requeridas</label>
                                             <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas" v-model="jsonData.modal_horas_requeridas">
+                                                   placeholder="Horas Requeridas"
+                                                   v-model="jsonData.modal_horas_requeridas">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="nombre">Dias Requeridos</label>
                                             <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.modal_dias_requeridos">
+                                                   placeholder="Dias Requeridos"
+                                                   v-model="jsonData.modal_dias_requeridos">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -1185,7 +1187,7 @@ export default {
             const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
             console.log('ITEM RECURSOS', response.data);
 
-                this.rows = await this.filterList(response.data);
+            this.rows = await this.filterList(response.data);
         },
         async retrieveFromCurrentDescripcionRecurso() {
 
@@ -1319,7 +1321,7 @@ export default {
             this.jsonData.modal_unidad = data.unidad_id;
             //this object will be modified in the next step
             this.jsonData.modal_cantidad = data.cantidad_recurso;
-            this.jsonData.modal_horas_requeridas= data.horas_recurso;
+            this.jsonData.modal_horas_requeridas = data.horas_recurso;
             this.jsonData.modal_dias_requeridos = data.dias_recurso;
             this.jsonData.modal_plazo = data.tiempo_total_recurso;
             this.jsonData.modal_precio_referencia = data.precio_referencia_recurso;
@@ -1376,7 +1378,26 @@ export default {
             // this.rows1 = responseReqRelacion;
             console.log('LIST REQ REL', responseReqRelacion);
         },
-        async guardarItemRelacion() {
+
+        areAlltheFieldsFilledRelacion() {
+            return this.jsonData.trabajos_encarados !== '' &&
+                this.jsonData.item_codigo !== '' &&
+                this.jsonData.item_descripcion !== '' &&
+                this.jsonData.item_simbolo !== '' &&
+                this.jsonData.item_vigente !== '' &&
+                this.jsonData.item_avance !== '' &&
+                this.jsonData.item_saldo !== '' &&
+                this.jsonData.item_estimado !== '' &&
+                this.jsonData.item_precio_unitario !== '' &&
+                this.jsonData.monto_bs !== '' &&
+                this.jsonData.objeto !== '' &&
+                this.jsonData.modifica !== '' &&
+                this.jsonData.files !== '';
+        },
+        async firstUpdateItemRelacionDesc() {
+
+        },
+        async saveItemRelacion(){
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             let datos_jsonData = new FormData();
@@ -1391,6 +1412,15 @@ export default {
             console.log('SAVE ITEM RELACION', itemRelacion.data);
             await this.cleanFormItemRelacion()
             await this.listarItemRelacion();
+        },
+        async guardarItemRelacion() {
+            if (this.areAlltheFieldsFilledRelacion()) {
+                await this.firstUpdateItemRelacionDesc();
+                await this.guardarItemRelacion();
+            } else {
+                alert('Por favor complete todos los campos');
+            }
+
         },
         async editarItemRelacion(data = {}) {
             this.jsonData.id = data.id;
@@ -1828,7 +1858,7 @@ export default {
 
                 //MODALES MODIFICAR
                 modal_codigo: '',
-                modal_descripcion : '',
+                modal_descripcion: '',
                 modal_unidad: '',
 
                 modal_cantidad: '',
