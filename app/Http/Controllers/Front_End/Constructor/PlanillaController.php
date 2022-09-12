@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Constructor\PlanillaItem;
+use App\Models\Constructor\PlanillaMovimiento;
+
 use Illuminate\Http\Request;
 
 use App\Models\Constructor\document;
@@ -21,6 +24,59 @@ class PlanillaController extends Controller
     {
         return view('front-end.constructor.IndexPlanillas');
     }
+
+
+    public function planillaCSV(Request $request)
+    {
+        //lo utilizamos para no crear mas rutas, no permite verificar para cargar planillas items por items
+        // jalar 
+        $tipo_planilla_id=$request->tipo_planilla_id;
+        $contrato_id=$request->contrato_id;
+        $inicial=DB::table('planillas')
+        ->join('planilla_movimientos', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
+        ->where('planillas.contrato_id', '=', $contrato_id)
+        ->where('planillas.tipo_planilla_id', '=', '1')
+        ->select('planilla_movimientos.planilla_id', 'planillas.tipo_planilla_id')->distinct()
+        ->get();
+
+        If ((count($inicial)==0)  and ($tipo_planilla_id==1)){
+
+
+            $mensaje='PUEDE CARGAR LA Planilla  inicial';
+            return $mensaje;
+
+        }
+
+        If ((count($inicial)>0)  and ($tipo_planilla_id!=1)){
+
+            $mensaje='PUEDE CARGAR YA ESTA CARGADA LA PLANILLA INICIAL Y ES DE OTRO TIPO';
+        return $mensaje;
+
+        }
+        //$existe=PlanillaItem::whereb
+        $mensaje=1;
+        return $mensaje;
+
+    }
+
+    // ahora veamos el archivo no encuetro path
+    public function upLoadCSV(Request $request)
+    {
+        $path='ni mod';
+        if ($request->hasFile('files')) {
+            $files = $request->file('files');
+            $nombre_carpeta = "/constructor/planillacsv";
+            $nombre_archivo = $_FILES['files']['name'];
+            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+            //$documentId->path_contrato = $path;
+        }
+
+       return $path;
+
+
+    }
+
+
 
     public function getValoresItem($id){
 
@@ -94,7 +150,10 @@ class PlanillaController extends Controller
 
     public function index()
     {
-        //
+        //lo utilizamos para no crear mas rutas, no permite verificar para cargar planillas items por items
+        // jalar 
+        
+
     }
 
     /**

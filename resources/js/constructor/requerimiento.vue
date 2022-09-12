@@ -90,9 +90,6 @@
                                                        class="custom-control-label font-weight-normal">Fondos en
                                                     Avance</label>
                                                 <div>
-                                                    <!--                                                    <input type="checkbox" class="custom-control-input" id="customCheck1"-->
-                                                    <!--                                                           value="1" v-model="jsonData.modifica">-->
-                                                    <!--                                                    <label class="custom-control-label" for="customCheck1">TODO</label>-->
                                                     <input class="form-check-input" type="checkbox"
                                                            v-model="wasChecked"
                                                            id="flexCheckDefault"
@@ -126,7 +123,7 @@
                                                 :calendar-class="configFechas.nombreClaseParaModal"
                                                 :input-class="configFechas.nombreClaseParaInput"
                                                 :monday-first="true"
-                                                :clear-button="true"
+                                                :clear-button="!clickedAdd"
                                                 :clear-button-icon="configFechas.IconoBotonBorrar"
                                                 :calendar-button="true"
 
@@ -868,7 +865,7 @@
                                 <div class="form-group">
                                     <label for="codigo_recurso">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
-                                           v-model="jsonData.codigo_recurso" disabled>
+                                           v-model="jsonData.modal_codigo" disabled>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -876,7 +873,7 @@
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Descripcion Recurso:</label>
                                     <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
-                                              v-model="jsonData.descripcion_recurso"
+                                              v-model="jsonData.modal_descripcion"
                                               placeholder="Selecione una opción"
                                               @input="retrieveFromCurrentDescripcionRecurso">
                                         <span slot="no-options">No hay data para cargar</span>
@@ -888,14 +885,14 @@
                                 <div class="form-group">
                                     <label for="nombre">Unidad</label>
                                     <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
-                                           v-model="jsonData.simbolo" disabled>
+                                           v-model="jsonData.modal_unidad" disabled>
                                 </div>
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Cantidad</label>
                                     <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                           v-model="jsonData.cantidad_recurso">
+                                           v-model="jsonData.modal_cantidad">
                                 </div>
                             </div>
 
@@ -905,14 +902,16 @@
                                         <div class="form-group">
                                             <label for="nombre">Horas Requeridas</label>
                                             <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas" v-model="jsonData.horas_recurso">
+                                                   placeholder="Horas Requeridas"
+                                                   v-model="jsonData.modal_horas_requeridas">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="nombre">Dias Requeridos</label>
                                             <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.dias_recurso">
+                                                   placeholder="Dias Requeridos"
+                                                   v-model="jsonData.modal_dias_requeridos">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -920,7 +919,7 @@
                                             <label for="nombre">Plazo Ejecucion</label>
                                             <input type="text" class="form-control" name="plazo"
                                                    placeholder="dias de ejecucion"
-                                                   v-model="jsonData.tiempo_total_recurso">
+                                                   v-model="jsonData.modal_plazo">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -928,7 +927,7 @@
                                             <label for="nombre">Precio referencial</label>
                                             <input type="text" class="form-control" name="referencial"
                                                    placeholder="precio referencial"
-                                                   v-model="jsonData.precio_referencia_recurso">
+                                                   v-model="jsonData.modal_precio_referencia">
                                         </div>
                                     </div>
                                 </div>
@@ -1188,7 +1187,7 @@ export default {
             const items = response.data.filter(item => item.requerimiento_id === this.jsonData.requerimiento_id);
             console.log('ITEM RECURSOS', response.data);
 
-                this.rows = await this.filterList(response.data);
+            this.rows = await this.filterList(response.data);
         },
         async retrieveFromCurrentDescripcionRecurso() {
 
@@ -1317,27 +1316,27 @@ export default {
         // Editar Requerimiento en Obra
         editar(data = {}) {
             this.jsonData.id = data.id;
-            this.jsonData.codigo_recurso = data.codigo_recurso;
-            this.jsonData.descripcion_recurso = data.descripcion_recurso;
-            this.jsonData.unidad_id = data.unidad_id;
+            this.jsonData.modal_codigo = data.codigo_recurso;
+            this.jsonData.modal_descripcion = data.descripcion_recurso;
+            this.jsonData.modal_unidad = data.unidad_id;
             //this object will be modified in the next step
-            this.jsonData.cantidad_recurso = data.cantidad_recurso;
-            this.jsonData.horas_recurso = data.horas_recurso;
-            this.jsonData.dias_recurso = data.dias_recurso;
-            this.jsonData.tiempo_total_recurso = data.tiempo_total_recurso;
-            this.jsonData.precio_referencia_recurso = data.precio_referencia_recurso;
+            this.jsonData.modal_cantidad = data.cantidad_recurso;
+            this.jsonData.modal_horas_requeridas = data.horas_recurso;
+            this.jsonData.modal_dias_requeridos = data.dias_recurso;
+            this.jsonData.modal_plazo = data.tiempo_total_recurso;
+            this.jsonData.modal_precio_referencia = data.precio_referencia_recurso;
             //Behavior Modal Components
             this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
             console.log('EDITAR REQ ITEM', data);
         },
         async modificar() {
             let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.descripcion_recurso.id);
-            datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
-            datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
-            datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
-            datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
-            datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.modal_descripcion.id);
+            datos_jsonData.append('cantidad_recurso', this.jsonData.modal_cantidad);
+            datos_jsonData.append('horas_recurso', this.jsonData.modal_horas_requeridas);
+            datos_jsonData.append('dias_recurso', this.jsonData.modal_dias_requeridos);
+            datos_jsonData.append('tiempo_total_recurso', this.jsonData.modal_plazo);
+            datos_jsonData.append('precio_referencia_recurso', this.jsonData.modal_precio_referencia);
             datos_jsonData.append('id', this.jsonData.id);
             const response = await axios.post('update_requerimiento_item/' + this.jsonData.id, datos_jsonData);
             console.log('UPDATE REQ ITEM', response.data);
@@ -1379,7 +1378,26 @@ export default {
             // this.rows1 = responseReqRelacion;
             console.log('LIST REQ REL', responseReqRelacion);
         },
-        async guardarItemRelacion() {
+
+        areAlltheFieldsFilledRelacion() {
+            return this.jsonData.trabajos_encarados !== '' &&
+                this.jsonData.item_codigo !== '' &&
+                this.jsonData.item_descripcion !== '' &&
+                this.jsonData.item_simbolo !== '' &&
+                this.jsonData.item_vigente !== '' &&
+                this.jsonData.item_avance !== '' &&
+                this.jsonData.item_saldo !== '' &&
+                this.jsonData.item_estimado !== '' &&
+                this.jsonData.item_precio_unitario !== '' &&
+                this.jsonData.monto_bs !== '' &&
+                this.jsonData.objeto !== '' &&
+                this.jsonData.modifica !== '' &&
+                this.jsonData.files !== '';
+        },
+        async firstUpdateItemRelacionDesc() {
+
+        },
+        async saveItemRelacion(){
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             let datos_jsonData = new FormData();
@@ -1394,6 +1412,15 @@ export default {
             console.log('SAVE ITEM RELACION', itemRelacion.data);
             await this.cleanFormItemRelacion()
             await this.listarItemRelacion();
+        },
+        async guardarItemRelacion() {
+            if (this.areAlltheFieldsFilledRelacion()) {
+                await this.firstUpdateItemRelacionDesc();
+                await this.guardarItemRelacion();
+            } else {
+                alert('Por favor complete todos los campos');
+            }
+
         },
         async editarItemRelacion(data = {}) {
             this.jsonData.id = data.id;
@@ -1829,6 +1856,17 @@ export default {
                 fecha_requerimiento: '',
                 fechaFormatted: '',
 
+                //MODALES MODIFICAR
+                modal_codigo: '',
+                modal_descripcion: '',
+                modal_unidad: '',
+
+                modal_cantidad: '',
+                modal_horas_requeridas: '',
+                modal_dias_requeridos: '',
+                modal_plazo: '',
+                modal_precio_referencia: '',
+                // FIN MODALES MODIFICAR
             },
             rows: [],
             columns: [
