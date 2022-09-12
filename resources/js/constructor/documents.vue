@@ -661,6 +661,7 @@ export default {
             document.getElementById("closeModal").click();
             document.getElementById("closeOr").click();
             this.cleanProceder();
+            await this.listar();
         },
 
         cleanProceder() {
