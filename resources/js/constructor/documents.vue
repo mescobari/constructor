@@ -69,7 +69,8 @@
                             <button type="button" class="btn btn-outline-primary ml-1"
                                     data-toggle="modal"
                                     data-target="#orden"
-                                    v-if="props.row.document_types_id === 1 || props.row.document_types_id === 2"
+                                    v-if="(props.row.document_types_id === 1 || props.row.document_types_id === 2)"
+                                    v-bind:disabled="props.row.fecha_orden_proceder !== null"
                                     @click="openModalOrden(props.row)">
                                 <span><i class="fas fa-upload"></i> </span></button>
                             <button type="button" class="btn btn-outline-success ml-1"
