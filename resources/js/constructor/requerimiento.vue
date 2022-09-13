@@ -1454,10 +1454,15 @@ export default {
             //this object will be modified in the next step Item Relacion
             this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.planilla_item_id = data.planilla_item_id;
-            this.jsonData.item_vigente = data.vigente;
-            this.jsonData.item_avance = data.avance;
+            // this.jsonData.item_vigente = data.vigente;
+            // this.jsonData.item_avance = data.avance;
             this.jsonData.item_estimado = data.estimado;
             this.jsonData.item_precio_unitario = data.precio_unitario;
+            let getValoresItem = (await axios.get('get_valores_item/' +data.planilla_item_id)).data;
+            console.log('GET VALORES ITEM', getValoresItem);
+            this.jsonData.item_vigente = getValoresItem[0].fvigente;
+            this.jsonData.item_avance = getValoresItem[0].favance;
+            this.jsonData.item_saldo = getValoresItem[0].fsaldo;
             console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
