@@ -471,6 +471,17 @@ export default {
             var span = document.getElementById("csvPath");
             span.textContent = uploadFile.data;
             // ahora ler el archivo
+            const path=uploadFile.data;
+            
+            
+
+            
+            var data = {"path" : uploadFile.data  };
+            const procFile = await axios.post('procesar_csv',  data);
+
+            //const procFile = await axios.get('procesar_csv/'+uploadFile.data);
+            console.log('========procesar_csv===procesar_csv========');
+            console.log(procFile.data);
 
         },
 

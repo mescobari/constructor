@@ -65,13 +65,35 @@ class PlanillaController extends Controller
         $path='ni mod';
         if ($request->hasFile('files')) {
             $files = $request->file('files');
-            $nombre_carpeta = "/constructor/planillacsv";
+            $nombre_carpeta = "/constructor/documentos/planillacsv";
+            //D:\max\constructor\storage\app\documentos\constructor
             $nombre_archivo = $_FILES['files']['name'];
             $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
-            //$documentId->path_contrato = $path;
+            
         }
-
        return $path;
+
+
+    }
+
+    public function procesarCSV(Request $request)
+    {
+       
+        
+        $path = str_replace('\\', '/', storage_path());
+
+        $archivo=$path.'/app/'.$request->path;
+        
+
+        $file = fopen($archivo, "r");
+       $delimitador = ";";
+
+      
+
+           
+            return $archivo;
+
+        
 
 
     }
