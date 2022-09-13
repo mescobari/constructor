@@ -1076,7 +1076,7 @@
                                         <label for="nombre">Codigo:</label>
                                         <input type="text" class="form-control" name="codigo"
                                                placeholder="Codigo"
-                                               v-model="jsonData.codigo_otros"
+                                               v-model="jsonData.modal3_codigo"
                                                disabled>
                                     </div>
                                 </div>
@@ -1085,7 +1085,7 @@
                                         <!-- Recursos  Spinner-->
                                         <label for="nombre">Gastos Generales:</label>
                                         <v-select label="descripcion_recurso" :options="combo_otros_gastos"
-                                                  v-model="jsonData.descripcion_otros"
+                                                  v-model="jsonData.modal3_descripcion"
                                                   @input="filterNameForOtrosGastos"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
@@ -1096,14 +1096,14 @@
                                     <div class="form-group">
                                         <label for="nombre">Unidad</label>
                                         <input type="text" class="form-control" name="unidad" placeholder="Unidad"
-                                               v-model="jsonData.simbolo_otros" disabled>
+                                               v-model="jsonData.modal3_unidad" disabled>
                                     </div>
                                 </div>
                                 <div class="col-md-1">
                                     <div class="form-group">
                                         <label for="nombre">Cantidad</label>
                                         <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                               v-model="jsonData.cantidad_otros">
+                                               v-model="jsonData.modal3_cantidad">
                                     </div>
                                 </div>
 
@@ -1113,14 +1113,14 @@
                                             <div class="form-group">
                                                 <label for="nombre">Monto</label>
                                                 <input type="text" class="form-control" name="horas"
-                                                       placeholder="Monto Requerido" v-model="jsonData.monto_otros">
+                                                       placeholder="Monto Requerido" v-model="jsonData.modal3_monto">
                                             </div>
                                         </div>
                                         <div class="col-md-9">
                                             <div class="form-group">
                                                 <label for="nombre">Detallar</label>
                                                 <input type="text" class="form-control" name="dias"
-                                                       placeholder="Detalle" v-model="jsonData.explicar_otros">
+                                                       placeholder="Detalle" v-model="jsonData.modal3_detallar">
                                             </div>
                                         </div>
                                     </div>
@@ -1561,24 +1561,25 @@ export default {
         },
         async editarItemOtrosGastos(data = {}) {
             this.jsonData.id = data.id;
-            this.jsonData.codigo_otros = data.codigo_recurso;
-            this.jsonData.descripcion_otros = data.descripcion_recurso;
-            this.jsonData.simbolo_otros = data.unidad_id;
+            this.jsonData.modal3_codigo = data.codigo_recurso;
+            this.jsonData.modal3_descripcion = data.descripcion_recurso;
+            this.jsonData.modal3_unidad = data.unidad_id;
             //Item Oros Gastos
             this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.requerimiento_recurso_id = data.requerimiento_recurso_id;
-            this.jsonData.cantidad_otros = data.cantidad_otros;
-            this.jsonData.monto_otros = data.monto_otros;
-            this.jsonData.explicar_otros = data.explicar_otros;
-            this.jsonData.id = data.id;
+            this.jsonData.modal3_cantidad = data.cantidad_otros;
+            this.jsonData.modal3_monto = data.monto_otros;
+            this.jsonData.modal3_detallar = data.explicar_otros;
+
+            console.log('EDIT ITEM OTROS GASTOS', data);
         },
         async modificarItemOtrosGastos() {
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
-            datos_jsonData.append('cantidad_otros', this.jsonData.cantidad_otros);
-            datos_jsonData.append('monto_otros', this.jsonData.monto_otros);
-            datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
+            datos_jsonData.append('cantidad_otros', this.jsonData.modal3_cantidad);
+            datos_jsonData.append('monto_otros', this.jsonData.modal3_monto);
+            datos_jsonData.append('explicar_otros', this.jsonData.modal3_detallar);
             const response = await axios.post('update_requerimiento_otros_gastos/' + this.jsonData.id, datos_jsonData);
             console.log('UPDATE ITEM OTROS GASTOS', response.data);
             document.getElementById("cerrarModal").click();
@@ -1917,12 +1918,20 @@ export default {
                 modal2_descripcion: '',
                 modal2_unidad: '',
 
-                modal2_requerimiento_recurso_id: '',
                 modal2_vigente: '',
                 modal2_avance: '',
                 modal2_saldo: '',
                 modal2_estimado: '',
                 modal2_precio_unitario: '',
+                //3
+                modal3_codigo: '',
+                modal3_descripcion: '',
+                modal3_unidad: '',
+
+                modal3_requerimiento_recurso_id: '',
+                modal3_cantidad: '',
+                modal3_monto: '',
+                modal3_detallar: '',
 
 
                 // FIN MODALES MODIFICAR
