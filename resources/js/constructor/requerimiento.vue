@@ -1414,11 +1414,7 @@ export default {
                 this.jsonData.item_avance !== '' &&
                 this.jsonData.item_saldo !== '' &&
                 this.jsonData.item_estimado !== '' &&
-                this.jsonData.item_precio_unitario !== '' &&
-                this.jsonData.monto_bs !== '' &&
-                this.jsonData.objeto !== '' &&
-                this.jsonData.modifica !== '' &&
-                this.jsonData.files !== '';
+                this.jsonData.item_precio_unitario !== '';
         },
         async firstUpdateItemRelacionDesc() {
         },
@@ -1426,7 +1422,7 @@ export default {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             let getValoresItem = await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id);
-            const arrayValoresItem = getValoresItem.data;
+            const arrayValoresItem = Object.assign(getValoresItem.data);
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
