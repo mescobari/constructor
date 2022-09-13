@@ -1466,6 +1466,11 @@ export default {
             console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
+            let getValoresItem = (await axios.get('get_valores_item/' +this.jsonData.planilla_item_id)).data;
+            console.log('GET VALORES ITEM', getValoresItem);
+            const arrayValoresItem = Object.assign(getValoresItem);
+            this.jsonData.item_vigente = arrayValoresItem[0].vigente;
+            this.jsonData.item_avance = arrayValoresItem[0].avance;
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.planilla_item_id);
