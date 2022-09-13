@@ -1354,24 +1354,6 @@ export default {
             this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
             console.log('EDITAR REQ ITEM', data);
         },
-        async modifica2() {
-            const response_req = await axios.get('get_requerimientos');
-            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
-            datos_jsonData.append('cantidad_recurso', this.jsonData.cantidad_recurso);
-            datos_jsonData.append('horas_recurso', this.jsonData.horas_recurso);
-            datos_jsonData.append('dias_recurso', this.jsonData.dias_recurso);
-            datos_jsonData.append('tiempo_total_recurso', this.jsonData.tiempo_total_recurso);
-            datos_jsonData.append('precio_referencia_recurso', this.jsonData.precio_referencia_recurso);
-            datos_jsonData.append('id', this.jsonData.id);
-            const response = await axios.post('update_requerimiento_item/' + this.jsonData.id, datos_jsonData);
-            console.log('UPDATE REQ ITEM', response.data);
-            document.getElementById("cerrarModal").click();
-            this.limpiar_formulario();
-            await this.listarRequerimientoItem();
-        },
         async modificar() {
 
             let datos_jsonData = new FormData();
