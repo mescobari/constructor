@@ -1284,7 +1284,7 @@ export default {
                 this.jsonData.tiempo_total_recurso != null &&
                 this.jsonData.precio_referencia_recurso != null &&
                 this.jsonData.nuri_requerimiento != null &&
-                this.jsonData.descripcion_requerimiento != null &&
+                this.jsonData.descripcion_requerimiento !== '' &&
                 this.jsonData.tipo_requerimiento_id != null &&
                 this.jsonData.fecha_requerimiento != null &&
                 this.jsonData.fecha_requerimiento !== "" &&
@@ -1395,16 +1395,17 @@ export default {
                 this.jsonData.files !== '';
         },
         async firstUpdateItemRelacionDesc() {
-
         },
         async saveItemRelacion(){
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
+            let getValoresItem = await axios.get('get_valores_item/'+this.jsonData.item_descripcion.id);
+            const arrayValoresItem = getValoresItem.data;
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
-            datos_jsonData.append('vigente', this.jsonData.item_vigente);
-            datos_jsonData.append('avance', this.jsonData.item_avance);
+            datos_jsonData.append('vigente', /*this.jsonData.item_vigente*/ arrayValoresItem[0].vigente);
+            datos_jsonData.append('avance', /*this.jsonData.item_avance*/ arrayValoresItem[0].avance);
             datos_jsonData.append('estimado', this.jsonData.item_estimado);
 
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
@@ -1415,8 +1416,8 @@ export default {
         },
         async guardarItemRelacion() {
             if (this.areAlltheFieldsFilledRelacion()) {
-                await this.firstUpdateItemRelacionDesc();
-                await this.guardarItemRelacion();
+                // await this.firstUpdateItemRelacionDesc();
+                await this.saveItemRelacion();
             } else {
                 alert('Por favor complete todos los campos');
             }
@@ -1469,6 +1470,12 @@ export default {
                     break;
                 }
             }
+            //get Vigente, Avance, Estimado, Saldo
+            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id)).data;
+            console.log('GET VALORES ITEM', getValoresItem);
+            this.jsonData.item_vigente = getValoresItem[0].fvigente;
+            this.jsonData.item_avance = getValoresItem[0].favance;
+            this.jsonData.item_saldo = getValoresItem[0].fsaldo;
         },
         async filterListOtrosGastos(arrayReqOtrosGastos) {
             const responseReqRecursos = (await axios.get('requerimientos')).data;
