@@ -661,6 +661,7 @@ export default {
             document.getElementById("closeModal").click();
             document.getElementById("closeOr").click();
             this.cleanProceder();
+            await this.listar();
         },
 
         cleanProceder() {
@@ -751,87 +752,9 @@ export default {
                 this.deleteItem(this.id_eliminacion);
             }
         },
-        async filterList(documentsResult) {
-            const getOrdenesProceder = (await axios.get('get_ordenes_proceder')).data;
-            const fechaEmpty = {
-                fecha_orden_proceder: '',
-                desc_orden_proceder: '',
-                files: ''
-            }
-            console.log("ORDENES PROCEDER", getOrdenesProceder);
-            let arrayList = [];
-            for (let i in documentsResult) {
-                if (0 < documentsResult[i].document_types_id < 3) {
-                    for (let j in getOrdenesProceder) {
-                        if (documentsResult[i].id === getOrdenesProceder[j].document_id) {
-                            console.log('Documents', documentsResult)
-                            arrayList.push({
-                                ...getOrdenesProceder[j],
-                                ...documentsResult[i]
-                            });
-                            console.log('RESULT', arrayList)
-                        }
-                    }
-                } else if (2 < documentsResult[i].document_types_id < 13) {
-                    console.log('Documents w/o problem', documentsResult)
-                    arrayList.push({
-                        ...documentsResult[i],
-                        ...fechaEmpty
-                    });
-                    console.log('RESULT WITH EMPTY', arrayList)
-                }
-            }
-            return arrayList;
-        },
-        async filterList2(documentsResult) {
-            const getOrdenesProceder = (await axios.get('get_ordenes_proceder')).data;
-            const fechaEmpty = Object.assign({}, {
-                fecha_orden_proceder: 'default',
-                document_id: '0',
-                id: '0',
-            });
-            console.log("ORDENES PROCEDER", getOrdenesProceder);
-            let listwithOrdenes = [];
-            let arrayList = [];
-            // for (let i in documentsResult){
-            //     arrayList.push({
-            //         ...documentsResult[i],
-            //         ...fechaEmpty,
-            //
-            //     });
-            //     arrayList.map( item => {
-            //         item.fecha_orden_proceder  = getOrdenesProceder[i].document_id;
-            //     });
-            // }
-            // Object.assign({},arrayList);
-            console.log('DOCUMENTS LIST', documentsResult);
-            for (let i in documentsResult) {
-                for (let j in getOrdenesProceder) {
-                    if (getOrdenesProceder[j].document_id === documentsResult[i].id) {
-                        listwithOrdenes.push({
-                            ...getOrdenesProceder[j],
-                            ...documentsResult[i]
-                        })
-                    }
-                }
-            }
-
-            for (let i in documentsResult) {
-                for (let j in listwithOrdenes) {
-                    if (listwithOrdenes[j].id === documentsResult[i].id) {
-                        documentsResult.splice(documentsResult[i], 1)
-                    }
-                }
-            }
-            arrayList = [...listwithOrdenes, ...documentsResult]
-
-            console.log('ARRAY LIST', arrayList)
-            return arrayList
-        },
-        async listar() {
-            const respuesta = await axios.get('documents');
+        async listar(){
+            const respuesta = await axios.get('get_ordenes_proceder');
             const getDocumentTypes = (await axios.get('documentos_legaleses')).data;
-
 
             const documentsResult = respuesta.data.map(documento => {
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
@@ -839,7 +762,7 @@ export default {
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
-            this.rows = await this.filterList2(documentsResult);
+            this.rows = documentsResult
         },
         areAlltheFieldsFilled() {
             return this.jsonData.document_types_id !== '' &&

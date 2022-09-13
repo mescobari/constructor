@@ -237,7 +237,11 @@ class DocumentController extends Controller
 
     public function getOrdenesProceder()
     {
-        return OrdenesProceder::all();
+        $ordenes=DB::table('documents')
+            ->leftjoin('proceder_ordenes', 'documents.id','=', 'proceder_ordenes.document_id')
+            ->select('documents.*','proceder_ordenes.fecha_orden_proceder')
+            ->get();
+        return $ordenes;
     }
 
     public function uploadOrdenFile(Request $request)
