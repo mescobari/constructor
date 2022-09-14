@@ -140,18 +140,21 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="fecha-firma">Fecha de Firma:</label>
-                                        <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
+                                        <label for="fecha">Fecha de Firma:</label>
+                                        <datepicker :language="configFechas.es"
+                                                    :placeholder="jsonData.fecha_firma"
+
                                                     :calendar-class="configFechas.nombreClaseParaModal"
                                                     :input-class="configFechas.nombreClaseParaInput"
                                                     :monday-first="true"
                                                     :clear-button="true"
                                                     :clear-button-icon="configFechas.IconoBotonBorrar"
                                                     :calendar-button="true"
+
                                                     :calendar-button-icon="configFechas.IconoBotonAbrir"
                                                     calendar-button-icon-content=""
                                                     :format="configFechas.DatePickerFormat"
-                                                    :full-month-name="true" :bootstrap-styling="true"
+                                                    :bootstrap-styling="true"
                                                     :disabled-dates="configFechas.disabledDates"
                                                     :typeable="configFechas.typeable"
                                                     v-model="jsonData.fecha_firma">
@@ -306,7 +309,7 @@
                                             :calendar-button="true"
                                             :calendar-button-icon="configFechas.IconoBotonAbrir"
                                             calendar-button-icon-content=""
-                                            :format="configFechas.DatePickerFormat"
+                                            :format="configFechas.format"
                                             :full-month-name="true" :bootstrap-styling="true"
                                             :disabled-dates="configFechas.disabledDates"
                                             :typeable="configFechas.typeable"
@@ -353,6 +356,8 @@
         </div>
         <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
                             ref="abrirAlerta"></alert-confirmacion>
+<!--        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"-->
+<!--                         @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>-->
     </div>
 </template>
 
@@ -367,6 +372,7 @@ import vue2Dropzone from 'vue2-dropzone';
 import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
+import moment from "moment";
 
 Vue.component("v-select", vSelect);
 // Vue.component('vueDropzone', vue2Dropzone);
@@ -389,7 +395,7 @@ export default {
             },
             mandarMensajesAlerta: {},
             configToolBarEditText: [
-                [{font: []}],
+                // [{font: []}],
                 [{header: [false, 1, 2, 3, 4, 5, 6]}],//mismo que tamaño pequeño, mediano y grande pero esta tiene seis niveles
                 // [{ size: ["small", "large", "huge"] }],    //misma que tamaño 1-6 pero esta solo seria pequeño, mediano y grande
                 ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -412,26 +418,24 @@ export default {
                 nombreClaseParaInput: "clase-input-datepicker",
                 en: en,
                 es: es,
-                DatePickerFormat: 'dd/MM/yyyy',
+                DatePickerFormat: 'd-MM-yyyy',
+                // DatePickerFormat: 'mm/dd/yyyy',
                 disablesFullDate: {
                     to: new Date(1987, 5, 25), //ojo los meses menos uno //fecha desde
                     from: new Date(1987, 5, 25), //fecha hasta
                 },
-                fecha: '2021-05-05',
+                // fecha: '2021-05-05',
                 placeholder: "Selecione Fecha",
                 placeholderDisbled: "Fecha Bloqueada",
-                format: "dd-MM-yyyy",
+                // format: 'mm/dd/yyyy',
+                format: "dd/MM/yyyy",
                 IconoBotonBorrar: "fa fa-times-circle fa-1x text-danger",
                 IconoBotonAbrir: "fa fa-calendar-alt fa-1x text-success",
                 typeable: false,//bloquear edicion por teclado
                 disabledDates: {},
             },
-            computed: {
-                //format thousand separator to input in real time (v-model)
-                verify_document_types_id() {
-                    return this.jsonData.document_types_id.id === 1;
-                },
-            },
+            datosEnviarConfiguracion: {},
+
             optionsSelect: [{label: 'Favor de Seleccionar su opción', code: "fer"}],
             guardar_bottom: false,
             modificar_bottom: false,
@@ -815,6 +819,7 @@ export default {
             console.log('SAVED', saved.data);
         },
         async contratoSave2() {
+
             let datosJsonData = new FormData();
             datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datosJsonData.append('padre', this.jsonData.padre.id);
@@ -837,6 +842,7 @@ export default {
             if (this.areAlltheFieldsFilled()) {
                 await this.contratoSave2();
                 // await this.contratoSave()
+                document.getElementById("closeDoc").click();
                 document.getElementById("cerrarModal").click();
                 await this.listar();
             } else {
@@ -859,7 +865,12 @@ export default {
             datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
-            datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()));
+            if(isNaN(fecha_firma.getDate())){
+                datos_jsonData.append('fecha_firma', '');
+            }
+            else{
+                datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()).toString());
+            }
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
             datos_jsonData.append('objeto', this.jsonData.objeto);
             datos_jsonData.append('modifica', this.jsonData.modifica);
@@ -869,9 +880,11 @@ export default {
             const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
             // const respuesta = await axios.put(`documents/` + this.jsonData.id, datos_jsonData);
             console.log('MODIFIED', respuesta.data);
-            document.getElementById("cerrarModal").click();
-            document.getElementById("closeDoc").click();
             await this.listar();
+            document.getElementById("cerrarModal").click();
+            if (document.getElementById("closeDoc")) {
+                document.getElementById("closeDoc").click();
+            }
             // this.limpiar_formulario();
         },
         limpiar_formulario() {
@@ -909,7 +922,17 @@ export default {
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
-            this.jsonData.fecha_firma = new Date(data.fecha_firma)
+
+            const fecha = new Date(data.fecha_firma);
+            const formateado = moment(data.fecha_firma, 'D-M-YYYY')
+            const dateObject = formateado.toDate();
+            const f = new Date(dateObject);
+            console.log("FECHA", dateObject);
+            // this.jsonData.fecha_firma = fecha.getDate() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getFullYear();
+            // this.jsonData.fecha_firma = data.fecha_firma
+            this.jsonData.fecha_firma = (f.getDate() + '-' + (f.getMonth() + 1) + '-' + f.getFullYear()).toString();
+            console.log("FECHA OBTENIDA", this.jsonData.fecha_firma);
+
             this.jsonData.files = data.files;
             this.jsonData.path_contrato = data.path_contrato;
             //set data to v-select contratante_id
@@ -958,6 +981,7 @@ export default {
                     this.jsonData.padre = padreIdName[0];
                 }
             }
+            console.log("EDITAR", data);
         },
         async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
@@ -1139,6 +1163,18 @@ export default {
                 }
             }
         },
+        /*********** funciones de configuracion**************/
+        // funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
+        //     this.configFechas = configuracion.configFechas;
+        //     this.configTablas = configuracion.configTablas;
+        //     this.actions = configuracion.configTablasAction;
+        //     this.classes = configuracion.configTablasClases;
+        //     this.configToolBarEditText = configuracion.configToolBarEditText;
+        // },
+        // funcionRecuperaConfig() {//funcion solicita la configuracion
+        //     this.$refs.RecuperaConfig.RecuperaConfig();//esta es la funcion de mandar configuracion desde hijo
+        // },
+        /*************************fin funciones de configuracion********************** */
     },
     created() {
         this.listar();
