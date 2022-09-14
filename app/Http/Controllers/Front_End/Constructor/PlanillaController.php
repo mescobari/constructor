@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+use App\Models\Constructor\Unidad;
 use App\Models\Constructor\PlanillaItem;
 use App\Models\Constructor\PlanillaMovimiento;
 
@@ -81,18 +82,69 @@ class PlanillaController extends Controller
        
         
         $path = str_replace('\\', '/', storage_path());
-
+        $tipo_planilla_id=$request->tipo_planilla_id;
+       
         $archivo=$path.'/app/'.$request->path;
+        $file_to_read = fopen($archivo, "r");
+
+        if($tipo_planilla_id == 1){
+            // planilla inicial reciaen creamos los itemes
+
+                $item= new PlanillaItem;
+                
+                $item->contrato_id=$request->contrato_id;
+                $item->planilla_id=$request->planilla_id;
+                    
+
+                $row=0;
+                if($file_to_read !== FALSE){
+                    
+                
+                    while(($data = fgetcsv($file_to_read, 1000, ';')) !== FALSE){
+                    
+                        // LA FILA CERO SON LOS TITULOS
+                        // tipo;codigo;ITEM;DESCRIPCON;UNIDAD;SIMBOLO;CANTIDAD;PREC_UNITARIO;TOTAL--count($data)
+
+                        for($i = 0; $i < 9; $i++) {
+                            $pla[$row][$i]=$data[$i];
+
+                          }
+                          $pla[$row][9]=2;
+                          if( $pla[$row][0] == 'I'){
+                            $simbolo= $pla[$row][$i];
+                            $unidad=Unidad::where('simbolo', 'like',"'". $simbolo."'")->first()->toArray();       
+                            $pla[$row][9]=$unidad['id'];
+
+                          }
+                          $row++;
+
+                            /*   if($row > 0){
+                                $item->tipo=$data[0];
+                                $item->item_codigo=$data[1];
+                                $item->item_descripcion=$data[3];
+                                $item->unidad_id=2;
+                                if($data[0] =='I'){
+                                    $simbolo=$data[5];
+                                    $unidad=Unidad::where('simbolo', 'like','%'.$simbolo.'%')->first();
+                                    $item->unidad_id=$unidad['id'];
+                                }
+
+                                $item->padre=0;
+
+                                $item->save();  */    
+
+                    }
+                
+                
+                    fclose($file_to_read);
+            
+            
+                }
+            
+            }        
+        dd($pla);
         
-
-        $file = fopen($archivo, "r");
-       $delimitador = ";";
-
-      
-
-           
-            return $archivo;
-
+        return $request;
         
 
 

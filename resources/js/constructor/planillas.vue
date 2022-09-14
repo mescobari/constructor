@@ -109,7 +109,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                
-                                <h5>  {{ jsonData.proyectos.nombre }}</h5>
+                                <h5>  {{ jsonData.proyectos.nombre }} ({{ jsonData.proyectos.id }})</h5>
                                
                                 
                             </div>
@@ -398,6 +398,8 @@ export default {
                 tipo:'',
                 referencia:'',
                 fecha_planilla:'',
+                id:'',
+                tipo_planilla_id:'',
             },
             rows:[],
             columns:[
@@ -440,6 +442,9 @@ export default {
             this.cargarData.tipo=data.tipo;
             this.cargarData.referencia=data.referencia;
             this.cargarData.fecha_planilla=data.fecha_planilla;
+            this.cargarData.id=data.id;
+            this.cargarData.tipo_planilla_id=data.tipo_planilla_id;
+            
 
             // debemos verificar si tiene planilla inicial
             var respuesta = await axios.post('planilla_csv', data);
@@ -476,7 +481,12 @@ export default {
             
 
             
-            var data = {"path" : uploadFile.data  };
+            var data = {
+                "path" : uploadFile.data,
+                "contrato_id" : this.jsonData.proyectos.id, 
+                "planilla_id" : this.cargarData.id,
+                "tipo_planilla_id" : this.cargarData.tipo_planilla_id,
+            };
             const procFile = await axios.post('procesar_csv',  data);
 
             //const procFile = await axios.get('procesar_csv/'+uploadFile.data);
