@@ -14,6 +14,7 @@ use App\Models\FrontEnd\usuarios\Funcionario;
 use App\Models\Responsables;
 
 use Illuminate\Support\Facades\Storage;
+use function PHPUnit\Framework\isNan;
 
 
 class DocumentController extends Controller
@@ -149,7 +150,10 @@ class DocumentController extends Controller
         $documentId->contratante_id = $request->contratante_id;
         $documentId->contratado_id = $request->contratado_id;
         $documentId->duracion_dias = $request->duracion_dias;
-        $documentId->fecha_firma = $request->fecha_firma;
+        if($request->fecha_firma != null && $request->fecha_firma != '' && $request->fecha_firma != 'NaN-NaN-NaN'){
+            $documentId->fecha_firma = $request->fecha_firma;
+        }
+//        $documentId->fecha_firma = $request->fecha_firma;
         $documentId->monto_bs = $request->monto_bs;
         $documentId->objeto = $request->objeto;
         $documentId->modifica = $request->modifica;
@@ -207,6 +211,12 @@ class DocumentController extends Controller
         } else {
             $path = $documentId->path_contrato;
         }
+        if($request->fecha_firma != ''){
+            $previous = $request->fecha_firma;
+        }
+        else{
+            $previous = $documentId->fecha_firma;
+        }
         return $documentId->update([
             'document_types_id' => $request->document_types_id,
             'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
@@ -216,7 +226,7 @@ class DocumentController extends Controller
             'contratante_id' => $request->contratante_id,
             'contratado_id' => $request->contratado_id,
             'duracion_dias' => $request->duracion_dias,
-            'fecha_firma' => $request->fecha_firma,
+            'fecha_firma' => $previous,
             'monto_bs' => $request->monto_bs,
             'objeto' => $request->objeto,
             'modifica' => $request->modifica,
