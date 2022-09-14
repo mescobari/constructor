@@ -140,20 +140,26 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="fecha-firma">Fecha de Firma:</label>
-                                        <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
+                                        <label for="fecha">Fecha de Firma:</label>
+                                        <datepicker :language="configFechas.es"
+                                                    :placeholder="configFechas.placeholder"
+
                                                     :calendar-class="configFechas.nombreClaseParaModal"
                                                     :input-class="configFechas.nombreClaseParaInput"
                                                     :monday-first="true"
                                                     :clear-button="true"
                                                     :clear-button-icon="configFechas.IconoBotonBorrar"
                                                     :calendar-button="true"
+
                                                     :calendar-button-icon="configFechas.IconoBotonAbrir"
                                                     calendar-button-icon-content=""
                                                     :format="configFechas.DatePickerFormat"
-                                                    :full-month-name="true" :bootstrap-styling="true"
+                                                    :full-month-name="true"
+
+                                                    :bootstrap-styling="true"
                                                     :disabled-dates="configFechas.disabledDates"
                                                     :typeable="configFechas.typeable"
+                                                    :value="jsonData.fecha_firma"
                                                     v-model="jsonData.fecha_firma">
                                         </datepicker>
                                     </div>
@@ -389,7 +395,7 @@ export default {
             },
             mandarMensajesAlerta: {},
             configToolBarEditText: [
-                [{font: []}],
+                // [{font: []}],
                 [{header: [false, 1, 2, 3, 4, 5, 6]}],//mismo que tamaño pequeño, mediano y grande pero esta tiene seis niveles
                 // [{ size: ["small", "large", "huge"] }],    //misma que tamaño 1-6 pero esta solo seria pequeño, mediano y grande
                 ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -870,7 +876,7 @@ export default {
             // const respuesta = await axios.put(`documents/` + this.jsonData.id, datos_jsonData);
             console.log('MODIFIED', respuesta.data);
             document.getElementById("cerrarModal").click();
-            document.getElementById("closeDoc").click();
+            // document.getElementById("closeDoc").click();
             await this.listar();
             // this.limpiar_formulario();
         },
@@ -909,7 +915,9 @@ export default {
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
-            this.jsonData.fecha_firma = new Date(data.fecha_firma)
+            const fecha = new Date(data.fecha_firma);
+            this.jsonData.fecha_firma = fecha;
+
             this.jsonData.files = data.files;
             this.jsonData.path_contrato = data.path_contrato;
             //set data to v-select contratante_id
@@ -958,6 +966,7 @@ export default {
                     this.jsonData.padre = padreIdName[0];
                 }
             }
+            console.log("EDITAR", data);
         },
         async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
