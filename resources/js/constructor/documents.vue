@@ -922,6 +922,7 @@ export default {
             this.jsonData.duracion_dias = data.duracion_dias;
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
+
             const fecha = new Date(data.fecha_firma);
             const formateado = moment(data.fecha_firma, 'D-M-YYYY')
             const dateObject = formateado.toDate();
@@ -931,6 +932,7 @@ export default {
             // this.jsonData.fecha_firma = data.fecha_firma
             this.jsonData.fecha_firma = (f.getDate() + '-' + (f.getMonth() + 1) + '-' + f.getFullYear()).toString();
             console.log("FECHA OBTENIDA", this.jsonData.fecha_firma);
+
             this.jsonData.files = data.files;
             this.jsonData.path_contrato = data.path_contrato;
             //set data to v-select contratante_id
