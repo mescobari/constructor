@@ -63,7 +63,7 @@ class document extends Model
     {
         $que_modifica='';
         $modi=explode( ',', $modifica ) ;
-        for($i = 0; $i < count( $modi); $i++) { 
+        for($i = 0; $i < count( $modi); $i++) {
                 switch($modi[$i]) {
                     case 1:
                     $res='1.- Plazo';
@@ -92,7 +92,7 @@ class document extends Model
         $items[0]['codigo']=$documento->codigo;
         $items[0]['fecha_firma']=$documento->fecha_firma;
         $items[0]['duracion_dias']=$documento->duracion_dias;
-        $items[0]['plazo_vigente']=$documento->duracion_dias;       
+        $items[0]['plazo_vigente']=$documento->duracion_dias;
         $items[0]['monto_bs']=$documento->monto_bs;
         $items[0]['monto_vigente']=$documento->monto_bs;
         $items[0]['objeto']=$documento->objeto;
@@ -107,7 +107,7 @@ class document extends Model
         $dias= $items[0]['duracion_dias'];
         $items[0]['fecha_estimada']=date("d-m-Y",strtotime($items[0]['fecha_orden_proceder']."+ ".$dias." days"));
 
-        $json=document::where('padre',$contrato_id )        
+        $json=document::where('padre',$contrato_id )
         ->where('document_types_id','!=','9')
         ->where('document_types_id','!=','2')
         ->with('contratante')->with('contratado')
@@ -117,7 +117,7 @@ class document extends Model
         ->get();
 
         $obj = json_decode($json, true);
-        
+
        for($i = 1; $i <= count( $obj); $i++) {
             $items[$i]['id']=$obj[$i-1]['id'];
             $items[$i]['nombre']=$obj[$i-1]['nombre'];
@@ -135,14 +135,14 @@ class document extends Model
             $dias= $items[$i]['plazo_vigente'];
             $items[$i]['fecha_estimada']=date("d-m-Y",strtotime($items[0]['fecha_orden_proceder']."+ ".$dias." days"));
 
-          
-            $items[$i]['contratante']=$obj[$i-1]['contratante']['nombre']; 
-            $items[$i]['contratante_sigla']=$obj[$i-1]['contratante']['sigla']; 
-            $items[$i]['contratado']=$obj[$i-1]['contratado']['nombre']; 
+
+            $items[$i]['contratante']=$obj[$i-1]['contratante']['nombre'];
+            $items[$i]['contratante_sigla']=$obj[$i-1]['contratante']['sigla'];
+            $items[$i]['contratado']=$obj[$i-1]['contratado']['nombre'];
             $items[$i]['contratado_sigla']=$obj[$i-1]['contratado']['sigla'];
             //$items[$i]['fecha_orden_proceder']=$obj[$i-1]['ordenProceder']['fecha_orden_proceder'];
 
-           
+
         }
 
 
@@ -156,8 +156,8 @@ class document extends Model
     public function getSubContratos($contrato_id)
     {
         $items=[];
-        
-        $json=document::where('padre',$contrato_id )        
+
+        $json=document::where('padre',$contrato_id )
         ->where('document_types_id','=','2')
         ->with('contratante')->with('contratado')
         ->with('tipo_documento')
@@ -179,13 +179,13 @@ class document extends Model
             $items[$i]['que_modifica']=$this->queModifica($obj[$i]['modifica']);
             $items[$i]['tipo_doc_nombre']=$obj[$i]['tipo_documento']['nombre'];
 
-          
-            $items[$i]['contratante']=$obj[$i]['contratante']['nombre']; 
-            $items[$i]['contratante_sigla']=$obj[$i]['contratante']['sigla']; 
-            $items[$i]['contratado']=$obj[$i]['contratado']['nombre']; 
+
+            $items[$i]['contratante']=$obj[$i]['contratante']['nombre'];
+            $items[$i]['contratante_sigla']=$obj[$i]['contratante']['sigla'];
+            $items[$i]['contratado']=$obj[$i]['contratado']['nombre'];
             $items[$i]['contratado_sigla']=$obj[$i]['contratado']['sigla'];
            // $items[$i]['fecha_orden_proceder']=$obj[$i-1]['ordenProceder']['fecha_orden_proceder'];
-           
+
         }
 
         return $items;
