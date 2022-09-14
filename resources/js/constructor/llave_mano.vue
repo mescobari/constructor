@@ -374,12 +374,12 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row bg-info">
+                        <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="item_codigo">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
-                                           v-model="jsonData.item_codigo" disabled>
+                                           v-model="jsonData.modal_codigo" disabled>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -387,7 +387,7 @@
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Item Relacionado:</label>
                                     <v-select label="item_descripcion" :options="combo_items_planilla"
-                                              v-model="jsonData.item_descripcion"
+                                              v-model="jsonData.modal_descripcion"
                                               placeholder="Selecione una opción"
                                               @input="getNameForItemRelacion">
                                         <span slot="no-options">No hay data para cargar</span>
@@ -399,14 +399,15 @@
                                 <div class="form-group">
                                     <label for="nombre">Unidad</label>
                                     <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
-                                           v-model="jsonData.item_simbolo" disabled>
+                                           v-model="jsonData.modal_unidad" disabled>
                                 </div>
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Vigente</label>
                                     <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                           v-model="jsonData.item_vigente">
+                                           disabled
+                                           v-model="jsonData.modal_vigente">
                                 </div>
                             </div>
 
@@ -417,7 +418,8 @@
                                             <label for="nombre">Avance Acumulado</label>
                                             <input type="text" class="form-control" name="horas"
                                                    placeholder="Horas Requeridas"
-                                                   v-model="jsonData.item_avance">
+                                                   disabled
+                                                   v-model="jsonData.modal_avance_acumulado">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -425,7 +427,8 @@
                                             <label for="nombre">Saldo</label>
                                             <input type="text" class="form-control" name="dias"
                                                    placeholder="Dias Requeridos"
-                                                   v-model="jsonData.item_saldo">
+                                                   disabled
+                                                   v-model="jsonData.modal_saldo">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -433,7 +436,7 @@
                                             <label for="nombre">Avance Contratado</label>
                                             <input type="text" class="form-control" name="plazo"
                                                    placeholder="dias de ejecucion"
-                                                   v-model="jsonData.item_estimado">
+                                                   v-model="jsonData.modal_avance_contratado">
                                             <!--este es el avance contratado-->
                                         </div>
                                     </div>
@@ -442,7 +445,7 @@
                                             <label for="nombre">Precio Contratado</label>
                                             <input type="text" class="form-control" name="referencial"
                                                    placeholder="precio referencial"
-                                                   v-model="jsonData.item_precio_unitario">
+                                                   v-model="jsonData.modal_precio_contratado">
                                             <!--este es el avance contratado-->
                                         </div>
                                     </div>
@@ -552,7 +555,7 @@ export default {
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
             console.log('REQ ID', this.jsonData.requerimiento_id);
             console.log('ITEM RELACION ID', this.jsonData.item_descripcion.id)
-            let getValoresItem = await axios.get('get_valores_item/'+this.jsonData.item_descripcion.id);
+            let getValoresItem = await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id);
             const arrayValoresItem = getValoresItem.data;
             // console.log('GET VALORES ITEM', getValoresItem);
             // this.jsonData.item_vigente = getValoresItem[0].vigente;
@@ -608,20 +611,42 @@ export default {
             }
         },
         async editarItemRelacion(data = {}) {
+            let getValoresItem = (await axios.get('get_valores_item/' + data.planilla_item_id)).data;
             this.jsonData.id = data.id;
-            this.jsonData.item_codigo = data.item_codigo;
-            this.jsonData.item_descripcion = data.item_descripcion;
-            this.jsonData.item_simbolo = data.unidad_id;
+            this.jsonData.requerimiento_id = data.requerimiento_id;
+            this.jsonData.planilla_item_id = data.planilla_item_id;
+
+            this.jsonData.modal_codigo = data.item_codigo;
+            this.jsonData.modal_descripcion = data.item_descripcion;
+            this.jsonData.modal_unidad = data.unidad_id;
             //this object will be modified in the next step Item Relacion
             this.jsonData.planilla_item_id = data.planilla_item_id;
-            this.jsonData.item_vigente = data.vigente;
-            this.jsonData.item_avance = data.avance;
-            this.jsonData.item_estimado = data.estimado;
-            this.jsonData.item_precio_unitario = data.precio_unitario;
+            this.jsonData.modal_vigente = getValoresItem[0].fvigente;
+            this.jsonData.modal_avance_acumulado = getValoresItem[0].favance;
+            ;
+            this.jsonData.modal_saldo = getValoresItem[0].fsaldo;
+            this.jsonData.modal_avance_contratado = data.estimado;
+            this.jsonData.modal_precio_contratado = data.precio_unitario;
+
             console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
-
+            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.planilla_item_id)).data;
+            console.log('GET VALORES ITEM', getValoresItem);
+            const arrayValoresItem = Object.assign(getValoresItem);
+            this.jsonData.modal_vigente = arrayValoresItem[0].vigente;
+            this.jsonData.modal_avance_acumulado = arrayValoresItem[0].avance;
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
+            datos_jsonData.append('planilla_item_id', this.jsonData.planilla_item_id);
+            datos_jsonData.append('vigente', this.jsonData.modal_vigente);
+            datos_jsonData.append('avance', this.jsonData.modal_avance_acumulado);
+            datos_jsonData.append('estimado', this.jsonData.modal_avance_contratado);
+            datos_jsonData.append('precio_unitario', this.jsonData.modal_precio_contratado);
+            const response = await axios.post('update_requerimiento_relacion/' + this.jsonData.id, datos_jsonData);
+            console.log('UPDATE ITEM RELACION', response.data);
+            document.getElementById("cerrarModal").click();
+            await this.listarItemRelacion();
         },
         async eliminarItemRelacion(id) {
             const response = await axios.delete('delete_requerimiento_relacion/' + id);
@@ -910,15 +935,16 @@ export default {
                 saldo: '',
                 precio_unitario: '',
                 ///FIN RELACION
-                codigo_otros: '',
-                descripcion_otros: '',
-                simbolo_otros: '',
-                cantidad_otros: '',
-                monto_otros: '',
-                explicar_otros: '',
-                fecha_requerimiento: '',
-                fechaFormatted: '',
+                //modal vars
+                modal_codigo: '',
+                modal_descripcion: '',
+                modal_unidad: '',
 
+                modal_vigente: '',
+                modal_avance_acumulado: '',
+                modal_saldo: '',
+                modal_avance_contratado: '',
+                modal_precio_contratado: '',
             },
 
 

@@ -441,7 +441,9 @@
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Vigente</label>
-                                    <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                    <input type="text" class="form-control" name="cantidad"
+                                           placeholder="Cantidad"
+                                           disabled
                                            v-model="jsonData.item_vigente">
                                 </div>
                             </div>
@@ -452,14 +454,18 @@
                                         <div class="form-group">
                                             <label for="nombre">Avance</label>
                                             <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas" v-model="jsonData.item_avance">
+                                                   placeholder="Horas Requeridas"
+                                                   disabled
+                                                   v-model="jsonData.item_avance">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="nombre">Saldo</label>
                                             <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.item_saldo">
+                                                   placeholder="Dias Requeridos"
+                                                   disabled
+                                                   v-model="jsonData.item_saldo">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -960,12 +966,12 @@
                     </div>
                     <div class="modal-body">
                         <div class="row bg-warning">
-                            <div class="row bg-success">
+                            <div class="row bg-warning">
                                 <div class="col-md-1">
                                     <div class="form-group">
                                         <label for="codigo">Codigo:</label>
                                         <input type="text" class="form-control" name="codigo" placeholder="Codigo"
-                                               v-model="jsonData.item_codigo" disabled>
+                                               v-model="jsonData.modal2_codigo" disabled>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -973,7 +979,7 @@
                                         <!-- Recursos  Spinner-->
                                         <label for="document_type">Item Relacionado:</label>
                                         <v-select label="item_descripcion" :options="combo_items_planilla"
-                                                  v-model="jsonData.item_descripcion"
+                                                  v-model="jsonData.modal2_descripcion"
                                                   placeholder="Selecione una opción"
                                                   @input="getNameForItemRelacion">
                                             <span slot="no-options">No hay data para cargar</span>
@@ -984,14 +990,16 @@
                                     <div class="form-group">
                                         <label for="nombre">Unidad:</label>
                                         <input type="text" class="form-control" name="unidad" placeholder="Unidad"
-                                               v-model="jsonData.item_simbolo" disabled>
+                                               v-model="jsonData.modal2_unidad" disabled>
                                     </div>
                                 </div>
                                 <div class="col-md-1">
                                     <div class="form-group">
                                         <label for="nombre">Vigente</label>
-                                        <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                               v-model="jsonData.item_vigente">
+                                        <input type="text" class="form-control" name="cantidad"
+                                               placeholder="Cantidad"
+                                               disabled
+                                               v-model="jsonData.modal2_vigente">
                                     </div>
                                 </div>
 
@@ -1001,21 +1009,25 @@
                                             <div class="form-group">
                                                 <label for="nombre">Avance</label>
                                                 <input type="text" class="form-control" name="horas"
-                                                       placeholder="Horas Requeridas" v-model="jsonData.item_avance">
+                                                       placeholder="Horas Requeridas"
+                                                       disabled
+                                                       v-model="jsonData.modal2_avance">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="nombre">Saldo</label>
                                                 <input type="text" class="form-control" name="dias"
-                                                       placeholder="Dias Requeridos" v-model="jsonData.item_saldo">
+                                                       placeholder="Dias Requeridos"
+                                                       disabled
+                                                       v-model="jsonData.modal2_saldo">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="nombre">Avance Estimado</label>
                                                 <input type="text" class="form-control" name="plazo"
-                                                       placeholder="dias de ejecucion" v-model="jsonData.item_estimado">
+                                                       placeholder="dias de ejecucion" v-model="jsonData.modal2_estimado">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -1023,7 +1035,7 @@
                                                 <label for="nombre">Precio Unitario</label>
                                                 <input type="text" class="form-control" name="plazo"
                                                        placeholder="dias de ejecucion"
-                                                       v-model="jsonData.item_precio_unitario">
+                                                       v-model="jsonData.modal2_precio_unitario">
                                             </div>
                                         </div>
                                     </div>
@@ -1058,12 +1070,14 @@
                     </div>
                     <div class="modal-body">
                         <div class="row bg-warning">
-                            <div class="row bg-success">
+                            <div class="row bg-warning">
                                 <div class="col-md-1">
                                     <div class="form-group">
                                         <label for="nombre">Codigo:</label>
-                                        <input type="text" class="form-control" name="codigo" placeholder="Codigo"
-                                               v-model="jsonData.codigo_otros" disabled>
+                                        <input type="text" class="form-control" name="codigo"
+                                               placeholder="Codigo"
+                                               v-model="jsonData.modal3_codigo"
+                                               disabled>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -1071,7 +1085,7 @@
                                         <!-- Recursos  Spinner-->
                                         <label for="nombre">Gastos Generales:</label>
                                         <v-select label="descripcion_recurso" :options="combo_otros_gastos"
-                                                  v-model="jsonData.descripcion_otros"
+                                                  v-model="jsonData.modal3_descripcion"
                                                   @input="filterNameForOtrosGastos"
                                                   placeholder="Selecione una opción">
                                             <span slot="no-options">No hay data para cargar</span>
@@ -1082,14 +1096,14 @@
                                     <div class="form-group">
                                         <label for="nombre">Unidad</label>
                                         <input type="text" class="form-control" name="unidad" placeholder="Unidad"
-                                               v-model="jsonData.simbolo_otros" disabled>
+                                               v-model="jsonData.modal3_unidad" disabled>
                                     </div>
                                 </div>
                                 <div class="col-md-1">
                                     <div class="form-group">
                                         <label for="nombre">Cantidad</label>
                                         <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                               v-model="jsonData.cantidad_otros">
+                                               v-model="jsonData.modal3_cantidad">
                                     </div>
                                 </div>
 
@@ -1099,14 +1113,14 @@
                                             <div class="form-group">
                                                 <label for="nombre">Monto</label>
                                                 <input type="text" class="form-control" name="horas"
-                                                       placeholder="Monto Requerido" v-model="jsonData.monto_otros">
+                                                       placeholder="Monto Requerido" v-model="jsonData.modal3_monto">
                                             </div>
                                         </div>
                                         <div class="col-md-9">
                                             <div class="form-group">
                                                 <label for="nombre">Detallar</label>
                                                 <input type="text" class="form-control" name="dias"
-                                                       placeholder="Detalle" v-model="jsonData.explicar_otros">
+                                                       placeholder="Detalle" v-model="jsonData.modal3_detallar">
                                             </div>
                                         </div>
                                     </div>
@@ -1284,7 +1298,7 @@ export default {
                 this.jsonData.tiempo_total_recurso != null &&
                 this.jsonData.precio_referencia_recurso != null &&
                 this.jsonData.nuri_requerimiento != null &&
-                this.jsonData.descripcion_requerimiento != null &&
+                this.jsonData.descripcion_requerimiento !== '' &&
                 this.jsonData.tipo_requerimiento_id != null &&
                 this.jsonData.fecha_requerimiento != null &&
                 this.jsonData.fecha_requerimiento !== "" &&
@@ -1314,24 +1328,42 @@ export default {
             }
         },
         // Editar Requerimiento en Obra
+        editar2(data = {}) {
+            this.jsonData.id = data.id;
+            this.jsonData.codigo_recurso = data.codigo_recurso;
+            this.jsonData.descripcion_recurso = data.descripcion_recurso;
+            this.jsonData.simbolo = data.unidad_id;
+            //this object will be modified in the next step
+            this.jsonData.requerimiento_recurso_id = data.requerimiento_recurso_id;
+            this.jsonData.cantidad_recurso = data.cantidad_recurso;
+            this.jsonData.horas_recurso = data.horas_recurso;
+            this.jsonData.dias_recurso = data.dias_recurso;
+            this.jsonData.tiempo_total_recurso = data.tiempo_total_recurso;
+            this.jsonData.precio_referencia_recurso = data.precio_referencia_recurso;
+            //Behavior Modal Components
+            this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
+            console.log('EDITAR REQ ITEM', data);
+        },
         editar(data = {}) {
             this.jsonData.id = data.id;
             this.jsonData.modal_codigo = data.codigo_recurso;
             this.jsonData.modal_descripcion = data.descripcion_recurso;
             this.jsonData.modal_unidad = data.unidad_id;
-            //this object will be modified in the next step
+
+            this.jsonData.modal_requerimiento_recurso_id = data.requerimiento_recurso_id;
             this.jsonData.modal_cantidad = data.cantidad_recurso;
             this.jsonData.modal_horas_requeridas = data.horas_recurso;
             this.jsonData.modal_dias_requeridos = data.dias_recurso;
             this.jsonData.modal_plazo = data.tiempo_total_recurso;
             this.jsonData.modal_precio_referencia = data.precio_referencia_recurso;
-            //Behavior Modal Components
+
             this.tituloDocLegalesModal = "Formulario de Modificar Item de Requerimiento";
             console.log('EDITAR REQ ITEM', data);
         },
         async modificar() {
+
             let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.modal_descripcion.id);
+            datos_jsonData.append('requerimiento_recurso_id', this.jsonData.modal_requerimiento_recurso_id);
             datos_jsonData.append('cantidad_recurso', this.jsonData.modal_cantidad);
             datos_jsonData.append('horas_recurso', this.jsonData.modal_horas_requeridas);
             datos_jsonData.append('dias_recurso', this.jsonData.modal_dias_requeridos);
@@ -1388,23 +1420,20 @@ export default {
                 this.jsonData.item_avance !== '' &&
                 this.jsonData.item_saldo !== '' &&
                 this.jsonData.item_estimado !== '' &&
-                this.jsonData.item_precio_unitario !== '' &&
-                this.jsonData.monto_bs !== '' &&
-                this.jsonData.objeto !== '' &&
-                this.jsonData.modifica !== '' &&
-                this.jsonData.files !== '';
+                this.jsonData.item_precio_unitario !== '';
         },
         async firstUpdateItemRelacionDesc() {
-
         },
-        async saveItemRelacion(){
+        async saveItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
             this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
+            let getValoresItem = await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id);
+            const arrayValoresItem = Object.assign(getValoresItem.data);
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
-            datos_jsonData.append('vigente', this.jsonData.item_vigente);
-            datos_jsonData.append('avance', this.jsonData.item_avance);
+            datos_jsonData.append('vigente', /*this.jsonData.item_vigente*/ arrayValoresItem[0].vigente);
+            datos_jsonData.append('avance', /*this.jsonData.item_avance*/ arrayValoresItem[0].avance);
             datos_jsonData.append('estimado', this.jsonData.item_estimado);
 
             datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
@@ -1415,36 +1444,45 @@ export default {
         },
         async guardarItemRelacion() {
             if (this.areAlltheFieldsFilledRelacion()) {
-                await this.firstUpdateItemRelacionDesc();
-                await this.guardarItemRelacion();
+                // await this.firstUpdateItemRelacionDesc();
+                await this.saveItemRelacion();
             } else {
                 alert('Por favor complete todos los campos');
             }
 
         },
         async editarItemRelacion(data = {}) {
+            let getValoresItem = (await axios.get('get_valores_item/' +data.planilla_item_id)).data;
             this.jsonData.id = data.id;
-            this.jsonData.item_codigo = data.item_codigo;
-            this.jsonData.item_descripcion = data.item_descripcion;
-            this.jsonData.item_simbolo = data.unidad_id;
+            this.jsonData.modal2_codigo = data.item_codigo;
+            this.jsonData.modal2_descripcion = data.item_descripcion;
+            this.jsonData.modal2_unidad = data.unidad_id;
 
             //this object will be modified in the next step Item Relacion
             this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.planilla_item_id = data.planilla_item_id;
-            this.jsonData.item_vigente = data.vigente;
-            this.jsonData.item_avance = data.avance;
-            this.jsonData.item_estimado = data.estimado;
-            this.jsonData.item_precio_unitario = data.precio_unitario;
+            this.jsonData.modal2_vigente = getValoresItem[0].fvigente;
+            this.jsonData.modal2_avance = getValoresItem[0].favance;
+            this.jsonData.modal2_saldo = getValoresItem[0].fsaldo;
+            this.jsonData.modal2_estimado = data.estimado;
+            this.jsonData.modal2_precio_unitario = data.precio_unitario;
+
+            console.log('GET VALORES ITEM', getValoresItem);
             console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
+            let getValoresItem = (await axios.get('get_valores_item/' +this.jsonData.planilla_item_id)).data;
+            console.log('GET VALORES ITEM', getValoresItem);
+            const arrayValoresItem = Object.assign(getValoresItem);
+            this.jsonData.modal2_vigente = arrayValoresItem[0].vigente;
+            this.jsonData.modal2_avance = arrayValoresItem[0].avance;
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('planilla_item_id', this.jsonData.planilla_item_id);
-            datos_jsonData.append('vigente', this.jsonData.item_vigente);
-            datos_jsonData.append('avance', this.jsonData.item_avance);
-            datos_jsonData.append('estimado', this.jsonData.item_estimado);
-            datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
+            datos_jsonData.append('vigente', this.jsonData.modal2_vigente);
+            datos_jsonData.append('avance', this.jsonData.modal2_avance);
+            datos_jsonData.append('estimado', this.jsonData.modal2_estimado);
+            datos_jsonData.append('precio_unitario', this.jsonData.modal2_precio_unitario);
             const response = await axios.post('update_requerimiento_relacion/' + this.jsonData.id, datos_jsonData);
             console.log('UPDATE ITEM RELACION', response.data);
             document.getElementById("cerrarModal").click();
@@ -1469,6 +1507,12 @@ export default {
                     break;
                 }
             }
+            //get Vigente, Avance, Estimado, Saldo
+            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id)).data;
+            console.log('GET VALORES ITEM', getValoresItem);
+            this.jsonData.item_vigente = getValoresItem[0].fvigente;
+            this.jsonData.item_avance = getValoresItem[0].favance;
+            this.jsonData.item_saldo = getValoresItem[0].fsaldo;
         },
         async filterListOtrosGastos(arrayReqOtrosGastos) {
             const responseReqRecursos = (await axios.get('requerimientos')).data;
@@ -1517,24 +1561,25 @@ export default {
         },
         async editarItemOtrosGastos(data = {}) {
             this.jsonData.id = data.id;
-            this.jsonData.codigo_otros = data.codigo_recurso;
-            this.jsonData.descripcion_otros = data.descripcion_recurso;
-            this.jsonData.simbolo_otros = data.unidad_id;
+            this.jsonData.modal3_codigo = data.codigo_recurso;
+            this.jsonData.modal3_descripcion = data.descripcion_recurso;
+            this.jsonData.modal3_unidad = data.unidad_id;
             //Item Oros Gastos
             this.jsonData.requerimiento_id = data.requerimiento_id;
             this.jsonData.requerimiento_recurso_id = data.requerimiento_recurso_id;
-            this.jsonData.cantidad_otros = data.cantidad_otros;
-            this.jsonData.monto_otros = data.monto_otros;
-            this.jsonData.explicar_otros = data.explicar_otros;
-            this.jsonData.id = data.id;
+            this.jsonData.modal3_cantidad = data.cantidad_otros;
+            this.jsonData.modal3_monto = data.monto_otros;
+            this.jsonData.modal3_detallar = data.explicar_otros;
+
+            console.log('EDIT ITEM OTROS GASTOS', data);
         },
         async modificarItemOtrosGastos() {
             let datos_jsonData = new FormData();
             datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
             datos_jsonData.append('requerimiento_recurso_id', this.jsonData.requerimiento_recurso_id);
-            datos_jsonData.append('cantidad_otros', this.jsonData.cantidad_otros);
-            datos_jsonData.append('monto_otros', this.jsonData.monto_otros);
-            datos_jsonData.append('explicar_otros', this.jsonData.explicar_otros);
+            datos_jsonData.append('cantidad_otros', this.jsonData.modal3_cantidad);
+            datos_jsonData.append('monto_otros', this.jsonData.modal3_monto);
+            datos_jsonData.append('explicar_otros', this.jsonData.modal3_detallar);
             const response = await axios.post('update_requerimiento_otros_gastos/' + this.jsonData.id, datos_jsonData);
             console.log('UPDATE ITEM OTROS GASTOS', response.data);
             document.getElementById("cerrarModal").click();
@@ -1857,15 +1902,38 @@ export default {
                 fechaFormatted: '',
 
                 //MODALES MODIFICAR
+                //1
                 modal_codigo: '',
                 modal_descripcion: '',
                 modal_unidad: '',
 
+                modal_requerimiento_recurso_id: '',
                 modal_cantidad: '',
                 modal_horas_requeridas: '',
                 modal_dias_requeridos: '',
                 modal_plazo: '',
                 modal_precio_referencia: '',
+                //2
+                modal2_codigo: '',
+                modal2_descripcion: '',
+                modal2_unidad: '',
+
+                modal2_vigente: '',
+                modal2_avance: '',
+                modal2_saldo: '',
+                modal2_estimado: '',
+                modal2_precio_unitario: '',
+                //3
+                modal3_codigo: '',
+                modal3_descripcion: '',
+                modal3_unidad: '',
+
+                modal3_requerimiento_recurso_id: '',
+                modal3_cantidad: '',
+                modal3_monto: '',
+                modal3_detallar: '',
+
+
                 // FIN MODALES MODIFICAR
             },
             rows: [],
