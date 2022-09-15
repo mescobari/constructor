@@ -1423,6 +1423,7 @@ export default {
                 this.jsonData.item_precio_unitario !== '';
         },
         async firstUpdateItemRelacionDesc() {
+
         },
         async saveItemRelacion() {
             const response_req = await axios.get('get_requerimientos');

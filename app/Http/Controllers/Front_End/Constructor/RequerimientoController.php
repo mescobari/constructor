@@ -250,6 +250,24 @@ class RequerimientoController extends Controller
         ]);
     }
 
+    public function updateRequerimientoTrabajosGastos(Request $request, $id){
+        $requerimiento = Requerimiento::findOrFail($id);
+        if($request->trabajos_encarados = ''){
+            $trabajos_encarados = $requerimiento->trabajos_encarados;
+        } else {
+            $trabajos_encarados = $request->trabajos_encarados;
+        }
+        if($request->gastos_generales = ''){
+            $gastos_generales = $requerimiento->gastos_generales;
+        } else {
+            $gastos_generales = $request->gastos_generales;
+        }
+        $requerimiento->update([
+            'trabajos_encarados' => $trabajos_encarados,
+            'gastos_generales' => $gastos_generales,
+        ]);
+    }
+
     public function downloadRequerimiento($id)
     {
         $requerimiento = Requerimiento::findOrFail($id);
