@@ -1423,7 +1423,7 @@ export default {
                 this.jsonData.item_estimado !== '' &&
                 this.jsonData.item_precio_unitario !== '';
         },
-        async firstUpdateItemRelacionDesc() {
+        async updateDescription() {
             console.log('REQ ID', this.jsonData.requerimiento_id);
             const getRequerimientos = (await axios.get('get_requerimientos')).data;
             this.jsonData.requerimiento_id = getRequerimientos[getRequerimientos.length - 1].id;
@@ -1432,7 +1432,7 @@ export default {
                 getRequerimientos.filter(item => item.id === this.jsonData.requerimiento_id)
             );
             const trabajos = this.jsonData.trabajos_encarados.toString();
-            const gastos = this.jsonData.gastos_generales.toString()
+            const gastos = this.jsonData.gastos_generales.toString();
             let jsonData = new FormData();
             jsonData.append('trabajos_encarados', trabajos);
             jsonData.append('gastos_generales', gastos);
@@ -1462,7 +1462,7 @@ export default {
 
                 if(this.areAlltheFieldsFilledRelacion()){
                     await this.saveItemRelacion();
-                    await this.firstUpdateItemRelacionDesc();
+                    await this.updateDescription();
                 } else {
                     alert('Por favor complete todos los campos');
                 }
@@ -1560,7 +1560,14 @@ export default {
             // this.rows2 = responseReqOtrosGastos;
             console.log('LIST REQ OTROS GASTOS', this.rows2);
         },
-        async guardarItemOtrosGastos() {
+        areAlltheFieldsFilledOtros(){
+            return this.jsonData.descripcion_otros != '' &&
+                this.jsonData.cantidad_otros != '' &&
+                this.jsonData.monto_otros != '' &&
+                this.jsonData.explicar_otros != '' &&
+                this.jsonData.gastos_generales != '';
+        },
+        async saveItemOtrosGastos() {
             const response_req = (await axios.get('get_requerimientos')).data;
             this.jsonData.requerimiento_id = response_req[response_req.length - 1].id;
             console.log('REQ ID', this.jsonData.requerimiento_id);
@@ -1574,6 +1581,15 @@ export default {
             console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
             await this.listarItemOtrosGastos();
             await this.cleanFormOtrosGastos();
+        },
+        async guardarItemOtrosGastos() {
+            if (this.areAlltheFieldsFilledOtros()){
+                await this.saveItemOtrosGastos();
+                await this.updateDescription();
+            }else{
+                alert('Por favor complete todos los campos');
+            }
+
         },
         async editarItemOtrosGastos(data = {}) {
             this.jsonData.id = data.id;
