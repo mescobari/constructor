@@ -109,13 +109,23 @@ class PlanillaController extends Controller
                             $pla[$row][$i]=$data[$i];
 
                           }
-                          $pla[$row][9]=2;
-                          if( $pla[$row][0] == 'I'){
-                            $simbolo= $pla[$row][$i];
-                            $unidad=Unidad::where('simbolo', 'like',"'". $simbolo."'")->first()->toArray();       
-                            $pla[$row][9]=$unidad['id'];
+                          if($row > 0){
+                                $pla[$row][9]=2;
+                                if( $pla[$row][5] != ""){
+                                    $simbolo= $pla[$row][5];
+                                    $unidades=DB::table('unidades')->select('id')
+                                    ->where('simbolo', 'like', $simbolo)
+                                    ->first();   
+                                    
+                                //    $strUni = json_encode($unidades);
 
-                          }
+                                //    $und=explode(":", $strUni);
+
+                                    $pla[$row][9]=$simbolo;
+                                    $pla[$row][10]= $unidades ;
+                                }
+
+                        }
                           $row++;
 
                             /*   if($row > 0){
