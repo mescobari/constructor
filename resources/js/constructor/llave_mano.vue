@@ -71,7 +71,7 @@
                                                 :calendar-class="configFechas.nombreClaseParaModal"
                                                 :input-class="configFechas.nombreClaseParaInput"
                                                 :monday-first="true"
-                                                :clear-button="true"
+                                                :clear-button="!clickedAdd"
                                                 :clear-button-icon="configFechas.IconoBotonBorrar"
                                                 :calendar-button="true"
 
