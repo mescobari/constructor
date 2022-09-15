@@ -923,14 +923,9 @@ export default {
             this.jsonData.monto_bs = data.monto_bs;
             this.jsonData.objeto = data.objeto;
 
-            const fecha = new Date(data.fecha_firma);
-            // const formateado = moment(data.fecha_firma, 'D-M-YYYY')
             const formateado = moment(data.fecha_firma, 'D-M-YYYY')
             const dateObject = formateado.toDate();
             const f = new Date(dateObject);
-            console.log("FECHA", dateObject);
-            // this.jsonData.fecha_firma = fecha.getDate() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getFullYear();
-            // this.jsonData.fecha_firma = data.fecha_firma
             this.jsonData.fecha_firma = ((f.getMonth() + 1) + '-' + f.getDate() + '-' + f.getFullYear()).toString();
             console.log("FECHA OBTENIDA", this.jsonData.fecha_firma);
 
