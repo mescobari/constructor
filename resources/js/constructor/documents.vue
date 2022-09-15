@@ -142,7 +142,7 @@
                                     <div class="form-group">
                                         <label for="fecha">Fecha de Firma:</label>
                                         <datepicker :language="configFechas.es"
-                                                    :placeholder="jsonData.fecha_firma"
+                                                    :placeholder="configFechas.placeholder"
 
                                                     :calendar-class="configFechas.nombreClaseParaModal"
                                                     :input-class="configFechas.nombreClaseParaInput"
