@@ -19,7 +19,6 @@ class RequerimientoController extends Controller
 {
 
 
-
     public function createRequerimiento(Request $request)
     {
         $path = "";
@@ -66,7 +65,8 @@ class RequerimientoController extends Controller
         ]);
     }
 
-    public function getRequerimientoOtrosGastos(){
+    public function getRequerimientoOtrosGastos()
+    {
         return RequerimientoOtros::all();
     }
 
@@ -94,6 +94,7 @@ class RequerimientoController extends Controller
     {
         return view('front-end.constructor.IndexRequerimientos');
     }
+
     public function llave_mano()
     {
         return view('front-end.constructor.IndexLlaveMano');
@@ -198,7 +199,8 @@ class RequerimientoController extends Controller
         return $requerimientoItemObra;
     }
 
-    public function deleteItemRelacion($id){
+    public function deleteItemRelacion($id)
+    {
         $requerimientoItemRelacion = RequerimientoRelacion::findOrFail($id);
         $requerimientoItemRelacion->delete();
         return $requerimientoItemRelacion;
@@ -224,6 +226,7 @@ class RequerimientoController extends Controller
             'precio_referencia_recurso' => $request->precio_referencia_recurso,
         ]);
     }
+
     public function updateRequerimientoRelacion(Request $request, $id)
     {
         $itemAndId = RequerimientoRelacion::findOrFail($id);
@@ -237,6 +240,7 @@ class RequerimientoController extends Controller
             'precio_unitario' => $request->precio_unitario,
         ]);
     }
+
     public function updateRequerimientoOtrosGastos(Request $request, $id)
     {
         $itemAndId = RequerimientoOtros::findOrFail($id);
@@ -248,6 +252,24 @@ class RequerimientoController extends Controller
             'monto_otros' => $request->monto_otros,
             'explicar_otros' => $request->explicar_otros,
         ]);
+    }
+
+    public function updateRequerimientoTrabajosGastos(Request $request, $id)
+    {
+        $requerimiento = Requerimiento::findOrFail($id);
+//        dd($request->trabajos_encarados);
+        if ($request->trabajos_encarados != '') {
+            $requerimiento->trabajos_encarados = $request->trabajos_encarados;
+        } else {
+            $requerimiento->trabajos_encarados = $requerimiento->trabajos_encarados;
+        }
+        if ($request->gastos_generales != '') {
+            $requerimiento->gastos_generales = $request->gastos_generales;
+        } else {
+            $requerimiento->gastos_generales = $requerimiento->gastos_generales;
+        }
+        $requerimiento->save();
+
     }
 
     public function downloadRequerimiento($id)

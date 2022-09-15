@@ -275,7 +275,6 @@ export default {
             this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
         },
         respuestaModalAlertaConfirmacion(datos) {
-            // console.log(datos.respuesta);
             console.log('eliminando', datos.respuesta);
             if (datos.respuesta === true) {
                 this.deleteRequerimiento(this.id_eliminacion);

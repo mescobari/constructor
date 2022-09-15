@@ -71,7 +71,7 @@
                                                 :calendar-class="configFechas.nombreClaseParaModal"
                                                 :input-class="configFechas.nombreClaseParaInput"
                                                 :monday-first="true"
-                                                :clear-button="true"
+                                                :clear-button="!clickedAdd"
                                                 :clear-button-icon="configFechas.IconoBotonBorrar"
                                                 :calendar-button="true"
 
@@ -107,7 +107,7 @@
                                                 }}</span></span>
                                             <button type="button" class="close" v-if="configFile.cerrar"
                                                     @click="borrar_file();"
-                                                    v-bind:disabled="clickedAdd"><span>&times;</span></button>
+                                                    ><span>&times;</span></button>
                                         </label>
                                         <input type="file" class="form-control" id="documento_res_aprobacion"
                                                @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
@@ -588,6 +588,7 @@ export default {
             datos_jsonData.append('gastos_generales', this.jsonData.trabajos_encarados);
             datos_jsonData.append('files', this.jsonData.files);
             this.clickedAdd = true;
+            this.configFile.cerrar = false;
             let response = await axios.post('create_requerimiento', datos_jsonData);
             console.log('CREATE REQ', response.data);
         },

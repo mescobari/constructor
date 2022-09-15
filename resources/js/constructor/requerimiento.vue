@@ -1027,7 +1027,8 @@
                                             <div class="form-group">
                                                 <label for="nombre">Avance Estimado</label>
                                                 <input type="text" class="form-control" name="plazo"
-                                                       placeholder="dias de ejecucion" v-model="jsonData.modal2_estimado">
+                                                       placeholder="dias de ejecucion"
+                                                       v-model="jsonData.modal2_estimado">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -1266,8 +1267,8 @@ export default {
             datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
             datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
             datos_jsonData.append('descripcion_requerimiento', this.jsonData.descripcion_requerimiento)
-            datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
-            datos_jsonData.append('gastos_generales', this.jsonData.gastos_generales);
+            datos_jsonData.append('trabajos_encarados', 'Trabajos Encarados');
+            datos_jsonData.append('gastos_generales', 'Gastos Generales');
             datos_jsonData.append('files', this.jsonData.files);
             this.clickedAdd = true;
             this.configFile.cerrar = false;
@@ -1422,7 +1423,21 @@ export default {
                 this.jsonData.item_estimado !== '' &&
                 this.jsonData.item_precio_unitario !== '';
         },
-        async firstUpdateItemRelacionDesc() {
+        async updateDescription() {
+            console.log('REQ ID', this.jsonData.requerimiento_id);
+            const getRequerimientos = (await axios.get('get_requerimientos')).data;
+            this.jsonData.requerimiento_id = getRequerimientos[getRequerimientos.length - 1].id;
+            const getCurrentRequerimiento = Object.assign(
+                {},
+                getRequerimientos.filter(item => item.id === this.jsonData.requerimiento_id)
+            );
+            const trabajos = this.jsonData.trabajos_encarados.toString();
+            const gastos = this.jsonData.gastos_generales.toString();
+            let jsonData = new FormData();
+            jsonData.append('trabajos_encarados', trabajos);
+            jsonData.append('gastos_generales', gastos);
+            const updateReqTrabajoGasto = await axios.post('update_requerimiento_trabajos_gastos/' + getCurrentRequerimiento[0].id, jsonData );
+            console.log('UPDATE REQ TRABAJO GASTO', updateReqTrabajoGasto.data);
         },
         async saveItemRelacion() {
             const response_req = await axios.get('get_requerimientos');
@@ -1443,16 +1458,17 @@ export default {
             await this.listarItemRelacion();
         },
         async guardarItemRelacion() {
-            if (this.areAlltheFieldsFilledRelacion()) {
-                // await this.firstUpdateItemRelacionDesc();
-                await this.saveItemRelacion();
-            } else {
-                alert('Por favor complete todos los campos');
-            }
+            console.log('PROYECTOS', this.jsonData.proyectos);
 
+                if(this.areAlltheFieldsFilledRelacion()){
+                    await this.saveItemRelacion();
+                    await this.updateDescription();
+                } else {
+                    alert('Por favor complete todos los campos');
+                }
         },
         async editarItemRelacion(data = {}) {
-            let getValoresItem = (await axios.get('get_valores_item/' +data.planilla_item_id)).data;
+            let getValoresItem = (await axios.get('get_valores_item/' + data.planilla_item_id)).data;
             this.jsonData.id = data.id;
             this.jsonData.modal2_codigo = data.item_codigo;
             this.jsonData.modal2_descripcion = data.item_descripcion;
@@ -1471,7 +1487,7 @@ export default {
             console.log('EDITAR ITEM RELACION', data);
         },
         async modificarItemRelacion() {
-            let getValoresItem = (await axios.get('get_valores_item/' +this.jsonData.planilla_item_id)).data;
+            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.planilla_item_id)).data;
             console.log('GET VALORES ITEM', getValoresItem);
             const arrayValoresItem = Object.assign(getValoresItem);
             this.jsonData.modal2_vigente = arrayValoresItem[0].vigente;
@@ -1544,7 +1560,14 @@ export default {
             // this.rows2 = responseReqOtrosGastos;
             console.log('LIST REQ OTROS GASTOS', this.rows2);
         },
-        async guardarItemOtrosGastos() {
+        areAlltheFieldsFilledOtros(){
+            return this.jsonData.descripcion_otros != '' &&
+                this.jsonData.cantidad_otros != '' &&
+                this.jsonData.monto_otros != '' &&
+                this.jsonData.explicar_otros != '' &&
+                this.jsonData.gastos_generales != '';
+        },
+        async saveItemOtros() {
             const response_req = (await axios.get('get_requerimientos')).data;
             this.jsonData.requerimiento_id = response_req[response_req.length - 1].id;
             console.log('REQ ID', this.jsonData.requerimiento_id);
@@ -1558,6 +1581,15 @@ export default {
             console.log('SAVE ITEM OTROS GASTOS', itemOtrosGastos.data);
             await this.listarItemOtrosGastos();
             await this.cleanFormOtrosGastos();
+        },
+        async guardarItemOtrosGastos() {
+            if (this.areAlltheFieldsFilledOtros()){
+                await this.saveItemOtros();
+                await this.updateDescription();
+            }else{
+                alert('Por favor complete todos los campos');
+            }
+
         },
         async editarItemOtrosGastos(data = {}) {
             this.jsonData.id = data.id;
@@ -1874,7 +1906,7 @@ export default {
                 dias_recurso: '',
                 tiempo_total_recurso: '',
                 precio_referencia_recurso: '',
-                trabajos_encarados: 'trabajos a ser encarados explicacion de ello',
+                trabajos_encarados: '',
                 files: null,
                 //RELACION CON EL CONTRATO PRINCIPAL
                 item_codigo: '',
@@ -1893,7 +1925,7 @@ export default {
                 ///FIN RELACION
                 codigo_otros: '',
                 descripcion_otros: '',
-                gastos_generales: 'se explica en que gatsos generales se trabajara',
+                gastos_generales: '',
                 simbolo_otros: '',
                 cantidad_otros: '',
                 monto_otros: '',
