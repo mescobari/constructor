@@ -1567,7 +1567,7 @@ export default {
                 this.jsonData.explicar_otros != '' &&
                 this.jsonData.gastos_generales != '';
         },
-        async saveItemOtrosGastos() {
+        async saveItemOtros() {
             const response_req = (await axios.get('get_requerimientos')).data;
             this.jsonData.requerimiento_id = response_req[response_req.length - 1].id;
             console.log('REQ ID', this.jsonData.requerimiento_id);
@@ -1584,7 +1584,7 @@ export default {
         },
         async guardarItemOtrosGastos() {
             if (this.areAlltheFieldsFilledOtros()){
-                await this.saveItemOtrosGastos();
+                await this.saveItemOtros();
                 await this.updateDescription();
             }else{
                 alert('Por favor complete todos los campos');
