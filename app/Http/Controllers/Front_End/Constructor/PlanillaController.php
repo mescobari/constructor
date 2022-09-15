@@ -88,17 +88,10 @@ class PlanillaController extends Controller
         $file_to_read = fopen($archivo, "r");
 
         if($tipo_planilla_id == 1){
-            // planilla inicial reciaen creamos los itemes
-
-                $item= new PlanillaItem;
-                
-                $item->contrato_id=$request->contrato_id;
-                $item->planilla_id=$request->planilla_id;
-                    
+            // planilla inicial reciaen creamos los itemes                  
 
                 $row=0;
-                if($file_to_read !== FALSE){
-                    
+                if($file_to_read !== FALSE){                    
                 
                     while(($data = fgetcsv($file_to_read, 1000, ';')) !== FALSE){
                     
@@ -109,40 +102,26 @@ class PlanillaController extends Controller
                             $pla[$row][$i]=$data[$i];
 
                           }
+                          $pla[$row][9]=2;
                           if($row > 0){
-                                $pla[$row][9]=2;
+                               
                                 if( $pla[$row][5] != ""){
                                     $simbolo= $pla[$row][5];
                                     $unidades=DB::table('unidades')->select('id')
                                     ->where('simbolo', 'like', $simbolo)
                                     ->first();   
                                     
-                                //    $strUni = json_encode($unidades);
-
-                                //    $und=explode(":", $strUni);
-
-                                    $pla[$row][9]=$simbolo;
-                                    $pla[$row][10]= $unidades ;
+                                    $strUni = json_encode($unidades);
+                                    $strUni1= (int) substr($strUni, 6, 2);
+                                 
+                                    $pla[$row][9]=$strUni1;
+                                
                                 }
+                            }                           
 
-                        }
                           $row++;
 
-                            /*   if($row > 0){
-                                $item->tipo=$data[0];
-                                $item->item_codigo=$data[1];
-                                $item->item_descripcion=$data[3];
-                                $item->unidad_id=2;
-                                if($data[0] =='I'){
-                                    $simbolo=$data[5];
-                                    $unidad=Unidad::where('simbolo', 'like','%'.$simbolo.'%')->first();
-                                    $item->unidad_id=$unidad['id'];
-                                }
-
-                                $item->padre=0;
-
-                                $item->save();  */    
-
+                           
                     }
                 
                 
@@ -150,10 +129,114 @@ class PlanillaController extends Controller
             
             
                 }
+
+                //cargar planilla_item
+                $long_max=0;
+                $registros=count($pla);
+                for($i = 1; $i < $registros; $i++) {
+                    if($pla[$i][1] != ''){
+                        $item= new PlanillaItem;
+                    
+                        $item->contrato_id=$request->contrato_id;
+                        $item->planilla_id=$request->planilla_id;
+
+                        $item->tipo=$pla[$i][0];
+                        $item->item_codigo=$pla[$i][1];
+                        $item->item_descripcion=$pla[$i][3];
+                        $item->unidad_id=$pla[$i][9];
+                        $item->padre=0;
+
+                        $item->save();
+                    }
+
+                    
+                }
+
+                // encontrar padres
+                // traemos todo de planil_items
+
+                $items_planilla=PlanillaItem::where('contrato_id', '=', $request->contrato_id)
+                ->where('planilla_id', '=', $request->planilla_id)
+                ->get();
+
+
+                $items=json_decode($items_planilla);
+                $fila=0;
+                foreach($items as $item) { //foreach element in $arr
+                    //$codigos[] = $item['item_codigo']; //etc
+                    //$a_item=$item->toArray();
+                    //$obj=json_encode($item, true);
+                    //le quito comillas al inicio y final substr($mystring, 0, -1);   $str = substr($str, 1);
+                    $fila++;
+                    $obj=str_replace('"', '', json_encode($item, true));
+
+                    $partes=explode(",",$obj );
+                    $item_codigo=explode(":",$partes[4]);
+                    $codigoLen=strLen($item_codigo[1]);
+                    $c_id=explode(":",$partes[0]);
+                    $codigo[$fila]['id']=$c_id[1];
+                    $codigo[$fila]['item_codigo']=$item_codigo[1];
+                    $codigo[$fila]['padre']=0;                                      
+
+                }
+               
+                for($i = 1; $i < count($codigo); $i++) {
+                    $body ='';
+                    $valor=$codigo[$i]['item_codigo'];
+                    // hacemps volar el ultimo carcater si es .
+                    $valor = (substr($valor, -1) =='.' ? substr($valor, 0, -1) : $valor);
+                    $familia=explode(".",$valor);
+                    $codigoLen=count($familia);
+                    
+                    if($codigoLen>1){                       
+                        
+                          for ($x = 0; $x <$codigoLen-1; $x++){
+                            
+                            $body .= $familia[$x]."." ;
+                         } 
+
+                    }
+                    
+                    $fam[$i]= $body; 
+
+
+                    if($body!=""){  
+                        for ($x = 1; $x <count($codigo); $x++){
+                            
+                            if($body == $codigo[$x]['item_codigo']){
+                                $codigo[$i]['padre']=$codigo[$x]['id'];
+                                $x=5+count($codigo);
+                            }
+
+                         } 
+                       
+                    }
+
+                }
+
+                //ahora actualizamos padres en la tabla
+                for ($x = 1; $x <count($codigo); $x++){
+
+                    
+
+
+                } 
+
+
+                dd($codigo);
+
+                
+                /*DELETE FROM planilla_items WHERE planilla_id=39 and contrato_id=1;
+                 */
+
+                
+
+                // cargar cantidades y montos iniciales en planilla movimientos
             
-            }        
-        dd($pla);
-        
+            }       // antes de cerrar debemos encontrar los padre 
+       
+      
+            //dd($a_item);
         return $request;
         
 
