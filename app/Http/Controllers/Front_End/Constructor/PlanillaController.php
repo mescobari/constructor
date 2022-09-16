@@ -597,7 +597,17 @@ class PlanillaController extends Controller
             'referencia'=>$request->referencia,
             'path_planilla'=>$path,
         ]);
+           // obtenesmos el id del ultimo insert y grabamos en planilla_documentos
+            $planilla_id = $planilla_save->id;
+            $document_id = $request->document_id;
 
+            $relacion = PlanillaDocument::create([
+                'planilla_id'=>$planilla_id,
+                'document_id'=>$document_id,
+            ]);
+
+           
+        
 
         //$mensaje='volviendo del backend grabar path documento '.$path;
         return $planilla_save;

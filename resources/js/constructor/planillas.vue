@@ -223,7 +223,7 @@
                         </div> 
                         <hr>
                         <div class="row">
-                            <div class="col-md-3">          
+                            <div class="col-md-3" >          
                                 <div class="form-group">
                                     <label for="nombre">Tipo de Planilla:</label>
                                     <div class="custom-control custom-radio">
@@ -283,7 +283,24 @@
                                     <input type="text" class="form-control" name="nombre" placeholder="Ingresar Nombre" v-model="jsonData.nuri_planilla">
                                 </div>
                             </div>
+
+
+
                         </div>
+
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">          
+                                <div class="form-group">
+                                    <label for="codsisin">Seleccione Documento Asociado:</label>
+                                    <v-select label="nombre" :options="documentos" v-model="jsonData.documento" placeholder="Selecione un documento">
+                                        <span slot="no-options">No hay datos para cargar</span>
+                                    </v-select>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <hr>
 
                         <div class="card" style="padding:5px;">                            
@@ -369,7 +386,7 @@ export default {
             combo_instituciones:[],
             combo_cofinanciadores:[],
             combo_documentos_legales:[],
-            combo_objetivos:[],
+            documentos:[],
 
             proyectos:[],
             jsonData:{
@@ -380,7 +397,6 @@ export default {
                 cofinanciador:{},
                 titulo:'',
                 doc_legal:{},
-                objetivo:{},
                 tipo_planilla_id:3,
                 contrato_id:'',
                 numero_planilla:1,
@@ -391,7 +407,8 @@ export default {
                 anticipo_planilla:'',
                 retencion_planilla:'',
                 referencia:'',               
-                funcionario:'',                
+                documento:'',  
+                document_id:'',              
                 files:null,
             },
             cargarData:{
@@ -502,15 +519,14 @@ export default {
             console.log(this.jsonData.tipo_planilla_id);
             const fecha = new Date(this.jsonData.fecha_planilla);
              this.jsonData.fecha1 = fecha.getFullYear() + "-" + (fecha.getMonth()+1) + "-" + fecha.getDate();
-           
-           
-           
+             this.jsonData.document_id = this.jsonData.documento.id;
+                      
            let datos_jsonData = new FormData();
-           
-            for(let key in this.jsonData){                
-                datos_jsonData.append(key, this.jsonData[key]);
-                console.log(key, this.jsonData[key]);
-            }
+           console.log('===================');
+                for(let key in this.jsonData){                
+                    datos_jsonData.append(key, this.jsonData[key]);
+                    console.log(key, this.jsonData[key]);
+                }
             
             console.log('===================');
             
@@ -632,7 +648,7 @@ export default {
             console.log(principales);
             this.proyectos = principales;
             $("#seleccion_proyecto_doc_legales").modal("show");
-            
+           
         },
         
          async ver_planilla(){
@@ -659,6 +675,7 @@ export default {
             });
 
             this.rows = planillas;
+            this.lista_documentos();
          },
 
         
@@ -676,7 +693,7 @@ export default {
             this.instituciones();
             this.organismos_financiadores();
             this.doc_legales();
-            this.objetivos();
+            this.documentos();
         },
         async tipos_documentos(){
             var respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
@@ -695,15 +712,17 @@ export default {
             var respuesta = await axios.post('buscar_documentos_legaleses_combo', data);
             this.combo_documentos_legales = respuesta.data;
         },
-        async objetivos(){
-            var data = { 'intervencion':this.jsonData.proyectos, }
-            var respuesta = await axios.post('buscar_documentos_legaleses_objetivos', data);
-            this.combo_objetivos = respuesta.data;
+        async lista_documentos(){
+           
+            var respuesta = await axios.get('documents');
+            const docFilter = respuesta.data.filter(docf => (docf.padre == this.jsonData.proyectos.id || docf.id == this.jsonData.proyectos.id));
+            this.documentos = docFilter;           
         },
         ModalCrear(){
             this.modificar_bottom=false;
             this.guardar_bottom=true;
             this.tituloDocLegalesModal = "Formulario de Creación de Planillas";
+           
         },
         limpiar_formulario(){
             $('#modifica1').removeAttr('checked');
@@ -800,11 +819,11 @@ export default {
         // this.tipoDocumento();
         this.funcionRecuperaConfig();
         this.seleccionar_cont_primario();
-        
+       
 
     },
     created(){
-
+        
     },
     components: {
         VueBootstrap4Table,
