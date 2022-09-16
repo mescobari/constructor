@@ -834,6 +834,7 @@ export default {
             datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datosJsonData.append('padre', this.jsonData.padre.id);
             datosJsonData.append('unidad_ejecutora_id', 1/*this.jsonData.unidad_ejecutora_id.id*/);
+
             if(this.jsonData.document_types_id === 1){
                 datosJsonData.append('contratado_id', 271);
                 datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
