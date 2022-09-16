@@ -720,19 +720,29 @@ export default {
             }
         },
         async selectContratanteContratado() {
-            let contratanteContratado = (await axios.get('cla_institucional')).data;
+            let getContrata = (await axios.get('cla_institucional')).data;
             console.log('PADRE', this.jsonData.padre);
-            let contratante = [];
-            let contratado = [];
-            contratante = Object.assign(contratanteContratado.filter(contratante => contratante.id == this.jsonData.padre.contratante_id));
-            contratado = Object.assign(contratanteContratado.filter(contratado => contratado.id == this.jsonData.padre.contratado_id));
+            let contratante = '';
+            let contratado = '';
+            for(let i in getContrata){
+                if(getContrata[i].id === this.jsonData.padre.contratante_id){
+                    contratante = getContrata[i];
+                }
+                i = getContrata.length;
+            }
+            for (let i in getContrata) {
+                if (getContrata[i].id === this.jsonData.padre.contratado_id) {
+                    contratado = getContrata[i];
+                }
+                i = getContrata.length;
+            }
 
-            console.log("CONTRATANTE", contratante);
-            console.log("CONTRATADO", contratado);
+            console.log("CONTRATANTE", this.jsonData.contratante_id);
+            console.log("CONTRATADO", this.jsonData.contratado_id);
             if (this.disablePadre === false &&
                 this.jsonData.document_types_id.id !== 1 &&
                 this.jsonData.document_types_id.id !== 2) {
-                this.jsonData.contratante_id = contratante;
+                this.jsonData.contratante_id = contratante ;
                 this.jsonData.contratado_id = contratado;
             }
         },
@@ -824,8 +834,17 @@ export default {
             datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
             datosJsonData.append('padre', this.jsonData.padre.id);
             datosJsonData.append('unidad_ejecutora_id', 1/*this.jsonData.unidad_ejecutora_id.id*/);
+            if(this.jsonData.document_types_id === 1){
+                datosJsonData.append('contratado_id', 271);
+                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            } else if(this.jsonData.document_types_id === 2) {
+                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+                datosJsonData.append('contratado_id', 271);
+            } else {
+                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+                datosJsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            }
             datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            datosJsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datosJsonData.append('duracion_dias', this.jsonData.duracion_dias);
             const fecha = new Date(this.jsonData.fecha_firma);
             datosJsonData.append('fecha_firma', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
