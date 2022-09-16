@@ -217,27 +217,48 @@ class PlanillaController extends Controller
                 //ahora actualizamos padres en la tabla
                 for ($x = 1; $x <count($codigo); $x++){
 
-                    
+                    $item= new PlanillaItem;
+                    $id= $codigo[$x]['id'];
+                    $padre= $codigo[$x]['padre'];
+
+                    $data = PlanillaItem::where('id', $id)
+                            ->update(['padre' => $padre]);
 
 
                 } 
-
-
-                dd($codigo);
-
-                
-                /*DELETE FROM planilla_items WHERE planilla_id=39 and contrato_id=1;
-                 */
-
-                
-
                 // cargar cantidades y montos iniciales en planilla movimientos
+                for ($x = 1; $x <count($codigo); $x++){
+                    $id= $codigo[$x]['id'];
+                    $item_codigo= $codigo[$x]['item_codigo'];
+
+                    for ($i = 1; $i <count($pla); $i++){
+                        //$pla[$i][10]=0;
+                        $valor=$pla[$i][1];
+                        //$valor = (substr($valor, -1) =='.' ? substr($valor, 0, -1) : $valor);
+                        $comp=strcmp($valor, $item_codigo);
+                        $val1[$x][$i] =$valor.'---'.$item_codigo.'---'.$id.'---'.$comp.'---'.$i.'---'.$x;
+
+                                 if($comp == 0){
+                                    $pla[$i][10]=$id;                          
+                                     $i=5+count($pla);
+                                 }
+                     } 
+
+                } 
+                // insertar pla en la tabla moviminetos
+
+                
+
+
             
-            }       // antes de cerrar debemos encontrar los padre 
+            }       // aqui cierra para planilla inicial
+
+
+
        
-      
-            //dd($a_item);
-        return $request;
+      //DELETE FROM planilla_items WHERE planilla_id=39 and contrato_id=1;
+            dd($pla);
+        return $pla;
         
 
 
