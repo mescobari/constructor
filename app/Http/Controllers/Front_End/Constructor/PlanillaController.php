@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Constructor\Unidad;
 use App\Models\Constructor\PlanillaItem;
 use App\Models\Constructor\PlanillaMovimiento;
+use App\Models\Constructor\PlanillaDocument;
 
 use Illuminate\Http\Request;
 
@@ -86,50 +87,57 @@ class PlanillaController extends Controller
        
         $archivo=$path.'/app/'.$request->path;
         $file_to_read = fopen($archivo, "r");
+        // LEE EL ARCHIVO CSV Y LO GUARDA EN UN ARRAY PLA
+        $row=0;
+        if($file_to_read !== FALSE){                    
+        
+            while(($data = fgetcsv($file_to_read, 1000, ';')) !== FALSE){
+            
+                // LA FILA CERO SON LOS TITULOS
+                // tipo;codigo;ITEM;DESCRIPCON;UNIDAD;SIMBOLO;CANTIDAD;PREC_UNITARIO;TOTAL--count($data)
+
+                for($i = 0; $i < 9; $i++) {
+                    $pla[$row][$i]=$data[$i];
+
+                  }
+                  $pla[$row][9]=2;
+                  $pla[$row][10]=0;
+                  if($row > 0){
+                       
+                        if( $pla[$row][5] != ""){
+                            $simbolo= $pla[$row][5];
+                            $unidades=DB::table('unidades')->select('id')
+                            ->where('simbolo', 'like', $simbolo)
+                            ->first();   
+                            
+                            $strUni = json_encode($unidades);
+                            $strUni1= (int) substr($strUni, 6, 2);
+                         
+                            $pla[$row][9]=$strUni1;
+                        
+                        }
+                    }                           
+
+                  $row++;
+
+                   
+            }
+        
+        
+            fclose($file_to_read);
+    
+    
+        }
+
+
+    /*  ********************************************************************************************************************
+    *       INICIO ---> CARGAR PLANILLA INICIAL
+    *********************************************************************************************************************/
 
         if($tipo_planilla_id == 1){
             // planilla inicial reciaen creamos los itemes                  
 
-                $row=0;
-                if($file_to_read !== FALSE){                    
-                
-                    while(($data = fgetcsv($file_to_read, 1000, ';')) !== FALSE){
-                    
-                        // LA FILA CERO SON LOS TITULOS
-                        // tipo;codigo;ITEM;DESCRIPCON;UNIDAD;SIMBOLO;CANTIDAD;PREC_UNITARIO;TOTAL--count($data)
-
-                        for($i = 0; $i < 9; $i++) {
-                            $pla[$row][$i]=$data[$i];
-
-                          }
-                          $pla[$row][9]=2;
-                          if($row > 0){
-                               
-                                if( $pla[$row][5] != ""){
-                                    $simbolo= $pla[$row][5];
-                                    $unidades=DB::table('unidades')->select('id')
-                                    ->where('simbolo', 'like', $simbolo)
-                                    ->first();   
-                                    
-                                    $strUni = json_encode($unidades);
-                                    $strUni1= (int) substr($strUni, 6, 2);
-                                 
-                                    $pla[$row][9]=$strUni1;
-                                
-                                }
-                            }                           
-
-                          $row++;
-
-                           
-                    }
-                
-                
-                    fclose($file_to_read);
-            
-            
-                }
-
+               
                 //cargar planilla_item
                 $long_max=0;
                 $registros=count($pla);
@@ -247,18 +255,218 @@ class PlanillaController extends Controller
                 } 
                 // insertar pla en la tabla moviminetos
 
+                $registros=count($pla);
+                for($i = 1; $i < $registros; $i++) {
+                    if($pla[$i][10] != 0){
+                        $movi= new PlanillaMovimiento;
+                        $cant=explode(",",$pla[$i][6]); $cant=implode(".",$cant); $cantidad = floatval($cant);
+                        $prec=explode(",",$pla[$i][7]); $prec=implode(".",$prec); $precio_unitario = floatval($prec);
+
+                        $movi->planilla_id=$request->planilla_id;
+                        $movi->planilla_item_id =$pla[$i][10];
+                        $movi->cantidad=$cantidad;
+                        $movi->precio_unitario=$precio_unitario;
+                        
+
+                        $movi->save();
+                    }
+                    
+                }
+                //grabamos en planilla-dcoumentos
                 
+                $relacion= new PlanillaDocument;
+                $relacion->document_id =$request->contrato_id;
+                $relacion->planilla_id=$request->planilla_id;
+                $relacion->save();
 
 
             
-            }       // aqui cierra para planilla inicial
+                 // aqui cierra para planilla inicial
+        }
+        
+    /********************************************************************************************************************
+     * FIN DE CARGAR PLANILLA INICIAL
+     *********************************************************************************************************************/
+
+    /*  ********************************************************************************************************************
+    *       INICIO ---> CARGAR PLANILLA MODIFICATORIAS 2
+    *********************************************************************************************************************/  
+    if($tipo_planilla_id == 2){
+                // ya tenemos leido el archivo, ahota debemos pnerle  item_id
+                $items_planilla=PlanillaItem::where('contrato_id', '=', $request->contrato_id)
+                ->get();
+
+
+                $items=json_decode($items_planilla);
+                $fila=0;
+                foreach($items as $item) {
+                    $fila++;
+                    $obj=str_replace('"', '', json_encode($item, true));
+
+                    $partes=explode(",",$obj );
+                    //$codigo[$fila]['item']= $partes;
+                
+                    $item_codigo=explode(":",$partes[4]);
+                    $codigoLen=strLen($item_codigo[1]);
+                    $c_id=explode(":",$partes[0]);
+                    $padre=explode(":",$partes[7]);
+                    $codigo[$fila]['id']=$c_id[1];
+                    $codigo[$fila]['item_codigo']=$item_codigo[1];
+                    $codigo[$fila]['padre']=$padre[1];
+
+                    // ahora ponemos id y contrato a pla
+                    // cargar cantidades y montos iniciales en planilla movimientos
+                    for ($x = 1; $x <count($codigo); $x++){
+                        $id= $codigo[$x]['id'];
+                        $item_codigo= $codigo[$x]['item_codigo'];
+
+                        for ($i = 1; $i <count($pla); $i++){
+                            //$pla[$i][10]=0;
+                            $valor=$pla[$i][1];
+                            //$valor = (substr($valor, -1) =='.' ? substr($valor, 0, -1) : $valor);
+                            $comp=strcmp($valor, $item_codigo);
+                            $val1[$x][$i] =$valor.'---'.$item_codigo.'---'.$id.'---'.$comp.'---'.$i.'---'.$x;
+
+                                    if($comp == 0){
+                                        $pla[$i][10]=$id;                          
+                                        $i=5+count($pla);
+                                    }
+                        } 
+
+                    } 
+                } 
+
+
+                // insertar pla en la tabla moviminetos
+
+                $registros=count($pla);
+                for($i = 1; $i < $registros; $i++) {
+                    if($pla[$i][10] != 0){
+                        $movi= new PlanillaMovimiento;
+                        $cant=explode(",",$pla[$i][6]); $cant=implode(".",$cant); $cantidad = floatval($cant);
+                        $prec=explode(",",$pla[$i][7]); $prec=implode(".",$prec); $precio_unitario = floatval($prec);
+
+                        $movi->planilla_id=$request->planilla_id;
+                        $movi->planilla_item_id =$pla[$i][10];
+                        $movi->cantidad=$cantidad;
+                        $movi->precio_unitario=$precio_unitario;
+
+                        $movi->save();
+                    }
+                    
+                }
+                //grabamos en planilla-dcoumentos
+                
+                $relacion= new PlanillaDocument;
+                $relacion->document_id =$request->contrato_id;
+                $relacion->planilla_id=$request->planilla_id;
+                $relacion->save();
 
 
 
-       
+
+
+
+                
+               // dd($pla);
+    }    
+    /********************************************************************************************************************
+     * FIN DE CARGAR PLANILLA MODIFICATORIAS TIPO 2
+     *********************************************************************************************************************/
+
+
+ /*  ********************************************************************************************************************
+    *       INICIO ---> CARGAR PLANILLA AVANCE 3
+    *********************************************************************************************************************/  
+    if($tipo_planilla_id == 3 ){
+        // ya tenemos leido el archivo, ahota debemos pnerle  item_id
+        $items_planilla=PlanillaItem::where('contrato_id', '=', $request->contrato_id)
+        ->get();
+
+
+        $items=json_decode($items_planilla);
+        $fila=0;
+        foreach($items as $item) {
+            $fila++;
+            $obj=str_replace('"', '', json_encode($item, true));
+
+            $partes=explode(",",$obj );
+            //$codigo[$fila]['item']= $partes;
+        
+            $item_codigo=explode(":",$partes[4]);
+            $codigoLen=strLen($item_codigo[1]);
+            $c_id=explode(":",$partes[0]);
+            $padre=explode(":",$partes[7]);
+            $codigo[$fila]['id']=$c_id[1];
+            $codigo[$fila]['item_codigo']=$item_codigo[1];
+            $codigo[$fila]['padre']=$padre[1];
+
+            // ahora ponemos id y contrato a pla
+            // cargar cantidades y montos iniciales en planilla movimientos
+            for ($x = 1; $x <count($codigo); $x++){
+                $id= $codigo[$x]['id'];
+                $item_codigo= $codigo[$x]['item_codigo'];
+
+                for ($i = 1; $i <count($pla); $i++){
+                    //$pla[$i][10]=0;
+                    $valor=$pla[$i][1];
+                    //$valor = (substr($valor, -1) =='.' ? substr($valor, 0, -1) : $valor);
+                    $comp=strcmp($valor, $item_codigo);
+                    $val1[$x][$i] =$valor.'---'.$item_codigo.'---'.$id.'---'.$comp.'---'.$i.'---'.$x;
+
+                            if($comp == 0){
+                                $pla[$i][10]=$id;                          
+                                $i=5+count($pla);
+                            }
+                } 
+
+            } 
+        } 
+
+
+        // insertar pla en la tabla moviminetos
+
+        $registros=count($pla);
+        for($i = 1; $i < $registros; $i++) {
+            if($pla[$i][10] != 0){
+                $movi= new PlanillaMovimiento;
+                $cant=explode(",",$pla[$i][6]); $cant=implode(".",$cant); $cantidad = floatval($cant);
+                $prec=explode(",",$pla[$i][7]); $prec=implode(".",$prec); $precio_unitario = floatval($prec);
+
+                $movi->planilla_id=$request->planilla_id;
+                $movi->planilla_item_id =$pla[$i][10];
+                $movi->cantidad=$cantidad;
+                $movi->precio_unitario=$precio_unitario;
+
+                $movi->save();
+            }
+            
+        }
+        //grabamos en planilla-dcoumentos
+        
+        $relacion= new PlanillaDocument;
+        $relacion->document_id =$request->contrato_id;
+        $relacion->planilla_id=$request->planilla_id;
+        $relacion->save();
+
+
+
+
+
+
+        
+       // dd($pla);
+}      
+    /********************************************************************************************************************
+     * FIN DE CARGAR PLANILLA AVANCE TIPO 3
+     *********************************************************************************************************************/
+
+
+
       //DELETE FROM planilla_items WHERE planilla_id=39 and contrato_id=1;
-            dd($pla);
-        return $pla;
+      //DELETE FROM planilla_movimientos WHERE planilla_movimientos.id > 1395;
+           // dd($pla);
+        return $request;
         
 
 
