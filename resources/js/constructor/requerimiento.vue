@@ -835,7 +835,9 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="tipo_intervencion">Contrato Principal:</label>
-                                        <v-select label="nombre" :options="proyectos" v-model="jsonData.proyectos"
+                                        <v-select label="nombre" :options="proyectos"
+                                                  v-model="jsonData.proyectos"
+                                                  @input="getAllItemRelacion"
                                                   placeholder="Selecione un proyecto">
                                             <span slot="no-options">No hay datos para cargar</span>
                                         </v-select>
@@ -1509,10 +1511,27 @@ export default {
             console.log('DELETE ITEM RELACION', response.data);
             await this.listarItemRelacion();
         },
+        async filterGetItemsFromContrato(planillas) {
+            console.log('Proyecto', this.jsonData.proyectos);
+
+            let arrayPlanillasCurrentProyecto = [];
+            for(let i in planillas){
+                if (planillas[i].contrato_id === this.jsonData.proyectos.id){
+                    arrayPlanillasCurrentProyecto.push(planillas[i]);
+                }
+                else {
+                    console.log('No hay item planillas Relacionadas para este proyecto');
+                    alert('No hay item planillas Relacionadas para este proyecto');
+                    break
+                }
+            }
+            return arrayPlanillasCurrentProyecto;
+        },
         async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');
-            // responseItemPlanilla.data.filter(this.jsonData.item_descripcion.padre === );
-            this.combo_items_planilla = responseItemPlanilla.data;
+            console.log("ITEMS PLANILLA", responseItemPlanilla.data);
+            this.combo_items_planilla = await this.filterGetItemsFromContrato(responseItemPlanilla.data);
+            console.log('GET ALL ITEM RELACION', this.combo_items_planilla);
         },
         async getNameForItemRelacion() {
             const responseUnidad = (await axios.get('get_unidades')).data;
@@ -2136,7 +2155,7 @@ export default {
         this.descripcionRecursoGetAll();
         this.descripcionRecursoGetbyType();
         //Item Relacionado
-        this.getAllItemRelacion();
+        // this.getAllItemRelacion();
         this.getNameForItemRelacion();
         // this.listarItemRelacion();
         //Otros Gastos

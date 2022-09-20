@@ -107,7 +107,7 @@
                                                 }}</span></span>
                                             <button type="button" class="close" v-if="configFile.cerrar"
                                                     @click="borrar_file();"
-                                                    ><span>&times;</span></button>
+                                            ><span>&times;</span></button>
                                         </label>
                                         <input type="file" class="form-control" id="documento_res_aprobacion"
                                                @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
@@ -343,7 +343,9 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="tipo_intervencion">Contrato Principal:</label>
-                                        <v-select label="nombre" :options="proyectos" v-model="jsonData.proyectos"
+                                        <v-select label="nombre" :options="proyectos"
+                                                  v-model="jsonData.proyectos"
+                                                  @input="getAllItemRelacion"
                                                   placeholder="Selecione un proyecto">
                                             <span slot="no-options">No hay datos para cargar</span>
                                         </v-select>
@@ -497,6 +499,13 @@ export default {
         }
     },
     methods: {
+        async getProyecto(data){
+          const proyecto = data;
+          this.projectSelected = true;
+          console.log('SELECTED', this.projectSelected)
+          console.log('PROYECTO SELECCIONADO',proyecto);
+          // await this.getAllItemRelacion(proyecto)
+        },
 
         async showRequerimiento() {
             if (this.current_id != null) {
@@ -654,10 +663,28 @@ export default {
             console.log('DELETE ITEM RELACION', response.data);
             await this.listarItemRelacion();
         },
+        async filterGetItemsFromContrato(planillas) {
+            console.log('Proyecto', this.jsonData.proyectos);
+
+            let arrayPlanillasCurrentProyecto = [];
+            for(let i in planillas){
+                if (planillas[i].contrato_id === this.jsonData.proyectos.id){
+                    arrayPlanillasCurrentProyecto.push(planillas[i]);
+                }
+                else {
+                    console.log('No hay planillas para este proyecto');
+                    alert('No hay planillas para este proyecto');
+                    break
+                }
+            }
+            return arrayPlanillasCurrentProyecto;
+        },
         async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');
             console.log("ITEMS PLANILLA", responseItemPlanilla.data);
-            this.combo_items_planilla = responseItemPlanilla.data;
+            this.combo_items_planilla = await this.filterGetItemsFromContrato(responseItemPlanilla.data);
+            console.log('GET ALL ITEM RELACION', this.combo_items_planilla);
+            // this.combo_items_planilla = responseItemPlanilla.data;
         },
         async getNameForItemRelacion() {
             const responseUnidad = (await axios.get('get_unidades')).data;
@@ -876,6 +903,7 @@ export default {
             modificar_bottom: false,
             guardar_bottom: false,
             clickedAdd: false,
+            projectSelected: false,
             tituloDocLegalesModal: '',
             requerimientoFirstFill: true,
             combo_requerimiento_recursos: [],
@@ -1023,8 +1051,7 @@ export default {
     },
     created() {
         //Item Relacionado
-        this.getAllItemRelacion();
-        this.getNameForItemRelacion();
+        // this.getNameForItemRelacion();
         // this.listarItemRelacion();
         //Otros Gastos
         // this.listarItemOtrosGastos();
