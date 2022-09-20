@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Front_End\Constructor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Constructor\RequerimientoRelacion;
 
 class RequerimientoManoObraController extends Controller
 {
     public function inicio()
     {
-        return view('front-end.constructor.IndexRequerimientoManoObra');
+        return view('front-end.constructor.IndexManoObra');
     }
     /**
      * Display a listing of the resource.
