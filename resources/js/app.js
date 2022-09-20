@@ -31,8 +31,10 @@ Vue.component('requerimiento', require('./constructor/requerimiento.vue').defaul
 
 Vue.component('llave_mano', require('./constructor/llave_mano.vue').default);
 Vue.component('lista_req', require('./constructor/lista_req.vue').default);
-
-
+Vue.component('req_mano_obra', require('./constructor/req_mano_obra.vue').default);
+Vue.component('req_materiales', require('./constructor/req_materiales.vue').default);
+Vue.component('req_equipo', require('./constructor/req_equipo.vue').default);
+Vue.component('req_fondos_avance', require('./constructor/req_fondos_avance.vue').default);
 //componentes
 Vue.component('alert', require('./components/Alerta.vue').default);
 Vue.component('alert-confirmacion', require('./components/AlertaConfirmacion.vue').default);
