@@ -12,6 +12,17 @@
         <br>
         <!--------------------------------------------Tabla de Contratos----------------------------------------------->
         <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-12">
+                    
+                    <h5>  {{ jsonData.proyectos.nombre }} ({{ jsonData.proyectos.id }})</h5>
+                    
+                    
+                </div>
+            </div> 
+
+
             <div class="table-responsive">
                 <vue-bootstrap4-table :rows="rows" :columns="columns" :config="config" @on-download="mostrar"
                                       :classes="classes">
@@ -90,6 +101,46 @@
             </div>
         </div>
         <!------------------------------------------------------Fin Tabla Contrato--------------------------------------------------------->
+
+<!--  modal para la seleccion de contratos //////////--> 
+<div class="modal fade" id="seleccion_proyecto_doc_legales" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="seleccion_proyecto_doc_legalesTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato Principal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">   
+                        <div class="row">
+                            <div class="col-md-12">   
+                                <div class="col-md-12">          
+                                    <div class="form-group">
+                                        <label for="tipo_intervencion">Contrato Principal:</label>
+                                        <v-select label="nombre" :options="proyectos" v-model="jsonData.proyectos" placeholder="Selecione un proyecto">
+                                            <span slot="no-options">No hay datos para cargar</span>
+                                        </v-select>
+                                    </div>
+                                </div>    
+                            </div>                             
+                        </div>           
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="listar();">Seleccionar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
+
+
+
+
+
+
+
+
 
         <!------------------------------------------------------Modal Crear Contrato------------------------------------------------------->
         <div class="modal fade" id="contrato" tabindex="-1" role="dialog" style="overflow-y: scroll;"
@@ -359,6 +410,11 @@
 <!--        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"-->
 <!--                         @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>-->
     </div>
+
+
+
+
+    
 </template>
 
 <script>
@@ -457,6 +513,7 @@ export default {
             sectoriales: [],
             tipo_intervenciones: [],
             intervenciones: [],
+            proyectos:[],
             jsonData: {
                 //required to CRUD
                 id: 0,
@@ -474,6 +531,7 @@ export default {
                 modifica: [],
                 files: null,
                 path_contrato: null,
+                proyectos:{},
 
                 //required to Orden Proceder
                 document_id: null,
@@ -769,14 +827,21 @@ export default {
         },
         async listar(){
             const respuesta = await axios.get('get_ordenes_proceder');
+
+            const docFilter = respuesta.data.filter(docf => (docf.padre == this.jsonData.proyectos.id || docf.id == this.jsonData.proyectos.id));
+           
+
             const getDocumentTypes = (await axios.get('documentos_legaleses')).data;
 
-            const documentsResult = respuesta.data.map(documento => {
+           
+            const documentsResult = docFilter.map(documento => {
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
                 documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
                 return documento;
             });
+
+            
             this.rows = documentsResult
         },
         areAlltheFieldsFilled() {
@@ -1179,6 +1244,15 @@ export default {
                 }
             }
         },
+        async seleccionar_cont_primario(){
+            var respuesta = await axios.get('documents');
+            const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
+            console.log('========seleccionar contrato =========');
+            console.log(principales);
+            this.proyectos = principales;
+            $("#seleccion_proyecto_doc_legales").modal("show");
+           
+        },
         /*********** funciones de configuracion**************/
         // funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
         //     this.configFechas = configuracion.configFechas;
@@ -1193,7 +1267,8 @@ export default {
         /*************************fin funciones de configuracion********************** */
     },
     created() {
-        this.listar();
+        this.seleccionar_cont_primario();
+       
         this.unidadesEjecutorasGetAll();
         this.tipoDocumentoGetAll();
         this.intervencionesTipoActivas();

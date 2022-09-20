@@ -715,7 +715,13 @@ export default {
         async lista_documentos(){
            
             var respuesta = await axios.get('documents');
+            console.log('===============respuesta.data===========================');
+           console.log(respuesta.data);
             const docFilter = respuesta.data.filter(docf => (docf.padre == this.jsonData.proyectos.id || docf.id == this.jsonData.proyectos.id));
+           console.log('===============docFilter===========================');
+           console.log(docFilter);
+           
+           
             this.documentos = docFilter;           
         },
         ModalCrear(){

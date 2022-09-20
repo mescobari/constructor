@@ -40,7 +40,7 @@ class DocumentController extends Controller
             // ahora debemos encontrar el id del responsable, un funcionario puede estar asignado a mas de un proyecto.
             $resp = Responsables::select('documents_id')->where('funcionario_id', '=', $funcionario_id)->get()->toarray();
 
-            return document::whereIn('id', $resp)->get();
+            return document::whereIn('id', $resp) ->orWhereIn('padre', $resp)->get();
         } else {
             return document::all();
         }
