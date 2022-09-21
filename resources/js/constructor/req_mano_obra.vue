@@ -1,385 +1,113 @@
-<template>
-    <div>
-        <div class="card">
-            <div class="card-header ferdy-background-Primary-blak">
-                <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
-                            @click="showRequerimiento();">
-                        Imprimir Requerimiento
-                    </button>
-                    <!--                                <a :href="'ver_requerimientos/'+this.current_id" target="_blank" rel="noopener noreferrer">-->
-                    <!--                                    <button type="button"  ><span><i class="far fa-file-pdf"></i></span></button>-->
-                    <!--                                </a>-->
-                </div>
-
+<template slot-scope="props">
+    <div class="card">
+        <div class="card-header ferdy-background-Primary-blak">
+            <h3 class="card-title">Creacion de Contratos</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#contrato"
+                        @click="ModalCrear();">
+                    Crear Requerimiento Mano Obra
+                </button>
             </div>
-            <br>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div style="text-align: center;">
-                            <h5> {{ jsonData.proyectos.nombre }}</h5>
+        </div>
+        <br>
+        <!--------------------------------------------Tabla de Contratos----------------------------------------------->
+        <div class="card-body">
+            <div class="table-responsive">
+                <vue-bootstrap4-table :rows="rows" :columns="columns" :config="config" @on-download="mostrar"
+                                      :classes="classes">
+                    <template slot="simple-filter-clear-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </template>
+                    <template slot="global-search-clear-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </template>
+                    <template slot="paginataion-previous-button">
+                        <span class="text-primary"><i class="fas fa-angle-double-left"></i></span> Anterior
+                    </template>
+                    <template slot="paginataion-next-button">
+                        Siguiente <span class="text-primary"><i class="fas fa-angle-double-right"></i></span>
+                    </template>
+                    <template slot="pagination-info" slot-scope="props">
+                        Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }} |
+                        de un total de: {{ props.originalRowsLength }} Registros Obtenidos
+                    </template>
+                    <template slot="selected-rows-info" slot-scope="props">
+                        Número total de filas seleccionadas: {{ props.selectedItemsCount }}
+                    </template>
+
+                    <template slot="sort-asc-icon">
+                        <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
+                    </template>
+                    <template slot="sort-desc-icon">
+                        <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
+                    </template>
+                    <template slot="no-sort-icon">
+                        <i class="fas fa-sort"> </i>
+                    </template>
+                    <template slot="aprobacion" slot-scope="props">
+                        <div v-if="props.row.soli_estado === 'R'">
+                            <button class="btn btn-outline btn-danger dim" type="button"
+                                    @click="aprobarSolicitud(props.row)"><i class="fa fa-thumbs-o-down"></i></button>
                         </div>
+                        <div v-else>
+                            <button class="btn btn-outline btn-primary dim" type="button"><i
+                                class="fa fa-thumbs-o-up"></i></button>
+                        </div>
+                    </template>
+                    <template slot="descripcion" slot-scope="props">
+                        <div class="btn-group" v-html="props.row.descripcion" style="width: 100px;
+                                                                                        white-space: nowrap;
+                                                                                        overflow: hidden;
+                                                                                        text-overflow: Ellipsis"
+                             :title="props.row.descripcion">
+                        </div>
+                    </template>
+                    <template slot="acciones" slot-scope="props">
+                        <div class="btn-group">
+
+
+                            <button type="button" class="btn btn-outline-primary ml-1"
+                                    data-toggle="modal"
+                                    data-target="#orden"
+                                    v-if="(props.row.document_types_id === 1 || props.row.document_types_id === 2)"
+                                    v-bind:disabled="props.row.fecha_orden_proceder !== null"
+                                    @click="openModalOrden(props.row)">
+                                <span><i class="fas fa-upload"></i> </span></button>
+                            <button type="button" class="btn btn-outline-success ml-1"
+                                    v-if="props.row.path_contrato!==''"
+                                    @click="downloadDocument(props.row)"><span><i
+                                class="far fa-file-pdf"></i> </span></button>
+                            <!--                            </a>-->
+                            <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
+                                    data-target="#contrato" @click="editarModal(props.row);"><span><i
+                                class="fa fa-user-edit"></i></span></button>
+                            <button type="button" class="btn btn-outline-danger ml-1"
+                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row);"><span><i
+                                class="fa fa-trash-alt"></i></span></button>
+                        </div>
+                    </template>
+                </vue-bootstrap4-table>
+            </div>
+        </div>
+        <!------------------------------------------------------Fin Tabla Contrato--------------------------------------------------------->
+
+        <!------------------------------------------------------Modal Crear Contrato------------------------------------------------------->
+        <div class="modal fade" id="contrato" tabindex="-1" role="dialog" style="overflow-y: scroll;"
+             aria-labelledby="intervencionTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <!--modal header, close button-->
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="intervencionTitle">{{ tituloIntervencionModal }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
-
-                <hr>
-                <div>
-                    <!-- Tabs navs -->
-                    <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
-                               href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento Llave en
-                                mano</h6>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Tabs navs -->
-
-
-                <div class="tab-content" id="custom-tabs-three-tabContent">
-                    <!-- ////////////  INICIO contenedor de tabs -->
-                    <!-- REQxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-
-                    <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-home-tab">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <center class="text-danger font-weight-bold">
-                                            <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
-                                            <h3 v-else> LLave en Mano</h3>
-                                        </center>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
-                                            <datepicker
-                                                :language="configFechas.es"
-                                                :placeholder="configFechas.placeholder"
-
-
-                                                :calendar-class="configFechas.nombreClaseParaModal"
-                                                :input-class="configFechas.nombreClaseParaInput"
-                                                :monday-first="true"
-                                                :clear-button="!clickedAdd"
-                                                :clear-button-icon="configFechas.IconoBotonBorrar"
-                                                :calendar-button="true"
-
-                                                :calendar-button-icon="configFechas.IconoBotonAbrir"
-                                                calendar-button-icon-content=""
-                                                :format="configFechas.DatePickerFormat"
-                                                :full-month-name="true"
-
-                                                :bootstrap-styling="true"
-                                                :disabled-dates="configFechas.disabledDates"
-                                                :typeable="configFechas.typeable"
-                                                :value="jsonData.fecha_requerimiento"
-                                                v-model="jsonData.fecha_requerimiento"
-                                                v-bind:disabled="clickedAdd">
-                                            </datepicker>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="nombre">NURI Correspondencia:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
-                                                   v-bind:disabled="clickedAdd">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
-                                               class="bg-primary"
-                                               style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
-                                            <span id="contenido_documento_res_aprobacion"><i
-                                                class="fas fa-download fa-1x"></i><br> <span> {{
-                                                    configFile.contenidoDefault
-                                                }}</span></span>
-                                            <button type="button" class="close" v-if="configFile.cerrar"
-                                                    @click="borrar_file();"
-                                            ><span>&times;</span></button>
-                                        </label>
-                                        <input type="file" class="form-control" id="documento_res_aprobacion"
-                                               @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="form-group">
-                                    <label for="descripcion">Trabajos a ser encarados, con este requerimiento:</label>
-                                    <vue-editor
-                                        v-model="jsonData.trabajos_encarados"
-                                        :editor-toolbar="configToolBarEditText"
-                                        placeholder="Explicacion de los trabajos a ser encarados"
-                                        v-bind:disabled="clickedAdd">
-
-                                    </vue-editor>
-                                </div>
-                            </div>
-
-                        </div>
-                        <!-- hasta aqui el row span> -->
-                        <h4 class="text-danger font-weight-bold">AGREGAR ITEMS RELACIONADOS SOLICITADOS</h4>
-
-                        <hr>
-
-                        <!-- ============================== Formulario Lineal -------------------------------->
-
+                    <div class="modal-body">
                         <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="codigo_recurso">Codigo:</label>
-                                    <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
-                                           v-model="jsonData.item_codigo" disabled>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <!-- Recursos  Spinner-->
-                                    <label for="document_type">Item Relacionado:</label>
-                                    <v-select label="item_descripcion" :options="combo_items_planilla"
-                                              v-model="jsonData.item_descripcion"
-                                              placeholder="Selecione una opción"
-                                              @input="getNameForItemRelacion">
-                                        <span slot="no-options">No hay data para cargar</span>
-                                    </v-select>
-                                </div>
-
-                            </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="nombre">Unidad:</label>
-                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
-                                           v-model="jsonData.item_simbolo" disabled>
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="nombre">Vigente</label>
-                                    <input type="text" class="form-control" name="cantidad"
-                                           placeholder="Cantidad"
-                                           v-model="jsonData.item_vigente"
-                                           disabled>
-                                </div>
-                            </div>
-
-                            <div class="col-md-5">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Avance Acumulado</label>
-                                            <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas"
-                                                   v-model="jsonData.item_avance"
-                                                   disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Saldo</label>
-                                            <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.item_saldo"
-                                                   disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Avance Contratado:</label>
-                                            <input type="text" class="form-control" name="plazo"
-                                                   placeholder="dias de ejecucion"
-                                                   v-model="jsonData.item_estimado">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Precio Unitario</label>
-                                            <input type="text" class="form-control" name="referencial"
-                                                   placeholder="precio referencial"
-                                                   v-model="jsonData.item_precio_unitario">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <br>
-                                        <button type="submit" @click="guardarItemRelacion();"
-                                                class="btn btn-success">
-                                            Agregar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                        <!-- ======================/ termina form Formulario Lineal -->
-                        <hr>
-
-                        <!--  row para la tabla mostrar detalles del modelo y acciones //////////-->
-                        <div class="row">
-
-                            <div class="table-responsive">
-                                <vue-bootstrap4-table :rows="rows" :columns="columns" :config="configTablas"
-                                                      :classes="configTablas.classes">
-                                    <template slot="global-search-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="paginataion-previous-button">
-                                        <span class="text-primary"><i class="fas fa-angle-double-left"></i></span>
-                                        Anterior
-                                    </template>
-                                    <template slot="paginataion-next-button">
-                                        Siguiente <span class="text-primary"><i
-                                        class="fas fa-angle-double-right"></i></span>
-                                    </template>
-                                    <template slot="pagination-info" slot-scope="props">
-                                        Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }}
-                                        |
-                                        de un total de: {{ props.originalRowsLength }} Registros Obtenidos
-                                    </template>
-                                    <template slot="selected-rows-info" slot-scope="props">
-                                        Número total de filas seleccionadas: {{ props.selectedItemsCount }}
-                                    </template>
-
-                                    <template slot="simple-filter-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="sort-asc-icon">
-                                        <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
-                                    </template>
-                                    <template slot="sort-desc-icon">
-                                        <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
-                                    </template>
-                                    <template slot="no-sort-icon">
-                                        <i class="fas fa-sort"> </i>
-                                    </template>
-                                    <template slot="aprobacion" slot-scope="props">
-                                        <div v-if="props.row.soli_estado=='R'">
-                                            <button class="btn btn-outline btn-danger dim" type="button"
-                                                    @click="aprobarSolicitud(props.row)"><i
-                                                class="fa fa-thumbs-o-down"></i></button>
-                                        </div>
-                                        <div v-else>
-                                            <button class="btn btn-outline btn-primary dim" type="button"><i
-                                                class="fa fa-thumbs-o-up"></i></button>
-                                        </div>
-                                    </template>
-                                    <template slot="filePath" slot-scope="props">
-                                        <a :href="props.row.filePathFull" target="_blank"
-                                           title="Ver el archivo digital">
-                                            <span
-                                                class="badge badge-primary">Ver: {{
-                                                    props.row.cofinanciador_documento.titulo
-                                                }}</span>
-                                        </a>
-                                    </template>
-                                    <template slot="acciones" slot-scope="props">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-outline-warning ml-1"
-                                                    data-toggle="modal" data-target="#modal-editar-item"
-                                                    @click="editarItemRelacion(props.row);"><span><i
-                                                class="fa fa-user-edit"></i></span></button>
-                                            <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
-                                                class="fa fa-trash-alt"></i></span></button>
-                                        </div>
-                                    </template>
-                                </vue-bootstrap4-table>
-                            </div>
-                        </div>
-
-                        <!-- ////////////  FIN row de la tabla mostrar detalles del modelo y acciones -->
-
-                    </div>    <!-- ////////////  FIN del primer tab -->
-
-                    <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-
-
-                    <!-- Otrosxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-
-                    <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-                </div>
-                <!-- ////////////  FIN contenedor de tabs<div class="tab-content" id="custom-tabs-three-tabContent"> -->
-
-            </div> <!-- ////////////  FIN card-body -->
-
-            <!-- En el footer pondremos el tab veamos como funciona y to se mueve en el body -->
-            <div class="card-footer">
-
-
-            </div>
-            <!-- ///// fin  footer  -->
-        </div>
-
-        <!--  modal para la seleccion de contratos //////////-->
-        <div class="modal fade" id="seleccion_proyecto_doc_legales" tabindex="-1" role="dialog"
-             style="overflow-y: scroll;" aria-labelledby="seleccion_proyecto_doc_legalesTitle" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
-                            Principal</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="tipo_intervencion">Contrato Principal:</label>
-                                        <v-select label="nombre" :options="proyectos"
-                                                  v-model="jsonData.proyectos"
-                                                  @input="getAllItemRelacion"
-                                                  placeholder="Selecione un proyecto">
-                                            <span slot="no-options">No hay datos para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">
-                            Seleccionar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
-        <!--================================ MODAL MODIFICAR ITEM REQUERIMIENTO =============================================-->
-        <div class="modal fade" id="modal-editar-item" tabindex="-1" role="dialog"
-             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">
-                            Modificar Item Relacionado</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row bg-warning">
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="item_codigo">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
                                            v-model="jsonData.modal_codigo" disabled>
                                 </div>
@@ -387,11 +115,11 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
-                                    <label for="document_type">Item Relacionado:</label>
-                                    <v-select label="item_descripcion" :options="combo_items_planilla"
+                                    <label for="document_type">Descripcion Recurso:</label>
+                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
                                               v-model="jsonData.modal_descripcion"
                                               placeholder="Selecione una opción"
-                                              @input="getNameForItemRelacion">
+                                              @input="retrieveFromCurrentDescripcionRecurso">
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
                                 </div>
@@ -400,55 +128,27 @@
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Unidad</label>
-                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
+                                    <input type="text" class="form-control" name="unidad_id"
+                                           placeholder="Unidad"
                                            v-model="jsonData.modal_unidad" disabled>
                                 </div>
                             </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="nombre">Vigente</label>
-                                    <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                           disabled
-                                           v-model="jsonData.modal_vigente">
-                                </div>
-                            </div>
-
-                            <div class="col-md-5">
+                            <div class="col-md-7">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="nombre">Avance Acumulado</label>
-                                            <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas"
-                                                   disabled
-                                                   v-model="jsonData.modal_avance_acumulado">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Saldo</label>
-                                            <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos"
-                                                   disabled
-                                                   v-model="jsonData.modal_saldo">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Avance Contratado</label>
-                                            <input type="text" class="form-control" name="plazo"
-                                                   placeholder="dias de ejecucion"
-                                                   v-model="jsonData.modal_avance_contratado">
-                                            <!--este es el avance contratado-->
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Precio Contratado</label>
+                                            <label for="nombre">Precio referencial</label>
                                             <input type="text" class="form-control" name="referencial"
-                                                   placeholder="precio referencial"
-                                                   v-model="jsonData.modal_precio_contratado">
-                                            <!--este es el avance contratado-->
+                                                   placeholder="Precio Referencial"
+                                                   v-model="jsonData.modal_precio_referencia">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="nombre">Unidad de Contrato</label>
+                                            <input type="text" class="form-control" name="horas"
+                                                   placeholder="Unidad de Contrato"
+                                                   v-model="jsonData.modal_horas_requeridas">
                                         </div>
                                     </div>
                                 </div>
@@ -456,272 +156,499 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
-                            Cancelar
+                        <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal"
-                                @click="modificarItemRelacion">
-                            Modificar
+                        <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
+                                v-if="guardar_bottom === true">
+                            <slot>
+                                Guardar
+                            </slot>
+                        </button>
+                        <button type="submit" @click="modificar();" class="btn btn-success" id="modificarModal"
+                                v-if="modificar_bottom === true">Modificar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!----------------------------------------Fin Modal Crear Contrato---------------------------------------->
+
+        <!----------------------------------------MODAL ORDEN PROCEDER---------------------------------------->
+        <div class="modal fade" id="orden" tabindex="-1" role="dialog" style="overflow-y: scroll;"
+             aria-labelledby="intervencionTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <!--modal header, close button-->
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="intervencionTitle">{{ tituloIntervencionModal }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="fecha-firma">Fecha de Orden:</label>
+                                <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
+                                            :calendar-class="configFechas.nombreClaseParaModal"
+                                            :input-class="configFechas.nombreClaseParaInput"
+                                            :monday-first="true"
+                                            :clear-button="true"
+                                            :clear-button-icon="configFechas.IconoBotonBorrar"
+                                            :calendar-button="true"
+                                            :calendar-button-icon="configFechas.IconoBotonAbrir"
+                                            calendar-button-icon-content=""
+                                            :format="configFechas.format"
+                                            :full-month-name="true" :bootstrap-styling="true"
+                                            :disabled-dates="configFechas.disabledDates"
+                                            :typeable="configFechas.typeable"
+                                            v-model="jsonData.fecha_orden_proceder">
+                                </datepicker>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="descripcion">Descripcion de la Orden:</label>
+                                <vue-editor v-model="jsonData.desc_orden_proceder"
+                                            :editor-toolbar="configToolBarEditText">
+                                </vue-editor>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="descripcion">Orden de Proceder:</label>
+                            <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
+                                   class="bg-primary"
+                                   style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
+                                        <span id="contenido_documento_res_aprobacion"><i
+                                            class="fas fa-download fa-1x"></i><br> <span> {{
+                                                configFile.contenidoDefault
+                                            }}</span></span>
+                                <button type="button" class="close" id="closeOr" v-if="configFile.cerrar"
+                                        @click="borrar_file();"><span>&times;</span></button>
+                            </label>
+                            <input type="file" multiple class="form-control" id="documento_res_aprobacion"
+                                   @change="cargar_file" style="display:none">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="closeModal" data-dismiss="modal">Cancelar
+                        </button>
+                        <button type="submit" @click="saveOrdenProceder();" class="btn btn-success"
+                                id="guardarModal">
+                            <slot>
+                                Guardar Orden
+                            </slot>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
         <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
-                            ref="abrirAlerta">
-        </alert-confirmacion>
-
-        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"
-                         @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>
+                            ref="abrirAlerta"></alert-confirmacion>
+        <!--        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"-->
+        <!--                         @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>-->
     </div>
 </template>
 
 <script>
+
 import Vue from "vue";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
+import vue2Dropzone from 'vue2-dropzone';
+import 'vue2-dropzone/dist/vue2Dropzone.min.css';
+import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
-import {en, es} from 'vuejs-datepicker/dist/locale';
+import moment from "moment";
 
 Vue.component("v-select", vSelect);
+// Vue.component('vueDropzone', vue2Dropzone);
 
 export default {
+    props: ['url', 'csrf', 'ast', 'operations', 'user'],
+    data() {
+        return {
+            dropzoneOptions: {
+                url: 'https://httpbin.org/post',
+                thumbnailWidth: 150,
+                maxFilesize: 1,
+                headers: {"My-Awesome-Header": "header value"},
+                paralleleUploads: 1,
+            },
+            configFile: {
+                cerrar: false,
+                contenidoDefault: "DOCUMENTOS",
+                defaultProceder: "Orden Proceder"
+            },
+            mandarMensajesAlerta: {},
+            configToolBarEditText: [
+                // [{font: []}],
+                [{header: [false, 1, 2, 3, 4, 5, 6]}],//mismo que tamaño pequeño, mediano y grande pero esta tiene seis niveles
+                // [{ size: ["small", "large", "huge"] }],    //misma que tamaño 1-6 pero esta solo seria pequeño, mediano y grande
+                ["bold", "italic", "underline", "strike"], // toggled buttons
+                [
+                    {align: ""},
+                    {align: "center"},
+                    {align: "right"},
+                    {align: "justify"}
+                ],
+                ["blockquote", "code-block"],
+                [{list: "ordered"}, {list: "bullet"}, {list: "check"}],
+                [{indent: "-1"}, {indent: "+1"}], // outdent/indent
+                [{color: []}, {background: []}], // dropdown with defaults from theme
+                ["link"],
+                // ["link", "image", "video"],//comentamos por que no quiero que se cargue imagenes ni video
+                ["clean"] // remove formatting button
+            ],
+            configFechas: {
+                nombreClaseParaModal: "clase-modal-datepicker",
+                nombreClaseParaInput: "clase-input-datepicker",
+                en: en,
+                es: es,
+                DatePickerFormat: 'd-MM-yyyy',
+                // DatePickerFormat: 'mm/dd/yyyy',
+                disablesFullDate: {
+                    to: new Date(1987, 5, 25), //ojo los meses menos uno //fecha desde
+                    from: new Date(1987, 5, 25), //fecha hasta
+                },
+                // fecha: '2021-05-05',
+                placeholder: "Selecione Fecha",
+                placeholderDisbled: "Fecha Bloqueada",
+                // format: 'mm/dd/yyyy',
+                format: "dd/MM/yyyy",
+                IconoBotonBorrar: "fa fa-times-circle fa-1x text-danger",
+                IconoBotonAbrir: "fa fa-calendar-alt fa-1x text-success",
+                typeable: false,//bloquear edicion por teclado
+                disabledDates: {},
+            },
+            datosEnviarConfiguracion: {},
+
+            optionsSelect: [{label: 'Favor de Seleccionar su opción', code: "fer"}],
+            guardar_bottom: false,
+            modificar_bottom: false,
+            disablePadre: false,
+            disableSub: false,
+            disableSub2: false,
+            disabledForEdit: false,
+            combo_padres: [],
+            uploadProgress: '',
+            fileAdded: '',
+            sendingFiles: '',
+            success: '',
+            tituloIntervencionModal: '',
+            unidades_ejecutoras: [],
+            combo_tipos_documentos: [],
+            cla_institucional: [],
+            id_eliminacion: null,
+            type_name: [],
+            sectoriales: [],
+            tipo_intervenciones: [],
+            intervenciones: [],
+            jsonData: {
+                //required to CRUD
+                id: 0,
+                document_types_id: null,
+                unidad_ejecutora_id: null,
+                padre: null,
+                nombre: null,
+                codigo: null,
+                contratante_id: null,
+                contratado_id: null,
+                fecha_firma: null,
+                duracion_dias: null,
+                monto_bs: null,
+                objeto: null,
+                modifica: [],
+                files: null,
+                path_contrato: null,
+
+                //required to Orden Proceder
+                document_id: null,
+                fecha_orden_proceder: null,
+                desc_orden_proceder: null,
+                path_orden_proceder: null,
+
+                //required to MODAL CREATE UPDATE
+                modal_codigo: '',
+                modal_descripcion: '',
+                modal_unidad: '',
+                modal_cantidad: '',
+                modal_horas_requeridas: '',
+                modal_dias_requeridos: '',
+                modal_plazo: '',
+                modal_precio_referencial: '',
+
+                //required to object
+                tipo_requerimiento_id: '',
+                codigo_recurso: '',
+                descripcion_recurso: '',
+                unidad_id: '',
+                precio_referencial: '',
+                unidad_contrato: '',
+                //maybe
+                cantidad: '',
+                horas_requeridas: '',
+                dias_requeridos: '',
+                plazo: '',
+            },
+            rows: [],
+            columns: [
+                {
+                    label: "#",
+                    name: "id",
+                    filter: {
+                        type: "simple",
+                        placeholder: "#",
+                    },
+                    sort: true,
+                    uniqueId: true,
+                },
+                {
+                    label: "Codigo",
+                    name: "codigo_recurso",
+                    filter: {
+                        type: "simple",
+                        placeholder: "Nombre",
+                    },
+                    sort: true,
+                },
+                {
+                    label: "Descripcion Recurso",
+                    name: "descripcion_recurso",
+                    filter: {
+                        type: "simple",
+                        placeholder: "Tipo de Documento",
+                    },
+                    sort: true,
+                },
+                {
+                    label: "Unidad",
+                    name: "unidad_id",
+                    sort: false,
+                    filter: {
+                        type: "simple",
+                        placeholder: "Fecha",
+                    },
+                },
+                {
+                    label: "Precio Referencial.",
+                    name: "precio_referencial",
+                    sort: false,
+                    filter: {
+                        type: "simple",
+                        placeholder: "Monto",
+                    },
+                },
+                {
+                    label: "Tipo de Unidad Contrato",
+                    name: "unidad_contrato",
+                    sort: false,
+                    filter: {
+                        type: "simple",
+                        placeholder: "Dias",
+                    },
+                },
+                {
+                    label: "Acciones",
+                    name: "acciones",
+                    sort: false,
+                },
+            ],
+            actions: [//botones ejem el de descarga
+                {
+                    btn_text: "Download",
+                    event_name: "on-download",
+                    class: "btn btn-primary my-custom-class",
+                    event_payload: {
+                        msg: "my custom msg"
+                    }
+                }
+            ],
+            classes: {//clases para la tabla
+                tableWrapper: "outer-table-div-class wrapper-class-two",
+                table: {
+                    "table-striped my-class": true,
+                    "table-striped my-class-two": function (rows) {
+                        return true
+                    }
+                },
+                row: {
+                    "my-row my-row2": true,
+                    "function-class": function (row) {
+                        return row.id == 1
+                    }
+                },
+                cell: {
+                    "my-cell my-cell2": true,
+                    "text-danger": function (row, column, cellValue) {
+                        return column.name == "salary" && row.salary > 2500
+                    }
+                }
+            },
+            config: {
+                card_mode: false,
+                checkbox_rows: false,
+                rows_selectable: false,
+                global_search: {
+                    placeholder: "Buscar...",
+                    visibility: true,
+                    case_sensitive: true,
+                    showClearButton: true,
+                },
+                show_refresh_button: false,
+                show_reset_button: false,
+
+                pagination: true, // default true
+                pagination_info: true, // default true
+                num_of_visibile_pagination_buttons: 7, // default 5
+                per_page: 10, // default 10
+                per_page_options: [5, 10, 20, 30, -1],
+            },
+        }
+    },
+
     watch: {
-        behaviorReq() {
-            if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-                this.requerimientoFirstFill = true;
-            } else {
-                this.memorySelected = this.jsonData.tipo_requerimiento_id
-                this.requerimientoFirstFill = false;
-            }
+
+        props: function (val, oldVal) {
+            console.log("paso algpo");
+            // for (var i = 0; i < this.cases.length; i++) {
+            //     if (this.cases[i].status == val) {
+            //         this.activeCases.Push(this.cases[i]);
+            //         alert("Fired! " + val);
+            //     }
+            // }
+        },
+        numberFormatter(value) {
+            if (!value) return ''
+            value = value.toString()
+            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        },
+        numberFormatterInput() {
+            if (this.number) return ''
+            this.number = this.number.toString()
+            return this.number.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         }
     },
     methods: {
-        async getProyecto(data){
-            const proyecto = data;
-            this.projectSelected = true;
-            console.log('SELECTED', this.projectSelected)
-            console.log('PROYECTO SELECCIONADO',proyecto);
-            // await this.getAllItemRelacion(proyecto)
+        openModalOrden(data = {}) {
+            this.jsonData.document_id = data.id;
+            this.tituloIntervencionModal = data.nombre;
+            console.log(data);
         },
+        async saveOrdenProceder2() {
+            const document_id = this.jsonData.document_id;
+            const fecha = new Date(this.jsonData.fecha_orden_proceder);
+            const fecha_orden_proceder = fecha;
+            const desc_orden_proceder = this.jsonData.desc_orden_proceder;
+            const files = this.jsonData.files;
 
-        async showRequerimiento() {
-            if (this.current_id != null) {
-                const showReq = await axios.get('ver_requerimientos/' + this.current_id);
-                console.log('SHOW REQ', showReq.data);
-            } else {
-                alert("Debe llenar un requerimiento");
+            const jsonData = {
+                'document_id': document_id,
+                'fecha_orden_proceder': fecha_orden_proceder,
+                'desc_orden_proceder': desc_orden_proceder,
+                'files': files
             }
-        },
-        async filterListItemRelacion(arrayRequerimientoRelacion) {
-            const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
-            const getUnidades = (await axios.get('get_unidades')).data;
-            let arrayItemsFiltered = [];
-            for (let i = 0; i < arrayRequerimientoRelacion.length; i++) {
-                if (arrayRequerimientoRelacion[i].requerimiento_id === this.jsonData.requerimiento_id) {
-                    for (let j = 0; j < responsePlanillaItem.length; j++) {
-                        if (responsePlanillaItem[j].id === arrayRequerimientoRelacion[i].planilla_item_id) {
-                            arrayItemsFiltered.push({
-                                ...responsePlanillaItem[j],
-                                ...arrayRequerimientoRelacion[i], //here is the id object
-                            })
-                            j = responsePlanillaItem.length;
-                        }
-                    }
-                }
-            }
-            arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
-            });
-            console.log('LIST CURRENT', arrayItemsFiltered);
-            return arrayItemsFiltered
-        },
-        async listarItemRelacion() {
-            const responseReqRelacion = (await axios.get('get_requerimiento_relacion')).data;
-            this.rows = await this.filterListItemRelacion(responseReqRelacion);
-            // this.rows = responseReqRelacion;
-            console.log('LIST REQ REL', responseReqRelacion);
-        },
-        areAlltheFieldsFilled() {
-            return this.jsonData.requerimiento_id != null &&
-                //lineal form
-                this.jsonData.item_descripcion != null &&
-                this.jsonData.item_vigente != null &&
-                this.jsonData.item_avance != null &&
-                this.jsonData.item_saldo != null &&
-                this.jsonData.item_estimado != null &&
-                this.jsonData.item_precio_unitario != null &&
-                //panel
-                this.jsonData.fecha_requerimiento != null &&
-                this.jsonData.files != null &&
-                this.jsonData.trabajos_encarados != null &&
-                this.jsonData.nuri_requerimiento;
-        },
-        async saveItemRelacion() {
-            const response_req = await axios.get('get_requerimientos');
-            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-            console.log('REQ ID', this.jsonData.requerimiento_id);
-            console.log('ITEM RELACION ID', this.jsonData.item_descripcion.id)
-            let getValoresItem = await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id);
-            const arrayValoresItem = getValoresItem.data;
-            // console.log('GET VALORES ITEM', getValoresItem);
-            // this.jsonData.item_vigente = getValoresItem[0].vigente;
-            // this.jsonData.item_avance = getValoresItem[0].avance;
-            // this.jsonData.item_saldo = getValoresItem[0].saldo;
-            console.log('ITEMS', arrayValoresItem)
 
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
-            datos_jsonData.append('vigente', /*this.jsonData.item_vigente*/ arrayValoresItem[0].vigente);
-            datos_jsonData.append('avance', /*this.jsonData.item_avance*/ arrayValoresItem[0].avance);
-            datos_jsonData.append('estimado', this.jsonData.item_estimado);
-            datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
-            const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
-            console.log('SAVE ITEM RELACION', itemRelacion.data);
-        },
-        async saveFirstRequerimiento() {
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('document_id', this.jsonData.proyectos.id);
-            datos_jsonData.append('tipo_requerimiento_id', '5');
-            datos_jsonData.append('correlativo_requerimiento', this.jsonData.nuri_requerimiento)
-            let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
-            this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
-            datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
-            datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
-
-            datos_jsonData.append('descripcion_requerimiento', this.jsonData.trabajos_encarados);
-            datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
-            datos_jsonData.append('gastos_generales', this.jsonData.trabajos_encarados);
-            datos_jsonData.append('files', this.jsonData.files);
-            this.clickedAdd = true;
-            this.configFile.cerrar = false;
-            let response = await axios.post('create_requerimiento', datos_jsonData);
-            console.log('CREATE REQ', response.data);
-        },
-        async guardarItemRelacion() {
-
-            if (this.areAlltheFieldsFilled()) {
-                if (this.clickedAdd) {
-                    console.log('MEMORYSELECTED - True', this.memorySelected);
-                    await this.saveItemRelacion()
-                } else {
-                    console.log('MEMORYSELECTED - False', this.memorySelected);
-                    await this.saveFirstRequerimiento()
-                    await this.saveItemRelacion()
-                    console.log('REQ ID FOR CURRENT', this.jsonData.requerimiento_id);
-                    this.current_id = this.jsonData.requerimiento_id;
-                }
-                await this.cleanFormItemRelacion();
-                await this.listarItemRelacion();
-            } else {
-                alert('Por favor llene todos los campos');
-            }
-        },
-        async editarItemRelacion(data = {}) {
-            let getValoresItem = (await axios.get('get_valores_item/' + data.planilla_item_id)).data;
-            this.jsonData.id = data.id;
-            this.jsonData.requerimiento_id = data.requerimiento_id;
-            this.jsonData.planilla_item_id = data.planilla_item_id;
-
-            this.jsonData.modal_codigo = data.item_codigo;
-            this.jsonData.modal_descripcion = data.item_descripcion;
-            this.jsonData.modal_unidad = data.unidad_id;
-            //this object will be modified in the next step Item Relacion
-            this.jsonData.planilla_item_id = data.planilla_item_id;
-            this.jsonData.modal_vigente = getValoresItem[0].fvigente;
-            this.jsonData.modal_avance_acumulado = getValoresItem[0].favance;
-            ;
-            this.jsonData.modal_saldo = getValoresItem[0].fsaldo;
-            this.jsonData.modal_avance_contratado = data.estimado;
-            this.jsonData.modal_precio_contratado = data.precio_unitario;
-
-            console.log('EDITAR ITEM RELACION', data);
-        },
-        async modificarItemRelacion() {
-            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.planilla_item_id)).data;
-            console.log('GET VALORES ITEM', getValoresItem);
-            const arrayValoresItem = Object.assign(getValoresItem);
-            this.jsonData.modal_vigente = arrayValoresItem[0].vigente;
-            this.jsonData.modal_avance_acumulado = arrayValoresItem[0].avance;
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('planilla_item_id', this.jsonData.planilla_item_id);
-            datos_jsonData.append('vigente', this.jsonData.modal_vigente);
-            datos_jsonData.append('avance', this.jsonData.modal_avance_acumulado);
-            datos_jsonData.append('estimado', this.jsonData.modal_avance_contratado);
-            datos_jsonData.append('precio_unitario', this.jsonData.modal_precio_contratado);
-            const response = await axios.post('update_requerimiento_relacion/' + this.jsonData.id, datos_jsonData);
-            console.log('UPDATE ITEM RELACION', response.data);
+            const uploadFile = await axios.post('upload_orden_file', jsonData)
+            console.log(uploadFile.data);
             document.getElementById("cerrarModal").click();
-            await this.listarItemRelacion();
         },
-        async eliminarItemRelacion(id) {
-            const response = await axios.delete('delete_requerimiento_relacion/' + id);
-            console.log('DELETE ITEM RELACION', response.data);
-            await this.listarItemRelacion();
-        },
-        async filterGetItemsFromContrato(planillas) {
-            console.log('Proyecto', this.jsonData.proyectos);
+        async saveOrdenProceder() {
+            let jsonData = new FormData();
+            jsonData.append('document_id', this.jsonData.document_id);
+            const fecha = new Date(this.jsonData.fecha_orden_proceder);
+            jsonData.append('fecha_orden_proceder', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
+            jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
+            jsonData.append('files', this.jsonData.files);
+            const uploadFile = await axios.post('upload_orden_file', jsonData)
+            console.log('SAVE ORDEN', uploadFile.data);
 
-            let arrayPlanillasCurrentProyecto = [];
-            for(let i in planillas){
-                if (planillas[i].contrato_id === this.jsonData.proyectos.id){
-                    arrayPlanillasCurrentProyecto.push(planillas[i]);
-                }
-                else {
-                    console.log('No hay planillas para este proyecto');
-                    alert('No hay planillas para este proyecto');
-                    break
-                }
-            }
-            return arrayPlanillasCurrentProyecto;
+            document.getElementById("closeModal").click();
+            document.getElementById("closeOr").click();
+            this.cleanProceder();
+            await this.listar();
         },
-        async getAllItemRelacion() {
-            const responseItemPlanilla = await axios.get('get_planilla_item');
-            console.log("ITEMS PLANILLA", responseItemPlanilla.data);
-            this.combo_items_planilla = await this.filterGetItemsFromContrato(responseItemPlanilla.data);
-            console.log('GET ALL ITEM RELACION', this.combo_items_planilla);
-            // this.combo_items_planilla = responseItemPlanilla.data;
+
+        cleanProceder() {
+            this.jsonData.document_id = '';
+            this.jsonData.fecha_orden_proceder = '';
+            this.jsonData.desc_orden_proceder = '';
+            this.jsonData.files = '';
+
         },
-        async getNameForItemRelacion() {
-            const responseUnidad = (await axios.get('get_unidades')).data;
-            for (let i = 0; i < responseUnidad.length; i++) {
-                if (this.jsonData.item_descripcion.unidad_id == responseUnidad[i].id) {
-                    this.jsonData.item_simbolo = responseUnidad[i].simbolo;
-                    this.jsonData.item_codigo = this.jsonData.item_descripcion.item_codigo;
+        //modify the value of the input in real time from v-select document_types_id and padre
+        async cambioTipoDocumento() {
+            let padresObjeto = await this.padreGetAll()
+            let subPadres = []
+            const defaultValue = Object.assign({},
+                {
+                    id: 271,
+                    nombre: 'Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil'
+                });
+            switch (this.jsonData.document_types_id.id) {
+                case 1:
+                    this.disablePadre = true;
+                    this.jsonData.padre = Object.assign({}, {id: 0, nombre: 'Ninguno'});
+                    this.jsonData.contratado_id = defaultValue
+                    this.jsonData.contratante_id = '';
+                    this.disableSub = false;
+                    this.disableSub2 = true;
                     break;
-                }
+                case 2:
+                    for (let i = 0; i < padresObjeto.length; i++) {
+                        if (padresObjeto[i].padre === 0) {
+                            subPadres.push(padresObjeto[i]);
+                        }
+                        this.combo_padres = subPadres;
+                        this.disablePadre = false;
+                        this.disableSub = true;
+                        this.disableSub2 = false;
+                        this.jsonData.contratante_id = defaultValue
+                        this.jsonData.contratado_id = '';
+                    }
+                    break;
+                default:
+                    console.log("DEFAULT", this.jsonData.document_types_id.id);
+                    this.combo_padres = padresObjeto;
+                    this.disablePadre = false;
+                    this.disableSub = true;
+                    this.disableSub2 = true;
+                    if (this.jsonData.padre != null || this.jsonData.padre != '') {
+                        this.jsonData.contratado_id = '';
+                        this.jsonData.contratante_id = '';
+                    }
             }
-            //get Vigente, Avance, Estimado, Saldo
-            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id)).data;
-            console.log('GET VALORES ITEM', getValoresItem);
-            this.jsonData.item_vigente = getValoresItem[0].fvigente;
-            this.jsonData.item_avance = getValoresItem[0].favance;
-            this.jsonData.item_saldo = getValoresItem[0].fsaldo;
         },
-        async cleanFormItemRelacion() {
-            this.jsonData.item_codigo = '';
-            this.jsonData.item_descripcion = '';
-            this.jsonData.item_simbolo = '';
+        async selectContratanteContratado() {
+            let getContrata = (await axios.get('cla_institucional')).data;
+            console.log('PADRE', this.jsonData.padre);
+            let contratante = '';
+            let contratado = '';
+            for(let i in getContrata){
+                if(getContrata[i].id === this.jsonData.padre.contratante_id){
+                    contratante = getContrata[i];
+                }
+                i = getContrata.length;
+            }
+            for (let i in getContrata) {
+                if (getContrata[i].id === this.jsonData.padre.contratado_id) {
+                    contratado = getContrata[i];
+                }
+                i = getContrata.length;
+            }
 
-            this.jsonData.item_vigente = '';
-            this.jsonData.item_avance = '';
-            this.jsonData.item_saldo = '';
-            this.jsonData.item_estimado = '';
-            this.jsonData.item_precio_unitario = '';
+            console.log("CONTRATANTE", this.jsonData.contratante_id);
+            console.log("CONTRATADO", this.jsonData.contratado_id);
+            if (this.disablePadre === false &&
+                this.jsonData.document_types_id.id !== 1 &&
+                this.jsonData.document_types_id.id !== 2) {
+                this.jsonData.contratante_id = contratante ;
+                this.jsonData.contratado_id = contratado;
+            }
         },
-        async seleccionar_cont_primario() {
-            const respuesta = await axios.get('documents');
-            const principales = respuesta.data.filter((item) => item.document_types_id === 1)
-            console.log('Documentos Principales', principales);
-            this.proyectos = principales;
-            $("#seleccion_proyecto_doc_legales").modal("show");
-
-        },
-        preguntarModalAlertaConfirmacionEliminar(id) {
+        preguntarModalAlertaConfirmacionEliminar(document) {
             this.mandarMensajesAlerta = {
                 titulo: "Mensajes del Sistema",//titulo del mensaje
                 contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
@@ -729,138 +656,366 @@ export default {
                 contenidoPie: "¿Esta seguro de eliminar el registro?",//contenido del mensaje
                 tipo: "ferdy-background-Primary-blak",//color danger warnin etc para header de modal
                 tituloBotonUno: "SI", //texto de primer boton el de true
-                tituloBotonDos: "NO", //texto segundo bocton del de false
+                tituloBotonDos: "NO", //texto segundo boton del de false
                 respuesta: false,
             };
-            this.id_eliminacion = id;
+            this.id_eliminacion = document.id;
             this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
         },
-        detectActiveTab(currentTab) {
-            this.tabSelected = currentTab;
-        },
         respuestaModalAlertaConfirmacion(datos) {
-            console.log('eliminando', datos.respuesta);
+            // console.log(datos.respuesta);
             if (datos.respuesta === true) {
-                this.eliminarItemRelacion(this.id_eliminacion);
+                console.log('eliminando', datos.respuesta);
+                this.deleteItem(this.id_eliminacion);
             }
         },
-        async ver_planilla() {
-            const vp = this.jsonData.proyectos.id;
-            console.log('vplan--> ' + vp);
-            var respuesta = await axios.get('planillas/' + vp);
-            console.log('voviendo del backend');
-            console.log(respuesta.data);
+        async listar(){
+            const respuesta = await axios.get('get_ordenes_proceder');
+            const getDocumentTypes = (await axios.get('documentos_legaleses')).data;
 
-            const planillas = respuesta.data.map(planilla => {
-                if (planilla.tipo_planilla_id === 1) {
-                    planilla.tipo = 'Inicial (#' + planilla.numero_planilla + ')';
-                } else if (planilla.tipo_planilla_id === 2) {
-                    planilla.tipo = 'Modificacion (#' + planilla.numero_planilla + ')';
-                } else {
-                    planilla.tipo = 'Avance (#' + planilla.numero_planilla + ')';
-                }
-
-                planilla.fecha_planilla = planilla.fecha_planilla.split('-').reverse().join('-');
-
-                //documento.tipo_documento = contratosObjeto[documento.document_types_id];
+            const documentsResult = respuesta.data.map(documento => {
+                documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
+                documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
                 //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
-                return planilla;
+                return documento;
             });
-
-            this.rows = planillas;
+            this.rows = documentsResult
         },
+        areAlltheFieldsFilled() {
+            return this.jsonData.document_types_id !== '' &&
+                this.jsonData.padre !== '' &&
+                this.jsonData.contratante_id.id !== '' &&
+                this.jsonData.contratado_id.id !== '' &&
+                this.jsonData.duracion_dias !== '' &&
+                this.jsonData.fecha_firma !== '' &&
+                this.jsonData.codigo !== '' &&
+                this.jsonData.nombre !== '' &&
+                this.jsonData.monto_bs !== '' &&
+                this.jsonData.objeto !== '' &&
+                this.jsonData.modifica !== '' &&
+                this.jsonData.files !== '';
+        },
+        async contratoSave() {
+            console.log('contratoSave2', this.jsonData);
+            let document_types_id = this.jsonData.document_types_id.id;
+            let padre = this.jsonData.padre.id;
+            let unidad_ejecutora_id = 1/*this.jsonData.unidad_ejecutora_id.id*/;
+            let contratante_id = this.jsonData.contratante_id.id;
+            let contratado_id = this.jsonData.contratado_id.id;
+            let duracion_dias = this.jsonData.duracion_dias;
+            let fecha = new Date(this.jsonData.fecha_firma);
+            let fecha_firma = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
+            let codigo = this.jsonData.codigo;
+            let nombre = this.jsonData.nombre;
+            let monto_bs = this.jsonData.monto_bs;
+            let objeto = this.jsonData.objeto;
+            let modifica = this.jsonData.modifica.toString();
+            let files = this.jsonData.files;
 
-
-        async buscar_doc_legales() {
-            var data = {
-                'intervencion': this.jsonData.proyectos,
+            const dataJson = {
+                'document_types_id': document_types_id,
+                'padre': padre,
+                'unidad_ejecutora_id': unidad_ejecutora_id,
+                'contratante_id': contratante_id,
+                'contratado_id': contratado_id,
+                'duracion_dias': duracion_dias,
+                'fecha_firma': fecha_firma,
+                'codigo': codigo,
+                'nombre': nombre,
+                'monto_bs': monto_bs,
+                'objeto': objeto,
+                'modifica': modifica,
+                'files': files
             }
-            console.log(data);
-            var respuesta = await axios.post('buscar_documentos_legaleses', data);
-            // console.log("cofinanciadores");
+            let saved = await axios.post('documents', dataJson)
+            console.log('SAVED', saved.data);
+        },
+        async contratoSave2() {
+
+            let datosJsonData = new FormData();
+            datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
+            datosJsonData.append('padre', this.jsonData.padre.id);
+            datosJsonData.append('unidad_ejecutora_id', 1/*this.jsonData.unidad_ejecutora_id.id*/);
+
+            if(this.jsonData.document_types_id === 1){
+                datosJsonData.append('contratado_id', 271);
+                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            } else if(this.jsonData.document_types_id === 2) {
+                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+                datosJsonData.append('contratado_id', 271);
+            } else {
+                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+                datosJsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            }
+            datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            datosJsonData.append('duracion_dias', this.jsonData.duracion_dias);
+            const fecha = new Date(this.jsonData.fecha_firma);
+            datosJsonData.append('fecha_firma', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
+            datosJsonData.append('codigo', this.jsonData.codigo);
+            datosJsonData.append('nombre', this.jsonData.nombre);
+            datosJsonData.append('monto_bs', this.jsonData.monto_bs);
+            datosJsonData.append('objeto', this.jsonData.objeto);
+            datosJsonData.append('modifica', this.jsonData.modifica.toString());
+            datosJsonData.append('files', this.jsonData.files);
+            let saved = await axios.post('documents', datosJsonData)
+            console.log('SAVED', saved.data);
+        },
+        async guardar() {
+            if (this.areAlltheFieldsFilled()) {
+                await this.contratoSave2();
+                // await this.contratoSave()
+                document.getElementById("closeDoc").click();
+                document.getElementById("cerrarModal").click();
+                await this.listar();
+            } else {
+                alert('Debe llenar todos campos');
+            }
+        },
+        async modificar() {
+
+            let datos_jsonData = new FormData();
+            datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
+            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
+            if (this.jsonData.document_types_id.id === 1) {
+                datos_jsonData.append('padre', '0');
+            } else {
+                datos_jsonData.append('padre', this.jsonData.padre.id);
+            }
+            datos_jsonData.append('nombre', this.jsonData.nombre);
+            datos_jsonData.append('codigo', this.jsonData.codigo);
+            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
+            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
+            datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
+            let fecha_firma = new Date(this.jsonData.fecha_firma);
+            if(isNaN(fecha_firma.getDate())){
+                datos_jsonData.append('fecha_firma', '');
+            }
+            else{
+                datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()).toString());
+            }
+            datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
+            datos_jsonData.append('objeto', this.jsonData.objeto);
+            datos_jsonData.append('modifica', this.jsonData.modifica);
+            datos_jsonData.append('files', this.jsonData.files);
+            datos_jsonData.append('id', this.jsonData.id);
+            console.log('APPEND', datos_jsonData);
+            const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
+            // const respuesta = await axios.put(`documents/` + this.jsonData.id, datos_jsonData);
+            console.log('MODIFIED', respuesta.data);
+            await this.listar();
+            document.getElementById("cerrarModal").click();
+            if (document.getElementById("closeDoc")) {
+                document.getElementById("closeDoc").click();
+            }
+            // this.limpiar_formulario();
+        },
+        limpiar_formulario() {
+            this.jsonData.id = null;
+            this.jsonData.document_types_id = null;
+            this.jsonData.codigo = '';
+            this.jsonData.nombre = '';
+            this.jsonData.unidad_ejecutora_id = null;
+            this.jsonData.contratado_id = null;
+            this.jsonData.contratante_id = null;
+            this.jsonData.fecha_firma = '';
+            this.jsonData.duracion_dias = null;
+            this.jsonData.monto_bs = null;
+            this.jsonData.modifica = [];
+            this.jsonData.padre = null;
+            this.jsonData.files = '';
+            this.jsonData.path_contrato = '';
+            this.jsonData.objeto = '';
+        },
+        async editarModal(data = {}) {
+            const response_documents = await axios.get(`documents`);
+            const response_doc_types = await axios.get('documentos_legaleses');
+            const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
+            const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
+
+            this.disabledForEdit = true;
+            this.modificar_bottom = true;
+            this.guardar_bottom = false;
+            this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
+            this.jsonData.id = data.id;
+            this.jsonData.codigo = data.codigo;
+            this.jsonData.nombre = data.nombre;
+            this.jsonData.modifica = data.modifica.split(',');
+            console.log("MODIFICA", this.jsonData.modifica);
+            this.jsonData.duracion_dias = data.duracion_dias;
+            this.jsonData.monto_bs = data.monto_bs;
+            this.jsonData.objeto = data.objeto;
+
+            const formateado = moment(data.fecha_firma, 'D-M-YYYY')
+            const dateObject = formateado.toDate();
+            const f = new Date(dateObject);
+            this.jsonData.fecha_firma = ((f.getMonth() + 1) + '-' + f.getDate() + '-' + f.getFullYear()).toString();
+            console.log("FECHA OBTENIDA", this.jsonData.fecha_firma);
+
+            this.jsonData.files = data.files;
+            this.jsonData.path_contrato = data.path_contrato;
+            //set data to v-select contratante_id
+            for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
+                if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
+                    this.jsonData.contratante_id = response_institucion_contratante_contratadora.data[i];
+                    i = response_institucion_contratante_contratadora.data.length;
+                }
+            }
+            //set data to v-select contratado_id
+            for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
+                if (data.contratado_id === response_institucion_contratante_contratadora.data[i].id) {
+                    this.jsonData.contratado_id = response_institucion_contratante_contratadora.data[i];
+                    i = response_institucion_contratante_contratadora.data.length;
+                }
+            }
+            //set data to v-select unidad_ejecutora_id
+            for (let i = 0; i < response_unidad_ejecutora.data.length; i++) {
+                if (data.unidad_ejecutora_id === response_unidad_ejecutora.data[i].id) {
+                    this.jsonData.unidad_ejecutora_id = response_unidad_ejecutora.data[i];
+                    i = response_unidad_ejecutora.data.length;
+                }
+            }
+            //set data to v-select document_types_id
+            for (let i = 0; i < response_doc_types.data.length; i++) {
+                if (data.document_types_id === response_doc_types.data[i].id) {
+                    this.jsonData.document_types_id = response_doc_types.data[i];
+                    i = response_doc_types.data.length;
+                }
+            }
+            //set this data to padre Contrato Principal
+            const padreIdName = [
+                {
+                    id: 0,
+                    nombre: 'Ninguno'
+                }
+            ];
+            //set data to v-select padre
+            for (let i = 0; i < response_documents.data.length; i++) {
+                if (data.padre === response_documents.data[i].id) {
+                    this.disablePadre = false;
+                    this.jsonData.padre = response_documents.data[i];
+                    i = response_documents.data.length;
+                } else {
+                    this.disablePadre = true;
+                    this.jsonData.padre = padreIdName[0];
+                }
+            }
+            console.log("EDITAR", data);
+        },
+        async downloadDocument(data = {}) {
+            const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
+            const blob = new Blob([response.data], {type: 'octet-stream'});
+            const href = URL.createObjectURL(blob);
+            const a = Object.assign(document.createElement('a'), {
+                href,
+                style: 'display: none',
+                download: data.path_contrato
+            });
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(href);
+            a.remove()
+        },
+        //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
+        async padreGetAll() {
+            let response = await axios.get('documents');
+            let padresArray = [];
+            let position = 0
+            //fill array of padres with contrato principal (1) and sub contrato (2)
+            for (let i = 0; i < response.data.length; i++) {
+                if (response.data[i].document_types_id === 1 ||
+                    response.data[i].document_types_id === 2) {
+                    padresArray[position] = response.data[i];
+                    position++;
+                }
+            }
+            return padresArray;
+            // await this.filterPadre(padresArray);
+            // this.combo_padres = padresArray
+        },
+        async deleteItem(doc) {
+            const respuesta = await axios.delete('documents/' + doc);
+            // this.id_eliminacion = null;
             console.log(respuesta.data);
-            this.rows = respuesta.data;
-            this.tipos_documentos();
-            this.instituciones();
-            this.organismos_financiadores();
-            this.doc_legales();
-            this.objetivos();
+            await this.listar();
         },
-        async instituciones() {
-            var respuesta = await axios.post('buscar_documentos_legaleses_instituciones');
-            this.combo_instituciones = respuesta.data;
+        async tipoDocumentoGetAll() {
+            let respuesta = await axios.get('documentos_legaleses');
+            this.combo_tipos_documentos = respuesta.data;
         },
-        async organismos_financiadores() {
-            var respuesta = await axios.post('buscar_documentos_legaleses_org_finan');
-            this.combo_cofinanciadores = respuesta.data;
+        async intervencionesTipoActivas() {
+            var respuesta = await axios.get('intervencions_tipo');
+            // console.log("intervencion");
+            // console.log(respuesta.data);
+            this.tipo_intervenciones = respuesta.data;
+            this.optionsSelect = respuesta.data;
         },
-        async doc_legales() {
-            var data = {'intervencion': this.jsonData.proyectos,}
-            var respuesta = await axios.post('buscar_documentos_legaleses_combo', data);
-            this.combo_documentos_legales = respuesta.data;
+        async institucionesGetAll() {
+            const respuesta = await axios.get('cla_instituciones');
+            // console.log(respuesta.data);
+            this.cla_institucional = respuesta.data;
+            // this.jsonData.institucion = respuesta.data;
         },
-        async objetivos() {
-            var data = {'intervencion': this.jsonData.proyectos,}
-            var respuesta = await axios.post('buscar_documentos_legaleses_objetivos', data);
-            this.combo_objetivos = respuesta.data;
+        async unidadesEjecutorasGetAll() {
+            const respuesta = await axios.get('get_unidades_ejecutoras');
+            this.unidades_ejecutoras = respuesta.data;
+            console.log(respuesta.data);
+        },
+        //get data from?
+        async sectorialesActivos() {
+            var respuesta = await axios.get('sectorials');
+            // console.log(respuesta.data);
+            this.sectoriales = respuesta.data;
         },
         ModalCrear() {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
-            this.tituloDocLegalesModal = "Formulario de Creación de Planillas";
+            this.disabledForEdit = false;
+            this.disablePadre = false;
+            this.limpiar_formulario();
+            this.tituloIntervencionModal = "Formulario de Creación de Contratos";
         },
-        limpiar_formulario() {
-            $('#modifica1').removeAttr('checked');
-            $('#modifica2').removeAttr('checked');
-            $('#modifica3').removeAttr('checked');
-
-            this.jsonData.id = "";
-
-            this.jsonData.tipos_documento = {};
-            this.jsonData.institucion = {};
-            this.jsonData.cofinanciador = {};
-            this.jsonData.titulo = '';
-            this.jsonData.doc_legal = {};
-            this.jsonData.objetivo = {};
-            this.jsonData.fecha_firma = '';
-            this.jsonData.fecha_inicio = '';
-            this.jsonData.fecha_vencimiento = '';
-            this.jsonData.funcionario = '';
-            this.jsonData.objeto = '';
-            this.jsonData.monto_bs = '';
-            this.jsonData.monto_Sus = '';
-            this.jsonData.duracion_dias = '';
-            this.jsonData.objeto = '';
-
-            this.btnmodificar = false;
-            this.btncancelar = false;
-            this.btnguardar = true;
-            this.configFile.contenidoDefault = " CARGAR INFORME TECNICO/JUSTIFICACION";
-            this.borrar_file();
+        mostrar() {
+            console.log(this.jsonData.nombre);
+            console.log(this.jsonData.document_types_id.id);
         },
-        /**********************archivos para file******************* */
-        cargar_file(event) {
-            var nombre_file = "";
-            this.jsonData.files = event.target.files[0];
-            for (let key in event.target.files) {//cargamos datos
-                var boucle = event.target.files[key];
-                if (boucle.name != null && boucle.name != 'undefined' && boucle.name != "item") {
-                    // console.log(boucle.name);
-                    nombre_file = boucle.name;
-                }
-
+        onDownload(payload) {
+            console.log(payload);
+        },
+        ordenar_tabla(total) {
+            for (i = 1; i <= total; i++) {
+                this.contador[i] = i;
             }
-
-            this.configFile.cerrar = true;
-            nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
-            this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
+            console.log("cnotador   ");
         },
+        handleImageAdded: function (file, Editor, cursorLocation, resetUploader) {
+            // An example of using FormData
+            // NOTE: Your key could be different such as:
+            // formData.append('file', file)
 
+            var formData = new FormData();
+            formData.append("image", file);
+
+            axios({
+                url: "https://fakeapi.yoursite.com/images",
+                method: "POST",
+                data: formData
+            })
+                .then(result => {
+                    const url = result.data.url; // Get url from response
+                    Editor.insertEmbed(cursorLocation, "image", url);
+                    resetUploader();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
         borrar_file() {
             var nombre_file = "<i class='fas fa-download fa-1x'></i><br><span> " + this.configFile.contenidoDefault + "</span>";
             $('#documento_res_aprobacion').val("");
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-primary'], '#contenido_documento_res_aprobacion', [nombre_file]);
         },
+        /////////////////*****************funciones de configuraciones********************* */
+
         reiniciar_file(id, clase_borrar, clase_adicionar, id_contenido, contenido_cargar) {
             // console.log("entro");
             console.log(contenido_cargar);
@@ -883,190 +1038,81 @@ export default {
                         $(id).addClass(clase_adicionar[key]);
                     }
                 }
+            } else {
+                console.log("no se encontro el id");
+            }
+        },
+        cargar_file(event) {
+            let nombre_file = "";
+            this.jsonData.files = event.target.files[0];
+            for (let key in event.target.files) {//cargamos datos
+                let boucle = event.target.files[key];
+                if (boucle.name != null && boucle.name !== 'undefined' && boucle.name !== "item") {
+                    // console.log(boucle.name);
+                    nombre_file = boucle.name;
+                }
+                // for(let key2 in boucle){
+                //     console.log(key2);
+                //     console.log(boucle[key2]);
+                // }
+            }
+            this.configFile.cerrar = true;
+            nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
+            this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
+        },
+        async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
+            var respuesta = await axios.get('tipo_cambio_bs_sus');
+            console.log(respuesta.data);
+            if (respuesta.data == "") {
+                alert("No se tiene registrado el tipo de cambio para hoy");
+            } else {
+                if (tipo_local == 'BS') {//como guarda en bs cargamos al de dolar
+                    var valor = "";
+                    console.log("aqui");
+                    var valor = this.jsonData.monto_aprobado_bs / respuesta.data.valor_compra;
+                    valor = valor.toFixed(2);
+                    this.jsonData.monto_aprobado_dolares = valor;
+                } else {//como guarda en dolar cargamos al de bs
+                    var valor = "";
+                    var valor = this.jsonData.monto_aprobado_dolares * respuesta.data.valor_venta;
+                    valor = valor.toFixed(2);
+                    this.jsonData.monto_aprobado_bs = valor;
+
+                }
             }
         },
         /*********** funciones de configuracion**************/
-        funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
-            this.configFechas = configuracion.configFechas;
-            this.configTablas = configuracion.configTablas;
-            this.actions = configuracion.configTablasAction;
-            this.classes = configuracion.configTablasClases;
-            this.configToolBarEditText = configuracion.configToolBarEditText;
-        },
-        funcionRecuperaConfig() {//funcion solicita la configuracion
-            this.$refs.RecuperaConfig.RecuperaConfig();//esta es la funcion de mandar configuracion desde hijo
-        }
+        // funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
+        //     this.configFechas = configuracion.configFechas;
+        //     this.configTablas = configuracion.configTablas;
+        //     this.actions = configuracion.configTablasAction;
+        //     this.classes = configuracion.configTablasClases;
+        //     this.configToolBarEditText = configuracion.configToolBarEditText;
+        // },
+        // funcionRecuperaConfig() {//funcion solicita la configuracion
+        //     this.$refs.RecuperaConfig.RecuperaConfig();//esta es la funcion de mandar configuracion desde hijo
+        // },
         /*************************fin funciones de configuracion********************** */
     },
-    data() {
-        return {
-            modificar_bottom: false,
-            guardar_bottom: false,
-            clickedAdd: false,
-            projectSelected: false,
-            tituloDocLegalesModal: '',
-            requerimientoFirstFill: true,
-            combo_requerimiento_recursos: [],
-            combo_items_planilla: [],
-            combo_otros_gastos: [],
-            memorySelected: true,
-            tabSelected: 'home',
-            proyectos: [],
-            current_id: null,
-            mandarMensajesAlerta: {},
-            id_eliminacion: null,
-            ///ITEM PLANILLA CON ITEM RELACIONADO VARS
-            fvigente: '',
-            favance: '',
-            fsaldo: '',
-            ///FIN PLANILLA RELACIONADO
-            jsonData: {
-                //REQUERIMIENTO OBRA
-                id: "",
-                correlativo_requerimiento: null,
-                nuri_requerimiento: '',
-                requerimiento_id: '',
-                tipo_requerimiento_id: 5,
-                codigo_recurso: '',
-                proyectos: '',
-                tipos_documento: {},
-                institucion: {},
-                cofinanciador: {},
-                titulo: '',
-                doc_legal: {},
-                objetivo: {},
-                document_id: '',
-                descripcion_requerimiento: '',
-                requerimiento_recurso_id: '',
-                descripcion_recurso: '',
-                unidad_id: '',
-                simbolo: '',
-                cantidad_recurso: '',
-                horas_recurso: '',
-                dias_recurso: '',
-                tiempo_total_recurso: '',
-                precio_referencia_recurso: '',
-                trabajos_encarados: '',
-                files: null,
-                //RELACION CON EL CONTRATO PRINCIPAL
-                item_codigo: '',
-                item_descripcion: '',
-                item_simbolo: '',
-                item_vigente: '',
-                item_avance: '',
-                item_saldo: '',
-                item_estimado: '',
-                item_precio_unitario: '',
-                planilla_item_id: '',
-                avance: '',
-                estimado: '',
-                vigente: '',
-                saldo: '',
-                precio_unitario: '',
-                ///FIN RELACION
-                //modal vars
-                modal_codigo: '',
-                modal_descripcion: '',
-                modal_unidad: '',
-
-                modal_vigente: '',
-                modal_avance_acumulado: '',
-                modal_saldo: '',
-                modal_avance_contratado: '',
-                modal_precio_contratado: '',
-            },
-
-
-            rows: [],
-            columns: [
-                {
-                    label: "Codigo",
-                    name: "item_codigo",
-                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
-                },
-                {
-                    label: "Item Relacionado:",
-                    name: "item_descripcion",
-                    filter: {type: "simple", placeholder: "Item Relacionado",},
-                    sort: true,
-                },
-                {
-                    label: "Unidad",
-                    name: "unidad_id",
-                    filter: {type: "simple", placeholder: "Unidad"},
-                    sort: true,
-                },
-                {
-                    label: "Cantidad Vigente",
-                    name: "vigente",
-                    filter: {type: "simple", placeholder: "Cantidad Vigente"},
-                },
-                {
-                    label: "Avance Acumulado",
-                    name: "avance",
-                    filter: {type: "simple", placeholder: "Avance"},
-                },
-                // {
-                //     label: "Avance Contratado",
-                //     name: "avance",
-                //     filter: {type: "simple", placeholder: "Avance"},
-                // },
-                {
-                    label: "precio_contratado",
-                    name: "precio_unitario",
-                    filter: {type: "simple", placeholder: "Por Ejecutar"},
-                },
-                {
-                    label: "Avance Estimado",
-                    //es el avance contratado
-                    name: "estimado",
-                    filter: {type: "simple", placeholder: "Avance Estimado"},
-                },
-
-
-                {
-                    label: "Acciones",
-                    name: "acciones",
-                    sort: false,
-                },
-
-
-            ],
-
-            configFile: {
-                cerrar: false,
-                contenidoDefault: " CARGAR INFORME TECNICO/JUSTIFICACION",
-            },
-            datosEnviarConfiguracion: {},
-            configFechas: {},
-            configTablas: {},
-            actions: [],
-            classes: {},
-            configToolBarEditText: [],
-        }
-    },
-    mounted() {
-        this.funcionRecuperaConfig();
-        this.seleccionar_cont_primario();
-    },
     created() {
-        //Item Relacionado
-        // this.getNameForItemRelacion();
-        // this.listarItemRelacion();
-        //Otros Gastos
-        // this.listarItemOtrosGastos();
-
-        //tabs
-        console.log("CLICKED ADD", this.clickedAdd);
-    },
+        this.listar();
+        this.unidadesEjecutorasGetAll();
+        this.tipoDocumentoGetAll();
+        this.intervencionesTipoActivas();
+        this.sectorialesActivos();
+        this.institucionesGetAll();
+        this.padreGetAll();
+    }
+    ,
     components: {
         VueBootstrap4Table,
         Datepicker,
         VueEditor,
+        vue2Dropzone
     }
 }
+;
+
 </script>
-
 <style>
-
 </style>
