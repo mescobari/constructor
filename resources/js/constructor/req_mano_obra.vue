@@ -124,9 +124,11 @@
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Unidad</label>
-                                    <input type="text" class="form-control" name="unidad_id"
-                                           placeholder="Unidad"
-                                           v-model="jsonEdUpSave.modal_unidad">
+                                    <v-select label="simbolo" :options="combo_unidades"
+                                              v-model="jsonEdUpSave.modal_unidad"
+                                              placeholder="Selecione una opción">
+                                        <span slot="no-options">No hay data para cargar</span>
+                                    </v-select>
                                 </div>
                             </div>
                             <div class="col-md-7">
@@ -142,9 +144,11 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="nombre">Unidad de Contrato</label>
-                                            <input type="text" class="form-control" name="horas"
-                                                   placeholder="Unidad de Contrato"
-                                                   v-model="jsonEdUpSave.modal_unidad_contrato">
+                                            <v-select label="nombre" :options="combo_unidades_contratos"
+                                                      v-model="jsonEdUpSave.modal_unidad_contrato"
+                                                      placeholder="Selecione una opción">
+                                                <span slot="no-options">No hay data para cargar</span>
+                                            </v-select>
                                         </div>
                                     </div>
                                 </div>
@@ -257,7 +261,6 @@ import vue2Dropzone from 'vue2-dropzone';
 import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
-import moment from "moment";
 
 Vue.component("v-select", vSelect);
 // Vue.component('vueDropzone', vue2Dropzone);
@@ -334,7 +337,9 @@ export default {
             sendingFiles: '',
             success: '',
             tituloIntervencionModal: '',
-            combo_requerimiento_recursos: [],
+
+            combo_unidades_contratos: [],
+            combo_unidades: [],
             cla_institucional: [],
             id_eliminacion: null,
             type_name: [],
@@ -674,6 +679,16 @@ export default {
             console.log("DELETED",respuesta.data);
             await this.listar();
         },
+        async comboUnidadesContratos(){
+            this.combo_unidades = (await axios.get('get_unidades')).data;
+            this.combo_unidades_contratos = [
+                {id: 1, nombre: 'dia'},
+                {id: 2, nombre: 'u'},
+            ];
+
+            console.log('UNIDADES CONTRATO', this.combo_unidades_contratos);
+            console.log('UNIDADES', this.combo_unidades);
+        },
         areAlltheFieldsFilled() {
             return this.jsonEdUpSave.modal_codigo !== '' &&
                 this.jsonEdUpSave.modal_descripcion !== '' &&
@@ -683,7 +698,10 @@ export default {
         },
         saveItemRecurso(){
             this.jsonEdUpSave.modal_tipo_requerimiento = 1;
+            this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
+            this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
             console.log(this.jsonEdUpSave);
+
             let jsonEdUpSave = new FormData();
             for (let key in this.jsonEdUpSave) {
                 jsonEdUpSave.append(key, this.jsonEdUpSave[key]);
@@ -916,7 +934,7 @@ export default {
     },
     created() {
         this.listar();
-        // this.requerimientoRecursoGetAll();
+        this.comboUnidadesContratos();
     },
     components: {
         VueBootstrap4Table,
