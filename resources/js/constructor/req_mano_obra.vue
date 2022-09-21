@@ -346,29 +346,7 @@ export default {
             tipo_intervenciones: [],
             intervenciones: [],
             jsonData: {
-                //required to CRUD
                 id: 0,
-                document_types_id: null,
-                unidad_ejecutora_id: null,
-                padre: null,
-                nombre: null,
-                codigo: null,
-                contratante_id: null,
-                contratado_id: null,
-                fecha_firma: null,
-                duracion_dias: null,
-                monto_bs: null,
-                objeto: null,
-                modifica: [],
-                files: null,
-                path_contrato: null,
-
-                //required to Orden Proceder
-                document_id: null,
-                fecha_orden_proceder: null,
-                desc_orden_proceder: null,
-                path_orden_proceder: null,
-
                 //required to MODAL CREATE UPDATE
                 modal_codigo: '',
                 modal_descripcion: '',
@@ -392,6 +370,17 @@ export default {
                 horas_requeridas: '',
                 dias_requeridos: '',
                 plazo: '',
+            },
+            jsonModal:{
+                modal_codigo: '',
+                modal_descripcion: '',
+                modal_unidad: '',
+                modal_cantidad: '',
+                modal_horas_requeridas: '',
+                modal_dias_requeridos: '',
+                modal_plazo: '',
+                modal_precio_referencial: '',
+                modal_unidad_contrato: '',
             },
             rows: [],
             columns: [
@@ -678,6 +667,7 @@ export default {
         async requerimientoRecursoGetAll() {
             let getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
             this.combo_requerimiento_recursos = getAllItemRecurso.filter(item => item.tipo_requerimiento_id === 1);
+            console.log('COMBO RECURSO', this.combo_requerimiento_recursos);
         },
         async retrieveFromCurrentDescripcionRecurso() {
             let getUnidades = (await axios.get('get_unidades')).data;
@@ -697,6 +687,11 @@ export default {
 
             console.log("EDITAR", data);
         },
+        async deleteItem(id) {
+            const respuesta = await axios.delete('requerimiento_mano_obra/' + id);
+            console.log(respuesta.data);
+            await this.listar();
+        },
         areAlltheFieldsFilled() {
             return this.jsonData.document_types_id !== '' &&
                 this.jsonData.padre !== '' &&
@@ -711,40 +706,12 @@ export default {
                 this.jsonData.modifica !== '' &&
                 this.jsonData.files !== '';
         },
-        async contratoSave2() {
+        async saveItemRecurso(){
 
-            let datosJsonData = new FormData();
-            datosJsonData.append('document_types_id', this.jsonData.document_types_id.id);
-            datosJsonData.append('padre', this.jsonData.padre.id);
-            datosJsonData.append('unidad_ejecutora_id', 1/*this.jsonData.unidad_ejecutora_id.id*/);
-
-            if(this.jsonData.document_types_id === 1){
-                datosJsonData.append('contratado_id', 271);
-                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            } else if(this.jsonData.document_types_id === 2) {
-                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
-                datosJsonData.append('contratado_id', 271);
-            } else {
-                datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
-                datosJsonData.append('contratado_id', this.jsonData.contratado_id.id);
-            }
-            datosJsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            datosJsonData.append('duracion_dias', this.jsonData.duracion_dias);
-            const fecha = new Date(this.jsonData.fecha_firma);
-            datosJsonData.append('fecha_firma', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
-            datosJsonData.append('codigo', this.jsonData.codigo);
-            datosJsonData.append('nombre', this.jsonData.nombre);
-            datosJsonData.append('monto_bs', this.jsonData.monto_bs);
-            datosJsonData.append('objeto', this.jsonData.objeto);
-            datosJsonData.append('modifica', this.jsonData.modifica.toString());
-            datosJsonData.append('files', this.jsonData.files);
-            let saved = await axios.post('documents', datosJsonData)
-            console.log('SAVED', saved.data);
         },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
-                await this.contratoSave2();
-                // await this.contratoSave()
+                this.saveItemRecurso()
                 document.getElementById("closeDoc").click();
                 document.getElementById("cerrarModal").click();
                 await this.listar();
@@ -790,6 +757,7 @@ export default {
             }
             // this.limpiar_formulario();
         },
+        //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         limpiar_formulario() {
             this.jsonData.id = null;
             this.jsonData.document_types_id = null;
@@ -807,7 +775,6 @@ export default {
             this.jsonData.path_contrato = '';
             this.jsonData.objeto = '';
         },
-        //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
             const blob = new Blob([response.data], {type: 'octet-stream'});
@@ -837,12 +804,6 @@ export default {
             return padresArray;
             // await this.filterPadre(padresArray);
             // this.combo_padres = padresArray
-        },
-        async deleteItem(doc) {
-            const respuesta = await axios.delete('documents/' + doc);
-            // this.id_eliminacion = null;
-            console.log(respuesta.data);
-            await this.listar();
         },
         ModalCrear() {
             this.modificar_bottom = false;

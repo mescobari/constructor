@@ -86,6 +86,8 @@ class RequerimientoManoObraController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $requerimientoRecurso = RequerimientoItem::findOrFail($id);
+        $requerimientoRecurso->delete();
+        return $requerimientoRecurso;
     }
 }
