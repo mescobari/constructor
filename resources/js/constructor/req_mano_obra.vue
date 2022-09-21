@@ -109,19 +109,22 @@
                                 <div class="form-group">
                                     <label for="codigo_recurso">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
-                                           v-model="jsonData.modal_codigo" disabled>
+                                           v-model="jsonEdUpSave.modal_codigo">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Descripcion Recurso:</label>
-                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
-                                              v-model="jsonData.modal_descripcion"
-                                              placeholder="Selecione una opción"
-                                              @input="retrieveFromCurrentDescripcionRecurso">
-                                        <span slot="no-options">No hay data para cargar</span>
-                                    </v-select>
+                                    <input type="text" class="form-control" name="codigo_recurso"
+                                           placeholder="Descripcion del Recurso"
+                                           v-model="jsonEdUpSave.modal_descripcion">
+<!--                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"-->
+<!--                                              v-model="jsonEdUpSave.modal_descripcion"-->
+<!--                                              placeholder="Selecione una opción"-->
+<!--                                              @input="retrieveFromCurrentDescripcionRecurso">-->
+<!--                                        <span slot="no-options">No hay data para cargar</span>-->
+<!--                                    </v-select>-->
                                 </div>
 
                             </div>
@@ -130,7 +133,7 @@
                                     <label for="nombre">Unidad</label>
                                     <input type="text" class="form-control" name="unidad_id"
                                            placeholder="Unidad"
-                                           v-model="jsonData.modal_unidad" disabled>
+                                           v-model="jsonEdUpSave.modal_unidad">
                                 </div>
                             </div>
                             <div class="col-md-7">
@@ -140,7 +143,7 @@
                                             <label for="nombre">Precio referencial</label>
                                             <input type="text" class="form-control" name="referencial"
                                                    placeholder="Precio Referencial"
-                                                   v-model="jsonData.modal_precio_referencial">
+                                                   v-model="jsonEdUpSave.modal_precio_referencial">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -148,7 +151,7 @@
                                             <label for="nombre">Unidad de Contrato</label>
                                             <input type="text" class="form-control" name="horas"
                                                    placeholder="Unidad de Contrato"
-                                                   v-model="jsonData.modal_unidad_contrato">
+                                                   v-model="jsonEdUpSave.modal_unidad_contrato">
                                         </div>
                                     </div>
                                 </div>
@@ -371,16 +374,14 @@ export default {
                 dias_requeridos: '',
                 plazo: '',
             },
-            jsonModal:{
+            jsonEdUpSave:{
+                id: 0,
                 modal_codigo: '',
                 modal_descripcion: '',
                 modal_unidad: '',
-                modal_cantidad: '',
-                modal_horas_requeridas: '',
-                modal_dias_requeridos: '',
-                modal_plazo: '',
                 modal_precio_referencial: '',
                 modal_unidad_contrato: '',
+                modal_tipo_requerimiento: '',
             },
             rows: [],
             columns: [
@@ -664,55 +665,54 @@ export default {
             console.log('LISTAR TODO', getAllItemRecurso);
             console.log('LISTAR FILTRO', this.rows);
         },
-        async requerimientoRecursoGetAll() {
-            let getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
-            this.combo_requerimiento_recursos = getAllItemRecurso.filter(item => item.tipo_requerimiento_id === 1);
-            console.log('COMBO RECURSO', this.combo_requerimiento_recursos);
-        },
-        async retrieveFromCurrentDescripcionRecurso() {
-            let getUnidades = (await axios.get('get_unidades')).data;
-            this.jsonData.modal_codigo = this.jsonData.modal_descripcion.codigo_recurso;
-            this.jsonData.modal_unidad = (getUnidades.find(item =>
-                item.id === this.jsonData.modal_descripcion.unidad_id)).simbolo;
-
-            console.log('UNIDAD', this.jsonData.modal_unidad);
-            console.log('CODIGO', this.jsonData.modal_codigo);
-        },
+        // async requerimientoRecursoGetAll() {
+        //     let getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
+        //     this.combo_requerimiento_recursos = getAllItemRecurso.filter(item => item.tipo_requerimiento_id === 1);
+        //     console.log('COMBO RECURSO', this.combo_requerimiento_recursos);
+        // },
+        // async retrieveFromCurrentDescripcionRecurso() {
+        //     let getUnidades = (await axios.get('get_unidades')).data;
+        //     this.jsonEdUpSave.modal_codigo = this.jsonEdUpSave.modal_descripcion.codigo_recurso;
+        //     this.jsonEdUpSave.modal_unidad = (getUnidades.find(item =>
+        //         item.id === this.jsonEdUpSave.modal_descripcion.unidad_id)).simbolo;
+        //
+        //     console.log('UNIDAD', this.jsonEdUpSave.modal_unidad);
+        //     console.log('CODIGO', this.jsonEdUpSave.modal_codigo);
+        // },
         async editarModal(data = {}) {
-            this.jsonData.modal_codigo = data.codigo_recurso;
-            this.jsonData.modal_descripcion = data.descripcion_recurso;
-            this.jsonData.modal_unidad = data.unidad_id;
-            this.jsonData.modal_precio_referencial = data.precio_referencial;
-            this.jsonData.modal_unidad_contrato = data.unidad_contrato;
+            this.jsonEdUpSave.modal_codigo = data.codigo_recurso;
+            this.jsonEdUpSave.modal_descripcion = data.descripcion_recurso;
+            this.jsonEdUpSave.modal_unidad = data.unidad_id;
+            this.jsonEdUpSave.modal_precio_referencial = data.precio_referencial;
+            this.jsonEdUpSave.modal_unidad_contrato = data.unidad_contrato;
 
             console.log("EDITAR", data);
         },
         async deleteItem(id) {
             const respuesta = await axios.delete('requerimiento_mano_obra/' + id);
-            console.log(respuesta.data);
+            console.log("DELETED",respuesta.data);
             await this.listar();
         },
         areAlltheFieldsFilled() {
-            return this.jsonData.document_types_id !== '' &&
-                this.jsonData.padre !== '' &&
-                this.jsonData.contratante_id.id !== '' &&
-                this.jsonData.contratado_id.id !== '' &&
-                this.jsonData.duracion_dias !== '' &&
-                this.jsonData.fecha_firma !== '' &&
-                this.jsonData.codigo !== '' &&
-                this.jsonData.nombre !== '' &&
-                this.jsonData.monto_bs !== '' &&
-                this.jsonData.objeto !== '' &&
-                this.jsonData.modifica !== '' &&
-                this.jsonData.files !== '';
+            return this.jsonEdUpSave.modal_codigo !== '' &&
+                this.jsonEdUpSave.modal_descripcion !== '' &&
+                this.jsonEdUpSave.modal_unidad !== '' &&
+                this.jsonEdUpSave.modal_precio_referencial !== '' &&
+                this.jsonEdUpSave.modal_unidad_contrato !== '';
         },
-        async saveItemRecurso(){
-
+        saveItemRecurso(){
+            console.log(this.jsonEdUpSave);
+            this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id
+            this.jsonEdUpSave.modal_descripcion = this.jsonEdUpSave.modal_descripcion.descripcion_recurso
+            let jsonEdUpSave = new FormData();
+            for (let key in this.jsonEdUpSave) {
+                jsonEdUpSave.append(key, this.jsonEdUpSave[key]);
+            }
+            console.log('Save', jsonEdUpSave);
         },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
                 this.saveItemRecurso()
-                document.getElementById("closeDoc").click();
                 document.getElementById("cerrarModal").click();
                 await this.listar();
             } else {
@@ -935,7 +935,7 @@ export default {
     },
     created() {
         this.listar();
-        this.requerimientoRecursoGetAll();
+        // this.requerimientoRecursoGetAll();
     },
     components: {
         VueBootstrap4Table,
