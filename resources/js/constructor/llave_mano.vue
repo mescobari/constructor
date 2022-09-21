@@ -671,13 +671,13 @@ export default {
                 if (planillas[i].contrato_id === this.jsonData.proyectos.id){
                     arrayPlanillasCurrentProyecto.push(planillas[i]);
                 }
-                else {
-                    console.log('No hay planillas para este proyecto');
-                    alert('No hay planillas para este proyecto');
-                    break
-                }
             }
-            return arrayPlanillasCurrentProyecto;
+            if(arrayPlanillasCurrentProyecto.length >0){
+                return arrayPlanillasCurrentProyecto;
+            } else {
+                console.log('No hay planillas para este proyecto');
+                alert('No hay planillas para este proyecto');
+            }
         },
         async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');

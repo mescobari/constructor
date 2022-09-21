@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], function () {
     Route::get('unidad_ejec', 'UnidadEjecutoraController@inicio')->name('unidad_ejec');  //menu
     Route::get('contrato_prin', 'ContratoPrincipalController@inicio')->name('contrato_prin');  //menu
-
     Route::get('listar_unidades_ejecutoras', 'UnidadEjecutoraController@listarUnidadesEjecutoras')->name('listar_unidades_ejecutoras');
     Route::get('get_unidades_ejecutoras', 'UnidadEjecutoraController@getUnidadesEjecutoras')->name('get_unidades_ejecutoras');
     Route::apiResource('unidades_ejecutoras', UnidadEjecutoraController::class);
@@ -32,10 +31,13 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::post('procesar_csv', 'PlanillaController@procesarCSV')->name('procesar_csv');
 
 //requerimientos
+    Route::apiResource('requerimiento_mano_obra', RequerimientoManoObraController::class);
+    Route::get('req_mano_obra_ini', 'RequerimientoManoObraController@inicio')->name('req_mano_obra_ini');
+
+    Route::apiResource('requerimientos', RequerimientoController::class);
     Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');
     Route::get('req_llave_mano', 'RequerimientoController@llave_mano')->name('req_llave_mano');
     Route::get('lista_req', 'RequerimientoController@listaReq')->name('lista_req');
-    Route::apiResource('requerimientos', RequerimientoController::class);
     Route::post('create_requerimiento', 'RequerimientoController@createRequerimiento')->name('create_requerimiento');
     Route::get('get_requerimientos', 'RequerimientoController@getRequerimientos')->name('get_requerimientos');
     Route::get('get_unidades', 'RequerimientoController@getUnidades')->name('get_unidades');
