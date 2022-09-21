@@ -140,7 +140,7 @@
                                             <label for="nombre">Precio referencial</label>
                                             <input type="text" class="form-control" name="referencial"
                                                    placeholder="Precio Referencial"
-                                                   v-model="jsonData.modal_precio_referencia">
+                                                   v-model="jsonData.modal_precio_referencial">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -148,7 +148,7 @@
                                             <label for="nombre">Unidad de Contrato</label>
                                             <input type="text" class="form-control" name="horas"
                                                    placeholder="Unidad de Contrato"
-                                                   v-model="jsonData.modal_horas_requeridas">
+                                                   v-model="jsonData.modal_unidad_contrato">
                                         </div>
                                     </div>
                                 </div>
@@ -338,8 +338,7 @@ export default {
             sendingFiles: '',
             success: '',
             tituloIntervencionModal: '',
-            unidades_ejecutoras: [],
-            combo_tipos_documentos: [],
+            combo_requerimiento_recursos: [],
             cla_institucional: [],
             id_eliminacion: null,
             type_name: [],
@@ -379,6 +378,7 @@ export default {
                 modal_dias_requeridos: '',
                 modal_plazo: '',
                 modal_precio_referencial: '',
+                modal_unidad_contrato: '',
 
                 //required to object
                 tipo_requerimiento_id: '',
@@ -670,16 +670,32 @@ export default {
             }
         },
         async listar(){
-            const respuesta = await axios.get('get_ordenes_proceder');
-            const getDocumentTypes = (await axios.get('documentos_legaleses')).data;
+            const getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
+            this.rows = getAllItemRecurso.filter(item => item.tipo_requerimiento_id === 1);
+            console.log('LISTAR TODO', getAllItemRecurso);
+            console.log('LISTAR FILTRO', this.rows);
+        },
+        async requerimientoRecursoGetAll() {
+            let getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
+            this.combo_requerimiento_recursos = getAllItemRecurso.filter(item => item.tipo_requerimiento_id === 1);
+        },
+        async retrieveFromCurrentDescripcionRecurso() {
+            let getUnidades = (await axios.get('get_unidades')).data;
+            this.jsonData.modal_codigo = this.jsonData.modal_descripcion.codigo_recurso;
+            this.jsonData.modal_unidad = (getUnidades.find(item =>
+                item.id === this.jsonData.modal_descripcion.unidad_id)).simbolo;
 
-            const documentsResult = respuesta.data.map(documento => {
-                documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
-                documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
-                //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
-                return documento;
-            });
-            this.rows = documentsResult
+            console.log('UNIDAD', this.jsonData.modal_unidad);
+            console.log('CODIGO', this.jsonData.modal_codigo);
+        },
+        async editarModal(data = {}) {
+            this.jsonData.modal_codigo = data.codigo_recurso;
+            this.jsonData.modal_descripcion = data.descripcion_recurso;
+            this.jsonData.modal_unidad = data.unidad_id;
+            this.jsonData.modal_precio_referencial = data.precio_referencial;
+            this.jsonData.modal_unidad_contrato = data.unidad_contrato;
+
+            console.log("EDITAR", data);
         },
         areAlltheFieldsFilled() {
             return this.jsonData.document_types_id !== '' &&
@@ -694,41 +710,6 @@ export default {
                 this.jsonData.objeto !== '' &&
                 this.jsonData.modifica !== '' &&
                 this.jsonData.files !== '';
-        },
-        async contratoSave() {
-            console.log('contratoSave2', this.jsonData);
-            let document_types_id = this.jsonData.document_types_id.id;
-            let padre = this.jsonData.padre.id;
-            let unidad_ejecutora_id = 1/*this.jsonData.unidad_ejecutora_id.id*/;
-            let contratante_id = this.jsonData.contratante_id.id;
-            let contratado_id = this.jsonData.contratado_id.id;
-            let duracion_dias = this.jsonData.duracion_dias;
-            let fecha = new Date(this.jsonData.fecha_firma);
-            let fecha_firma = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
-            let codigo = this.jsonData.codigo;
-            let nombre = this.jsonData.nombre;
-            let monto_bs = this.jsonData.monto_bs;
-            let objeto = this.jsonData.objeto;
-            let modifica = this.jsonData.modifica.toString();
-            let files = this.jsonData.files;
-
-            const dataJson = {
-                'document_types_id': document_types_id,
-                'padre': padre,
-                'unidad_ejecutora_id': unidad_ejecutora_id,
-                'contratante_id': contratante_id,
-                'contratado_id': contratado_id,
-                'duracion_dias': duracion_dias,
-                'fecha_firma': fecha_firma,
-                'codigo': codigo,
-                'nombre': nombre,
-                'monto_bs': monto_bs,
-                'objeto': objeto,
-                'modifica': modifica,
-                'files': files
-            }
-            let saved = await axios.post('documents', dataJson)
-            console.log('SAVED', saved.data);
         },
         async contratoSave2() {
 
@@ -826,81 +807,7 @@ export default {
             this.jsonData.path_contrato = '';
             this.jsonData.objeto = '';
         },
-        async editarModal(data = {}) {
-            const response_documents = await axios.get(`documents`);
-            const response_doc_types = await axios.get('documentos_legaleses');
-            const response_unidad_ejecutora = await axios.get('get_unidades_ejecutoras');
-            const response_institucion_contratante_contratadora = await axios.get('cla_institucional');
-
-            this.disabledForEdit = true;
-            this.modificar_bottom = true;
-            this.guardar_bottom = false;
-            this.tituloIntervencionModal = "Formulario de Modificaciones de Contratos";
-            this.jsonData.id = data.id;
-            this.jsonData.codigo = data.codigo;
-            this.jsonData.nombre = data.nombre;
-            this.jsonData.modifica = data.modifica.split(',');
-            console.log("MODIFICA", this.jsonData.modifica);
-            this.jsonData.duracion_dias = data.duracion_dias;
-            this.jsonData.monto_bs = data.monto_bs;
-            this.jsonData.objeto = data.objeto;
-
-            const formateado = moment(data.fecha_firma, 'D-M-YYYY')
-            const dateObject = formateado.toDate();
-            const f = new Date(dateObject);
-            this.jsonData.fecha_firma = ((f.getMonth() + 1) + '-' + f.getDate() + '-' + f.getFullYear()).toString();
-            console.log("FECHA OBTENIDA", this.jsonData.fecha_firma);
-
-            this.jsonData.files = data.files;
-            this.jsonData.path_contrato = data.path_contrato;
-            //set data to v-select contratante_id
-            for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
-                if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
-                    this.jsonData.contratante_id = response_institucion_contratante_contratadora.data[i];
-                    i = response_institucion_contratante_contratadora.data.length;
-                }
-            }
-            //set data to v-select contratado_id
-            for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
-                if (data.contratado_id === response_institucion_contratante_contratadora.data[i].id) {
-                    this.jsonData.contratado_id = response_institucion_contratante_contratadora.data[i];
-                    i = response_institucion_contratante_contratadora.data.length;
-                }
-            }
-            //set data to v-select unidad_ejecutora_id
-            for (let i = 0; i < response_unidad_ejecutora.data.length; i++) {
-                if (data.unidad_ejecutora_id === response_unidad_ejecutora.data[i].id) {
-                    this.jsonData.unidad_ejecutora_id = response_unidad_ejecutora.data[i];
-                    i = response_unidad_ejecutora.data.length;
-                }
-            }
-            //set data to v-select document_types_id
-            for (let i = 0; i < response_doc_types.data.length; i++) {
-                if (data.document_types_id === response_doc_types.data[i].id) {
-                    this.jsonData.document_types_id = response_doc_types.data[i];
-                    i = response_doc_types.data.length;
-                }
-            }
-            //set this data to padre Contrato Principal
-            const padreIdName = [
-                {
-                    id: 0,
-                    nombre: 'Ninguno'
-                }
-            ];
-            //set data to v-select padre
-            for (let i = 0; i < response_documents.data.length; i++) {
-                if (data.padre === response_documents.data[i].id) {
-                    this.disablePadre = false;
-                    this.jsonData.padre = response_documents.data[i];
-                    i = response_documents.data.length;
-                } else {
-                    this.disablePadre = true;
-                    this.jsonData.padre = padreIdName[0];
-                }
-            }
-            console.log("EDITAR", data);
-        },
+        //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
             const blob = new Blob([response.data], {type: 'octet-stream'});
@@ -915,7 +822,6 @@ export default {
             URL.revokeObjectURL(href);
             a.remove()
         },
-        //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         async padreGetAll() {
             let response = await axios.get('documents');
             let padresArray = [];
@@ -937,34 +843,6 @@ export default {
             // this.id_eliminacion = null;
             console.log(respuesta.data);
             await this.listar();
-        },
-        async tipoDocumentoGetAll() {
-            let respuesta = await axios.get('documentos_legaleses');
-            this.combo_tipos_documentos = respuesta.data;
-        },
-        async intervencionesTipoActivas() {
-            var respuesta = await axios.get('intervencions_tipo');
-            // console.log("intervencion");
-            // console.log(respuesta.data);
-            this.tipo_intervenciones = respuesta.data;
-            this.optionsSelect = respuesta.data;
-        },
-        async institucionesGetAll() {
-            const respuesta = await axios.get('cla_instituciones');
-            // console.log(respuesta.data);
-            this.cla_institucional = respuesta.data;
-            // this.jsonData.institucion = respuesta.data;
-        },
-        async unidadesEjecutorasGetAll() {
-            const respuesta = await axios.get('get_unidades_ejecutoras');
-            this.unidades_ejecutoras = respuesta.data;
-            console.log(respuesta.data);
-        },
-        //get data from?
-        async sectorialesActivos() {
-            var respuesta = await axios.get('sectorials');
-            // console.log(respuesta.data);
-            this.sectoriales = respuesta.data;
         },
         ModalCrear() {
             this.modificar_bottom = false;
@@ -1096,14 +974,8 @@ export default {
     },
     created() {
         this.listar();
-        this.unidadesEjecutorasGetAll();
-        this.tipoDocumentoGetAll();
-        this.intervencionesTipoActivas();
-        this.sectorialesActivos();
-        this.institucionesGetAll();
-        this.padreGetAll();
-    }
-    ,
+        this.requerimientoRecursoGetAll();
+    },
     components: {
         VueBootstrap4Table,
         Datepicker,
