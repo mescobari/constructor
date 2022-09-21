@@ -119,14 +119,7 @@
                                     <input type="text" class="form-control" name="codigo_recurso"
                                            placeholder="Descripcion del Recurso"
                                            v-model="jsonEdUpSave.modal_descripcion">
-<!--                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"-->
-<!--                                              v-model="jsonEdUpSave.modal_descripcion"-->
-<!--                                              placeholder="Selecione una opción"-->
-<!--                                              @input="retrieveFromCurrentDescripcionRecurso">-->
-<!--                                        <span slot="no-options">No hay data para cargar</span>-->
-<!--                                    </v-select>-->
                                 </div>
-
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
@@ -665,21 +658,9 @@ export default {
             console.log('LISTAR TODO', getAllItemRecurso);
             console.log('LISTAR FILTRO', this.rows);
         },
-        // async requerimientoRecursoGetAll() {
-        //     let getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
-        //     this.combo_requerimiento_recursos = getAllItemRecurso.filter(item => item.tipo_requerimiento_id === 1);
-        //     console.log('COMBO RECURSO', this.combo_requerimiento_recursos);
-        // },
-        // async retrieveFromCurrentDescripcionRecurso() {
-        //     let getUnidades = (await axios.get('get_unidades')).data;
-        //     this.jsonEdUpSave.modal_codigo = this.jsonEdUpSave.modal_descripcion.codigo_recurso;
-        //     this.jsonEdUpSave.modal_unidad = (getUnidades.find(item =>
-        //         item.id === this.jsonEdUpSave.modal_descripcion.unidad_id)).simbolo;
-        //
-        //     console.log('UNIDAD', this.jsonEdUpSave.modal_unidad);
-        //     console.log('CODIGO', this.jsonEdUpSave.modal_codigo);
-        // },
+
         async editarModal(data = {}) {
+            this.jsonEdUpSave.modal_tipo_requerimiento = data.tipo_requerimiento_id;
             this.jsonEdUpSave.modal_codigo = data.codigo_recurso;
             this.jsonEdUpSave.modal_descripcion = data.descripcion_recurso;
             this.jsonEdUpSave.modal_unidad = data.unidad_id;
@@ -701,14 +682,14 @@ export default {
                 this.jsonEdUpSave.modal_unidad_contrato !== '';
         },
         saveItemRecurso(){
+            this.jsonEdUpSave.modal_tipo_requerimiento = 1;
             console.log(this.jsonEdUpSave);
-            this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id
-            this.jsonEdUpSave.modal_descripcion = this.jsonEdUpSave.modal_descripcion.descripcion_recurso
             let jsonEdUpSave = new FormData();
             for (let key in this.jsonEdUpSave) {
                 jsonEdUpSave.append(key, this.jsonEdUpSave[key]);
             }
-            console.log('Save', jsonEdUpSave);
+            let savedRecurso = axios.post('requerimiento_mano_obra', jsonEdUpSave)
+            console.log('Save', savedRecurso);
         },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
