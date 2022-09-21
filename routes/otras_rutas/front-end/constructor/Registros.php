@@ -32,7 +32,7 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
 
 //requerimientos
     Route::apiResource('requerimiento_mano_obra', RequerimientoManoObraController::class);
-    Route::get('req_mano_obra_ini', 'RequerimientoManoObraController@inicio')->name('req_mano_obra_ini');
+    Route::get('req_mano_obra', 'RequerimientoManoObraController@inicio')->name('req_mano_obra');
 
     Route::apiResource('requerimientos', RequerimientoController::class);
     Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');

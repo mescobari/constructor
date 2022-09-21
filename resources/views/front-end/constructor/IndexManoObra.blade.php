@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{{asset("assets/ferdy/dataTables/fer-dataTables.bootstrap.min.css")}}"> --}}
 @endsection
 @section("scripts")
+{{--    <div id="app"><req_mano_obra/></div>--}}
     <script src="{{ asset('js/app.js') }}"></script>
     {{-- <script src="{{asset("assets/ferdy/pages/scripts/admin/index.js")}}" type="text/javascript"></script> --}}
     {{-- <script src="{{asset("assets/ferdy/dataTables/bootstrap.bundle.min.js")}}" type="text/javascript"></script>
