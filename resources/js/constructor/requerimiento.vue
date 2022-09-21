@@ -1516,16 +1516,16 @@ export default {
 
             let arrayPlanillasCurrentProyecto = [];
             for(let i in planillas){
-                if (planillas[i].contrato_id === this.jsonData.proyectos.id){
+                if (planillas[i].contrato_id === this.jsonData.proyectos.id) {
                     arrayPlanillasCurrentProyecto.push(planillas[i]);
                 }
-                else {
-                    console.log('No hay item planillas Relacionadas para este proyecto');
-                    alert('No hay item planillas Relacionadas para este proyecto');
-                    break
-                }
             }
-            return arrayPlanillasCurrentProyecto;
+            if(arrayPlanillasCurrentProyecto.length >0){
+                return arrayPlanillasCurrentProyecto;
+            } else {
+                console.log('No hay planillas para este proyecto');
+                alert('No hay planillas para este proyecto');
+            }
         },
         async getAllItemRelacion() {
             const responseItemPlanilla = await axios.get('get_planilla_item');
