@@ -677,6 +677,7 @@ export default {
         },
 
         async editarModal(data = {}) {
+            this.limpiar_formulario();
             this.jsonEdUpSave.modal_tipo_requerimiento = data.tipo_requerimiento_id;
             this.jsonEdUpSave.modal_codigo = data.codigo_recurso;
             this.jsonEdUpSave.modal_descripcion = data.descripcion_recurso;
@@ -772,7 +773,7 @@ export default {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
             this.limpiar_formulario();
-            this.tituloIntervencionModal = "Formulario de Creación de Contratos";
+            this.tituloIntervencionModal = "Formulario de Creación de Mano de Obra";
         },
         limpiar_formulario() {
             this.jsonEdUpSave.modal_codigo = '';
