@@ -84,13 +84,23 @@ class RequerimientoManoObraController extends Controller
     public function update(Request $request, $id)
     {
         $req_mano_obra = RequerimientoRecursos::findOrFail($id);
-        $req_mano_obra->tipo_requerimiento_id = $request->modal_tipo_requerimiento;
-        $req_mano_obra->codigo_recurso = $request->modal_codigo;
-        $req_mano_obra->descripcion_recurso = $request->modal_descripcion;
-        $req_mano_obra->unidad_id = $request->modal_unidad;
-        $req_mano_obra->precio_referencial = $request->modal_precio_referencial;
-        $req_mano_obra->unidad_contrato = $request->modal_unidad_contrato;
-        $req_mano_obra->save();
+        return $req_mano_obra->update([
+                'tipo_requerimiento_id' => $request->modal_tipo_requerimiento,
+                'codigo_recurso' => $request->modal_codigo,
+                'descripcion_recurso' => $request->modal_descripcion,
+                'unidad_id' => $request->modal_unidad,
+                'precio_referencial' => $request->modal_precio_referencial,
+                'unidad_contrato' => $request->modal_unidad_contrato,
+            ]
+        );
+//        $req_mano_obra = RequerimientoRecursos::findOrFail($id);
+//        $req_mano_obra->tipo_requerimiento_id = $request->modal_tipo_requerimiento;
+//        $req_mano_obra->codigo_recurso = $request->modal_codigo;
+//        $req_mano_obra->descripcion_recurso = $request->modal_descripcion;
+//        $req_mano_obra->unidad_id = $request->modal_unidad;
+//        $req_mano_obra->precio_referencial = $request->modal_precio_referencial;
+//        $req_mano_obra->unidad_contrato = $request->modal_unidad_contrato;
+//        $req_mano_obra->save();
     }
     public function updateManoObra(Request $request, $id){
         $req_mano_obra = RequerimientoRecursos::findOrFail($id);
@@ -120,7 +130,7 @@ class RequerimientoManoObraController extends Controller
      */
     public function destroy($id)
     {
-        $requerimientoRecurso = RequerimientoItem::findOrFail($id);
+        $requerimientoRecurso = RequerimientoRecursos::findOrFail($id);
         $requerimientoRecurso->delete();
         return $requerimientoRecurso;
     }
