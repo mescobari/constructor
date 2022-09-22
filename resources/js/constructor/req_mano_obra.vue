@@ -661,15 +661,17 @@ export default {
             const getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
             const getUnidades = (await axios.get('get_unidades')).data;
             let filteredItems = [];
-            for (let i in getAllItemRecurso) {
-                if (getAllItemRecurso[i].tipo_requerimiento_id === 1) {
-                    filteredItems.push(getAllItemRecurso[i]);
+
+            for (let position in getAllItemRecurso) {
+                if (getAllItemRecurso[position].tipo_requerimiento_id === 1) {
+                    filteredItems.push(getAllItemRecurso[position]);
                 }
             }
             filteredItems.map(item => {
                 item.unidad_id = getUnidades[item.unidad_id-1].simbolo
             });
             this.rows = filteredItems;
+
             console.log('LISTAR TODO', getAllItemRecurso);
             console.log('LISTAR FILTRO', this.rows);
         },
