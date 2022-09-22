@@ -694,7 +694,7 @@ export default {
         async comboUnidadesContratos() {
             this.combo_unidades = (await axios.get('get_unidades')).data;
             this.combo_unidades_contratos = [
-                {id: 1, nombre: 'dia'},
+                {id: 1, nombre: 'día'},
                 {id: 2, nombre: 'u'},
             ];
 
@@ -768,22 +768,18 @@ export default {
             // this.limpiar_formulario();
         },
         //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
+        ModalCrear() {
+            this.modificar_bottom = false;
+            this.guardar_bottom = true;
+            this.limpiar_formulario();
+            this.tituloIntervencionModal = "Formulario de Creación de Contratos";
+        },
         limpiar_formulario() {
-            this.jsonData.id = null;
-            this.jsonData.document_types_id = null;
-            this.jsonData.codigo = '';
-            this.jsonData.nombre = '';
-            this.jsonData.unidad_ejecutora_id = null;
-            this.jsonData.contratado_id = null;
-            this.jsonData.contratante_id = null;
-            this.jsonData.fecha_firma = '';
-            this.jsonData.duracion_dias = null;
-            this.jsonData.monto_bs = null;
-            this.jsonData.modifica = [];
-            this.jsonData.padre = null;
-            this.jsonData.files = '';
-            this.jsonData.path_contrato = '';
-            this.jsonData.objeto = '';
+            this.jsonEdUpSave.modal_codigo = '';
+            this.jsonEdUpSave.modal_descripcion = '';
+            this.jsonEdUpSave.modal_unidad = '';
+            this.jsonEdUpSave.modal_precio_referencial = '';
+            this.jsonEdUpSave.modal_unidad_contrato = '';
         },
         async downloadDocument(data = {}) {
             const response = await axios.get(`download_document/${data.id}`, {responseType: 'blob'});
@@ -814,14 +810,6 @@ export default {
             return padresArray;
             // await this.filterPadre(padresArray);
             // this.combo_padres = padresArray
-        },
-        ModalCrear() {
-            this.modificar_bottom = false;
-            this.guardar_bottom = true;
-            this.disabledForEdit = false;
-            this.disablePadre = false;
-            this.limpiar_formulario();
-            this.tituloIntervencionModal = "Formulario de Creación de Contratos";
         },
         mostrar() {
             console.log(this.jsonData.nombre);
