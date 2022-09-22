@@ -372,7 +372,7 @@ export default {
                 dias_requeridos: '',
                 plazo: '',
             },
-            jsonEdUpSave:{
+            jsonEdUpSave: {
                 id: 0,
                 modal_codigo: '',
                 modal_descripcion: '',
@@ -614,8 +614,8 @@ export default {
             console.log('PADRE', this.jsonData.padre);
             let contratante = '';
             let contratado = '';
-            for(let i in getContrata){
-                if(getContrata[i].id === this.jsonData.padre.contratante_id){
+            for (let i in getContrata) {
+                if (getContrata[i].id === this.jsonData.padre.contratante_id) {
                     contratante = getContrata[i];
                 }
                 i = getContrata.length;
@@ -632,7 +632,7 @@ export default {
             if (this.disablePadre === false &&
                 this.jsonData.document_types_id.id !== 1 &&
                 this.jsonData.document_types_id.id !== 2) {
-                this.jsonData.contratante_id = contratante ;
+                this.jsonData.contratante_id = contratante;
                 this.jsonData.contratado_id = contratado;
             }
         },
@@ -657,9 +657,19 @@ export default {
                 this.deleteItem(this.id_eliminacion);
             }
         },
-        async listar(){
+        async listar() {
             const getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
-            this.rows = getAllItemRecurso.filter(item => item.tipo_requerimiento_id === 1);
+            const getUnidades = (await axios.get('get_unidades')).data;
+            let filteredItems = [];
+            for (let i in getAllItemRecurso) {
+                if (getAllItemRecurso[i].tipo_requerimiento_id === 1) {
+                    filteredItems.push(getAllItemRecurso[i]);
+                }
+            }
+            filteredItems.map(item => {
+                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+            });
+            this.rows = filteredItems;
             console.log('LISTAR TODO', getAllItemRecurso);
             console.log('LISTAR FILTRO', this.rows);
         },
@@ -676,10 +686,10 @@ export default {
         },
         async deleteItem(id) {
             const respuesta = await axios.delete('requerimiento_mano_obra/' + id);
-            console.log("DELETED",respuesta.data);
+            console.log("DELETED", respuesta.data);
             await this.listar();
         },
-        async comboUnidadesContratos(){
+        async comboUnidadesContratos() {
             this.combo_unidades = (await axios.get('get_unidades')).data;
             this.combo_unidades_contratos = [
                 {id: 1, nombre: 'dia'},
@@ -696,7 +706,7 @@ export default {
                 this.jsonEdUpSave.modal_precio_referencial !== '' &&
                 this.jsonEdUpSave.modal_unidad_contrato !== '';
         },
-        saveItemRecurso(){
+        saveItemRecurso() {
             this.jsonEdUpSave.modal_tipo_requerimiento = 1;
             this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
             this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
@@ -734,10 +744,9 @@ export default {
             datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
             datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
             let fecha_firma = new Date(this.jsonData.fecha_firma);
-            if(isNaN(fecha_firma.getDate())){
+            if (isNaN(fecha_firma.getDate())) {
                 datos_jsonData.append('fecha_firma', '');
-            }
-            else{
+            } else {
                 datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()).toString());
             }
             datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
