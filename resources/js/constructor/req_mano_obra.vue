@@ -678,11 +678,13 @@ export default {
 
         async editarModal(data = {}) {
             this.limpiar_formulario();
+            const getUnidades = (await axios.get('get_unidades')).data;
             this.jsonEdUpSave.id = data.id;
             this.jsonEdUpSave.modal_tipo_requerimiento = data.tipo_requerimiento_id;
             this.jsonEdUpSave.modal_codigo = data.codigo_recurso;
             this.jsonEdUpSave.modal_descripcion = data.descripcion_recurso;
-            this.jsonEdUpSave.modal_unidad = data.unidad_id;
+
+            this.jsonEdUpSave.modal_unidad = getUnidades.find(unidad => unidad.simbolo === data.unidad_id);
             this.jsonEdUpSave.modal_precio_referencial = data.precio_referencial;
             this.jsonEdUpSave.modal_unidad_contrato = data.unidad_contrato;
 
@@ -730,23 +732,38 @@ export default {
             if (this.areAlltheFieldsFilled()) {
                 const jsonObject = this.saveItemRecurso();
                 let savedRecurso = axios.post('requerimiento_mano_obra', jsonObject)
+                console.log('Save', savedRecurso);
                 document.getElementById("cerrarModal").click();
                 await this.listar();
-                console.log('Save', savedRecurso);
             } else {
                 alert('Debe llenar todos campos');
             }
-
         },
         async modificar() {
             if (this.areAlltheFieldsFilled()) {
-                const jsonObject = this.saveItemRecurso();
-                const savedRecurso = axios.post('requerimiento_mano_obra' + this.jsonEdUpSave.id, jsonObject)
+                // this.jsonEdUpSave.modal_tipo_requerimiento = 1;
+                // this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
+                // this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
+                console.log('MODIFICAR', this.jsonEdUpSave);
+
+                // const jsonObject = this.saveItemRecurso();
+                let jsonModified = new FormData();
+                jsonModified.append('id', this.jsonEdUpSave.id);
+                jsonModified.append('modal_tipo_requerimiento', this.jsonEdUpSave.modal_tipo_requerimiento);
+                jsonModified.append('modal_codigo', this.jsonEdUpSave.modal_codigo);
+                jsonModified.append('modal_descripcion', this.jsonEdUpSave.modal_descripcion);
+                jsonModified.append('modal_unidad', this.jsonEdUpSave.modal_unidad.id);
+                jsonModified.append('modal_precio_referencial', this.jsonEdUpSave.modal_precio_referencial);
+                jsonModified.append('modal_unidad_contrato', this.jsonEdUpSave.modal_unidad_contrato.nombre);
+                const modifyRecurso = axios.post('update_req_mano_obra/' + this.jsonEdUpSave.id, jsonModified);
                 await this.listar();
-                console.log('Save', savedRecurso);
+                console.log('Modified', modifyRecurso);
+                document.getElementById("cerrarModal").click();
             }
-            document.getElementById("cerrarModal").click();
-            this.limpiar_formulario();
+            else {
+                alert('Debe llenar todos campos');
+            }
+            // this.limpiar_formulario();
         },
         //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         ModalCrear() {
