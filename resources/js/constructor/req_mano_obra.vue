@@ -64,20 +64,6 @@
                     </template>
                     <template slot="acciones" slot-scope="props">
                         <div class="btn-group">
-
-
-                            <button type="button" class="btn btn-outline-primary ml-1"
-                                    data-toggle="modal"
-                                    data-target="#orden"
-                                    v-if="(props.row.document_types_id === 1 || props.row.document_types_id === 2)"
-                                    v-bind:disabled="props.row.fecha_orden_proceder !== null"
-                                    @click="openModalOrden(props.row)">
-                                <span><i class="fas fa-upload"></i> </span></button>
-                            <button type="button" class="btn btn-outline-success ml-1"
-                                    v-if="props.row.path_contrato!==''"
-                                    @click="downloadDocument(props.row)"><span><i
-                                class="far fa-file-pdf"></i> </span></button>
-                            <!--                            </a>-->
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
                                     data-target="#contrato" @click="editarModal(props.row);"><span><i
                                 class="fa fa-user-edit"></i></span></button>
