@@ -668,7 +668,7 @@ export default {
                 }
             }
             filteredItems.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id-1].simbolo
+                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
             });
             this.rows = filteredItems;
 
@@ -678,6 +678,7 @@ export default {
 
         async editarModal(data = {}) {
             this.limpiar_formulario();
+            this.jsonEdUpSave.id = data.id;
             this.jsonEdUpSave.modal_tipo_requerimiento = data.tipo_requerimiento_id;
             this.jsonEdUpSave.modal_codigo = data.codigo_recurso;
             this.jsonEdUpSave.modal_descripcion = data.descripcion_recurso;
@@ -685,6 +686,8 @@ export default {
             this.jsonEdUpSave.modal_precio_referencial = data.precio_referencial;
             this.jsonEdUpSave.modal_unidad_contrato = data.unidad_contrato;
 
+            this.modificar_bottom = true;
+            this.guardar_bottom = false;
             console.log("EDITAR", data);
         },
         async deleteItem(id) {
@@ -713,60 +716,37 @@ export default {
             this.jsonEdUpSave.modal_tipo_requerimiento = 1;
             this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
             this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
-            console.log(this.jsonEdUpSave);
+            console.log('JSONEDUPSAVE', this.jsonEdUpSave);
 
             let jsonEdUpSave = new FormData();
             for (let key in this.jsonEdUpSave) {
                 jsonEdUpSave.append(key, this.jsonEdUpSave[key]);
             }
-            let savedRecurso = axios.post('requerimiento_mano_obra', jsonEdUpSave)
-            console.log('Save', savedRecurso);
+            return jsonEdUpSave
+            // let savedRecurso = axios.post('requerimiento_mano_obra', jsonEdUpSave)
+            // console.log('Save', savedRecurso);
         },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
-                this.saveItemRecurso()
+                const jsonObject = this.saveItemRecurso();
+                let savedRecurso = axios.post('requerimiento_mano_obra', jsonObject)
                 document.getElementById("cerrarModal").click();
                 await this.listar();
+                console.log('Save', savedRecurso);
             } else {
                 alert('Debe llenar todos campos');
             }
+
         },
         async modificar() {
-
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('document_types_id', this.jsonData.document_types_id.id);
-            datos_jsonData.append('unidad_ejecutora_id', this.jsonData.unidad_ejecutora_id.id);
-            if (this.jsonData.document_types_id.id === 1) {
-                datos_jsonData.append('padre', '0');
-            } else {
-                datos_jsonData.append('padre', this.jsonData.padre.id);
+            if (this.areAlltheFieldsFilled()) {
+                const jsonObject = this.saveItemRecurso();
+                const savedRecurso = axios.post('requerimiento_mano_obra' + this.jsonEdUpSave.id, jsonObject)
+                await this.listar();
+                console.log('Save', savedRecurso);
             }
-            datos_jsonData.append('nombre', this.jsonData.nombre);
-            datos_jsonData.append('codigo', this.jsonData.codigo);
-            datos_jsonData.append('contratante_id', this.jsonData.contratante_id.id);
-            datos_jsonData.append('contratado_id', this.jsonData.contratado_id.id);
-            datos_jsonData.append('duracion_dias', this.jsonData.duracion_dias);
-            let fecha_firma = new Date(this.jsonData.fecha_firma);
-            if (isNaN(fecha_firma.getDate())) {
-                datos_jsonData.append('fecha_firma', '');
-            } else {
-                datos_jsonData.append('fecha_firma', (fecha_firma.getFullYear() + "-" + (fecha_firma.getMonth() + 1) + "-" + fecha_firma.getDate()).toString());
-            }
-            datos_jsonData.append('monto_bs', this.jsonData.monto_bs);
-            datos_jsonData.append('objeto', this.jsonData.objeto);
-            datos_jsonData.append('modifica', this.jsonData.modifica);
-            datos_jsonData.append('files', this.jsonData.files);
-            datos_jsonData.append('id', this.jsonData.id);
-            console.log('APPEND', datos_jsonData);
-            const respuesta = await axios.post(`update_contrato/` + this.jsonData.id, datos_jsonData);
-            // const respuesta = await axios.put(`documents/` + this.jsonData.id, datos_jsonData);
-            console.log('MODIFIED', respuesta.data);
-            await this.listar();
             document.getElementById("cerrarModal").click();
-            if (document.getElementById("closeDoc")) {
-                document.getElementById("closeDoc").click();
-            }
-            // this.limpiar_formulario();
+            this.limpiar_formulario();
         },
         //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         ModalCrear() {
