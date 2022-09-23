@@ -36,7 +36,8 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::post('update_req_mano_obra/{id}', 'RequerimientoManoObraController@updateManoObra')->name('update_req_mano_obra');
 
     Route::apiResource('requerimiento_materiales', RequerimientoMaterialesController::class);
-    Route::get('req_materiales', 'RequerimientoMaterialesController@inicio')->name('req_materiales');
+//    Route::get('req_materiales', 'RequerimientoMaterialesController@inicio')->name('req_materiales');
+    Route::get('req_materiales', 'RequerimientoManoObraController@inicioMaterial')->name('req_materiales');
 
     Route::apiResource('requerimientos', RequerimientoController::class);
     Route::get('requerimientos_ini', 'RequerimientoController@inicio')->name('requerimientos_ini');

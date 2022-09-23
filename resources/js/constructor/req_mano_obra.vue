@@ -400,8 +400,9 @@ export default {
             this.jsonEdUpSave.modal_unidad = getUnidades.find(unidad => unidad.simbolo === data.unidad_id);
             this.jsonEdUpSave.modal_precio_referencial = data.precio_referencial;
             this.jsonEdUpSave.modal_unidad_contrato = this.listUnidadesHarcoded.find(unidad_contrato =>
-                unidad_contrato.nombre === data.unidad_contrato);;
+                unidad_contrato.nombre === data.unidad_contrato);
 
+            this.tituloIntervencionModal = "Formulario de Modificacion de Mano de Obra";
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             console.log("EDITAR", data);
@@ -413,10 +414,7 @@ export default {
         },
         async comboUnidadesContratos() {
             this.combo_unidades = (await axios.get('get_unidades')).data;
-            this.combo_unidades_contratos = [
-                {id: 1, nombre: 'día'},
-                {id: 2, nombre: 'u'},
-            ];
+            this.combo_unidades_contratos = this.listUnidadesHarcoded;
 
             console.log('UNIDADES CONTRATO', this.combo_unidades_contratos);
             console.log('UNIDADES', this.combo_unidades);
@@ -475,12 +473,6 @@ export default {
             this.jsonEdUpSave.modal_unidad = '';
             this.jsonEdUpSave.modal_precio_referencial = '';
             this.jsonEdUpSave.modal_unidad_contrato = '';
-        },
-        ordenar_tabla(total) {
-            for (i = 1; i <= total; i++) {
-                this.contador[i] = i;
-            }
-            console.log("cnotador   ");
         },
     },
     created() {

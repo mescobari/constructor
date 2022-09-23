@@ -5,7 +5,7 @@
             <div class="card-tools">
                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#contrato"
                         @click="ModalCrear();">
-                    Crear Requerimiento Mano Obra
+                    Crear Requerimiento Material
                 </button>
             </div>
         </div>
@@ -191,7 +191,17 @@ export default {
             modificar_bottom: false,
             success: '',
             tituloIntervencionModal: '',
-            listUnidadesHarcoded: [{id: 1, nombre: 'día'}, {id: 2, nombre: 'u'},],
+            listUnidadesHarcoded: [
+                {id: 1, nombre: 'm'},
+                {id: 2, nombre: 'm2'},
+                {id: 3, nombre: 'm3'},
+                {id: 4, nombre: 'u'},
+                {id: 5, nombre: 'kg'},
+                {id: 6, nombre: 'g'},
+                {id: 7, nombre: 'glo'},
+                {id: 8, nombre: 'lb'},
+                {id: 9, nombre: 'lt'},
+                {id: 10, nombre: 'gal'},],
             combo_unidades_contratos: [],
             combo_unidades: [],
             id_eliminacion: null,
@@ -376,7 +386,7 @@ export default {
             let filteredItems = [];
 
             for (let position in getAllItemRecurso) {
-                if (getAllItemRecurso[position].tipo_requerimiento_id === 1) {
+                if (getAllItemRecurso[position].tipo_requerimiento_id === 2) {
                     filteredItems.push(getAllItemRecurso[position]);
                 }
             }
@@ -400,8 +410,9 @@ export default {
             this.jsonEdUpSave.modal_unidad = getUnidades.find(unidad => unidad.simbolo === data.unidad_id);
             this.jsonEdUpSave.modal_precio_referencial = data.precio_referencial;
             this.jsonEdUpSave.modal_unidad_contrato = this.listUnidadesHarcoded.find(unidad_contrato =>
-                unidad_contrato.nombre === data.unidad_contrato);;
+                unidad_contrato.nombre === data.unidad_contrato);
 
+            this.tituloIntervencionModal = "Formulario de Modificacion de Materiales";
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             console.log("EDITAR", data);
@@ -413,10 +424,7 @@ export default {
         },
         async comboUnidadesContratos() {
             this.combo_unidades = (await axios.get('get_unidades')).data;
-            this.combo_unidades_contratos = [
-                {id: 1, nombre: 'día'},
-                {id: 2, nombre: 'u'},
-            ];
+            this.combo_unidades_contratos = this.listUnidadesHarcoded;
 
             console.log('UNIDADES CONTRATO', this.combo_unidades_contratos);
             console.log('UNIDADES', this.combo_unidades);
@@ -429,7 +437,7 @@ export default {
                 this.jsonEdUpSave.modal_unidad_contrato !== '';
         },
         saveItemRecurso() {
-            this.jsonEdUpSave.modal_tipo_requerimiento = 1;
+            this.jsonEdUpSave.modal_tipo_requerimiento = 2;
             this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
             this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
             console.log('JSONEDUPSAVE', this.jsonEdUpSave);
@@ -467,7 +475,7 @@ export default {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
             this.limpiar_formulario();
-            this.tituloIntervencionModal = "Formulario de Creación de Mano de Obra";
+            this.tituloIntervencionModal = "Formulario de Creación de Materiales";
         },
         limpiar_formulario() {
             this.jsonEdUpSave.modal_codigo = '';
@@ -475,12 +483,6 @@ export default {
             this.jsonEdUpSave.modal_unidad = '';
             this.jsonEdUpSave.modal_precio_referencial = '';
             this.jsonEdUpSave.modal_unidad_contrato = '';
-        },
-        ordenar_tabla(total) {
-            for (i = 1; i <= total; i++) {
-                this.contador[i] = i;
-            }
-            console.log("cnotador   ");
         },
     },
     created() {

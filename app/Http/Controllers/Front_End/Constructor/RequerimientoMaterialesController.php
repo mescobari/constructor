@@ -39,7 +39,14 @@ class RequerimientoMaterialesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $req_mano_obra = new RequerimientoRecursos();
+        $req_mano_obra->tipo_requerimiento_id = $request->modal_tipo_requerimiento;
+        $req_mano_obra->codigo_recurso = $request->modal_codigo;
+        $req_mano_obra->descripcion_recurso = $request->modal_descripcion;
+        $req_mano_obra->unidad_id = $request->modal_unidad;
+        $req_mano_obra->precio_referencial = $request->modal_precio_referencial;
+        $req_mano_obra->unidad_contrato = $request->modal_unidad_contrato;
+        $req_mano_obra->save();
     }
 
     /**
