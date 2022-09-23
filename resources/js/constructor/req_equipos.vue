@@ -1,7 +1,7 @@
 <template slot-scope="props">
     <div class="card">
         <div class="card-header ferdy-background-Primary-blak">
-            <h3 class="card-title">Creacion de Contratos</h3>
+            <h3 class="card-title">Creacion de Maquinaria y Equipos</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#contrato"
                         @click="ModalCrear();">

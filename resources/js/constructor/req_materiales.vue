@@ -1,7 +1,7 @@
 <template slot-scope="props">
     <div class="card">
         <div class="card-header ferdy-background-Primary-blak">
-            <h3 class="card-title">Creacion de Contratos</h3>
+            <h3 class="card-title">Creacion de Material</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#contrato"
                         @click="ModalCrear();">
@@ -201,7 +201,8 @@ export default {
                 {id: 7, nombre: 'glo'},
                 {id: 8, nombre: 'lb'},
                 {id: 9, nombre: 'lt'},
-                {id: 10, nombre: 'gal'},],
+                {id: 10, nombre: 'gal'},
+            ],
             combo_unidades_contratos: [],
             combo_unidades: [],
             id_eliminacion: null,
