@@ -439,8 +439,6 @@ export default {
                 jsonEdUpSave.append(key, this.jsonEdUpSave[key]);
             }
             return jsonEdUpSave
-            // let savedRecurso = axios.post('requerimiento_mano_obra', jsonEdUpSave)
-            // console.log('Save', savedRecurso);
         },
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
