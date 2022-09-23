@@ -17,6 +17,12 @@ class RequerimientoManoObraController extends Controller
     public function inicioMaterial(){
         return view('front-end.constructor.IndexMateriales');
     }
+    public function inicioEquipos(){
+        return view('front-end.constructor.IndexEquipos');
+    }
+    public function inicioFondosAvance(){
+        return view('front-end.constructor.IndexFondosAvance');
+    }
     /**
      * Display a listing of the resource.
      *
