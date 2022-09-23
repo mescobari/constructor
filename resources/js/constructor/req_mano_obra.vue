@@ -462,9 +462,7 @@ export default {
             } else {
                 alert('Debe llenar todos campos');
             }
-            // this.limpiar_formulario();
         },
-        //Modal Showing the Object get From Database, and getting the name from every id to show in the modal
         ModalCrear() {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
