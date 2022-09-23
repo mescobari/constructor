@@ -371,7 +371,7 @@ export default {
             }
         },
         async listar() {
-            const getAllItemRecurso = (await axios.get('requerimiento_mano_obra')).data;
+            const getAllItemRecurso = (await axios.get('requerimiento_recurso')).data;
             const getUnidades = (await axios.get('get_unidades')).data;
             let filteredItems = [];
 
@@ -408,7 +408,7 @@ export default {
             console.log("EDITAR", data);
         },
         async deleteItem(id) {
-            const respuesta = await axios.delete('requerimiento_mano_obra/' + id);
+            const respuesta = await axios.delete('requerimiento_recurso/' + id);
             console.log("DELETED", respuesta.data);
             await this.listar();
         },
@@ -441,7 +441,7 @@ export default {
         async guardar() {
             if (this.areAlltheFieldsFilled()) {
                 const jsonObject = this.saveItemRecurso();
-                let savedRecurso = axios.post('requerimiento_mano_obra', jsonObject)
+                let savedRecurso = axios.post('requerimiento_recurso', jsonObject)
                 console.log('Save', savedRecurso);
                 document.getElementById("cerrarModal").click();
                 await this.listar();
@@ -453,7 +453,7 @@ export default {
             if (this.areAlltheFieldsFilled()) {
                 console.log('MODIFICAR', this.jsonEdUpSave);
                 const jsonObject = this.saveItemRecurso();
-                const modifyRecurso = axios.post('update_req_mano_obra/' + this.jsonEdUpSave.id, jsonObject);
+                const modifyRecurso = axios.post('update_req_recurso/' + this.jsonEdUpSave.id, jsonObject);
                 await this.listar();
                 console.log('Modified', modifyRecurso);
                 document.getElementById("cerrarModal").click();
