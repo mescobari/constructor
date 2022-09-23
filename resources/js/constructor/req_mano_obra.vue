@@ -174,7 +174,6 @@ import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
 import vue2Dropzone from 'vue2-dropzone';
 import 'vue2-dropzone/dist/vue2Dropzone.min.css';
-import {en, es} from 'vuejs-datepicker/dist/locale'
 import {VueEditor} from "vue2-editor";
 
 Vue.component("v-select", vSelect);
@@ -432,8 +431,7 @@ export default {
         saveItemRecurso() {
             this.jsonEdUpSave.modal_tipo_requerimiento = 1;
             this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
-            const uContratoNombre = this.jsonEdUpSave.modal_unidad_contrato.nombre
-            this.jsonEdUpSave.modal_unidad_contrato = uContratoNombre;
+            this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
             console.log('JSONEDUPSAVE', this.jsonEdUpSave);
 
             let jsonEdUpSave = new FormData();
@@ -457,20 +455,8 @@ export default {
         },
         async modificar() {
             if (this.areAlltheFieldsFilled()) {
-                // this.jsonEdUpSave.modal_tipo_requerimiento = 1;
-                // this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
-                // this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
                 console.log('MODIFICAR', this.jsonEdUpSave);
-
                 const jsonObject = this.saveItemRecurso();
-                // let jsonModified = new FormData();
-                // jsonModified.append('id', this.jsonEdUpSave.id);
-                // jsonModified.append('modal_tipo_requerimiento', this.jsonEdUpSave.modal_tipo_requerimiento);
-                // jsonModified.append('modal_codigo', this.jsonEdUpSave.modal_codigo);
-                // jsonModified.append('modal_descripcion', this.jsonEdUpSave.modal_descripcion);
-                // jsonModified.append('modal_unidad', this.jsonEdUpSave.modal_unidad.id);
-                // jsonModified.append('modal_precio_referencial', this.jsonEdUpSave.modal_precio_referencial);
-                // jsonModified.append('modal_unidad_contrato', this.jsonEdUpSave.modal_unidad_contrato.nombre);
                 const modifyRecurso = axios.post('update_req_mano_obra/' + this.jsonEdUpSave.id, jsonObject);
                 await this.listar();
                 console.log('Modified', modifyRecurso);
