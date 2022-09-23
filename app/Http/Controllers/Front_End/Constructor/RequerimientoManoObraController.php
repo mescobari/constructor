@@ -84,13 +84,19 @@ class RequerimientoManoObraController extends Controller
     public function update(Request $request, $id)
     {
         $req_mano_obra = RequerimientoRecursos::findOrFail($id);
+        if (isset($request->modal_unidad_contrato)) {
+            $unidad = $req_mano_obra->unidad_contrato;
+        }
+        else {
+            $unidad = $request->modal_unidad_contrato;
+        }
         return $req_mano_obra->update([
                 'tipo_requerimiento_id' => $request->modal_tipo_requerimiento,
                 'codigo_recurso' => $request->modal_codigo,
                 'descripcion_recurso' => $request->modal_descripcion,
                 'unidad_id' => $request->modal_unidad,
                 'precio_referencial' => $request->modal_precio_referencial,
-                'unidad_contrato' => $request->modal_unidad_contrato,
+                'unidad_contrato' => $unidad,
             ]
         );
 //        $req_mano_obra = RequerimientoRecursos::findOrFail($id);
