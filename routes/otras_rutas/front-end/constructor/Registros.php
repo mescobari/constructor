@@ -28,6 +28,7 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::get('get_valores_item/{id}', 'PlanillaController@getValoresItem')->name('get_valores_item');
     Route::post('planilla_csv', 'PlanillaController@planillaCSV')->name('planilla_csv');
     Route::post('up_load_csv', 'PlanillaController@upLoadCSV')->name('up_load_csv');
+    Route::post('validar_csv', 'PlanillaController@validarCSV')->name('validar_csv');
     Route::post('procesar_csv', 'PlanillaController@procesarCSV')->name('procesar_csv');
 
 //requerimientos

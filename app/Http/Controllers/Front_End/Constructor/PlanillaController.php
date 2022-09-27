@@ -77,6 +77,80 @@ class PlanillaController extends Controller
 
 
     }
+    public function validarCSV(Request $request)
+    {
+        // debe devolver un true para poder ir a porcesar o habilitar un boton de procesar
+        $path = str_replace('\\', '/', storage_path());
+        $tipo_planilla_id=$request->tipo_planilla_id;
+       
+        $file=$path.'/app/'.$request->path;
+        $openfile = fopen($file, "r");
+        if($openfile !== FALSE){
+           
+           /* $cont = fread($openfile, filesize($file));
+            dd($cont);*/
+            $delimitador=",";
+            $linea1 = fgetcsv($openfile);
+            // veamos si el separador es , o ;
+            $separador=explode(",",$linea1[0] ); 
+
+
+          
+
+            if(count($separador)>1 ){
+                $delimitador=",";
+
+            } else {
+                $separador=explode(";",$linea1[0] ); 
+                $delimitador=";";
+                
+            }
+            $contador=0;
+            if(count($separador) == 9 ){
+
+               $mensaje = "tiene 9 columnas y el delimitador es ". $delimitador;
+           
+                    // vemos si las columnas tiene el titulo que corresponde
+                
+                (strtoupper($separador[0]) == "TIPO") ? $contador++ : $contador;
+                (strtoupper($separador[1]) == "CODIGO") ? $contador++ : $contador ;
+                (strtoupper($separador[2]) == "ITEM") ? $contador++ : $contador;
+                (strtoupper($separador[3]) == "DESCRIPCON") ? $contador++ : $contador;
+                (strtoupper($separador[4]) == "UNIDAD") ? $contador++ : $contador;
+                (strtoupper($separador[5]) == "SIMBOLO") ? $contador++ : $contador;
+                (strtoupper($separador[6]) == "CANTIDAD") ? $contador++ : $contador;
+                (strtoupper($separador[7]) == "PREC_UNITARIO") ? $contador++ : $contador;
+                (strtoupper($separador[8]) == "TOTAL") ? $contador++ : $contador;
+                
+           
+           
+            } else {
+                $mensaje = "No tiene 9 columnas tiene " .count($separador). " columnas  y el delimitador es ". $delimitador;
+            }
+
+            //
+          
+
+          if($contador==9){
+            $mensaje = "Todo bien El archivo tiene " .count($separador). " columnas  y el delimitador es ". $delimitador;
+            return $delimitador;
+
+          } else {
+            $mensaje = "El archivo tiene " .count($separador). " columnas  en lugar de 9 y el delimitador es ". $delimitador;
+            return $mensaje;
+            }
+         
+        
+           
+        }
+
+
+        
+      
+
+    }
+
+
 
     public function procesarCSV(Request $request)
     {
@@ -84,14 +158,15 @@ class PlanillaController extends Controller
         
         $path = str_replace('\\', '/', storage_path());
         $tipo_planilla_id=$request->tipo_planilla_id;
-       
+        $delimitador=$request->delimitador;
+
         $archivo=$path.'/app/'.$request->path;
         $file_to_read = fopen($archivo, "r");
         // LEE EL ARCHIVO CSV Y LO GUARDA EN UN ARRAY PLA
         $row=0;
         if($file_to_read !== FALSE){                    
         
-            while(($data = fgetcsv($file_to_read, 1000, ';')) !== FALSE){
+            while(($data = fgetcsv($file_to_read, 1000, $delimitador)) !== FALSE){
             
                 // LA FILA CERO SON LOS TITULOS
                 // tipo;codigo;ITEM;DESCRIPCON;UNIDAD;SIMBOLO;CANTIDAD;PREC_UNITARIO;TOTAL--count($data)

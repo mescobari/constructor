@@ -504,12 +504,24 @@ export default {
                 "planilla_id" : this.cargarData.id,
                 "tipo_planilla_id" : this.cargarData.tipo_planilla_id,
             };
-            const procFile = await axios.post('procesar_csv',  data);
+            const valFile = await axios.post('validar_csv',  data);
 
-            //const procFile = await axios.get('procesar_csv/'+uploadFile.data);
-            console.log('========procesar_csv===procesar_csv========');
+           
+            console.log('========validar_csv===validar_csv========');
+            console.log(valFile.data);
+          
+           
+            if( valFile.data.length == 1){
+                data.delimitador=valFile.data;
+                const procFile = await axios.post('procesar_csv',  data);
+
+            } else {
+                // mandar un mensaje
+                procFile.data=valFile.data;
+            }
+
+            console.log('========volviendo de procesar========');
             console.log(procFile.data);
-
         },
 
 
