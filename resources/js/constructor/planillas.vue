@@ -147,7 +147,13 @@
                                 <label id="csvPath" class="custom-file-label" for="csv">Seleccionar Archivo</label>
                                 </div>   
                             </div>                             
-                        </div>           
+                        </div>
+
+                        <div class="row" id="mensaje">
+                            <div class="alert alert-danger" role="alert" >
+                                Esta es una alerta de peligro. Utiliza la clase <strong>alert alert-danger</strong>
+                            </div>    
+                        </div>
                     </div>
 
                     
@@ -518,6 +524,10 @@ export default {
             } else {
                 // mandar un mensaje
                 procFile.data=valFile.data;
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+                })
             }
 
             console.log('========volviendo de procesar========');
