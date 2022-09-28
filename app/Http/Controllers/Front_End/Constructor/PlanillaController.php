@@ -225,7 +225,8 @@ class PlanillaController extends Controller
 
                         $item->tipo=$pla[$i][0];
                         $item->item_codigo=$pla[$i][1];
-                        $item->item_descripcion=$pla[$i][3];
+                        $item->item_descripcion=utf8_encode($pla[$i][3]);
+                        //$item->item_descripcion=$pla[$i][3];
                         $item->unidad_id=$pla[$i][9];
                         $item->padre=0;
 
@@ -234,7 +235,7 @@ class PlanillaController extends Controller
 
                     
                 }
-
+               
                 // encontrar padres
                 // traemos todo de planil_items
 

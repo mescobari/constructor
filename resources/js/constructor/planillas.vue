@@ -148,11 +148,9 @@
                                 </div>   
                             </div>                             
                         </div>
-
+                    
                         <div class="row" id="mensaje">
-                            <div class="alert alert-danger" role="alert" >
-                                Esta es una alerta de peligro. Utiliza la clase <strong>alert alert-danger</strong>
-                            </div>    
+                               
                         </div>
                     </div>
 
@@ -163,8 +161,7 @@
                             <button type="button" class="btn btn-primary" data-dismiss="modal" v-if="cargar==true"
                             @click="ver_planilla();">Seleccionar</button>
 
-                            <button type="button" class="btn btn-danger" data-dismiss="modal" v-if="cargar==false"
-                            @click="ver_planilla();">Cancelar</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" v-if="cargar==false">Cerrar</button>
                        
                     </div>
                 </div>
@@ -488,6 +485,9 @@ export default {
 
         
         async handleFiles(){
+
+            var rowMensaje = document.getElementById("mensaje");
+                rowMensaje.innerHTML ='<div> </div>';
                        
             let formData = new FormData(); 
             formData.append("files", csv.files[0]);
@@ -520,18 +520,26 @@ export default {
             if( valFile.data.length == 1){
                 data.delimitador=valFile.data;
                 const procFile = await axios.post('procesar_csv',  data);
-
+                
+                console.log('========volviendo de procesar file csv todo bien========');
+                 
+                 var rowMensaje = document.getElementById("mensaje");
+                
+                rowMensaje.innerHTML = '<div class="alert alert-success fade show" role="alert" >La planilla'
+                    + this.cargarData.tipo + ' fue cargada satisfactoriamente</div>';
+                this.cargar=false;
+                
             } else {
-                // mandar un mensaje
-                procFile.data=valFile.data;
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-                })
+                
+                var span = document.getElementById("csvPath");
+                 span.textContent = 'Seleccionar Archivo';
+                 var rowMensaje = document.getElementById("mensaje");
+                
+                rowMensaje.innerHTML = '<div class="alert alert-danger fade show" role="alert" >'+ valFile.data   + 'Revise el Archivo y vuelva a cargar</div>';
+                
             }
 
-            console.log('========volviendo de procesar========');
-            console.log(procFile.data);
+            
         },
 
 
@@ -674,6 +682,8 @@ export default {
         },
         
          async ver_planilla(){
+            var rowMensaje = document.getElementById("mensaje");
+                rowMensaje.innerHTML ='<div> </div>';
             const vp = this.jsonData.proyectos.id;
             console.log('vplan--> '+ vp);
             var respuesta = await axios.get('planillas/'+vp);
