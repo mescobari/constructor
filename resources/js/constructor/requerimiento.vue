@@ -1285,6 +1285,7 @@ export default {
                 let savedRecurso = axios.post('requerimiento_recurso', jsonObject);
                 console.log('Save', savedRecurso);
                 document.getElementById("cerrarModalRecurso").click();
+                await this.descripcionRecursoGetbyType();
                 // await this.listar();
             } else {
                 alert('Debe llenar todos campos');
