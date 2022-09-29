@@ -84,6 +84,7 @@ class DocumentController extends Controller
             $nombre_archivo = $request->padre . '-' . $request->document_types_id . '-' . $_FILES['files']['name'];
             $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
         };
+        $objetostrip = strip_tags($request->objeto);
         return document::create([
             'document_types_id' => $request->document_types_id,
             'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
@@ -95,7 +96,7 @@ class DocumentController extends Controller
             'duracion_dias' => $request->duracion_dias,
             'fecha_firma' => $request->fecha_firma,
             'monto_bs' => $request->monto_bs,
-            'objeto' => $request->objeto,
+            'objeto' => $objetostrip,
             'modifica' => $request->modifica,
             'path_contrato' => $path,
         ]);
@@ -217,6 +218,7 @@ class DocumentController extends Controller
         else{
             $previous = $documentId->fecha_firma;
         }
+        $objetostrip = strip_tags($request->objeto);
         return $documentId->update([
             'document_types_id' => $request->document_types_id,
             'unidad_ejecutora_id' => $request->unidad_ejecutora_id,
@@ -228,7 +230,7 @@ class DocumentController extends Controller
             'duracion_dias' => $request->duracion_dias,
             'fecha_firma' => $previous,
             'monto_bs' => $request->monto_bs,
-            'objeto' => $request->objeto,
+            'objeto' => $objetostrip,
             'modifica' => $request->modifica,
             'path_contrato' => $path,
         ]);

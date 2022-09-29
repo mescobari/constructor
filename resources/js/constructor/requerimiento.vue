@@ -202,7 +202,7 @@
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
-                                    <label for="document_type"></label>
+                                    <label for="document_type">Opcional</label>
                                     <button type="button"
                                             data-toggle="modal"
                                             data-target="#modalCrearRecurso"
