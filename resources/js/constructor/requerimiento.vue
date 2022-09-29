@@ -1279,6 +1279,13 @@ export default {
                 this.jsonEdUpSave.modal_precio_referencial !== '' &&
                 this.jsonEdUpSave.modal_unidad_contrato !== '';
         },
+        limpiar_recurso() {
+            this.jsonEdUpSave.modal_codigo = '';
+            this.jsonEdUpSave.modal_descripcion = '';
+            this.jsonEdUpSave.modal_unidad = '';
+            this.jsonEdUpSave.modal_precio_referencial = '';
+            this.jsonEdUpSave.modal_unidad_contrato = '';
+        },
         async guardarRecurso() {
             if (this.areAlltheFieldsFilledRecurso()) {
                 const jsonObject = this.saveItemRecurso();
@@ -1286,7 +1293,7 @@ export default {
                 console.log('Save', savedRecurso);
                 document.getElementById("cerrarModalRecurso").click();
                 await this.descripcionRecursoGetbyType();
-                // await this.listar();
+                this.limpiar_recurso();
             } else {
                 alert('Debe llenar todos campos');
             }
