@@ -199,224 +199,781 @@
                                         <span slot="no-options">No hay data para cargar</span>
                                     </v-select>
                                 </div>
-
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
-                                    <label for="nombre">Unidad</label>
-                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
-                                           v-model="jsonData.simbolo" disabled>
+                                    <label for="document_type">Opcional</label>
+                                    <button type="button"
+                                            data-toggle="modal"
+                                            data-target="#modalCrearRecurso"
+                                            class="btn btn-success">
+                                        Añadir Recurso
+                                    </button>
                                 </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Unidad</label>
+                                <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
+                                       v-model="jsonData.simbolo" disabled>
                             </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="nombre">Cantidad</label>
-                                    <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                           v-model="jsonData.cantidad_recurso">
-                                </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Cantidad</label>
+                                <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                       v-model="jsonData.cantidad_recurso">
                             </div>
-
-                            <div class="col-md-5">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Horas Requeridas</label>
-                                            <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas" v-model="jsonData.horas_recurso">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Dias Requeridos</label>
-                                            <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.dias_recurso">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Plazo Ejecucion</label>
-                                            <input type="text" class="form-control" name="plazo"
-                                                   placeholder="dias de ejecucion"
-                                                   v-model="jsonData.tiempo_total_recurso">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Precio referencial</label>
-                                            <input type="text" class="form-control" name="referencial"
-                                                   placeholder="precio referencial"
-                                                   v-model="jsonData.precio_referencia_recurso">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <br>
-                                        <button type="submit" @click="guardar();"
-                                                class="btn btn-success">
-                                            Agregar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-
                         </div>
 
-                        <!-- ======================/ termina form Formulario Lineal -->
-                        <hr>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Horas Requeridas</label>
+                                        <input type="text" class="form-control" name="horas"
+                                               placeholder="Horas Requeridas" v-model="jsonData.horas_recurso">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Dias Requeridos</label>
+                                        <input type="text" class="form-control" name="dias"
+                                               placeholder="Dias Requeridos" v-model="jsonData.dias_recurso">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Plazo Ejecucion</label>
+                                        <input type="text" class="form-control" name="plazo"
+                                               placeholder="dias de ejecucion"
+                                               v-model="jsonData.tiempo_total_recurso">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Precio referencial</label>
+                                        <input type="text" class="form-control" name="referencial"
+                                               placeholder="precio referencial"
+                                               v-model="jsonData.precio_referencia_recurso">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <br>
+                                    <button type="submit" @click="guardar();"
+                                            class="btn btn-success">
+                                        Agregar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
-                        <!--  row para la tabla mostrar detalles del modelo y acciones //////////-->
-                        <div class="row">
 
-                            <div class="table-responsive">
-                                <vue-bootstrap4-table :rows="rows" :columns="columns" :config="configTablas"
-                                                      :classes="configTablas.classes">
-                                    <template slot="global-search-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="paginataion-previous-button">
-                                        <span class="text-primary"><i class="fas fa-angle-double-left"></i></span>
-                                        Anterior
-                                    </template>
-                                    <template slot="paginataion-next-button">
-                                        Siguiente <span class="text-primary"><i
-                                        class="fas fa-angle-double-right"></i></span>
-                                    </template>
-                                    <template slot="pagination-info" slot-scope="props">
-                                        Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }}
-                                        |
-                                        de un total de: {{ props.originalRowsLength }} Registros Obtenidos
-                                    </template>
-                                    <template slot="selected-rows-info" slot-scope="props">
-                                        Número total de filas seleccionadas: {{ props.selectedItemsCount }}
-                                    </template>
+                    </div>
 
-                                    <template slot="simple-filter-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="sort-asc-icon">
-                                        <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
-                                    </template>
-                                    <template slot="sort-desc-icon">
-                                        <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
-                                    </template>
-                                    <template slot="no-sort-icon">
-                                        <i class="fas fa-sort"> </i>
-                                    </template>
-                                    <template slot="aprobacion" slot-scope="props">
-                                        <div v-if="props.row.soli_estado=='R'">
-                                            <button class="btn btn-outline btn-danger dim" type="button"
-                                                    @click="aprobarSolicitud(props.row)"><i
-                                                class="fa fa-thumbs-o-down"></i></button>
-                                        </div>
-                                        <div v-else>
-                                            <button class="btn btn-outline btn-primary dim" type="button"><i
-                                                class="fa fa-thumbs-o-up"></i></button>
-                                        </div>
-                                    </template>
-                                    <template slot="filePath" slot-scope="props">
-                                        <a :href="props.row.filePathFull" target="_blank"
-                                           title="Ver el archivo digital">
+                    <!-- ======================/ termina form Formulario Lineal -->
+                    <hr>
+
+                    <!--  row para la tabla mostrar detalles del modelo y acciones //////////-->
+                    <div class="row">
+
+                        <div class="table-responsive">
+                            <vue-bootstrap4-table :rows="rows" :columns="columns" :config="configTablas"
+                                                  :classes="configTablas.classes">
+                                <template slot="global-search-clear-icon">
+                                    <i class="fas fa-times-circle"></i>
+                                </template>
+                                <template slot="paginataion-previous-button">
+                                    <span class="text-primary"><i class="fas fa-angle-double-left"></i></span>
+                                    Anterior
+                                </template>
+                                <template slot="paginataion-next-button">
+                                    Siguiente <span class="text-primary"><i
+                                    class="fas fa-angle-double-right"></i></span>
+                                </template>
+                                <template slot="pagination-info" slot-scope="props">
+                                    Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }}
+                                    |
+                                    de un total de: {{ props.originalRowsLength }} Registros Obtenidos
+                                </template>
+                                <template slot="selected-rows-info" slot-scope="props">
+                                    Número total de filas seleccionadas: {{ props.selectedItemsCount }}
+                                </template>
+
+                                <template slot="simple-filter-clear-icon">
+                                    <i class="fas fa-times-circle"></i>
+                                </template>
+                                <template slot="sort-asc-icon">
+                                    <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
+                                </template>
+                                <template slot="sort-desc-icon">
+                                    <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
+                                </template>
+                                <template slot="no-sort-icon">
+                                    <i class="fas fa-sort"> </i>
+                                </template>
+                                <template slot="aprobacion" slot-scope="props">
+                                    <div v-if="props.row.soli_estado=='R'">
+                                        <button class="btn btn-outline btn-danger dim" type="button"
+                                                @click="aprobarSolicitud(props.row)"><i
+                                            class="fa fa-thumbs-o-down"></i></button>
+                                    </div>
+                                    <div v-else>
+                                        <button class="btn btn-outline btn-primary dim" type="button"><i
+                                            class="fa fa-thumbs-o-up"></i></button>
+                                    </div>
+                                </template>
+                                <template slot="filePath" slot-scope="props">
+                                    <a :href="props.row.filePathFull" target="_blank"
+                                       title="Ver el archivo digital">
                                             <span
                                                 class="badge badge-primary">Ver: {{
                                                     props.row.cofinanciador_documento.titulo
                                                 }}</span>
-                                        </a>
-                                    </template>
-                                    <template slot="acciones" slot-scope="props">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-outline-warning ml-1"
-                                                    data-toggle="modal" data-target="#modal-editar-item"
-                                                    @click="editar(props.row);"
-                                            ><span><i
-                                                class="fa fa-user-edit"></i></span></button>
-                                            <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
-                                                class="fa fa-trash-alt"></i></span></button>
-                                        </div>
-                                    </template>
-                                </vue-bootstrap4-table>
+                                    </a>
+                                </template>
+                                <template slot="acciones" slot-scope="props">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-warning ml-1"
+                                                data-toggle="modal" data-target="#modal-editar-item"
+                                                @click="editar(props.row);"
+                                        ><span><i
+                                            class="fa fa-user-edit"></i></span></button>
+                                        <button type="button" class="btn btn-outline-danger ml-1"
+                                                @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
+                                            class="fa fa-trash-alt"></i></span></button>
+                                    </div>
+                                </template>
+                            </vue-bootstrap4-table>
+                        </div>
+                    </div>
+
+                    <!-- ////////////  FIN row de la tabla mostrar detalles del modelo y acciones -->
+
+                </div>    <!-- ////////////  FIN del primer tab -->
+
+                <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+                <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel"
+                     aria-labelledby="custom-tabs-three-profile-tab">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <center class="text-danger font-weight-bold">
+                                        <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
+                                        <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
+                                        <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
+                                        <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
+                                        <h3 v-else> Contrato LLave en Mano</h3>
+                                    </center>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
+                                        <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
+                                        <input type="text" class="form-control" name="nombre"
+                                               placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
+                                               disabled>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="nombre">NURI Correspondencia:</label>
+                                        <input type="text" class="form-control" name="nombre"
+                                               placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
+                                               disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                                <label for="descripcion">Trabajos a ser encarados, con este requerimiento:</label>
+                                <vue-editor
+                                    v-model="jsonData.trabajos_encarados"
+                                    :editor-toolbar="configToolBarEditText"
+                                    placeholder="Explicacion de los trabajos a ser encarados"
+                                ></vue-editor>
                             </div>
                         </div>
 
-                        <!-- ////////////  FIN row de la tabla mostrar detalles del modelo y acciones -->
+                    </div>
 
-                    </div>    <!-- ////////////  FIN del primer tab -->
 
-                    <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+                    <!-- hasta aqui el row span> -->
+                    <h4 class="text-danger font-weight-bold">RELACION CON ITEMS CONTRATO PRINCIPAL</h4>
+                    <hr>
 
-                    <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-profile-tab">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <center class="text-danger font-weight-bold">
-                                            <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
-                                            <h3 v-else> Contrato LLave en Mano</h3>
-                                        </center>
+                    <!-- INICIO fORMULARIO EN FILA relacion items contrato principal-->
+
+                    <div class="row bg-warning">
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="codigo">Codigo:</label>
+                                <input type="text" class="form-control" name="codigo" placeholder="Codigo"
+                                       v-model="jsonData.item_codigo" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <!-- Recursos  Spinner-->
+                                <label for="document_type">Item Relacionado:</label>
+                                <v-select label="item_descripcion" :options="combo_items_planilla"
+                                          v-model="jsonData.item_descripcion"
+                                          placeholder="Selecione una opción"
+                                          @input="getNameForItemRelacion">
+                                    <span slot="no-options">No hay data para cargar</span>
+                                </v-select>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Unidad:</label>
+                                <input type="text" class="form-control" name="unidad" placeholder="Unidad"
+                                       v-model="jsonData.item_simbolo" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Vigente</label>
+                                <input type="text" class="form-control" name="cantidad"
+                                       placeholder="Cantidad"
+                                       disabled
+                                       v-model="jsonData.item_vigente">
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Avance</label>
+                                        <input type="text" class="form-control" name="horas"
+                                               placeholder="Horas Requeridas"
+                                               disabled
+                                               v-model="jsonData.item_avance">
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
-                                            <!-- <input type="date" class="form-control" name="fecha_aprobacion" v-model="jsonData.fecha_aprobacion"> -->
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
-                                                   disabled>
-                                        </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Saldo</label>
+                                        <input type="text" class="form-control" name="dias"
+                                               placeholder="Dias Requeridos"
+                                               disabled
+                                               v-model="jsonData.item_saldo">
                                     </div>
-
                                 </div>
-                                <div class="row">
-
-
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="nombre">NURI Correspondencia:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
-                                                   disabled>
-                                        </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Avance Estimado</label>
+                                        <input type="text" class="form-control" name="plazo"
+                                               placeholder="dias de ejecucion" v-model="jsonData.item_estimado">
                                     </div>
-
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Precio Unitario</label>
+                                        <input type="text" class="form-control" name="plazo"
+                                               placeholder="dias de ejecucion"
+                                               v-model="jsonData.item_precio_unitario">
+                                    </div>
                                 </div>
 
                             </div>
-                            <div class="col-md-9">
+                        </div>
+                        <div class="col-md-1">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <br>
+                                    <button type="submit" @click="guardarItemRelacion();" class="btn btn-danger">
+                                        Agregar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ///FIN  fORMULARIO EN FILA relacion items -->
+
+
+                    <!-- tabla de relacion de items-->
+                    <div class="row">
+                        <div class="table-responsive">
+                            <vue-bootstrap4-table :rows="rows1" :columns="columns1" :config="configTablas"
+                                                  :classes="configTablas.classes">
+                                <template slot="global-search-clear-icon">
+                                    <i class="fas fa-times-circle"></i>
+                                </template>
+                                <template slot="paginataion-previous-button">
+                                    <span class="text-primary"><i class="fas fa-angle-double-left"></i></span>
+                                    Anterior
+                                </template>
+                                <template slot="paginataion-next-button">
+                                    Siguiente <span class="text-primary"><i
+                                    class="fas fa-angle-double-right"></i></span>
+                                </template>
+                                <template slot="pagination-info" slot-scope="props">
+                                    Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }}
+                                    |
+                                    de un total de: {{ props.originalRowsLength }} Registros Obtenidos
+                                </template>
+                                <template slot="selected-rows-info" slot-scope="props">
+                                    Número total de filas seleccionadas: {{ props.selectedItemsCount }}
+                                </template>
+
+                                <template slot="simple-filter-clear-icon">
+                                    <i class="fas fa-times-circle"></i>
+                                </template>
+                                <template slot="sort-asc-icon">
+                                    <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
+                                </template>
+                                <template slot="sort-desc-icon">
+                                    <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
+                                </template>
+                                <template slot="no-sort-icon">
+                                    <i class="fas fa-sort"> </i>
+                                </template>
+                                <template slot="aprobacion" slot-scope="props">
+                                    <div v-if="props.row.soli_estado=='R'">
+                                        <button class="btn btn-outline btn-danger dim" type="button"
+                                                @click="aprobarSolicitud(props.row)"><i
+                                            class="fa fa-thumbs-o-down"></i></button>
+                                    </div>
+                                    <div v-else>
+                                        <button class="btn btn-outline btn-primary dim" type="button"><i
+                                            class="fa fa-thumbs-o-up"></i></button>
+                                    </div>
+                                </template>
+                                <template slot="filePath" slot-scope="props">
+                                    <a :href="props.row.filePathFull" target="_blank"
+                                       title="Ver el archivo digital">
+                                            <span
+                                                class="badge badge-primary">Ver: {{
+                                                    props.row.cofinanciador_documento.titulo
+                                                }}</span>
+                                    </a>
+                                </template>
+                                <template slot="acciones" slot-scope="props">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-warning ml-1"
+                                                @click="editarItemRelacion(props.row);"
+                                                data-toggle="modal"
+                                                data-target="#modal-editar-relacion"><span><i
+                                            class="fa fa-user-edit"></i></span>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger ml-1"
+                                                @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
+                                            class="fa fa-trash-alt"></i></span></button>
+                                    </div>
+                                </template>
+                            </vue-bootstrap4-table>
+                        </div>
+                    </div>
+                    <!-- tabla de relacion de items-->
+                </div> <!-- ////////////  FIN del segundo tab -->
+
+
+                <!-- Otrosxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+                <div class="tab-pane fade" id="custom-tabs-three-messages" role="tabpanel"
+                     aria-labelledby="custom-tabs-three-messages-tab">
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <center class="text-danger font-weight-bold">
+                                        <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
+                                        <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
+                                        <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
+                                        <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
+                                        <h3 v-else> Contrato LLave en Mano</h3>
+                                    </center>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
+                                        <input type="text" class="form-control" name="nombre"
+                                               placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
+                                               disabled>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="nombre">NURI Correspondencia:</label>
+                                        <input type="text" class="form-control" name="nombre"
+                                               placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
+                                               disabled>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                                <label for="descripcion">Gastos generales u otros gastos, con este
+                                    requerimiento:</label>
+                                <vue-editor
+                                    v-model="jsonData.gastos_generales"
+                                    :editor-toolbar="configToolBarEditText"
+                                    placeholder="Explicar en que gastos generales se trabajará"
+                                ></vue-editor>
+                                <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- hasta aqui el row span> -->
+                    <h4 class="text-danger font-weight-bold">GASTOS GENERALES</h4>
+                    <hr>
+
+                    <!-- INICIO fORMULARIO EN FILA relacion otros gastos-->
+
+                    <div class="row bg-warning">
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Codigo:</label>
+                                <input type="text" class="form-control" name="codigo" placeholder="Codigo"
+                                       v-model="jsonData.codigo_otros" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <!-- Recursos  Spinner-->
+                                <label for="nombre">Gastos Generales:</label>
+                                <v-select label="descripcion_recurso" :options="combo_otros_gastos"
+                                          v-model="jsonData.descripcion_otros"
+                                          @input="filterNameForOtrosGastos"
+                                          placeholder="Selecione una opción">
+                                    <span slot="no-options">No hay data para cargar</span>
+                                </v-select>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Unidad</label>
+                                <input type="text" class="form-control" name="unidad" placeholder="Unidad"
+                                       v-model="jsonData.simbolo_otros" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Cantidad</label>
+                                <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                       v-model="jsonData.cantidad_otros">
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Monto</label>
+                                        <input type="text" class="form-control" name="horas"
+                                               placeholder="Monto Requerido" v-model="jsonData.monto_otros">
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="form-group">
+                                        <label for="nombre">Detallar</label>
+                                        <input type="text" class="form-control" name="dias"
+                                               placeholder="Detalle" v-model="jsonData.explicar_otros">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <br>
+                                    <button type="submit" @click="guardarItemOtrosGastos();"
+                                            class="btn btn-danger">Agregar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <!-- ///FIN  fORMULARIO EN FILA otros gastos -->
+
+                    <!-- tabla de relacion con otros gastos-->
+                    <div class="row">
+                        <div class="table-responsive">
+                            <vue-bootstrap4-table :rows="rows2" :columns="columns2" :config="configTablas"
+                                                  :classes="configTablas.classes">
+                                <template slot="global-search-clear-icon">
+                                    <i class="fas fa-times-circle"></i>
+                                </template>
+                                <template slot="paginataion-previous-button">
+                                    <span class="text-primary"><i class="fas fa-angle-double-left"></i></span>
+                                    Anterior
+                                </template>
+                                <template slot="paginataion-next-button">
+                                    Siguiente <span class="text-primary"><i
+                                    class="fas fa-angle-double-right"></i></span>
+                                </template>
+                                <template slot="pagination-info" slot-scope="props">
+                                    Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }}
+                                    |
+                                    de un total de: {{ props.originalRowsLength }} Registros Obtenidos
+                                </template>
+                                <template slot="selected-rows-info" slot-scope="props">
+                                    Número total de filas seleccionadas: {{ props.selectedItemsCount }}
+                                </template>
+
+                                <template slot="simple-filter-clear-icon">
+                                    <i class="fas fa-times-circle"></i>
+                                </template>
+                                <template slot="sort-asc-icon">
+                                    <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
+                                </template>
+                                <template slot="sort-desc-icon">
+                                    <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
+                                </template>
+                                <template slot="no-sort-icon">
+                                    <i class="fas fa-sort"> </i>
+                                </template>
+                                <template slot="aprobacion" slot-scope="props">
+                                    <div v-if="props.row.soli_estado=='R'">
+                                        <button class="btn btn-outline btn-danger dim" type="button"
+                                                @click="aprobarSolicitud(props.row)"><i
+                                            class="fa fa-thumbs-o-down"></i></button>
+                                    </div>
+                                    <div v-else>
+                                        <button class="btn btn-outline btn-primary dim" type="button"><i
+                                            class="fa fa-thumbs-o-up"></i></button>
+                                    </div>
+                                </template>
+                                <template slot="filePath" slot-scope="props">
+                                    <a :href="props.row.filePathFull" target="_blank"
+                                       title="Ver el archivo digital">
+                                            <span
+                                                class="badge badge-primary">Ver: {{
+                                                    props.row.cofinanciador_documento.titulo
+                                                }}</span>
+                                    </a>
+                                </template>
+                                <template slot="acciones" slot-scope="props">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-warning ml-1"
+                                                data-toggle="modal"
+                                                data-target="#modal-editar-otros"
+                                                @click="editarItemOtrosGastos(props.row);"><span><i
+                                            class="fa fa-user-edit"></i></span>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger ml-1"
+                                                @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
+                                            class="fa fa-trash-alt"></i></span></button>
+                                    </div>
+                                </template>
+                            </vue-bootstrap4-table>
+                        </div>
+                    </div>
+
+
+                    <!-- tabla de relacion con otros gastos-->
+
+
+                </div>
+
+                <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            </div>
+            <!-- ////////////  FIN contenedor de tabs<div class="tab-content" id="custom-tabs-three-tabContent"> -->
+
+        </div> <!-- ////////////  FIN card-body -->
+
+        <!-- En el footer pondremos el tab veamos como funciona y to se mueve en el body -->
+        <div class="card-footer">
+
+
+        </div>
+        <!-- ///// fin  footer  -->
+    </div>
+
+    <!--  modal para la seleccion de contratos //////////-->
+    <div class="modal fade" id="seleccion_proyecto_doc_legales" tabindex="-1" role="dialog"
+         style="overflow-y: scroll;" aria-labelledby="seleccion_proyecto_doc_legalesTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header ferdy-background-Primary-blak">
+                    <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
+                        Principal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="descripcion">Trabajos a ser encarados, con este requerimiento:</label>
-                                    <vue-editor
-                                        v-model="jsonData.trabajos_encarados"
-                                        :editor-toolbar="configToolBarEditText"
-                                        placeholder="Explicacion de los trabajos a ser encarados"
-                                    ></vue-editor>
+                                    <label for="tipo_intervencion">Contrato Principal:</label>
+                                    <v-select label="nombre" :options="proyectos"
+                                              v-model="jsonData.proyectos"
+                                              @input="getAllItemRelacion"
+                                              placeholder="Selecione un proyecto">
+                                        <span slot="no-options">No hay datos para cargar</span>
+                                    </v-select>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        Seleccionar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
+    <!--================================ MODAL MODIFICAR ITEM REQUERIMIENTO =============================================-->
+    <div class="modal fade" id="modal-editar-item" tabindex="-1" role="dialog"
+         style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header ferdy-background-Primary-blak">
+                    <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento
+                        Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row bg-warning">
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="codigo_recurso">Codigo:</label>
+                                <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
+                                       v-model="jsonData.modal_codigo" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <!-- Recursos  Spinner-->
+                                <label for="document_type">Descripcion Recurso:</label>
+                                <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
+                                          v-model="jsonData.modal_descripcion"
+                                          placeholder="Selecione una opción"
+                                          @input="retrieveFromCurrentDescripcionRecurso">
+                                    <span slot="no-options">No hay data para cargar</span>
+                                </v-select>
                             </div>
 
                         </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Unidad</label>
+                                <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
+                                       v-model="jsonData.modal_unidad" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label for="nombre">Cantidad</label>
+                                <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
+                                       v-model="jsonData.modal_cantidad">
+                            </div>
+                        </div>
 
-
-                        <!-- hasta aqui el row span> -->
-                        <h4 class="text-danger font-weight-bold">RELACION CON ITEMS CONTRATO PRINCIPAL</h4>
-                        <hr>
-
-                        <!-- INICIO fORMULARIO EN FILA relacion items contrato principal-->
-
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Horas Requeridas</label>
+                                        <input type="text" class="form-control" name="horas"
+                                               placeholder="Horas Requeridas"
+                                               v-model="jsonData.modal_horas_requeridas">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Dias Requeridos</label>
+                                        <input type="text" class="form-control" name="dias"
+                                               placeholder="Dias Requeridos"
+                                               v-model="jsonData.modal_dias_requeridos">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Plazo Ejecucion</label>
+                                        <input type="text" class="form-control" name="plazo"
+                                               placeholder="dias de ejecucion"
+                                               v-model="jsonData.modal_plazo">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="nombre">Precio referencial</label>
+                                        <input type="text" class="form-control" name="referencial"
+                                               placeholder="precio referencial"
+                                               v-model="jsonData.modal_precio_referencia">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificar">
+                        Modificar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--================================ FIN MODAL MODIFICAR ITEM REQUERIMIENTO =========================================-->
+    <!--=================================== MODAL MODIFICAR ITEM RELACION ===============================================-->
+    <div class="modal fade" id="modal-editar-relacion" tabindex="-1" role="dialog"
+         style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header ferdy-background-Primary-blak">
+                    <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Item Relacion con
+                        Contrato Principal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row bg-warning">
                         <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="codigo">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo" placeholder="Codigo"
-                                           v-model="jsonData.item_codigo" disabled>
+                                           v-model="jsonData.modal2_codigo" disabled>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -424,7 +981,7 @@
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Item Relacionado:</label>
                                     <v-select label="item_descripcion" :options="combo_items_planilla"
-                                              v-model="jsonData.item_descripcion"
+                                              v-model="jsonData.modal2_descripcion"
                                               placeholder="Selecione una opción"
                                               @input="getNameForItemRelacion">
                                         <span slot="no-options">No hay data para cargar</span>
@@ -435,7 +992,7 @@
                                 <div class="form-group">
                                     <label for="nombre">Unidad:</label>
                                     <input type="text" class="form-control" name="unidad" placeholder="Unidad"
-                                           v-model="jsonData.item_simbolo" disabled>
+                                           v-model="jsonData.modal2_unidad" disabled>
                                 </div>
                             </div>
                             <div class="col-md-1">
@@ -444,7 +1001,7 @@
                                     <input type="text" class="form-control" name="cantidad"
                                            placeholder="Cantidad"
                                            disabled
-                                           v-model="jsonData.item_vigente">
+                                           v-model="jsonData.modal2_vigente">
                                 </div>
                             </div>
 
@@ -456,7 +1013,7 @@
                                             <input type="text" class="form-control" name="horas"
                                                    placeholder="Horas Requeridas"
                                                    disabled
-                                                   v-model="jsonData.item_avance">
+                                                   v-model="jsonData.modal2_avance">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -465,14 +1022,15 @@
                                             <input type="text" class="form-control" name="dias"
                                                    placeholder="Dias Requeridos"
                                                    disabled
-                                                   v-model="jsonData.item_saldo">
+                                                   v-model="jsonData.modal2_saldo">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="nombre">Avance Estimado</label>
                                             <input type="text" class="form-control" name="plazo"
-                                                   placeholder="dias de ejecucion" v-model="jsonData.item_estimado">
+                                                   placeholder="dias de ejecucion"
+                                                   v-model="jsonData.modal2_estimado">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -480,185 +1038,49 @@
                                             <label for="nombre">Precio Unitario</label>
                                             <input type="text" class="form-control" name="plazo"
                                                    placeholder="dias de ejecucion"
-                                                   v-model="jsonData.item_precio_unitario">
+                                                   v-model="jsonData.modal2_precio_unitario">
                                         </div>
                                     </div>
-
                                 </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <br>
-                                        <button type="submit" @click="guardarItemRelacion();" class="btn btn-danger">
-                                            Agregar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                        <!-- ///FIN  fORMULARIO EN FILA relacion items -->
-
-
-                        <!-- tabla de relacion de items-->
-                        <div class="row">
-
-                            <div class="table-responsive">
-                                <vue-bootstrap4-table :rows="rows1" :columns="columns1" :config="configTablas"
-                                                      :classes="configTablas.classes">
-                                    <template slot="global-search-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="paginataion-previous-button">
-                                        <span class="text-primary"><i class="fas fa-angle-double-left"></i></span>
-                                        Anterior
-                                    </template>
-                                    <template slot="paginataion-next-button">
-                                        Siguiente <span class="text-primary"><i
-                                        class="fas fa-angle-double-right"></i></span>
-                                    </template>
-                                    <template slot="pagination-info" slot-scope="props">
-                                        Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }}
-                                        |
-                                        de un total de: {{ props.originalRowsLength }} Registros Obtenidos
-                                    </template>
-                                    <template slot="selected-rows-info" slot-scope="props">
-                                        Número total de filas seleccionadas: {{ props.selectedItemsCount }}
-                                    </template>
-
-                                    <template slot="simple-filter-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="sort-asc-icon">
-                                        <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
-                                    </template>
-                                    <template slot="sort-desc-icon">
-                                        <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
-                                    </template>
-                                    <template slot="no-sort-icon">
-                                        <i class="fas fa-sort"> </i>
-                                    </template>
-                                    <template slot="aprobacion" slot-scope="props">
-                                        <div v-if="props.row.soli_estado=='R'">
-                                            <button class="btn btn-outline btn-danger dim" type="button"
-                                                    @click="aprobarSolicitud(props.row)"><i
-                                                class="fa fa-thumbs-o-down"></i></button>
-                                        </div>
-                                        <div v-else>
-                                            <button class="btn btn-outline btn-primary dim" type="button"><i
-                                                class="fa fa-thumbs-o-up"></i></button>
-                                        </div>
-                                    </template>
-                                    <template slot="filePath" slot-scope="props">
-                                        <a :href="props.row.filePathFull" target="_blank"
-                                           title="Ver el archivo digital">
-                                            <span
-                                                class="badge badge-primary">Ver: {{
-                                                    props.row.cofinanciador_documento.titulo
-                                                }}</span>
-                                        </a>
-                                    </template>
-                                    <template slot="acciones" slot-scope="props">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-outline-warning ml-1"
-                                                    @click="editarItemRelacion(props.row);"
-                                                    data-toggle="modal"
-                                                    data-target="#modal-editar-relacion"><span><i
-                                                class="fa fa-user-edit"></i></span>
-                                            </button>
-                                            <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
-                                                class="fa fa-trash-alt"></i></span></button>
-                                        </div>
-                                    </template>
-                                </vue-bootstrap4-table>
                             </div>
                         </div>
-
-
-                        <!-- tabla de relacion de items-->
-
-
-                    </div> <!-- ////////////  FIN del segundo tab -->
-
-
-                    <!-- Otrosxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-                    <div class="tab-pane fade" id="custom-tabs-three-messages" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-messages-tab">
-
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <center class="text-danger font-weight-bold">
-                                            <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
-                                            <h3 v-else> Contrato LLave en Mano</h3>
-                                        </center>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.fechaFormatted"
-                                                   disabled>
-
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="row">
-
-
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="nombre">NURI Correspondencia:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
-                                                   disabled>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <div class="col-md-9">
-                                <div class="form-group">
-                                    <label for="descripcion">Gastos generales u otros gastos, con este
-                                        requerimiento:</label>
-                                    <vue-editor
-                                        v-model="jsonData.gastos_generales"
-                                        :editor-toolbar="configToolBarEditText"
-                                        placeholder="Explicar en que gastos generales se trabajará"
-                                    ></vue-editor>
-                                    <!-- <input type="text" class="form-control" name="descripcion" placeholder="Ingresar descripcion" v-model="jsonData.descripcion"> -->
-                                </div>
-                            </div>
-
-                        </div>
-
-
-                        <!-- hasta aqui el row span> -->
-                        <h4 class="text-danger font-weight-bold">GASTOS GENERALES</h4>
-                        <hr>
-
-                        <!-- INICIO fORMULARIO EN FILA relacion otros gastos-->
-
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" data-dismiss="modal"
+                            @click="modificarItemRelacion">
+                        Modificar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--=============================== FIN MODAL MODIFICAR ITEM RELACION ========================================-->
+    <!--=================================== MODAL MODIFICAR ITEM OTROS ===============================================-->
+    <div class="modal fade" id="modal-editar-otros" tabindex="-1" role="dialog"
+         style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header ferdy-background-Primary-blak">
+                    <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
+                        Principal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row bg-warning">
                         <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Codigo:</label>
-                                    <input type="text" class="form-control" name="codigo" placeholder="Codigo"
-                                           v-model="jsonData.codigo_otros" disabled>
+                                    <input type="text" class="form-control" name="codigo"
+                                           placeholder="Codigo"
+                                           v-model="jsonData.modal3_codigo"
+                                           disabled>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -666,7 +1088,7 @@
                                     <!-- Recursos  Spinner-->
                                     <label for="nombre">Gastos Generales:</label>
                                     <v-select label="descripcion_recurso" :options="combo_otros_gastos"
-                                              v-model="jsonData.descripcion_otros"
+                                              v-model="jsonData.modal3_descripcion"
                                               @input="filterNameForOtrosGastos"
                                               placeholder="Selecione una opción">
                                         <span slot="no-options">No hay data para cargar</span>
@@ -677,14 +1099,14 @@
                                 <div class="form-group">
                                     <label for="nombre">Unidad</label>
                                     <input type="text" class="form-control" name="unidad" placeholder="Unidad"
-                                           v-model="jsonData.simbolo_otros" disabled>
+                                           v-model="jsonData.modal3_unidad" disabled>
                                 </div>
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Cantidad</label>
                                     <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                           v-model="jsonData.cantidad_otros">
+                                           v-model="jsonData.modal3_cantidad">
                                 </div>
                             </div>
 
@@ -694,175 +1116,43 @@
                                         <div class="form-group">
                                             <label for="nombre">Monto</label>
                                             <input type="text" class="form-control" name="horas"
-                                                   placeholder="Monto Requerido" v-model="jsonData.monto_otros">
+                                                   placeholder="Monto Requerido" v-model="jsonData.modal3_monto">
                                         </div>
                                     </div>
                                     <div class="col-md-9">
                                         <div class="form-group">
                                             <label for="nombre">Detallar</label>
                                             <input type="text" class="form-control" name="dias"
-                                                   placeholder="Detalle" v-model="jsonData.explicar_otros">
+                                                   placeholder="Detalle" v-model="jsonData.modal3_detallar">
                                         </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <br>
-                                        <button type="submit" @click="guardarItemOtrosGastos();"
-                                                class="btn btn-danger">Agregar
-                                        </button>
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
-
-                        <!-- ///FIN  fORMULARIO EN FILA otros gastos -->
-
-                        <!-- tabla de relacion con otros gastos-->
-                        <div class="row">
-                            <div class="table-responsive">
-                                <vue-bootstrap4-table :rows="rows2" :columns="columns2" :config="configTablas"
-                                                      :classes="configTablas.classes">
-                                    <template slot="global-search-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="paginataion-previous-button">
-                                        <span class="text-primary"><i class="fas fa-angle-double-left"></i></span>
-                                        Anterior
-                                    </template>
-                                    <template slot="paginataion-next-button">
-                                        Siguiente <span class="text-primary"><i
-                                        class="fas fa-angle-double-right"></i></span>
-                                    </template>
-                                    <template slot="pagination-info" slot-scope="props">
-                                        Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }}
-                                        |
-                                        de un total de: {{ props.originalRowsLength }} Registros Obtenidos
-                                    </template>
-                                    <template slot="selected-rows-info" slot-scope="props">
-                                        Número total de filas seleccionadas: {{ props.selectedItemsCount }}
-                                    </template>
-
-                                    <template slot="simple-filter-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="sort-asc-icon">
-                                        <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
-                                    </template>
-                                    <template slot="sort-desc-icon">
-                                        <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
-                                    </template>
-                                    <template slot="no-sort-icon">
-                                        <i class="fas fa-sort"> </i>
-                                    </template>
-                                    <template slot="aprobacion" slot-scope="props">
-                                        <div v-if="props.row.soli_estado=='R'">
-                                            <button class="btn btn-outline btn-danger dim" type="button"
-                                                    @click="aprobarSolicitud(props.row)"><i
-                                                class="fa fa-thumbs-o-down"></i></button>
-                                        </div>
-                                        <div v-else>
-                                            <button class="btn btn-outline btn-primary dim" type="button"><i
-                                                class="fa fa-thumbs-o-up"></i></button>
-                                        </div>
-                                    </template>
-                                    <template slot="filePath" slot-scope="props">
-                                        <a :href="props.row.filePathFull" target="_blank"
-                                           title="Ver el archivo digital">
-                                            <span
-                                                class="badge badge-primary">Ver: {{
-                                                    props.row.cofinanciador_documento.titulo
-                                                }}</span>
-                                        </a>
-                                    </template>
-                                    <template slot="acciones" slot-scope="props">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-outline-warning ml-1"
-                                                    data-toggle="modal"
-                                                    data-target="#modal-editar-otros"
-                                                    @click="editarItemOtrosGastos(props.row);"><span><i
-                                                class="fa fa-user-edit"></i></span>
-                                            </button>
-                                            <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
-                                                class="fa fa-trash-alt"></i></span></button>
-                                        </div>
-                                    </template>
-                                </vue-bootstrap4-table>
-                            </div>
-                        </div>
-
-
-                        <!-- tabla de relacion con otros gastos-->
-
 
                     </div>
-
-                    <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
                 </div>
-                <!-- ////////////  FIN contenedor de tabs<div class="tab-content" id="custom-tabs-three-tabContent"> -->
-
-            </div> <!-- ////////////  FIN card-body -->
-
-            <!-- En el footer pondremos el tab veamos como funciona y to se mueve en el body -->
-            <div class="card-footer">
-
-
-            </div>
-            <!-- ///// fin  footer  -->
-        </div>
-
-        <!--  modal para la seleccion de contratos //////////-->
-        <div class="modal fade" id="seleccion_proyecto_doc_legales" tabindex="-1" role="dialog"
-             style="overflow-y: scroll;" aria-labelledby="seleccion_proyecto_doc_legalesTitle" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
-                            Principal</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="tipo_intervencion">Contrato Principal:</label>
-                                        <v-select label="nombre" :options="proyectos"
-                                                  v-model="jsonData.proyectos"
-                                                  @input="getAllItemRelacion"
-                                                  placeholder="Selecione un proyecto">
-                                            <span slot="no-options">No hay datos para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">
-                            Seleccionar
-                        </button>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" data-dismiss="modal"
+                            @click="modificarItemOtrosGastos">
+                        Modificar
+                    </button>
                 </div>
             </div>
         </div>
-        <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
-        <!--================================ MODAL MODIFICAR ITEM REQUERIMIENTO =============================================-->
-        <div class="modal fade" id="modal-editar-item" tabindex="-1" role="dialog"
-             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
+    </div>
+    <!--=============================== FIN MODAL MODIFICAR ITEM OTROS ========================================-->
+        <!--=============================== MODAL AÑADIR RECURSO ========================================-->
+        <div class="modal fade" id="modalCrearRecurso" tabindex="-1" role="dialog" style="overflow-y: scroll;"
+             aria-labelledby="intervencionTitle" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
+                    <!--modal header, close button-->
                     <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Requerimiento
-                            Item</h5>
+                        <h5 class="modal-title" id="intervencionTitle">{{ tituloIntervencionModal }}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -873,69 +1163,46 @@
                                 <div class="form-group">
                                     <label for="codigo_recurso">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
-                                           v-model="jsonData.modal_codigo" disabled>
+                                           v-model="jsonEdUpSave.modal_codigo">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
                                     <label for="document_type">Descripcion Recurso:</label>
-                                    <v-select label="descripcion_recurso" :options="combo_requerimiento_recursos"
-                                              v-model="jsonData.modal_descripcion"
-                                              placeholder="Selecione una opción"
-                                              @input="retrieveFromCurrentDescripcionRecurso">
-                                        <span slot="no-options">No hay data para cargar</span>
-                                    </v-select>
+                                    <input type="text" class="form-control" name="codigo_recurso"
+                                           placeholder="Descripcion del Recurso"
+                                           v-model="jsonEdUpSave.modal_descripcion">
                                 </div>
-
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Unidad</label>
-                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
-                                           v-model="jsonData.modal_unidad" disabled>
+                                    <v-select label="simbolo" :options="combo_unidades"
+                                              v-model="jsonEdUpSave.modal_unidad"
+                                              placeholder="Selecione una opción">
+                                        <span slot="no-options">No hay data para cargar</span>
+                                    </v-select>
                                 </div>
                             </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="nombre">Cantidad</label>
-                                    <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                           v-model="jsonData.modal_cantidad">
-                                </div>
-                            </div>
-
-                            <div class="col-md-5">
+                            <div class="col-md-7">
                                 <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Horas Requeridas</label>
-                                            <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas"
-                                                   v-model="jsonData.modal_horas_requeridas">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Dias Requeridos</label>
-                                            <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos"
-                                                   v-model="jsonData.modal_dias_requeridos">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Plazo Ejecucion</label>
-                                            <input type="text" class="form-control" name="plazo"
-                                                   placeholder="dias de ejecucion"
-                                                   v-model="jsonData.modal_plazo">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="nombre">Precio referencial</label>
                                             <input type="text" class="form-control" name="referencial"
-                                                   placeholder="precio referencial"
-                                                   v-model="jsonData.modal_precio_referencia">
+                                                   placeholder="Precio Referencial"
+                                                   v-model="jsonEdUpSave.modal_precio_referencial">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="nombre">Unidad de Contrato</label>
+                                            <v-select label="nombre" :options="combo_unidades_contratos"
+                                                      v-model="jsonEdUpSave.modal_unidad_contrato"
+                                                      placeholder="Selecione una opción">
+                                                <span slot="no-options">No hay data para cargar</span>
+                                            </v-select>
                                         </div>
                                     </div>
                                 </div>
@@ -943,214 +1210,24 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
-                            Cancelar
+                        <button type="button" class="btn btn-danger" id="cerrarModalRecurso" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal" @click="modificar">
-                            Modificar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--================================ FIN MODAL MODIFICAR ITEM REQUERIMIENTO =========================================-->
-        <!--=================================== MODAL MODIFICAR ITEM RELACION ===============================================-->
-        <div class="modal fade" id="modal-editar-relacion" tabindex="-1" role="dialog"
-             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Modificar Item Relacion con
-                            Contrato Principal</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row bg-warning">
-                            <div class="row bg-warning">
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <label for="codigo">Codigo:</label>
-                                        <input type="text" class="form-control" name="codigo" placeholder="Codigo"
-                                               v-model="jsonData.modal2_codigo" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <!-- Recursos  Spinner-->
-                                        <label for="document_type">Item Relacionado:</label>
-                                        <v-select label="item_descripcion" :options="combo_items_planilla"
-                                                  v-model="jsonData.modal2_descripcion"
-                                                  placeholder="Selecione una opción"
-                                                  @input="getNameForItemRelacion">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <label for="nombre">Unidad:</label>
-                                        <input type="text" class="form-control" name="unidad" placeholder="Unidad"
-                                               v-model="jsonData.modal2_unidad" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <label for="nombre">Vigente</label>
-                                        <input type="text" class="form-control" name="cantidad"
-                                               placeholder="Cantidad"
-                                               disabled
-                                               v-model="jsonData.modal2_vigente">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-5">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="nombre">Avance</label>
-                                                <input type="text" class="form-control" name="horas"
-                                                       placeholder="Horas Requeridas"
-                                                       disabled
-                                                       v-model="jsonData.modal2_avance">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="nombre">Saldo</label>
-                                                <input type="text" class="form-control" name="dias"
-                                                       placeholder="Dias Requeridos"
-                                                       disabled
-                                                       v-model="jsonData.modal2_saldo">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="nombre">Avance Estimado</label>
-                                                <input type="text" class="form-control" name="plazo"
-                                                       placeholder="dias de ejecucion"
-                                                       v-model="jsonData.modal2_estimado">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="nombre">Precio Unitario</label>
-                                                <input type="text" class="form-control" name="plazo"
-                                                       placeholder="dias de ejecucion"
-                                                       v-model="jsonData.modal2_precio_unitario">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal"
-                                @click="modificarItemRelacion">
-                            Modificar
+                        <button type="submit" @click="guardarRecurso();" class="btn btn-success" id="guardarModal">
+                            <slot>
+                                Guardar
+                            </slot>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <!--=============================== FIN MODAL MODIFICAR ITEM RELACION ========================================-->
-        <!--=================================== MODAL MODIFICAR ITEM OTROS ===============================================-->
-        <div class="modal fade" id="modal-editar-otros" tabindex="-1" role="dialog"
-             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
-                            Principal</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row bg-warning">
-                            <div class="row bg-warning">
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <label for="nombre">Codigo:</label>
-                                        <input type="text" class="form-control" name="codigo"
-                                               placeholder="Codigo"
-                                               v-model="jsonData.modal3_codigo"
-                                               disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <!-- Recursos  Spinner-->
-                                        <label for="nombre">Gastos Generales:</label>
-                                        <v-select label="descripcion_recurso" :options="combo_otros_gastos"
-                                                  v-model="jsonData.modal3_descripcion"
-                                                  @input="filterNameForOtrosGastos"
-                                                  placeholder="Selecione una opción">
-                                            <span slot="no-options">No hay data para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <label for="nombre">Unidad</label>
-                                        <input type="text" class="form-control" name="unidad" placeholder="Unidad"
-                                               v-model="jsonData.modal3_unidad" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <label for="nombre">Cantidad</label>
-                                        <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                               v-model="jsonData.modal3_cantidad">
-                                    </div>
-                                </div>
+   <!--=============================== FIN MODAL AÑADIR RECURSO ========================================-->
+    <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
+                        ref="abrirAlerta">
+    </alert-confirmacion>
 
-                                <div class="col-md-5">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="nombre">Monto</label>
-                                                <input type="text" class="form-control" name="horas"
-                                                       placeholder="Monto Requerido" v-model="jsonData.modal3_monto">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <div class="form-group">
-                                                <label for="nombre">Detallar</label>
-                                                <input type="text" class="form-control" name="dias"
-                                                       placeholder="Detalle" v-model="jsonData.modal3_detallar">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal"
-                                @click="modificarItemOtrosGastos">
-                            Modificar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--=============================== FIN MODAL MODIFICAR ITEM OTROS ========================================-->
-        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
-                            ref="abrirAlerta">
-        </alert-confirmacion>
-
-        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"
-                         @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>
+    <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"
+                     @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>
     </div>
 </template>
 
@@ -1176,6 +1253,51 @@ export default {
         }
     },
     methods: {
+        async comboUnidadesContratos() {
+            this.combo_unidades = (await axios.get('get_unidades')).data;
+            this.combo_unidades_contratos = this.listUnidadesHarcoded;
+
+            console.log('UNIDADES CONTRATO', this.combo_unidades_contratos);
+            console.log('UNIDADES', this.combo_unidades);
+        },
+        saveItemRecurso() {
+            this.jsonEdUpSave.modal_tipo_requerimiento = this.jsonData.tipo_requerimiento_id;
+            this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
+            this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
+            console.log('JSONEDUPSAVE', this.jsonEdUpSave);
+
+            let jsonEdUpSave = new FormData();
+            for (let key in this.jsonEdUpSave) {
+                jsonEdUpSave.append(key, this.jsonEdUpSave[key]);
+            }
+            return jsonEdUpSave
+        },
+        areAlltheFieldsFilledRecurso() {
+            return this.jsonEdUpSave.modal_codigo !== '' &&
+                this.jsonEdUpSave.modal_descripcion !== '' &&
+                this.jsonEdUpSave.modal_unidad !== '' &&
+                this.jsonEdUpSave.modal_precio_referencial !== '' &&
+                this.jsonEdUpSave.modal_unidad_contrato !== '';
+        },
+        limpiar_recurso() {
+            this.jsonEdUpSave.modal_codigo = '';
+            this.jsonEdUpSave.modal_descripcion = '';
+            this.jsonEdUpSave.modal_unidad = '';
+            this.jsonEdUpSave.modal_precio_referencial = '';
+            this.jsonEdUpSave.modal_unidad_contrato = '';
+        },
+        async guardarRecurso() {
+            if (this.areAlltheFieldsFilledRecurso()) {
+                const jsonObject = this.saveItemRecurso();
+                let savedRecurso = axios.post('requerimiento_recurso', jsonObject);
+                console.log('Save', savedRecurso);
+                document.getElementById("cerrarModalRecurso").click();
+                await this.descripcionRecursoGetbyType();
+                this.limpiar_recurso();
+            } else {
+                alert('Debe llenar todos campos');
+            }
+        },
         async filterList(arrayItems) {
             const responseRecursos = (await axios.get('requerimientos')).data;
             const getUnidades = (await axios.get('get_unidades')).data;
@@ -1438,7 +1560,7 @@ export default {
             let jsonData = new FormData();
             jsonData.append('trabajos_encarados', trabajos);
             jsonData.append('gastos_generales', gastos);
-            const updateReqTrabajoGasto = await axios.post('update_requerimiento_trabajos_gastos/' + getCurrentRequerimiento[0].id, jsonData );
+            const updateReqTrabajoGasto = await axios.post('update_requerimiento_trabajos_gastos/' + getCurrentRequerimiento[0].id, jsonData);
             console.log('UPDATE REQ TRABAJO GASTO', updateReqTrabajoGasto.data);
         },
         async saveItemRelacion() {
@@ -1462,12 +1584,12 @@ export default {
         async guardarItemRelacion() {
             console.log('PROYECTOS', this.jsonData.proyectos);
 
-                if(this.areAlltheFieldsFilledRelacion()){
-                    await this.saveItemRelacion();
-                    await this.updateDescription();
-                } else {
-                    alert('Por favor complete todos los campos');
-                }
+            if (this.areAlltheFieldsFilledRelacion()) {
+                await this.saveItemRelacion();
+                await this.updateDescription();
+            } else {
+                alert('Por favor complete todos los campos');
+            }
         },
         async editarItemRelacion(data = {}) {
             let getValoresItem = (await axios.get('get_valores_item/' + data.planilla_item_id)).data;
@@ -1515,12 +1637,12 @@ export default {
             console.log('Proyecto', this.jsonData.proyectos);
 
             let arrayPlanillasCurrentProyecto = [];
-            for(let i in planillas){
+            for (let i in planillas) {
                 if (planillas[i].contrato_id === this.jsonData.proyectos.id) {
                     arrayPlanillasCurrentProyecto.push(planillas[i]);
                 }
             }
-            if(arrayPlanillasCurrentProyecto.length >0){
+            if (arrayPlanillasCurrentProyecto.length > 0) {
                 return arrayPlanillasCurrentProyecto;
             } else {
                 console.log('No hay planillas para este proyecto');
@@ -1579,7 +1701,7 @@ export default {
             // this.rows2 = responseReqOtrosGastos;
             console.log('LIST REQ OTROS GASTOS', this.rows2);
         },
-        areAlltheFieldsFilledOtros(){
+        areAlltheFieldsFilledOtros() {
             return this.jsonData.descripcion_otros != '' &&
                 this.jsonData.cantidad_otros != '' &&
                 this.jsonData.monto_otros != '' &&
@@ -1602,10 +1724,10 @@ export default {
             await this.cleanFormOtrosGastos();
         },
         async guardarItemOtrosGastos() {
-            if (this.areAlltheFieldsFilledOtros()){
+            if (this.areAlltheFieldsFilledOtros()) {
                 await this.saveItemOtros();
                 await this.updateDescription();
-            }else{
+            } else {
                 alert('Por favor complete todos los campos');
             }
 
@@ -1887,8 +2009,11 @@ export default {
             modificar_bottom: false,
             guardar_bottom: false,
             clickedAdd: false,
+            tituloIntervencionModal: "Formulario de Creación de Recursos",
             tituloDocLegalesModal: '',
             requerimientoFirstFill: true,
+            combo_unidades: [],
+            combo_unidades_contratos: [],
             combo_requerimiento_recursos: [],
             combo_items_planilla: [],
             combo_otros_gastos: [],
@@ -1899,6 +2024,31 @@ export default {
             wasChecked: false,
             mandarMensajesAlerta: {},
             id_eliminacion: null,
+            listUnidadesHarcoded: [
+                {id: 1, nombre: 'm'},
+                {id: 2, nombre: 'm2'},
+                {id: 3, nombre: 'm3'},
+                {id: 4, nombre: 'm3k'},
+                {id: 5, nombre: 'h'},
+                {id: 6, nombre: 'u'},
+                {id: 7, nombre: 'kg'},
+                {id: 8, nombre: 'g'},
+                {id: 9, nombre: 'glo'},
+                {id: 10, nombre: 'lb'},
+                {id: 11, nombre: 'lt'},
+                {id: 12, nombre: 'gal'},
+                {id: 13, nombre: 'día'},
+                {id: 14, nombre: 'mes'},
+            ],
+            jsonEdUpSave: {
+                //ITEM RECURSO
+                id:'',
+                modal_codigo: '',
+                modal_descripcion: '',
+                modal_unidad: '',
+                modal_precio_referencial: '',
+                modal_unidad_contrato: '',
+            },
             jsonData: {
                 //REQUERIMIENTO OBRA
                 id: "",
@@ -2154,6 +2304,7 @@ export default {
         //Requerimiento
         this.descripcionRecursoGetAll();
         this.descripcionRecursoGetbyType();
+        this.comboUnidadesContratos();
         //Item Relacionado
         // this.getAllItemRelacion();
         this.getNameForItemRelacion();

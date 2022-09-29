@@ -1,11 +1,11 @@
 <template slot-scope="props">
     <div class="card">
         <div class="card-header ferdy-background-Primary-blak">
-            <h3 class="card-title">Creacion de Fondos en Avance</h3>
+            <h3 class="card-title">Creacion de Maquinaria y Equipos</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#contrato"
                         @click="ModalCrear();">
-                    Crear Requerimiento Fondos en Avance
+                    Crear Requerimiento Maquinaria y Equipos
                 </button>
             </div>
         </div>
@@ -194,19 +194,11 @@ export default {
             listUnidadesHarcoded: [
                 {id: 1, nombre: 'm'},
                 {id: 2, nombre: 'm2'},
-                {id: 3, nombre: 'm3'},
-                {id: 4, nombre: 'm3k'},
-                {id: 5, nombre: 'h'},
-                {id: 6, nombre: 'u'},
-                {id: 7, nombre: 'kg'},
-                {id: 8, nombre: 'g'},
-                {id: 9, nombre: 'glo'},
-                {id: 10, nombre: 'lb'},
-                {id: 11, nombre: 'lt'},
-                {id: 12, nombre: 'gal'},
-                {id: 13, nombre: 'día'},
-                {id: 14, nombre: 'mes'},
-            ],
+                {id: 3, nombre: 'm3k'},
+                {id: 4, nombre: 'h'},
+                {id: 5, nombre: 'u'},
+                {id: 6, nombre: 'kg'},
+                ],
             combo_unidades_contratos: [],
             combo_unidades: [],
             id_eliminacion: null,
@@ -390,7 +382,7 @@ export default {
             let filteredItems = [];
 
             for (let position in getAllItemRecurso) {
-                if (getAllItemRecurso[position].tipo_requerimiento_id === 4) {
+                if (getAllItemRecurso[position].tipo_requerimiento_id === 3) {
                     filteredItems.push(getAllItemRecurso[position]);
                 }
             }
@@ -402,6 +394,7 @@ export default {
             console.log('LISTAR TODO', getAllItemRecurso);
             console.log('LISTAR FILTRO', this.rows);
         },
+
         async editarModal(data = {}) {
             this.limpiar_formulario();
             const getUnidades = (await axios.get('get_unidades')).data;
@@ -415,7 +408,7 @@ export default {
             this.jsonEdUpSave.modal_unidad_contrato = this.listUnidadesHarcoded.find(unidad_contrato =>
                 unidad_contrato.nombre === data.unidad_contrato);
 
-            this.tituloIntervencionModal = "Formulario de Modificacion de Fondos en Avance";
+            this.tituloIntervencionModal = "Formulario de Modificacion de Equipos y Maquinaria";
             this.modificar_bottom = true;
             this.guardar_bottom = false;
             console.log("EDITAR", data);
@@ -440,7 +433,7 @@ export default {
                 this.jsonEdUpSave.modal_unidad_contrato !== '';
         },
         saveItemRecurso() {
-            this.jsonEdUpSave.modal_tipo_requerimiento = 4;
+            this.jsonEdUpSave.modal_tipo_requerimiento = 3;
             this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
             this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
             console.log('JSONEDUPSAVE', this.jsonEdUpSave);
@@ -478,7 +471,7 @@ export default {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
             this.limpiar_formulario();
-            this.tituloIntervencionModal = "Formulario de Creación de Fondos en Avance";
+            this.tituloIntervencionModal = "Formulario de Creación de Equipos y Maquinaria";
         },
         limpiar_formulario() {
             this.jsonEdUpSave.modal_codigo = '';

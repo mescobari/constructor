@@ -1,454 +1,139 @@
-<template>
-    <div>
-        <div class="card">
-            <div class="card-header ferdy-background-Primary-blak">
-                <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA LLAVE EN MANO</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales"
-                            @click="showRequerimiento();">
-                        Imprimir Requerimiento
-                    </button>
-                    <!--                                <a :href="'ver_requerimientos/'+this.current_id" target="_blank" rel="noopener noreferrer">-->
-                    <!--                                    <button type="button"  ><span><i class="far fa-file-pdf"></i></span></button>-->
-                    <!--                                </a>-->
-                </div>
-
+<template slot-scope="props">
+    <div class="card">
+        <div class="card-header ferdy-background-Primary-blak">
+            <h3 class="card-title">Creacion de Mano Obra</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#contrato"
+                        @click="ModalCrear();">
+                    Crear Requerimiento de Mano Obra
+                </button>
             </div>
-            <br>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div style="text-align: center;">
-                            <h5> {{ jsonData.proyectos.nombre }}</h5>
+        </div>
+        <br>
+        <!--------------------------------------------Tabla de Contratos----------------------------------------------->
+        <div class="card-body">
+            <div class="table-responsive">
+                <vue-bootstrap4-table :rows="rows" :columns="columns" :config="config" :classes="classes">
+                    <template slot="simple-filter-clear-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </template>
+                    <template slot="global-search-clear-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </template>
+                    <template slot="paginataion-previous-button">
+                        <span class="text-primary"><i class="fas fa-angle-double-left"></i></span> Anterior
+                    </template>
+                    <template slot="paginataion-next-button">
+                        Siguiente <span class="text-primary"><i class="fas fa-angle-double-right"></i></span>
+                    </template>
+                    <template slot="pagination-info" slot-scope="props">
+                        Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }} |
+                        de un total de: {{ props.originalRowsLength }} Registros Obtenidos
+                    </template>
+                    <template slot="selected-rows-info" slot-scope="props">
+                        Número total de filas seleccionadas: {{ props.selectedItemsCount }}
+                    </template>
+
+                    <template slot="sort-asc-icon">
+                        <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
+                    </template>
+                    <template slot="sort-desc-icon">
+                        <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
+                    </template>
+                    <template slot="no-sort-icon">
+                        <i class="fas fa-sort"> </i>
+                    </template>
+                    <template slot="aprobacion" slot-scope="props">
+                        <div v-if="props.row.soli_estado === 'R'">
+                            <button class="btn btn-outline btn-danger dim" type="button"
+                                    @click="aprobarSolicitud(props.row)"><i class="fa fa-thumbs-o-down"></i></button>
                         </div>
+                        <div v-else>
+                            <button class="btn btn-outline btn-primary dim" type="button"><i
+                                class="fa fa-thumbs-o-up"></i></button>
+                        </div>
+                    </template>
+                    <template slot="descripcion" slot-scope="props">
+                        <div class="btn-group" v-html="props.row.descripcion" style="width: 100px;
+                                                                                        white-space: nowrap;
+                                                                                        overflow: hidden;
+                                                                                        text-overflow: Ellipsis"
+                             :title="props.row.descripcion">
+                        </div>
+                    </template>
+                    <template slot="acciones" slot-scope="props">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
+                                    data-target="#contrato" @click="editarModal(props.row);"><span><i
+                                class="fa fa-user-edit"></i></span></button>
+                            <button type="button" class="btn btn-outline-danger ml-1"
+                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row);"><span><i
+                                class="fa fa-trash-alt"></i></span></button>
+                        </div>
+                    </template>
+                </vue-bootstrap4-table>
+            </div>
+        </div>
+        <!------------------------------------------------------Fin Tabla Contrato--------------------------------------------------------->
+
+        <!------------------------------------------------------Modal Crear Contrato------------------------------------------------------->
+        <div class="modal fade" id="contrato" tabindex="-1" role="dialog" style="overflow-y: scroll;"
+             aria-labelledby="intervencionTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <!--modal header, close button-->
+                    <div class="modal-header ferdy-background-Primary-blak">
+                        <h5 class="modal-title" id="intervencionTitle">{{ tituloIntervencionModal }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
-
-                <hr>
-                <div>
-                    <!-- Tabs navs -->
-                    <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
-                               href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento Llave en
-                                mano</h6>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Tabs navs -->
-
-
-                <div class="tab-content" id="custom-tabs-three-tabContent">
-                    <!-- ////////////  INICIO contenedor de tabs -->
-                    <!-- REQxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-
-                    <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel"
-                         aria-labelledby="custom-tabs-three-home-tab">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <center class="text-danger font-weight-bold">
-                                            <h3 v-if="jsonData.tipo_requerimiento_id === '1'">Mano de Obra</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '2'">Material</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '3'">Equipo</h3>
-                                            <h3 v-else-if="jsonData.tipo_requerimiento_id === '4'">Fondos en Avance</h3>
-                                            <h3 v-else> LLave en Mano</h3>
-                                        </center>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
-                                            <datepicker
-                                                :language="configFechas.es"
-                                                :placeholder="configFechas.placeholder"
-
-
-                                                :calendar-class="configFechas.nombreClaseParaModal"
-                                                :input-class="configFechas.nombreClaseParaInput"
-                                                :monday-first="true"
-                                                :clear-button="!clickedAdd"
-                                                :clear-button-icon="configFechas.IconoBotonBorrar"
-                                                :calendar-button="true"
-
-                                                :calendar-button-icon="configFechas.IconoBotonAbrir"
-                                                calendar-button-icon-content=""
-                                                :format="configFechas.DatePickerFormat"
-                                                :full-month-name="true"
-
-                                                :bootstrap-styling="true"
-                                                :disabled-dates="configFechas.disabledDates"
-                                                :typeable="configFechas.typeable"
-                                                :value="jsonData.fecha_requerimiento"
-                                                v-model="jsonData.fecha_requerimiento"
-                                                v-bind:disabled="clickedAdd">
-                                            </datepicker>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="nombre">NURI Correspondencia:</label>
-                                            <input type="text" class="form-control" name="nombre"
-                                                   placeholder="Ingresar Nombre" v-model="jsonData.nuri_requerimiento"
-                                                   v-bind:disabled="clickedAdd">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
-                                               class="bg-primary"
-                                               style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
-                                            <span id="contenido_documento_res_aprobacion"><i
-                                                class="fas fa-download fa-1x"></i><br> <span> {{
-                                                    configFile.contenidoDefault
-                                                }}</span></span>
-                                            <button type="button" class="close" v-if="configFile.cerrar"
-                                                    @click="borrar_file();"
-                                            ><span>&times;</span></button>
-                                        </label>
-                                        <input type="file" class="form-control" id="documento_res_aprobacion"
-                                               @change="cargar_file" style="display:none" v-bind:disabled="clickedAdd">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="form-group">
-                                    <label for="descripcion">Trabajos a ser encarados, con este requerimiento:</label>
-                                    <vue-editor
-                                        v-model="jsonData.trabajos_encarados"
-                                        :editor-toolbar="configToolBarEditText"
-                                        placeholder="Explicacion de los trabajos a ser encarados"
-                                        v-bind:disabled="clickedAdd">
-
-                                    </vue-editor>
-                                </div>
-                            </div>
-
-                        </div>
-                        <!-- hasta aqui el row span> -->
-                        <h4 class="text-danger font-weight-bold">AGREGAR ITEMS RELACIONADOS SOLICITADOS</h4>
-
-                        <hr>
-
-                        <!-- ============================== Formulario Lineal -------------------------------->
-
+                    <div class="modal-body">
                         <div class="row bg-warning">
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="codigo_recurso">Codigo:</label>
                                     <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
-                                           v-model="jsonData.item_codigo" disabled>
+                                           v-model="jsonEdUpSave.modal_codigo">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <!-- Recursos  Spinner-->
-                                    <label for="document_type">Item Relacionado:</label>
-                                    <v-select label="item_descripcion" :options="combo_items_planilla"
-                                              v-model="jsonData.item_descripcion"
-                                              placeholder="Selecione una opción"
-                                              @input="getNameForItemRelacion">
-                                        <span slot="no-options">No hay data para cargar</span>
-                                    </v-select>
+                                    <label for="document_type">Descripcion Recurso:</label>
+                                    <input type="text" class="form-control" name="codigo_recurso"
+                                           placeholder="Descripcion del Recurso"
+                                           v-model="jsonEdUpSave.modal_descripcion">
                                 </div>
-
-                            </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="nombre">Unidad:</label>
-                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
-                                           v-model="jsonData.item_simbolo" disabled>
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="nombre">Vigente</label>
-                                    <input type="text" class="form-control" name="cantidad"
-                                           placeholder="Cantidad"
-                                           v-model="jsonData.item_vigente"
-                                           disabled>
-                                </div>
-                            </div>
-
-                            <div class="col-md-5">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Avance Acumulado</label>
-                                            <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas"
-                                                   v-model="jsonData.item_avance"
-                                                   disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Saldo</label>
-                                            <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos" v-model="jsonData.item_saldo"
-                                                   disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Avance Contratado:</label>
-                                            <input type="text" class="form-control" name="plazo"
-                                                   placeholder="dias de ejecucion"
-                                                   v-model="jsonData.item_estimado">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Precio Unitario</label>
-                                            <input type="text" class="form-control" name="referencial"
-                                                   placeholder="precio referencial"
-                                                   v-model="jsonData.item_precio_unitario">
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <br>
-                                        <button type="submit" @click="guardarItemRelacion();"
-                                                class="btn btn-success">
-                                            Agregar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                        <!-- ======================/ termina form Formulario Lineal -->
-                        <hr>
-
-                        <!--  row para la tabla mostrar detalles del modelo y acciones //////////-->
-                        <div class="row">
-
-                            <div class="table-responsive">
-                                <vue-bootstrap4-table :rows="rows" :columns="columns" :config="configTablas"
-                                                      :classes="configTablas.classes">
-                                    <template slot="global-search-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="paginataion-previous-button">
-                                        <span class="text-primary"><i class="fas fa-angle-double-left"></i></span>
-                                        Anterior
-                                    </template>
-                                    <template slot="paginataion-next-button">
-                                        Siguiente <span class="text-primary"><i
-                                        class="fas fa-angle-double-right"></i></span>
-                                    </template>
-                                    <template slot="pagination-info" slot-scope="props">
-                                        Mostrando: {{ props.currentPageRowsLength }} de: {{ props.filteredRowsLength }}
-                                        |
-                                        de un total de: {{ props.originalRowsLength }} Registros Obtenidos
-                                    </template>
-                                    <template slot="selected-rows-info" slot-scope="props">
-                                        Número total de filas seleccionadas: {{ props.selectedItemsCount }}
-                                    </template>
-
-                                    <template slot="simple-filter-clear-icon">
-                                        <i class="fas fa-times-circle"></i>
-                                    </template>
-                                    <template slot="sort-asc-icon">
-                                        <span class="text-primary"><i class="fas fa-arrow-up"> </i></span>
-                                    </template>
-                                    <template slot="sort-desc-icon">
-                                        <span class="text-danger"><i class="fas fa-arrow-down"> </i></span>
-                                    </template>
-                                    <template slot="no-sort-icon">
-                                        <i class="fas fa-sort"> </i>
-                                    </template>
-                                    <template slot="aprobacion" slot-scope="props">
-                                        <div v-if="props.row.soli_estado=='R'">
-                                            <button class="btn btn-outline btn-danger dim" type="button"
-                                                    @click="aprobarSolicitud(props.row)"><i
-                                                class="fa fa-thumbs-o-down"></i></button>
-                                        </div>
-                                        <div v-else>
-                                            <button class="btn btn-outline btn-primary dim" type="button"><i
-                                                class="fa fa-thumbs-o-up"></i></button>
-                                        </div>
-                                    </template>
-                                    <template slot="filePath" slot-scope="props">
-                                        <a :href="props.row.filePathFull" target="_blank"
-                                           title="Ver el archivo digital">
-                                            <span
-                                                class="badge badge-primary">Ver: {{
-                                                    props.row.cofinanciador_documento.titulo
-                                                }}</span>
-                                        </a>
-                                    </template>
-                                    <template slot="acciones" slot-scope="props">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-outline-warning ml-1"
-                                                    data-toggle="modal" data-target="#modal-editar-item"
-                                                    @click="editarItemRelacion(props.row);"><span><i
-                                                class="fa fa-user-edit"></i></span></button>
-                                            <button type="button" class="btn btn-outline-danger ml-1"
-                                                    @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
-                                                class="fa fa-trash-alt"></i></span></button>
-                                        </div>
-                                    </template>
-                                </vue-bootstrap4-table>
-                            </div>
-                        </div>
-
-                        <!-- ////////////  FIN row de la tabla mostrar detalles del modelo y acciones -->
-
-                    </div>    <!-- ////////////  FIN del primer tab -->
-
-                    <!-- RELACIONxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-
-
-                    <!-- Otrosxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-
-                    <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-                </div>
-                <!-- ////////////  FIN contenedor de tabs<div class="tab-content" id="custom-tabs-three-tabContent"> -->
-
-            </div> <!-- ////////////  FIN card-body -->
-
-            <!-- En el footer pondremos el tab veamos como funciona y to se mueve en el body -->
-            <div class="card-footer">
-
-
-            </div>
-            <!-- ///// fin  footer  -->
-        </div>
-
-        <!--  modal para la seleccion de contratos //////////-->
-        <div class="modal fade" id="seleccion_proyecto_doc_legales" tabindex="-1" role="dialog"
-             style="overflow-y: scroll;" aria-labelledby="seleccion_proyecto_doc_legalesTitle" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">Seleccione el Contrato
-                            Principal</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="tipo_intervencion">Contrato Principal:</label>
-                                        <v-select label="nombre" :options="proyectos"
-                                                  v-model="jsonData.proyectos"
-                                                  @input="getAllItemRelacion"
-                                                  placeholder="Selecione un proyecto">
-                                            <span slot="no-options">No hay datos para cargar</span>
-                                        </v-select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">
-                            Seleccionar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- ///////////  FIN modal para la seleccion de contratos //////////-->
-        <!--================================ MODAL MODIFICAR ITEM REQUERIMIENTO =============================================-->
-        <div class="modal fade" id="modal-editar-item" tabindex="-1" role="dialog"
-             style="overflow-y: scroll;" aria-labelledby="modal-editar-itemTitle" aria-hidden="true">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header ferdy-background-Primary-blak">
-                        <h5 class="modal-title" id="seleccion_proyecto_doc_legalesTitle">
-                            Modificar Item Relacionado</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row bg-warning">
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="item_codigo">Codigo:</label>
-                                    <input type="text" class="form-control" name="codigo_recurso" placeholder="Codigo"
-                                           v-model="jsonData.modal_codigo" disabled>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <!-- Recursos  Spinner-->
-                                    <label for="document_type">Item Relacionado:</label>
-                                    <v-select label="item_descripcion" :options="combo_items_planilla"
-                                              v-model="jsonData.modal_descripcion"
-                                              placeholder="Selecione una opción"
-                                              @input="getNameForItemRelacion">
-                                        <span slot="no-options">No hay data para cargar</span>
-                                    </v-select>
-                                </div>
-
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
                                     <label for="nombre">Unidad</label>
-                                    <input type="text" class="form-control" name="unidad_id" placeholder="Unidad"
-                                           v-model="jsonData.modal_unidad" disabled>
+                                    <v-select label="simbolo" :options="combo_unidades"
+                                              v-model="jsonEdUpSave.modal_unidad"
+                                              placeholder="Selecione una opción">
+                                        <span slot="no-options">No hay data para cargar</span>
+                                    </v-select>
                                 </div>
                             </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <label for="nombre">Vigente</label>
-                                    <input type="text" class="form-control" name="cantidad" placeholder="Cantidad"
-                                           disabled
-                                           v-model="jsonData.modal_vigente">
-                                </div>
-                            </div>
-
-                            <div class="col-md-5">
+                            <div class="col-md-7">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="nombre">Avance Acumulado</label>
-                                            <input type="text" class="form-control" name="horas"
-                                                   placeholder="Horas Requeridas"
-                                                   disabled
-                                                   v-model="jsonData.modal_avance_acumulado">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Saldo</label>
-                                            <input type="text" class="form-control" name="dias"
-                                                   placeholder="Dias Requeridos"
-                                                   disabled
-                                                   v-model="jsonData.modal_saldo">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Avance Contratado</label>
-                                            <input type="text" class="form-control" name="plazo"
-                                                   placeholder="dias de ejecucion"
-                                                   v-model="jsonData.modal_avance_contratado">
-                                            <!--este es el avance contratado-->
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="nombre">Precio Contratado</label>
+                                            <label for="nombre">Precio referencial</label>
                                             <input type="text" class="form-control" name="referencial"
-                                                   placeholder="precio referencial"
-                                                   v-model="jsonData.modal_precio_contratado">
-                                            <!--este es el avance contratado-->
+                                                   placeholder="Precio Referencial"
+                                                   v-model="jsonEdUpSave.modal_precio_referencial">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="nombre">Unidad de Contrato</label>
+                                            <v-select label="nombre" :options="combo_unidades_contratos"
+                                                      v-model="jsonEdUpSave.modal_unidad_contrato"
+                                                      placeholder="Selecione una opción">
+                                                <span slot="no-options">No hay data para cargar</span>
+                                            </v-select>
                                         </div>
                                     </div>
                                 </div>
@@ -456,272 +141,215 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarModal">
-                            Cancelar
+                        <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar
                         </button>
-                        <button type="submit" class="btn btn-success" data-dismiss="modal"
-                                @click="modificarItemRelacion">
-                            Modificar
+                        <button type="submit" @click="guardar();" class="btn btn-success" id="guardarModal"
+                                v-if="guardar_bottom === true">
+                            <slot>
+                                Guardar
+                            </slot>
+                        </button>
+                        <button type="submit" @click="modificar();" class="btn btn-success" id="modificarModal"
+                                v-if="modificar_bottom === true">Modificar
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
-                            ref="abrirAlerta">
-        </alert-confirmacion>
+        <!----------------------------------------Fin Modal Crear---------------------------------------->
 
-        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"
-                         @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>
+        <alert-confirmacion :mensajesAlerta="mandarMensajesAlerta" @escucharAlerta="respuestaModalAlertaConfirmacion"
+                            ref="abrirAlerta"></alert-confirmacion>
+        <!--        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion"-->
+        <!--                         @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>-->
     </div>
 </template>
 
 <script>
+
 import Vue from "vue";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import VueBootstrap4Table from 'vue-bootstrap4-table';
 import Datepicker from 'vuejs-datepicker';
+import vue2Dropzone from 'vue2-dropzone';
+import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import {VueEditor} from "vue2-editor";
-import {en, es} from 'vuejs-datepicker/dist/locale';
 
 Vue.component("v-select", vSelect);
+// Vue.component('vueDropzone', vue2Dropzone);
 
 export default {
-    watch: {
-        behaviorReq() {
-            if (this.memorySelected === this.jsonData.tipo_requerimiento_id) {
-                this.requerimientoFirstFill = true;
-            } else {
-                this.memorySelected = this.jsonData.tipo_requerimiento_id
-                this.requerimientoFirstFill = false;
-            }
-        }
-    },
-    methods: {
-        async getProyecto(data){
-            const proyecto = data;
-            this.projectSelected = true;
-            console.log('SELECTED', this.projectSelected)
-            console.log('PROYECTO SELECCIONADO',proyecto);
-            // await this.getAllItemRelacion(proyecto)
-        },
+    props: ['url', 'csrf', 'ast', 'operations', 'user'],
+    data() {
+        return {
+            mandarMensajesAlerta: {},
+            datosEnviarConfiguracion: {},
 
-        async showRequerimiento() {
-            if (this.current_id != null) {
-                const showReq = await axios.get('ver_requerimientos/' + this.current_id);
-                console.log('SHOW REQ', showReq.data);
-            } else {
-                alert("Debe llenar un requerimiento");
-            }
-        },
-        async filterListItemRelacion(arrayRequerimientoRelacion) {
-            const responsePlanillaItem = (await axios.get('get_planilla_item')).data;
-            const getUnidades = (await axios.get('get_unidades')).data;
-            let arrayItemsFiltered = [];
-            for (let i = 0; i < arrayRequerimientoRelacion.length; i++) {
-                if (arrayRequerimientoRelacion[i].requerimiento_id === this.jsonData.requerimiento_id) {
-                    for (let j = 0; j < responsePlanillaItem.length; j++) {
-                        if (responsePlanillaItem[j].id === arrayRequerimientoRelacion[i].planilla_item_id) {
-                            arrayItemsFiltered.push({
-                                ...responsePlanillaItem[j],
-                                ...arrayRequerimientoRelacion[i], //here is the id object
-                            })
-                            j = responsePlanillaItem.length;
-                        }
+            optionsSelect: [{label: 'Favor de Seleccionar su opción', code: "fer"}],
+            guardar_bottom: false,
+            modificar_bottom: false,
+            success: '',
+            tituloIntervencionModal: '',
+            listUnidadesHarcoded: [{id: 1, nombre: 'día'}, {id: 2, nombre: 'u'},],
+            combo_unidades_contratos: [],
+            combo_unidades: [],
+            id_eliminacion: null,
+            jsonData: {
+                id: 0,
+                //required to MODAL CREATE UPDATE
+                modal_codigo: '',
+                modal_descripcion: '',
+                modal_unidad: '',
+                modal_cantidad: '',
+                modal_horas_requeridas: '',
+                modal_dias_requeridos: '',
+                modal_plazo: '',
+                modal_precio_referencial: '',
+                modal_unidad_contrato: '',
+
+                //required to object
+                tipo_requerimiento_id: '',
+                codigo_recurso: '',
+                descripcion_recurso: '',
+                unidad_id: '',
+                precio_referencial: '',
+                unidad_contrato: '',
+                //maybe
+                cantidad: '',
+                horas_requeridas: '',
+                dias_requeridos: '',
+                plazo: '',
+            },
+            jsonEdUpSave: {
+                id: 0,
+                modal_codigo: '',
+                modal_descripcion: '',
+                modal_unidad: '',
+                modal_precio_referencial: '',
+                modal_unidad_contrato: '',
+                modal_tipo_requerimiento: '',
+            },
+
+            rows: [],
+            columns: [
+                {
+                    label: "#",
+                    name: "id",
+                    filter: {
+                        type: "simple",
+                        placeholder: "ID",
+                    },
+                    sort: true,
+                    uniqueId: true,
+                },
+                {
+                    label: "Codigo",
+                    name: "codigo_recurso",
+                    filter: {
+                        type: "simple",
+                        placeholder: "Codigo",
+                    },
+                    sort: true,
+                },
+                {
+                    label: "Descripcion Recurso",
+                    name: "descripcion_recurso",
+                    filter: {
+                        type: "simple",
+                        placeholder: "Recurso",
+                    },
+                    sort: true,
+                },
+                {
+                    label: "Unidad",
+                    name: "unidad_id",
+                    sort: false,
+                    filter: {
+                        type: "simple",
+                        placeholder: "Unidad",
+                    },
+                },
+                {
+                    label: "Precio Referencial.",
+                    name: "precio_referencial",
+                    sort: false,
+                    filter: {
+                        type: "simple",
+                        placeholder: "Precio",
+                    },
+                },
+                {
+                    label: "Tipo de Unidad Contrato",
+                    name: "unidad_contrato",
+                    sort: false,
+                    filter: {
+                        type: "simple",
+                        placeholder: "Tipo",
+                    },
+                },
+                {
+                    label: "Acciones",
+                    name: "acciones",
+                    sort: false,
+                },
+            ],
+            actions: [//botones ejem el de descarga
+                {
+                    btn_text: "Download",
+                    event_name: "on-download",
+                    class: "btn btn-primary my-custom-class",
+                    event_payload: {
+                        msg: "my custom msg"
                     }
                 }
-            }
-            arrayItemsFiltered.map(item => {
-                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
-            });
-            console.log('LIST CURRENT', arrayItemsFiltered);
-            return arrayItemsFiltered
-        },
-        async listarItemRelacion() {
-            const responseReqRelacion = (await axios.get('get_requerimiento_relacion')).data;
-            this.rows = await this.filterListItemRelacion(responseReqRelacion);
-            // this.rows = responseReqRelacion;
-            console.log('LIST REQ REL', responseReqRelacion);
-        },
-        areAlltheFieldsFilled() {
-            return this.jsonData.requerimiento_id != null &&
-                //lineal form
-                this.jsonData.item_descripcion != null &&
-                this.jsonData.item_vigente != null &&
-                this.jsonData.item_avance != null &&
-                this.jsonData.item_saldo != null &&
-                this.jsonData.item_estimado != null &&
-                this.jsonData.item_precio_unitario != null &&
-                //panel
-                this.jsonData.fecha_requerimiento != null &&
-                this.jsonData.files != null &&
-                this.jsonData.trabajos_encarados != null &&
-                this.jsonData.nuri_requerimiento;
-        },
-        async saveItemRelacion() {
-            const response_req = await axios.get('get_requerimientos');
-            this.jsonData.requerimiento_id = response_req.data[response_req.data.length - 1].id;
-            console.log('REQ ID', this.jsonData.requerimiento_id);
-            console.log('ITEM RELACION ID', this.jsonData.item_descripcion.id)
-            let getValoresItem = await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id);
-            const arrayValoresItem = getValoresItem.data;
-            // console.log('GET VALORES ITEM', getValoresItem);
-            // this.jsonData.item_vigente = getValoresItem[0].vigente;
-            // this.jsonData.item_avance = getValoresItem[0].avance;
-            // this.jsonData.item_saldo = getValoresItem[0].saldo;
-            console.log('ITEMS', arrayValoresItem)
-
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('planilla_item_id', this.jsonData.item_descripcion.id);
-            datos_jsonData.append('vigente', /*this.jsonData.item_vigente*/ arrayValoresItem[0].vigente);
-            datos_jsonData.append('avance', /*this.jsonData.item_avance*/ arrayValoresItem[0].avance);
-            datos_jsonData.append('estimado', this.jsonData.item_estimado);
-            datos_jsonData.append('precio_unitario', this.jsonData.item_precio_unitario);
-            const itemRelacion = await axios.post('create_requerimiento_relacion', datos_jsonData);
-            console.log('SAVE ITEM RELACION', itemRelacion.data);
-        },
-        async saveFirstRequerimiento() {
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('document_id', this.jsonData.proyectos.id);
-            datos_jsonData.append('tipo_requerimiento_id', '5');
-            datos_jsonData.append('correlativo_requerimiento', this.jsonData.nuri_requerimiento)
-            let fecha_requerimiento = new Date(this.jsonData.fecha_requerimiento);
-            this.jsonData.fechaFormatted = (fecha_requerimiento.getDate() + "/" + (fecha_requerimiento.getMonth() + 1) + "/" + fecha_requerimiento.getFullYear());
-            datos_jsonData.append('fecha_requerimiento', (fecha_requerimiento.getFullYear() + "-" + (fecha_requerimiento.getMonth() + 1) + "-" + fecha_requerimiento.getDate()));
-            datos_jsonData.append('nuri_requerimiento', this.jsonData.nuri_requerimiento);
-
-            datos_jsonData.append('descripcion_requerimiento', this.jsonData.trabajos_encarados);
-            datos_jsonData.append('trabajos_encarados', this.jsonData.trabajos_encarados);
-            datos_jsonData.append('gastos_generales', this.jsonData.trabajos_encarados);
-            datos_jsonData.append('files', this.jsonData.files);
-            this.clickedAdd = true;
-            this.configFile.cerrar = false;
-            let response = await axios.post('create_requerimiento', datos_jsonData);
-            console.log('CREATE REQ', response.data);
-        },
-        async guardarItemRelacion() {
-
-            if (this.areAlltheFieldsFilled()) {
-                if (this.clickedAdd) {
-                    console.log('MEMORYSELECTED - True', this.memorySelected);
-                    await this.saveItemRelacion()
-                } else {
-                    console.log('MEMORYSELECTED - False', this.memorySelected);
-                    await this.saveFirstRequerimiento()
-                    await this.saveItemRelacion()
-                    console.log('REQ ID FOR CURRENT', this.jsonData.requerimiento_id);
-                    this.current_id = this.jsonData.requerimiento_id;
+            ],
+            classes: {//clases para la tabla
+                tableWrapper: "outer-table-div-class wrapper-class-two",
+                table: {
+                    "table-striped my-class": true,
+                    "table-striped my-class-two": function (rows) {
+                        return true
+                    }
+                },
+                row: {
+                    "my-row my-row2": true,
+                    "function-class": function (row) {
+                        return row.id == 1
+                    }
+                },
+                cell: {
+                    "my-cell my-cell2": true,
+                    "text-danger": function (row, column, cellValue) {
+                        return column.name == "salary" && row.salary > 2500
+                    }
                 }
-                await this.cleanFormItemRelacion();
-                await this.listarItemRelacion();
-            } else {
-                alert('Por favor llene todos los campos');
-            }
-        },
-        async editarItemRelacion(data = {}) {
-            let getValoresItem = (await axios.get('get_valores_item/' + data.planilla_item_id)).data;
-            this.jsonData.id = data.id;
-            this.jsonData.requerimiento_id = data.requerimiento_id;
-            this.jsonData.planilla_item_id = data.planilla_item_id;
+            },
+            config: {
+                card_mode: false,
+                checkbox_rows: false,
+                rows_selectable: false,
+                global_search: {
+                    placeholder: "Buscar...",
+                    visibility: true,
+                    case_sensitive: true,
+                    showClearButton: true,
+                },
+                show_refresh_button: false,
+                show_reset_button: false,
 
-            this.jsonData.modal_codigo = data.item_codigo;
-            this.jsonData.modal_descripcion = data.item_descripcion;
-            this.jsonData.modal_unidad = data.unidad_id;
-            //this object will be modified in the next step Item Relacion
-            this.jsonData.planilla_item_id = data.planilla_item_id;
-            this.jsonData.modal_vigente = getValoresItem[0].fvigente;
-            this.jsonData.modal_avance_acumulado = getValoresItem[0].favance;
-            ;
-            this.jsonData.modal_saldo = getValoresItem[0].fsaldo;
-            this.jsonData.modal_avance_contratado = data.estimado;
-            this.jsonData.modal_precio_contratado = data.precio_unitario;
+                pagination: true, // default true
+                pagination_info: true, // default true
+                num_of_visibile_pagination_buttons: 7, // default 5
+                per_page: 10, // default 10
+                per_page_options: [5, 10, 20, 30, -1],
+            },
+        }
+    },
 
-            console.log('EDITAR ITEM RELACION', data);
-        },
-        async modificarItemRelacion() {
-            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.planilla_item_id)).data;
-            console.log('GET VALORES ITEM', getValoresItem);
-            const arrayValoresItem = Object.assign(getValoresItem);
-            this.jsonData.modal_vigente = arrayValoresItem[0].vigente;
-            this.jsonData.modal_avance_acumulado = arrayValoresItem[0].avance;
-            let datos_jsonData = new FormData();
-            datos_jsonData.append('requerimiento_id', this.jsonData.requerimiento_id);
-            datos_jsonData.append('planilla_item_id', this.jsonData.planilla_item_id);
-            datos_jsonData.append('vigente', this.jsonData.modal_vigente);
-            datos_jsonData.append('avance', this.jsonData.modal_avance_acumulado);
-            datos_jsonData.append('estimado', this.jsonData.modal_avance_contratado);
-            datos_jsonData.append('precio_unitario', this.jsonData.modal_precio_contratado);
-            const response = await axios.post('update_requerimiento_relacion/' + this.jsonData.id, datos_jsonData);
-            console.log('UPDATE ITEM RELACION', response.data);
-            document.getElementById("cerrarModal").click();
-            await this.listarItemRelacion();
-        },
-        async eliminarItemRelacion(id) {
-            const response = await axios.delete('delete_requerimiento_relacion/' + id);
-            console.log('DELETE ITEM RELACION', response.data);
-            await this.listarItemRelacion();
-        },
-        async filterGetItemsFromContrato(planillas) {
-            console.log('Proyecto', this.jsonData.proyectos);
-
-            let arrayPlanillasCurrentProyecto = [];
-            for(let i in planillas){
-                if (planillas[i].contrato_id === this.jsonData.proyectos.id){
-                    arrayPlanillasCurrentProyecto.push(planillas[i]);
-                }
-                else {
-                    console.log('No hay planillas para este proyecto');
-                    alert('No hay planillas para este proyecto');
-                    break
-                }
-            }
-            return arrayPlanillasCurrentProyecto;
-        },
-        async getAllItemRelacion() {
-            const responseItemPlanilla = await axios.get('get_planilla_item');
-            console.log("ITEMS PLANILLA", responseItemPlanilla.data);
-            this.combo_items_planilla = await this.filterGetItemsFromContrato(responseItemPlanilla.data);
-            console.log('GET ALL ITEM RELACION', this.combo_items_planilla);
-            // this.combo_items_planilla = responseItemPlanilla.data;
-        },
-        async getNameForItemRelacion() {
-            const responseUnidad = (await axios.get('get_unidades')).data;
-            for (let i = 0; i < responseUnidad.length; i++) {
-                if (this.jsonData.item_descripcion.unidad_id == responseUnidad[i].id) {
-                    this.jsonData.item_simbolo = responseUnidad[i].simbolo;
-                    this.jsonData.item_codigo = this.jsonData.item_descripcion.item_codigo;
-                    break;
-                }
-            }
-            //get Vigente, Avance, Estimado, Saldo
-            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id)).data;
-            console.log('GET VALORES ITEM', getValoresItem);
-            this.jsonData.item_vigente = getValoresItem[0].fvigente;
-            this.jsonData.item_avance = getValoresItem[0].favance;
-            this.jsonData.item_saldo = getValoresItem[0].fsaldo;
-        },
-        async cleanFormItemRelacion() {
-            this.jsonData.item_codigo = '';
-            this.jsonData.item_descripcion = '';
-            this.jsonData.item_simbolo = '';
-
-            this.jsonData.item_vigente = '';
-            this.jsonData.item_avance = '';
-            this.jsonData.item_saldo = '';
-            this.jsonData.item_estimado = '';
-            this.jsonData.item_precio_unitario = '';
-        },
-        async seleccionar_cont_primario() {
-            const respuesta = await axios.get('documents');
-            const principales = respuesta.data.filter((item) => item.document_types_id === 1)
-            console.log('Documentos Principales', principales);
-            this.proyectos = principales;
-            $("#seleccion_proyecto_doc_legales").modal("show");
-
-        },
-        preguntarModalAlertaConfirmacionEliminar(id) {
+    watch: {},
+    methods: {
+        preguntarModalAlertaConfirmacionEliminar(document) {
             this.mandarMensajesAlerta = {
                 titulo: "Mensajes del Sistema",//titulo del mensaje
                 contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
@@ -729,344 +357,137 @@ export default {
                 contenidoPie: "¿Esta seguro de eliminar el registro?",//contenido del mensaje
                 tipo: "ferdy-background-Primary-blak",//color danger warnin etc para header de modal
                 tituloBotonUno: "SI", //texto de primer boton el de true
-                tituloBotonDos: "NO", //texto segundo bocton del de false
+                tituloBotonDos: "NO", //texto segundo boton del de false
                 respuesta: false,
             };
-            this.id_eliminacion = id;
+            this.id_eliminacion = document.id;
             this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
         },
-        detectActiveTab(currentTab) {
-            this.tabSelected = currentTab;
-        },
         respuestaModalAlertaConfirmacion(datos) {
-            console.log('eliminando', datos.respuesta);
+            // console.log(datos.respuesta);
             if (datos.respuesta === true) {
-                this.eliminarItemRelacion(this.id_eliminacion);
+                console.log('eliminando', datos.respuesta);
+                this.deleteItem(this.id_eliminacion);
             }
         },
-        async ver_planilla() {
-            const vp = this.jsonData.proyectos.id;
-            console.log('vplan--> ' + vp);
-            var respuesta = await axios.get('planillas/' + vp);
-            console.log('voviendo del backend');
-            console.log(respuesta.data);
+        async listar() {
+            const getAllItemRecurso = (await axios.get('requerimiento_recurso')).data;
+            const getUnidades = (await axios.get('get_unidades')).data;
+            let filteredItems = [];
 
-            const planillas = respuesta.data.map(planilla => {
-                if (planilla.tipo_planilla_id === 1) {
-                    planilla.tipo = 'Inicial (#' + planilla.numero_planilla + ')';
-                } else if (planilla.tipo_planilla_id === 2) {
-                    planilla.tipo = 'Modificacion (#' + planilla.numero_planilla + ')';
-                } else {
-                    planilla.tipo = 'Avance (#' + planilla.numero_planilla + ')';
+            for (let position in getAllItemRecurso) {
+                if (getAllItemRecurso[position].tipo_requerimiento_id === 1) {
+                    filteredItems.push(getAllItemRecurso[position]);
                 }
-
-                planilla.fecha_planilla = planilla.fecha_planilla.split('-').reverse().join('-');
-
-                //documento.tipo_documento = contratosObjeto[documento.document_types_id];
-                //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
-                return planilla;
-            });
-
-            this.rows = planillas;
-        },
-
-
-        async buscar_doc_legales() {
-            var data = {
-                'intervencion': this.jsonData.proyectos,
             }
-            console.log(data);
-            var respuesta = await axios.post('buscar_documentos_legaleses', data);
-            // console.log("cofinanciadores");
-            console.log(respuesta.data);
-            this.rows = respuesta.data;
-            this.tipos_documentos();
-            this.instituciones();
-            this.organismos_financiadores();
-            this.doc_legales();
-            this.objetivos();
+            filteredItems.map(item => {
+                item.unidad_id = getUnidades[item.unidad_id - 1].simbolo
+            });
+            this.rows = filteredItems;
+
+            console.log('LISTAR TODO', getAllItemRecurso);
+            console.log('LISTAR FILTRO', this.rows);
         },
-        async instituciones() {
-            var respuesta = await axios.post('buscar_documentos_legaleses_instituciones');
-            this.combo_instituciones = respuesta.data;
+
+        async editarModal(data = {}) {
+            this.limpiar_formulario();
+            const getUnidades = (await axios.get('get_unidades')).data;
+            this.jsonEdUpSave.id = data.id;
+            this.jsonEdUpSave.modal_tipo_requerimiento = data.tipo_requerimiento_id;
+            this.jsonEdUpSave.modal_codigo = data.codigo_recurso;
+            this.jsonEdUpSave.modal_descripcion = data.descripcion_recurso;
+
+            this.jsonEdUpSave.modal_unidad = getUnidades.find(unidad => unidad.simbolo === data.unidad_id);
+            this.jsonEdUpSave.modal_precio_referencial = data.precio_referencial;
+            this.jsonEdUpSave.modal_unidad_contrato = this.listUnidadesHarcoded.find(unidad_contrato =>
+                unidad_contrato.nombre === data.unidad_contrato);
+
+            this.tituloIntervencionModal = "Formulario de Modificacion de Mano de Obra";
+            this.modificar_bottom = true;
+            this.guardar_bottom = false;
+            console.log("EDITAR", data);
         },
-        async organismos_financiadores() {
-            var respuesta = await axios.post('buscar_documentos_legaleses_org_finan');
-            this.combo_cofinanciadores = respuesta.data;
+        async deleteItem(id) {
+            const respuesta = await axios.delete('requerimiento_recurso/' + id);
+            console.log("DELETED", respuesta.data);
+            await this.listar();
         },
-        async doc_legales() {
-            var data = {'intervencion': this.jsonData.proyectos,}
-            var respuesta = await axios.post('buscar_documentos_legaleses_combo', data);
-            this.combo_documentos_legales = respuesta.data;
+        async comboUnidadesContratos() {
+            this.combo_unidades = (await axios.get('get_unidades')).data;
+            this.combo_unidades_contratos = this.listUnidadesHarcoded;
+
+            console.log('UNIDADES CONTRATO', this.combo_unidades_contratos);
+            console.log('UNIDADES', this.combo_unidades);
         },
-        async objetivos() {
-            var data = {'intervencion': this.jsonData.proyectos,}
-            var respuesta = await axios.post('buscar_documentos_legaleses_objetivos', data);
-            this.combo_objetivos = respuesta.data;
+        areAlltheFieldsFilled() {
+            return this.jsonEdUpSave.modal_codigo !== '' &&
+                this.jsonEdUpSave.modal_descripcion !== '' &&
+                this.jsonEdUpSave.modal_unidad !== '' &&
+                this.jsonEdUpSave.modal_precio_referencial !== '' &&
+                this.jsonEdUpSave.modal_unidad_contrato !== '';
+        },
+        saveItemRecurso() {
+            this.jsonEdUpSave.modal_tipo_requerimiento = 1;
+            this.jsonEdUpSave.modal_unidad = this.jsonEdUpSave.modal_unidad.id;
+            this.jsonEdUpSave.modal_unidad_contrato = this.jsonEdUpSave.modal_unidad_contrato.nombre;
+            console.log('JSONEDUPSAVE', this.jsonEdUpSave);
+
+            let jsonEdUpSave = new FormData();
+            for (let key in this.jsonEdUpSave) {
+                jsonEdUpSave.append(key, this.jsonEdUpSave[key]);
+            }
+            return jsonEdUpSave
+        },
+        async guardar() {
+            if (this.areAlltheFieldsFilled()) {
+                const jsonObject = this.saveItemRecurso();
+                let savedRecurso = axios.post('requerimiento_recurso', jsonObject)
+                console.log('Save', savedRecurso);
+                document.getElementById("cerrarModal").click();
+                await this.listar();
+            } else {
+                alert('Debe llenar todos campos');
+            }
+        },
+        async modificar() {
+            if (this.areAlltheFieldsFilled()) {
+                console.log('MODIFICAR', this.jsonEdUpSave);
+                const jsonObject = this.saveItemRecurso();
+                const modifyRecurso = axios.post('update_req_recurso/' + this.jsonEdUpSave.id, jsonObject);
+                await this.listar();
+                console.log('Modified', modifyRecurso);
+                document.getElementById("cerrarModal").click();
+            } else {
+                alert('Debe llenar todos campos');
+            }
         },
         ModalCrear() {
             this.modificar_bottom = false;
             this.guardar_bottom = true;
-            this.tituloDocLegalesModal = "Formulario de Creación de Planillas";
+            this.limpiar_formulario();
+            this.tituloIntervencionModal = "Formulario de Creación de Mano de Obra";
         },
         limpiar_formulario() {
-            $('#modifica1').removeAttr('checked');
-            $('#modifica2').removeAttr('checked');
-            $('#modifica3').removeAttr('checked');
-
-            this.jsonData.id = "";
-
-            this.jsonData.tipos_documento = {};
-            this.jsonData.institucion = {};
-            this.jsonData.cofinanciador = {};
-            this.jsonData.titulo = '';
-            this.jsonData.doc_legal = {};
-            this.jsonData.objetivo = {};
-            this.jsonData.fecha_firma = '';
-            this.jsonData.fecha_inicio = '';
-            this.jsonData.fecha_vencimiento = '';
-            this.jsonData.funcionario = '';
-            this.jsonData.objeto = '';
-            this.jsonData.monto_bs = '';
-            this.jsonData.monto_Sus = '';
-            this.jsonData.duracion_dias = '';
-            this.jsonData.objeto = '';
-
-            this.btnmodificar = false;
-            this.btncancelar = false;
-            this.btnguardar = true;
-            this.configFile.contenidoDefault = " CARGAR INFORME TECNICO/JUSTIFICACION";
-            this.borrar_file();
+            this.jsonEdUpSave.modal_codigo = '';
+            this.jsonEdUpSave.modal_descripcion = '';
+            this.jsonEdUpSave.modal_unidad = '';
+            this.jsonEdUpSave.modal_precio_referencial = '';
+            this.jsonEdUpSave.modal_unidad_contrato = '';
         },
-        /**********************archivos para file******************* */
-        cargar_file(event) {
-            var nombre_file = "";
-            this.jsonData.files = event.target.files[0];
-            for (let key in event.target.files) {//cargamos datos
-                var boucle = event.target.files[key];
-                if (boucle.name != null && boucle.name != 'undefined' && boucle.name != "item") {
-                    // console.log(boucle.name);
-                    nombre_file = boucle.name;
-                }
-
-            }
-
-            this.configFile.cerrar = true;
-            nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
-            this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
-        },
-
-        borrar_file() {
-            var nombre_file = "<i class='fas fa-download fa-1x'></i><br><span> " + this.configFile.contenidoDefault + "</span>";
-            $('#documento_res_aprobacion').val("");
-            this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-primary'], '#contenido_documento_res_aprobacion', [nombre_file]);
-        },
-        reiniciar_file(id, clase_borrar, clase_adicionar, id_contenido, contenido_cargar) {
-            // console.log("entro");
-            console.log(contenido_cargar);
-            // console.log("salio");
-            if (id != null) {
-                $(id_contenido).empty();
-                if (contenido_cargar != null) {
-                    contenido_cargar.forEach(element => {
-                        // console.log(element);
-                        $(id_contenido).append(element);
-                    });
-                }
-                if (clase_borrar != null) {
-                    for (let key in clase_borrar) {
-                        $(id).removeClass(clase_borrar[key]);
-                    }
-                }
-                if (clase_adicionar != null) {
-                    for (let key in clase_adicionar) {
-                        $(id).addClass(clase_adicionar[key]);
-                    }
-                }
-            }
-        },
-        /*********** funciones de configuracion**************/
-        funcionRespuestaConfig(configuracion) {//funcion recibe la solicitud hecha
-            this.configFechas = configuracion.configFechas;
-            this.configTablas = configuracion.configTablas;
-            this.actions = configuracion.configTablasAction;
-            this.classes = configuracion.configTablasClases;
-            this.configToolBarEditText = configuracion.configToolBarEditText;
-        },
-        funcionRecuperaConfig() {//funcion solicita la configuracion
-            this.$refs.RecuperaConfig.RecuperaConfig();//esta es la funcion de mandar configuracion desde hijo
-        }
-        /*************************fin funciones de configuracion********************** */
-    },
-    data() {
-        return {
-            modificar_bottom: false,
-            guardar_bottom: false,
-            clickedAdd: false,
-            projectSelected: false,
-            tituloDocLegalesModal: '',
-            requerimientoFirstFill: true,
-            combo_requerimiento_recursos: [],
-            combo_items_planilla: [],
-            combo_otros_gastos: [],
-            memorySelected: true,
-            tabSelected: 'home',
-            proyectos: [],
-            current_id: null,
-            mandarMensajesAlerta: {},
-            id_eliminacion: null,
-            ///ITEM PLANILLA CON ITEM RELACIONADO VARS
-            fvigente: '',
-            favance: '',
-            fsaldo: '',
-            ///FIN PLANILLA RELACIONADO
-            jsonData: {
-                //REQUERIMIENTO OBRA
-                id: "",
-                correlativo_requerimiento: null,
-                nuri_requerimiento: '',
-                requerimiento_id: '',
-                tipo_requerimiento_id: 5,
-                codigo_recurso: '',
-                proyectos: '',
-                tipos_documento: {},
-                institucion: {},
-                cofinanciador: {},
-                titulo: '',
-                doc_legal: {},
-                objetivo: {},
-                document_id: '',
-                descripcion_requerimiento: '',
-                requerimiento_recurso_id: '',
-                descripcion_recurso: '',
-                unidad_id: '',
-                simbolo: '',
-                cantidad_recurso: '',
-                horas_recurso: '',
-                dias_recurso: '',
-                tiempo_total_recurso: '',
-                precio_referencia_recurso: '',
-                trabajos_encarados: '',
-                files: null,
-                //RELACION CON EL CONTRATO PRINCIPAL
-                item_codigo: '',
-                item_descripcion: '',
-                item_simbolo: '',
-                item_vigente: '',
-                item_avance: '',
-                item_saldo: '',
-                item_estimado: '',
-                item_precio_unitario: '',
-                planilla_item_id: '',
-                avance: '',
-                estimado: '',
-                vigente: '',
-                saldo: '',
-                precio_unitario: '',
-                ///FIN RELACION
-                //modal vars
-                modal_codigo: '',
-                modal_descripcion: '',
-                modal_unidad: '',
-
-                modal_vigente: '',
-                modal_avance_acumulado: '',
-                modal_saldo: '',
-                modal_avance_contratado: '',
-                modal_precio_contratado: '',
-            },
-
-
-            rows: [],
-            columns: [
-                {
-                    label: "Codigo",
-                    name: "item_codigo",
-                    filter: {type: "simple", placeholder: "Codigo",}, sort: true,
-                },
-                {
-                    label: "Item Relacionado:",
-                    name: "item_descripcion",
-                    filter: {type: "simple", placeholder: "Item Relacionado",},
-                    sort: true,
-                },
-                {
-                    label: "Unidad",
-                    name: "unidad_id",
-                    filter: {type: "simple", placeholder: "Unidad"},
-                    sort: true,
-                },
-                {
-                    label: "Cantidad Vigente",
-                    name: "vigente",
-                    filter: {type: "simple", placeholder: "Cantidad Vigente"},
-                },
-                {
-                    label: "Avance Acumulado",
-                    name: "avance",
-                    filter: {type: "simple", placeholder: "Avance"},
-                },
-                // {
-                //     label: "Avance Contratado",
-                //     name: "avance",
-                //     filter: {type: "simple", placeholder: "Avance"},
-                // },
-                {
-                    label: "precio_contratado",
-                    name: "precio_unitario",
-                    filter: {type: "simple", placeholder: "Por Ejecutar"},
-                },
-                {
-                    label: "Avance Estimado",
-                    //es el avance contratado
-                    name: "estimado",
-                    filter: {type: "simple", placeholder: "Avance Estimado"},
-                },
-
-
-                {
-                    label: "Acciones",
-                    name: "acciones",
-                    sort: false,
-                },
-
-
-            ],
-
-            configFile: {
-                cerrar: false,
-                contenidoDefault: " CARGAR INFORME TECNICO/JUSTIFICACION",
-            },
-            datosEnviarConfiguracion: {},
-            configFechas: {},
-            configTablas: {},
-            actions: [],
-            classes: {},
-            configToolBarEditText: [],
-        }
-    },
-    mounted() {
-        this.funcionRecuperaConfig();
-        this.seleccionar_cont_primario();
     },
     created() {
-        //Item Relacionado
-        // this.getNameForItemRelacion();
-        // this.listarItemRelacion();
-        //Otros Gastos
-        // this.listarItemOtrosGastos();
-
-        //tabs
-        console.log("CLICKED ADD", this.clickedAdd);
+        this.listar();
+        this.comboUnidadesContratos();
     },
     components: {
         VueBootstrap4Table,
         Datepicker,
         VueEditor,
+        vue2Dropzone
     }
 }
+;
+
 </script>
-
 <style>
-
 </style>
