@@ -263,15 +263,16 @@ class PlanillaController extends Controller
                     $codigo[$fila]['padre']=0;                                      
 
                 }
+                
                
-                for($i = 1; $i < count($codigo); $i++) {
+                for($i = 1; $i <= count($codigo); $i++) {
                     $body ='';
                     $valor=$codigo[$i]['item_codigo'];
                     // hacemps volar el ultimo carcater si es .
-                    $valor = (substr($valor, -1) =='.' ? substr($valor, 0, -1) : $valor);
-                    $familia=explode(".",$valor);
-                    $codigoLen=count($familia);
-                    
+                    $valor = (substr($valor, -1) =='.' ? substr($valor, 0, -1) : $valor); // si tiene punto al final lo elimina
+                    $familia=explode(".",$valor); // separa los numeros en elemento de array
+                    $codigoLen=count($familia); // cuandos digito tiene el codigo 7.6 tiene 2
+                   
                     if($codigoLen>1){                       
                         
                           for ($x = 0; $x <$codigoLen-1; $x++){
@@ -285,7 +286,7 @@ class PlanillaController extends Controller
 
 
                     if($body!=""){  
-                        for ($x = 1; $x <count($codigo); $x++){
+                        for ($x = 1; $x <= count($codigo); $x++){
                             
                             if($body == $codigo[$x]['item_codigo']){
                                 $codigo[$i]['padre']=$codigo[$x]['id'];
@@ -298,8 +299,12 @@ class PlanillaController extends Controller
 
                 }
 
+
+               // dd($codigo);
+                //DELETE FROM planilla_items WHERE `planilla_id` = 49 AND `contrato_id` = 24;
+
                 //ahora actualizamos padres en la tabla
-                for ($x = 1; $x <count($codigo); $x++){
+                for ($x = 1; $x <= count($codigo); $x++){
 
                     $item= new PlanillaItem;
                     $id= $codigo[$x]['id'];
@@ -310,8 +315,10 @@ class PlanillaController extends Controller
 
 
                 } 
+                
+                
                 // cargar cantidades y montos iniciales en planilla movimientos
-                for ($x = 1; $x <count($codigo); $x++){
+                for ($x = 1; $x <= count($codigo); $x++){
                     $id= $codigo[$x]['id'];
                     $item_codigo= $codigo[$x]['item_codigo'];
 
@@ -392,7 +399,7 @@ class PlanillaController extends Controller
 
                     // ahora ponemos id y contrato a pla
                     // cargar cantidades y montos iniciales en planilla movimientos
-                    for ($x = 1; $x <count($codigo); $x++){
+                    for ($x = 1; $x <= count($codigo); $x++){
                         $id= $codigo[$x]['id'];
                         $item_codigo= $codigo[$x]['item_codigo'];
 
@@ -479,7 +486,7 @@ class PlanillaController extends Controller
 
             // ahora ponemos id y contrato a pla
             // cargar cantidades y montos iniciales en planilla movimientos
-            for ($x = 1; $x <count($codigo); $x++){
+            for ($x = 1; $x <= count($codigo); $x++){
                 $id= $codigo[$x]['id'];
                 $item_codigo= $codigo[$x]['item_codigo'];
 
@@ -539,8 +546,8 @@ class PlanillaController extends Controller
 
 
 
-      //DELETE FROM planilla_items WHERE planilla_id=39 and contrato_id=1;
-      //DELETE FROM planilla_movimientos WHERE planilla_movimientos.id > 1395;
+      //DELETE FROM planilla_items WHERE planilla_id=49 and contrato_id=24;
+      //DELETE FROM planilla_movimientos WHERE planilla_id=49
            // dd($pla);
         return $request;
         

@@ -451,7 +451,7 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         return $pdf->stream('reporte_ficha_proyecto.pdf');
 
  
-     // return  $array3;
+     // return  $array1;
     }
 
 

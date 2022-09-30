@@ -569,6 +569,7 @@ export default {
            this.ver_planilla();
             
         },
+        
         cargar_checks(dato){            
             if(dato == "1"){
                 $('#modifica1').attr('checked','checked');
@@ -580,50 +581,49 @@ export default {
                 $('#modifica3').attr('checked','checked');
             }
         },
-        editar(data={}){
-            console.log('XXXXXXXXXXXXXXXXX');
-            console.log(data);
-            $('#modifica1').removeAttr('checked');
-            $('#modifica2').removeAttr('checked');
-            $('#modifica3').removeAttr('checked');
-            if(data.modifica != 'undefined' && data.modifica != null && data.modifica != undefined ){
-                var dato = "";
-                for(var i = 0;i < data.modifica.length; i++){
-                    if(data.modifica[i] != ','){
-                        dato = dato + data.modifica[i];
-                    }else{
-                        this.cargar_checks(dato);
-                        dato = "";
-                    }
-                }
-                this.cargar_checks(dato);
-            }
-            console.log('===============');
-            console.log(data);//return;     
-            
-            this.jsonData.id = data.id;
-            // this.jsonData.proyectos={};
-            this.jsonData.tipos_documento=data.tipo_documento;
-            this.jsonData.institucion=data.institucion.institucion;
-            this.jsonData.cofinanciador=data.institucion.organismo;
-            this.jsonData.titulo=data.titulo;
-            this.jsonData.doc_legal=data.padre;
-            this.jsonData.objetivo=data.objetivo;
-            this.jsonData.fecha_firma=data.fecha_firma;
-            this.jsonData.fecha_inicio=data.fecha_inicio;
-            this.jsonData.fecha_vencimiento=data.fecha_vencimiento;
-            this.jsonData.funcionario=data.firma;
-            this.jsonData.objeto=data.objeto;
-            this.jsonData.monto_bs=data.monto_bs;
-            this.jsonData.monto_Sus=data.monto_Sus;
-            this.jsonData.duracion_dias=data.duracion_dias;
 
-            this.modificar_bottom=true;
-            this.guardar_bottom=false;
+
+        editar(data={}){
+            console.log('XX Data en editarXXXXXX');
+            console.log(data);
+          
+
+            $('#customRadio1').prop("checked", false);
+            $('#customRadio2').prop("checked", false);
+            $('#customRadio3').prop("checked", false);
+
+            switch (data.tipo_planilla_id) {
+                case 1:
+                $('#customRadio1').prop("checked", true);
+                    break;
+                case 2:
+                $('#customRadio2').prop("checked", true);
+                    break;
+                case 3:
+                $('#customRadio3').prop("checked", true);
+                    break;
+            }
+
+                    
+            this.jsonData.id = data.id;
+            
+            this.jsonData.nuri_planilla=data.nuri_planilla;
+            this.jsonData.numero_planilla=data.numero_planilla;
+
+            this.jsonData.fecha_planilla=data.fecha_planilla.split('-').reverse().join('-');
+
+            this.jsonData.total_planilla=data.total_planilla;
+            this.jsonData.anticipo_planilla=data.anticipo_planilla;
+            this.jsonData.retencion_planilla=data.retencion_planilla;
+
+           
+            this.jsonData.documento = this.documentos.find(element => element.id == data.contrato_id);
+                       
             this.tituloDocLegalesModal = "Formulario de Modificaciones de Planillas";
             // this.jsonData = data;
             $('#doc_legales').modal('show');
         },
+
         async modificar(){
             var modifica = "";
             if ($('#modifica1').prop('checked') ) {modifica = "1";}
