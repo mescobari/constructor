@@ -356,7 +356,8 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" id="cerrarModal" data-dismiss="modal">Cancelar</button>
                         <button type="submit" @click="guardar();" class="btn btn-success" v-if="guardar_bottom==true">Guardar</button>
-                        <button type="submit" @click="modificar();" class="btn btn-success" v-if="modificar_bottom==true">Modificar</button>
+                        <button type="submit" @click="guardar();" 
+                        class="btn btn-success" v-if="modificar_bottom==true" data-dismiss="modal">Guardar</button>
                     </div>
                 </div>
             </div>
@@ -544,43 +545,38 @@ export default {
 
 
         async guardar(){
+          
+           var accion = this.modificar_bottom==true ? 1 : 0;
             
             this.jsonData.contrato_id = this.jsonData.proyectos.id;
             console.log(this.jsonData.tipo_planilla_id);
             const fecha = new Date(this.jsonData.fecha_planilla);
              this.jsonData.fecha1 = fecha.getFullYear() + "-" + (fecha.getMonth()+1) + "-" + fecha.getDate();
              this.jsonData.document_id = this.jsonData.documento.id;
-                      
+             this.jsonData.accion = accion; 
+
            let datos_jsonData = new FormData();
-           console.log('===================');
                 for(let key in this.jsonData){                
                     datos_jsonData.append(key, this.jsonData[key]);
                     console.log(key, this.jsonData[key]);
                 }
             
-            console.log('===================');
-            
+            console.log('======Guardar ante de mandar al back end=============');
+            console.log(datos_jsonData);
+
              var respuesta = await axios.post('planillas', datos_jsonData);
             
-            this.buscar_doc_legales();
-           this.limpiar_formulario();
+
+
+            this.buscar_doc_legales(); // borrar ya no sirve aqui
+           this.limpiar_formulario();  //esto arreglar
             
             document.getElementById("cerrarModal").click();
            this.ver_planilla();
             
         },
         
-        cargar_checks(dato){            
-            if(dato == "1"){
-                $('#modifica1').attr('checked','checked');
-            }
-            if(dato == "2"){
-                $('#modifica2').attr('checked','checked');
-            }
-            if(dato == "3"){
-                $('#modifica3').attr('checked','checked');
-            }
-        },
+       
 
 
         editar(data={}){
@@ -618,12 +614,16 @@ export default {
 
            
             this.jsonData.documento = this.documentos.find(element => element.id == data.contrato_id);
-                       
+              
+            
+            this.modificar_bottom=true;
+            this.guardar_bottom=false;
             this.tituloDocLegalesModal = "Formulario de Modificaciones de Planillas";
             // this.jsonData = data;
             $('#doc_legales').modal('show');
         },
 
+        
         async modificar(){
             var modifica = "";
             if ($('#modifica1').prop('checked') ) {modifica = "1";}
@@ -727,6 +727,7 @@ export default {
             this.doc_legales();
             this.documentos();
         },
+
         async tipos_documentos(){
             var respuesta = await axios.post('buscar_documentos_legaleses_tipos_doc');
             this.combo_tipos_documentos = respuesta.data;
@@ -791,6 +792,7 @@ export default {
             this.configFile.contenidoDefault = " CARGAR PLANILLA";
             this.borrar_file();
         },
+
         /**********************archivos para file******************* */        
         cargar_file(event){
             var nombre_file = "";

@@ -632,7 +632,6 @@ class PlanillaController extends Controller
         //lo utilizamos para no crear mas rutas, no permite verificar para cargar planillas items por items
         // jalar 
         
-
     }
 
     /**
@@ -707,8 +706,7 @@ class PlanillaController extends Controller
     public function show($id)
     {
 
-
-        $data = Planilla::where('contrato_id',$id)->get();
+        $data = Planilla::where('contrato_id',$id)->orderBy('fecha_planilla')->get();
         return $data;
 
     }
