@@ -26,7 +26,8 @@
                 <div class="row">  
 
                     <div class="table-responsive">
-                        <vue-bootstrap4-table :rows="rows" :columns="columns" :config="configTablas" :classes="configTablas.classes">
+                          <vue-bootstrap4-table :rows="rows" :columns="columns" :config="configTablas" :classes="configTablas.classes">
+                            <!--<vue-bootstrap4-table :rows="rows" :columns="columns" :config="config" :classes="classes">-->
                             <template slot="global-search-clear-icon">
                                 <i class="fas fa-times-circle"></i>
                             </template>
@@ -64,11 +65,15 @@
                                 <button class="btn btn-outline btn-primary dim" type="button"><i class="fa fa-thumbs-o-up"></i></button>
                             </div>
                             </template>
-                            <template slot="filePath" slot-scope="props">
-                                <a :href="props.row.filePathFull" target="_blank" title="Ver el archivo digital">
-                                    <span class="badge badge-primary">Ver: {{props.row.cofinanciador_documento.titulo}}</span>
+                            
+                           
+
+                            <template slot="path_planilla" slot-scope="props">
+                                <a :href="props.row.path_planilla" target="_blank" title="Ver el archivo digital">
+                                     {{props.row.arch_nombre}}
                                 </a>                    
                             </template>
+
                             <template slot="acciones" slot-scope="props">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-outline-primary ml-1" data-toggle="modal" data-target="#planillaCSV" @click="planillaCSV(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
@@ -432,9 +437,19 @@ export default {
                 { label: "Fecha",      name: "fecha_planilla",         filter: { type: "simple", placeholder: "Fecha", }, sort: true,  },
                 { label: "Numero",     name: "numero_planilla",              filter: { type: "simple", placeholder: "Numero" }, sort: true,     },
                 { label: "Nuri",       name: "nuri_planilla",            filter: { type: "simple", placeholder: "Nuri" },         },
-                { label: "Referencia", name: "referencia",       filter: { type: "simple", placeholder: "Referencia" },   },
+                { label: "Referencia", name: "referencia1",       filter: { type: "simple", placeholder: "Referencia" },   },
                 { label: "Respaldo",   name: "path_planilla",    filter: { type: "simple", placeholder: "Respaldo" },       },
-                { label: "Total BS.",  name: "total_planilla",       filter: { type: "simple", placeholder: "Total BS." }, sort: true,      },
+                { label: "Total BS.",
+                  name: "total_planilla1",
+
+                  filter: { 
+                    type: "simple", 
+                    placeholder: "Total BS." 
+                    },
+                  sort: true,
+                  row_text_alignment: "text-right",
+                  
+                },
                 {
                     label: "Acciones",
                     name: "acciones",
@@ -547,28 +562,30 @@ export default {
         async guardar(){
           
            var accion = this.modificar_bottom==true ? 1 : 0;
-            
+           this.jsonData.path= accion==1 ?  this.configFile.contenidoDefault  : 'existe file';
+
+
             this.jsonData.contrato_id = this.jsonData.proyectos.id;
             console.log(this.jsonData.tipo_planilla_id);
             const fecha = new Date(this.jsonData.fecha_planilla);
              this.jsonData.fecha1 = fecha.getFullYear() + "-" + (fecha.getMonth()+1) + "-" + fecha.getDate();
              this.jsonData.document_id = this.jsonData.documento.id;
              this.jsonData.accion = accion; 
-
-           let datos_jsonData = new FormData();
+             console.log('======Guardar ante de mandar al back end=============');
+                let datos_jsonData = new FormData();
                 for(let key in this.jsonData){                
                     datos_jsonData.append(key, this.jsonData[key]);
                     console.log(key, this.jsonData[key]);
                 }
             
-            console.log('======Guardar ante de mandar al back end=============');
-            console.log(datos_jsonData);
+          
 
-             var respuesta = await axios.post('planillas', datos_jsonData);
+            var respuesta = await axios.post('planillas', datos_jsonData);
             
+            console.log('======Guardar volviendo del back end=============');
+            console.log(respuesta.data);
 
-
-            this.buscar_doc_legales(); // borrar ya no sirve aqui
+            //this.buscar_doc_legales(); // borrar ya no sirve aqui
            this.limpiar_formulario();  //esto arreglar
             
             document.getElementById("cerrarModal").click();
@@ -614,7 +631,10 @@ export default {
 
            
             this.jsonData.documento = this.documentos.find(element => element.id == data.contrato_id);
-              
+           
+            this. jsonData.referencia =data.referencia;
+            //const arch=data.path_planilla.split('/');
+            this.configFile.contenidoDefault = data.path_planilla ;
             
             this.modificar_bottom=true;
             this.guardar_bottom=false;
@@ -685,9 +705,9 @@ export default {
             var rowMensaje = document.getElementById("mensaje");
                 rowMensaje.innerHTML ='<div> </div>';
             const vp = this.jsonData.proyectos.id;
-            console.log('vplan--> '+ vp);
+            console.log('ver_planilla: vplan--> '+ vp);
             var respuesta = await axios.get('planillas/'+vp);
-            console.log('voviendo del backend');
+            console.log('ver_planilla: voviendo del backend');
             console.log(respuesta.data);
 
             const planillas = respuesta.data.map(planilla => {
@@ -701,8 +721,15 @@ export default {
 
                 planilla.fecha_planilla = planilla.fecha_planilla.split('-').reverse().join('-');
                 
-                //documento.tipo_documento = contratosObjeto[documento.document_types_id];
-                //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
+
+               //nfObject = new Intl.NumberFormat('en-US');
+              // planilla.total_planilla1= nfObject.format(planilla.total_planilla); 
+                              
+              planilla.total_planilla1=planilla.total_planilla.toLocaleString('en-US');
+              planilla.referencia1=planilla.referencia.replace(/<[^>]*>?/gm, '');
+              const arch=planilla.path_planilla.split('/');
+             const arch_nombre=arch[2].substring(7);
+              planilla.arch_nombre=arch_nombre;
                 return planilla;
             });
 
@@ -748,10 +775,9 @@ export default {
         async lista_documentos(){
            
             var respuesta = await axios.get('documents');
-            console.log('===============respuesta.data===========================');
-           console.log(respuesta.data);
+            
             const docFilter = respuesta.data.filter(docf => (docf.padre == this.jsonData.proyectos.id || docf.id == this.jsonData.proyectos.id));
-           console.log('===============docFilter===========================');
+           console.log('===============lista_documentos: docFilter===========================');
            console.log(docFilter);
            
            

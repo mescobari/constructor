@@ -662,37 +662,67 @@ class PlanillaController extends Controller
 
             //dd($_FILES);
 
-        }
+        } else {
+            $path= $request->path;
+
+        }   
 
         // grbamos en planilla
 
-
-      $planilla_save = Planilla::create([
-            'tipo_planilla_id'=>$request->tipo_planilla_id,
-            'contrato_id'=>$request->contrato_id,
-           'numero_planilla'=>$request->numero_planilla,
-            'nuri_planilla'=>$request->nuri_planilla,
-            'fecha_planilla'=>$request->fecha1,
-             'total_planilla'=>$request->total_planilla,
-            'anticipo_planilla'=>$request->anticipo_planilla,
-            'retencion_planilla'=>$request->retencion_planilla,
-            'referencia'=>$request->referencia,
-            'path_planilla'=>$path,
-        ]);
-           // obtenesmos el id del ultimo insert y grabamos en planilla_documentos
-            $planilla_id = $planilla_save->id;
-            $document_id = $request->document_id;
-
-            $relacion = PlanillaDocument::create([
-                'planilla_id'=>$planilla_id,
-                'document_id'=>$document_id,
+        if ($request->accion==0) {
+           // insert
+         
+            $planilla_save = Planilla::create([
+                'tipo_planilla_id'=>$request->tipo_planilla_id,
+                'contrato_id'=>$request->contrato_id,
+                'numero_planilla'=>$request->numero_planilla,
+                'nuri_planilla'=>$request->nuri_planilla,
+                'fecha_planilla'=>$request->fecha1,
+                'total_planilla'=>$request->total_planilla,
+                'anticipo_planilla'=>$request->anticipo_planilla,
+                'retencion_planilla'=>$request->retencion_planilla,
+                'referencia'=>$request->referencia,
+                'path_planilla'=>$path,
             ]);
 
+
+            // obtenesmos el id del ultimo insert y grabamos en planilla_documentos
+                $planilla_id = $planilla_save->id;
+                $document_id = $request->document_id;
+
+                $relacion = PlanillaDocument::create([
+                    'planilla_id'=>$planilla_id,
+                    'document_id'=>$document_id,
+                ]);
+                return $planilla_save;
+
+        } else {
+            //update
            
+            $planilla_update = Planilla::where("id", $request->id)
+            ->update([                
+                'tipo_planilla_id'=>$request->tipo_planilla_id,
+                'contrato_id'=>$request->contrato_id,
+                'numero_planilla'=>$request->numero_planilla,
+                'nuri_planilla'=>$request->nuri_planilla,
+                'fecha_planilla'=>$request->fecha1,
+                'total_planilla'=>$request->total_planilla,
+                'anticipo_planilla'=>$request->anticipo_planilla,
+                'retencion_planilla'=>$request->retencion_planilla,
+                'referencia'=>$request->referencia,
+                'path_planilla'=>$path,
+            ]);
+
+
+            
+            return $planilla_update;
+        }
+            
+
         
 
         //$mensaje='volviendo del backend grabar path documento '.$path;
-        return $planilla_save;
+       
 
 
     }
