@@ -207,7 +207,7 @@
                                             data-toggle="modal"
                                             data-target="#modalCrearRecurso"
                                             class="btn btn-success">
-                                        Añadir Recurso
+                                        +
                                     </button>
                                 </div>
                         </div>
@@ -1665,7 +1665,7 @@ export default {
                 }
             }
             //get Vigente, Avance, Estimado, Saldo
-            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id)).data;
+            let getValoresItem = (await axios.get('get_valores_item/' + this.jsonData.item_descripcion.id+1)).data;
             console.log('GET VALORES ITEM', getValoresItem);
             this.jsonData.item_vigente = getValoresItem[0].fvigente;
             this.jsonData.item_avance = getValoresItem[0].favance;
