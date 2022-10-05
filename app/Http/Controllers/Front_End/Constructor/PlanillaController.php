@@ -654,16 +654,26 @@ class PlanillaController extends Controller
     {
         //subimos el archivo y armamos el path doc
         if($request->hasFile('files')){
-            $extension = $request->file('files')->getClientOriginalExtension();
-            $nombre_carpeta = "/constructor";
+           /* $extension = $request->file('files')->getClientOriginalExtension();
+            $files = $request->file('files');
+            $nombre_carpeta = "constructor";
             $nombre_archivo = $request->contrato_id.'_pla_'.$_FILES['files']['name'];
-            $path= $nombre_carpeta.'/'.$nombre_archivo;
-            $files = $request->file('files')->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
 
-            //dd($_FILES);
+           // $path= $nombre_carpeta.'/'.$nombre_archivo;
+            $path = $files->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
+
+            //dd($files);*/
+
+
+            $extension = $request->file('files')->getClientOriginalExtension();
+            $nombre_carpeta = "/constructor/documentos";
+            $files = $request->file('files');
+            $nombre_archivo = $request->contrato_id.'_pla_'.$_FILES['files']['name'];
+            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+           // $path = Storage::url($path);
 
         } else {
-            $path= $request->path;
+            $path= $request->path_planilla;
 
         }   
 
