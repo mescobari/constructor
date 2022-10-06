@@ -654,23 +654,26 @@ class PlanillaController extends Controller
     {
         //subimos el archivo y armamos el path doc
         if($request->hasFile('files')){
-           /* $extension = $request->file('files')->getClientOriginalExtension();
+           $extension = $request->file('files')->getClientOriginalExtension();
             $files = $request->file('files');
-            $nombre_carpeta = "constructor";
+            $nombre_carpeta = "/constructor";
             $nombre_archivo = $request->contrato_id.'_pla_'.$_FILES['files']['name'];
 
-           // $path= $nombre_carpeta.'/'.$nombre_archivo;
-            $path = $files->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
+            $path= $nombre_carpeta.'/'.$nombre_archivo;
+           // $alma = $files->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
+           $archivo_guardado = $files->storeAs( $nombre_carpeta, $nombre_archivo, 'constructor');
+           
+           //$archivo_guardado = $archivo_original->storeAs($path, $file_full_name, 'drive' );
 
-            //dd($files);*/
+            //dd($files);
 
-
+/* 
             $extension = $request->file('files')->getClientOriginalExtension();
-            $nombre_carpeta = "/constructor/documentos";
+            $nombre_carpeta = "constructor";
             $files = $request->file('files');
             $nombre_archivo = $request->contrato_id.'_pla_'.$_FILES['files']['name'];
             $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
-           // $path = Storage::url($path);
+           // $path = Storage::url($path);*/
 
         } else {
             $path= $request->path_planilla;
@@ -692,7 +695,7 @@ class PlanillaController extends Controller
                 'anticipo_planilla'=>$request->anticipo_planilla,
                 'retencion_planilla'=>$request->retencion_planilla,
                 'referencia'=>$request->referencia,
-                'path_planilla'=>$path,
+                'path_planilla'=>$archivo_guardado,
             ]);
 
 

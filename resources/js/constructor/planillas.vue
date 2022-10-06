@@ -624,6 +624,14 @@ export default {
             this.jsonData.numero_planilla=data.numero_planilla;
 
             this.jsonData.fecha_planilla=data.fecha_planilla.split('-').reverse().join('-');
+           //const dia =data.fecha_planilla.getDate() + 1;
+
+            console.log('==========estamos en edit==================');
+           
+            console.log(data.fecha_planilla);
+            console.log( this.jsonData.fecha_planilla);
+            //console.log( dia);
+
 
             this.jsonData.total_planilla=data.total_planilla;
             this.jsonData.anticipo_planilla=data.anticipo_planilla;
@@ -720,6 +728,8 @@ export default {
                 }
 
                 planilla.fecha_planilla = planilla.fecha_planilla.split('-').reverse().join('-');
+
+
                 
 
                //nfObject = new Intl.NumberFormat('en-US');
@@ -727,8 +737,9 @@ export default {
                               
               planilla.total_planilla1=planilla.total_planilla.toLocaleString('en-US');
               planilla.referencia1=planilla.referencia.replace(/<[^>]*>?/gm, '');
+
               const arch=planilla.path_planilla.split('/');
-             const arch_nombre=arch[2].substring(7);
+             const arch_nombre=arch[1].substring(7);
               planilla.arch_nombre=arch_nombre;
                 return planilla;
             });

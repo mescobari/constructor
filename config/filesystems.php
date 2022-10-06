@@ -58,7 +58,7 @@ return [
 
         'constructor' => [
             'driver' => 'local',
-            'root' => storage_path('app/constructor'),
+            'root' => storage_path('app/public/constructor'),
             'url' => env('APP_URL').'/constructor',
             'visibility' => 'public',
         ],
@@ -91,6 +91,7 @@ return [
         public_path('storage') => storage_path('app/public'),
         public_path('cofinanciadores') => storage_path('app/cofinanciadores'),
         public_path('documentos') => storage_path('app/documentos'),
+        public_path('constructor') => storage_path('app/constructor'),
     ],
 
 ];
