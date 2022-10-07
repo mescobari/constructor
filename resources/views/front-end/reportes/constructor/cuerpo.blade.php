@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>PLANILLAS CONTRATO</title>    
+        <title>Planilla Individual</title>    
     </head>
     <body style="border:  1px solid #000; ">
         <div id="header">
@@ -15,80 +15,51 @@
         <div class="contenido">
 
             <!-- contrato principal -->
+            <h4>CONTRATO PRINCIPAL</h4>
+            <table class="styled-table1" >
+                    <thead>
+                        <tr>
+                            <th  width="20%"><b>Item</b></th>  
+                            <th><b>Descripcion</b></th>
+                        </tr>
+                    </thead> 
 
-            <table class="styled-table1" border="1">
-            <thead>
-                 <tr  align="center">
-                    <td class="td-texto-titulo" >
-                        <b>Contrato Principal </b>
-                    </td>
-                    <td class="td-texto-titulo" >
-                        <b>Fecha de Firma </b>
-                    </td>
-                    <td class="td-texto-titulo" >
-                        <b>Monto Aprobado </b>
-                    </td>
-                    
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                                        
-                    <td class="td-texto" width="70%">
-                    <b> {{$principal_codigo}}</b> <br>{{$principal_nombre}}
-                    </td>
-                    <td class="td-texto" width="10%" align="center">
-                        {{$principal_firma}}
-                    </td>
-                    <td class="td-texto" width="20%" align="right">
-                        {{$principal_monto}}
-                    </td>
+                    <tbody>
+                        <tr><td>Contrato Principal:</td><td>{{$principal_codigo}}</td></tr>   
+                        <tr><td>Descripcion:</td><td>{{$principal_nombre}}</td></tr>
+                        <tr><td>Fecha de Firma:</td><td>{{$principal_firma}}</td></tr>
+                        <tr><td>Monto Aprobado:</td><td>{{$principal_monto}}</td></tr>
+                       
+                       
+                    </tbody>
+                </table>
 
-                </tr>
-               
-            </tbody> 
-            </table>
-
-
-
+            
         </div>
 
          <!-- docuento de la planilla que puede coincider con el contrato principal -->
-         @if($padre!=0)
+         @if(($padre!=0) && ($nombre_reporte != "PLANILLA DE AVANCE"))
          <div class="contenido">
-            <table class="styled-table1" border="1">
-            <thead>
-                    <tr  align="center">
-                        <td class="td-texto-titulo" >
-                            <b>Dcouemnto Asociado a la Planilla </b>
-                        </td>
-                        <td class="td-texto-titulo" >
-                            <b>Fecha de Firma </b>
-                        </td>
-                        <td class="td-texto-titulo" >
-                            <b>Monto Aprobado </b>
-                        </td>
-                        
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                                            
-                        <td class="td-texto" width="70%">
-                        <b> {{$documento_codigo}}</b> <br>{{$documento_nombre}}
-                        </td>
-                        <td class="td-texto" width="10%" align="center">
-                            {{$documento_firma}}
-                        </td>
-                        <td class="td-texto" align="right">
-                            {{$documento_monto}}
-                        </td>
 
-                    </tr>
-                    </tbody>
-                    
-                </table>
+                <h4>{{$nombre_reporte}}</h4>
+                    <table class="styled-table1" >
+                            <thead>
+                                <tr>
+                                    <th  width="20%"><b>Item</b></th>  
+                                    <th><b>Descripcion</b></th>
+                                </tr>
+                            </thead> 
 
+                            <tbody>
+                                <tr><td>Codigo Documento:</td><td>{{$documento_codigo}}</td></tr>   
+                                <tr><td>Descripcion:</td><td>{{$documento_nombre}}<br> {{$referencia}}</td></tr>
+                                <tr><td>Fecha de Firma:</td><td>{{$documento_firma}}</td></tr>
+                                <tr><td>Monto Aprobado:</td><td>{{$documento_monto}}</td></tr>
+                                <tr><td>NURI Correspondencia:</td><td>{{$nuri_planilla}}</td></tr>
+                                <tr><td>Monto Vigente:</td><td>{{$total_total}}</td></tr>
+                            
+                            </tbody>
+                        </table>
 
 
             </div>
@@ -98,109 +69,32 @@
         <!-- Informacion de la planilla eNCABEZADO-->
 
         <div class="contenido">
-            @if ($nombre_reporte != "PLANILLA DE AVANCE")
-                <table class="styled-table1" border="1">
-                <thead>
-                <tr  align="center"> 
-                            <td colspan="4" class="td-texto-titulo" >
-                                <b>INFORMACION DE LA PLANILLA </b>
-                            </td>
-                        </tr>
-                        <tr  align="center">
-                            <td class="td-texto-titulo" >
-                                <b>Referencia </b>
-                            </td>
-                            <td class="td-texto-titulo" >
-                                <b>NURI Correspondencia </b>
-                            </td>
-                            <td class="td-texto-titulo" >
-                                <b>Fecha Panilla </b>
-                            </td>
-                            <td class="td-texto-titulo" >
-                                <b>Monto Panilla </b>
-                            </td>
-                            
-                        </tr>
-                        </thead>
-                    <tbody>
-                        <tr>
-                                                
-                            <td class="td-texto" width="50%">
-                            {{$referencia}}
-                            </td>
-                            <td class="td-texto" width="20%" align="center">
-                                {{$nuri_planilla}}
-                            </td>
-                            <td class="td-texto" align="center">
-                                {{$fecha_planilla}}
-                            </td>
-                            <td class="td-texto" align="right">
-                                {{$total_planilla}}
-                            </td>
-                        </tr>   
-                        </tbody>
-                    </table>
-            @else
-                <table class="styled-table1" border="1">
-                <thead>
-                        <tr  align="center"> 
-                            <td colspan="3" class="td-texto-titulo" >
-                                <b>INFORMACION DE LA PLANILLA </b>
-                            </td>
-                        </tr>
-                        <tr  align="center">
-                            <td class="td-texto-titulo" >
-                                <b>Referencia </b>
-                            </td>
-                            <td class="td-texto-titulo" >
-                                <b>NURI Correspondencia </b>
-                            </td>
-                            <td class="td-texto-titulo" >
-                                <b>Fecha Panilla </b>
-                            </td>                        
-                        </tr>
-                        </thead>
-                    <tbody>
-                        <tr>
-                                                
-                            <td class="td-texto" width="40%">
-                            {{$referencia}}
-                            </td>
-                            <td class="td-texto" width="30%" align="center">
-                                {{$nuri_planilla}}
-                            </td>
-                            <td class="td-texto" align="center">
-                                {{$fecha_planilla}}
-                            </td>
-                            
-                        </tr>
-                        
-                        <tr  align="center">
-                            <td class="td-texto-titulo" >
-                                <b>Monto Panilla </b>
-                            </td>
-                            <td class="td-texto-titulo" >
-                                <b>Descto. Anticipo (20%) </b>
-                            </td>
-                            <td class="td-texto-titulo" >
-                                <b>Retencion (7%) </b>
-                            </td>
-                        </tr>
-                    
-                        <tr>
-                            <td class="td-texto" align="right">
-                                {{$total_planilla}}
-                            </td>
-                            <td class="td-texto" align="right">
-                                {{$anticipo_planilla}}
-                            </td>
-                            <td class="td-texto" align="right">
-                                {{$retencion_planilla}}
-                            </td>
-                        </tr>
+            @if ($nombre_reporte == "PLANILLA DE AVANCE")
+                
+            <h4>CERTIFICADO DE AVANCE DE OBRA ({{$numero_planilla}})</h4>
+                    <table class="styled-table1" >
+                            <thead>
+                                <tr>
+                                    <th  width="20%"><b>Item</b></th>  
+                                    <th><b>Descripcion</b></th>
+                                </tr>
+                            </thead> 
 
-                        </tbody>    
-                    </table>
+                            <tbody>
+                                <tr><td>Codigo Documento:</td><td>{{$numero_planilla}}</td></tr>   
+                                <tr><td>Descripcion:</td><td>{{$referencia}}<br> {{$referencia}}</td></tr>
+                                <tr><td>Fecha Planilla:</td><td>{{$fecha_planilla}}</td></tr>
+                                <tr><td>NURI Correspondencia:</td><td>{{$nuri_planilla}}</td></tr>
+
+                                <tr><td>Monto Planilla:</td><td>{{$total_planilla}}</td></tr>
+                                <tr><td>Descuento Anticipo:</td><td>{{$anticipo_planilla}}</td></tr>
+                                <tr><td>Retencion (7%) :</td><td>{{$retencion_planilla}}</td></tr>
+
+                                <tr><td>Total detalle Bs. :</td><td>{{$total_total}}</td></tr>
+                            </tbody>
+                        </table>
+
+
             @endif
 
             
@@ -213,13 +107,28 @@
 
             <!-- Informacion de la planilla DETALLADO-->
         <div class="contenido">
+        <h4>DETALLE DE LA PLANILLA</h4>
                 @php 
                     
                     $keys = array_keys($planilla); 
                     $salida=[];
                     $filas = count($planilla);
-                    $inicial=20;
-                    $filas_pagina=45;
+                   
+                   
+                    switch ($nombre_reporte) {
+                        case "PLANILLA INICIAL":
+                            $inicial=25;
+                            break;
+                        case "PLANILLA MODIFICATORIA":
+                            $inicial=15;
+                            break;
+                        case "PLANILLA DE AVANCE":
+                            $inicial=15;
+                            break;
+                    }
+
+
+                    $filas_pagina=40;
                     $tablas=  intdiv(($filas-$inicial), $filas_pagina)+2;
                     $t[0]=0;
                     $a_item = array("item_codigo", "item_descripcion", "simbolo","cantidad", "precio_unitario", "precio_total","tipo");
@@ -325,7 +234,7 @@
             width: 100%;
             border-collapse: collapse; 
             margin: 10px 0; 
-            font-size: 1em; 
+            font-size: 0.8em; 
             font-family: sans-serif; 
             min-width: 450px; 
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 

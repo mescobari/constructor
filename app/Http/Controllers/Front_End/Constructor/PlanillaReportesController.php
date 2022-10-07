@@ -280,6 +280,9 @@ public function ver_requerimientos(Request $request, $id){
         ->groupBy('planilla_items.padre')
         ->get();
 
+
+       
+
 //SELECT m.cantidad, m.precio_unitario, (m.cantidad* m.precio_unitario) as precio_total, i.padre FROM planilla_movimientos m, planilla_items i WHERE m.planilla_item_id=i.id and m.planilla_id = 1;
 
 //SELECT m.cantidad, m.precio_unitario,
@@ -292,14 +295,16 @@ public function ver_requerimientos(Request $request, $id){
         $keys = array_keys($array1);
         $salida=[];
         $super=[];
+      
        
+         
 //xxxxxxxxxxxxxCalculamos subtotales de primer nivel o nivel superior rabajamos con array 2
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 // debemos seleccionartodos 
 for($i = 0; $i < count($array2); $i++) {
     $nivel=array_search(null, array_column($array2, 'precio_total'));
     if ($nivel!==false){
-        $array2[$nivel]['precio_total']=12345;
+        $array2[$nivel]['precio_total']= '0';
         $super[]= $array2[$nivel]['padre'];
     }  
 }
@@ -321,6 +326,17 @@ for($i = 1; $i < count($super); $i++) {
 }
 
 
+
+//Sumamos el Total de planilla array2
+
+$total_total = array_sum(array_column($array2, 'precio_total'));
+
+/*echo "<pre>";
+print_r($super);
+echo "</pre>";
+echo $total_total;
+dd($array2);
+*/
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 //procesamos la planlla poniendo los campos extras, cambiando formatos y calculando total item
@@ -365,7 +381,9 @@ for($i = 1; $i < count($super); $i++) {
 
         }
 
-// calculamos los totales de la planilla
+
+       
+        // calculamos los totales de la planilla
 
         $grupos = array();
         for($i = 0; $i < count($array1); $i++) {
@@ -380,6 +398,7 @@ for($i = 1; $i < count($super); $i++) {
                         //$buscar= array_search($id,$array2);
                         $found_key = array_search($id, array_column($array2, 'padre'));
                         if ($found_key != false) {
+
                             $salida[$i]['precio_total']=
                             number_format($array2[$found_key]['precio_total'],2,",",".");
 
@@ -391,7 +410,10 @@ for($i = 1; $i < count($super); $i++) {
             }
          }
 
-//datos para la cabecera del reportedel reporte
+        // dd($salida);
+
+
+ //datos para la cabecera del reportedel reporte
 $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
 $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
 $siglas = "EL CONSTRUCTOR";
@@ -399,19 +421,21 @@ $documento_codigo = $documento->codigo;// codigo del contrato
 $fecha_hora_emision = date('d-m-Y h:i:s a', time());
 $nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
 
-$documento_nombre= $documento->objeto;
+$documento_nombre= strip_tags($documento->objeto);
 $documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
 $documento_monto= number_format($documento->monto_bs,2,",",".");
 
 $fecha_planilla= $salida[0]['fecha_planilla'];
 $nuri_planilla= $salida[0]['nuri_planilla'];
-$referencia= $salida[0]['referencia'];
+$referencia=  strip_tags($salida[0]['referencia']);
 $total_planilla=  $salida[0]['total_planilla'];
 $anticipo_planilla=  $salida[0]['anticipo_planilla'];
 $retencion_planilla=  $salida[0]['retencion_planilla'];
 
+$numero_planilla=  $salida[0]['numero_planilla'];
+
 $principal_codigo=$documento_padre->codigo;
-$principal_nombre=$documento_padre->objeto;
+$principal_nombre=strip_tags($documento_padre->objeto);
 $principal_firma=date("d-m-Y", strtotime($documento_padre->fecha_firma));
 $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 
@@ -437,10 +461,12 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
             'total_planilla' => $total_planilla,
             'anticipo_planilla' => $anticipo_planilla,
             'retencion_planilla' => $retencion_planilla,
+            'numero_planilla' => $numero_planilla,            
             'principal_codigo' => $principal_codigo,
             'principal_nombre' => $principal_nombre,
             'principal_firma' =>  $principal_firma,
             'principal_monto' =>  $principal_monto,
+            'total_total' =>  $total_total,            
             'padre' =>  $padre,
             'planilla' =>  $salida,
 
