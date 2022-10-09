@@ -622,22 +622,12 @@ export default {
             
             this.jsonData.nuri_planilla=data.nuri_planilla;
             this.jsonData.numero_planilla=data.numero_planilla;
+            
+            //la fecha un dia mas
+            const fecha =new Date(data.fecha_planilla.split('-').reverse().join('-'));
+            this.jsonData.fecha_planilla=new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate()+1);
 
-            this.jsonData.fecha_planilla=data.fecha_planilla.split('-').reverse().join('-');
-           //const dia =data.fecha_planilla.getDate() + 1;
-
-            console.log('==========estamos en edit==================');
-           
-            console.log(data.fecha_planilla);
-            console.log( this.jsonData.fecha_planilla);
-            //console.log( dia);
-
-
-            this.jsonData.total_planilla=data.total_planilla;
-            this.jsonData.anticipo_planilla=data.anticipo_planilla;
-            this.jsonData.retencion_planilla=data.retencion_planilla;
-
-           
+           //contrato salga seleccionado           
             this.jsonData.documento = this.documentos.find(element => element.id == data.contrato_id);
            
             this. jsonData.referencia =data.referencia;

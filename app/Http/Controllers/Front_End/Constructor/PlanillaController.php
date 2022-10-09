@@ -657,9 +657,10 @@ class PlanillaController extends Controller
            $extension = $request->file('files')->getClientOriginalExtension();
             $files = $request->file('files');
             $nombre_carpeta = "/constructor";
+           
             $nombre_archivo = $request->contrato_id.'_pla_'.$_FILES['files']['name'];
 
-            $path= $nombre_carpeta.'/'.$nombre_archivo;
+            //$path= $nombre_carpeta.'/'.$nombre_archivo;
            // $alma = $files->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
            $archivo_guardado = $files->storeAs( $nombre_carpeta, $nombre_archivo, 'constructor');
            
