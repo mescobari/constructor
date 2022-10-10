@@ -11,10 +11,12 @@ return [
     | by the framework. The "local" disk, as well as a variety of cloud
     | based disks are available to your application. Just store away!
     |
+    |
+    |  'default' => env('FILESYSTEM_DRIVER', 'local'),
     */
 
     'default' => env('FILESYSTEM_DRIVER', 'public'),
-
+   
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks

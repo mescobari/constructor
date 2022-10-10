@@ -663,10 +663,14 @@ class PlanillaController extends Controller
             //$path= $nombre_carpeta.'/'.$nombre_archivo;
            // $alma = $files->storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);//no recomendado por que sobre escribe aparte puede haber espacios y eso es problemas en navegador
            $archivo_guardado = $files->storeAs( $nombre_carpeta, $nombre_archivo, 'constructor');
+
+           // $archivo_guardado = $files->storeAs( '', $nombre_archivo, 'constructor'); // graba en el raiz del dico constructor asi no me sale construcor constructor.
+
+           $path= asset(Storage::disk('constructor')->url($archivo_guardado));
            
            //$archivo_guardado = $archivo_original->storeAs($path, $file_full_name, 'drive' );
 
-            //dd($files);
+            //dd($path);
 
 /* 
             $extension = $request->file('files')->getClientOriginalExtension();
@@ -696,7 +700,7 @@ class PlanillaController extends Controller
                 'anticipo_planilla'=>$request->anticipo_planilla,
                 'retencion_planilla'=>$request->retencion_planilla,
                 'referencia'=>$request->referencia,
-                'path_planilla'=>$archivo_guardado,
+                'path_planilla'=>$path,
             ]);
 
 

@@ -26,7 +26,7 @@ class Planilla extends Model
         ->join('planillas', 'planilla_documents.planilla_id', '=', 'planillas.id')
         ->select('planillas.*', 'document_types.nombre',  'documents.*')
         ->where('planillas.contrato_id', $contrato_id)
-        ->where('documents.document_types_id', '9')
+        ->where('planillas.tipo_planilla_id', '3')
         ->orderBy('planillas.fecha_planilla')
         ->get();
 
