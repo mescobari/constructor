@@ -559,9 +559,16 @@ class PlanillaController extends Controller
 
     public function getValoresItem($id){
 
+       
+
         $json=PlanillaItem::where('id',$id )->with('Unidad')->first();
+       
+        
         $contrato_id=$json->contrato_id;
         $planilla_item_id=$id;
+
+
+        //dd($contrato_id);
 
         $obj = json_decode($json, true);
 
