@@ -97,11 +97,11 @@ public function ver_requerimientos(Request $request, $id){
  $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
  $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
  $siglas = "EL CONSTRUCTOR";
- $documento_codigo = $documento->codigo;// codigo del contrato
+ $documento_codigo = strip_tags($documento->codigo);// codigo del contrato
  $fecha_hora_emision = date('d-m-Y h:i:s a', time());
  //$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
  $nombre_reporte=  'REQUERIMEINTOS EN OBRA';
- $documento_nombre= $documento->objeto;
+ $documento_nombre= strip_tags($documento->objeto);
  $documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
  $documento_monto= number_format($documento->monto_bs,2,",",".");
 

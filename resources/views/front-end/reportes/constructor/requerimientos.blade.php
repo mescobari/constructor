@@ -27,7 +27,7 @@
                         <tr><td>Tipo de Documento:</td><td>{{$docs_modificatorios[0]['tipo_doc_nombre']}}</td></tr>
                         <tr><td>codigo</td><td>{{$docs_modificatorios[0]['codigo']}}</td></tr>
                         <tr><td>nombre</td><td>{{$docs_modificatorios[0]['nombre']}}</td></tr>
-                        <tr><td>objeto</td><td>{{$docs_modificatorios[0]['objeto']}}</td></tr>
+                        <tr><td>objeto</td><td>{{strip_tags($docs_modificatorios[0]['objeto'])}}</td></tr>
                         <tr><td>contratante</td><td>{{$docs_modificatorios[0]['contratante']}} - ({{$docs_modificatorios[0]['contratante_sigla']}})</td></tr>
                         <tr><td>contratado</td><td>{{$docs_modificatorios[0]['contratado']}} - ({{$docs_modificatorios[0]['contratado_sigla']}})</td></tr>                     
                         <tr><td>fecha_firma</td><td>{{ date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_firma']))}}</td></tr>
@@ -52,7 +52,7 @@
                         <tr><td>Tipo de Documento:</td><td>Requerimiento de: {{$tipo_requerimiento}}</td></tr>
                         <tr><td>fecha Requerimiento</td><td>{{date("d-m-Y",strtotime($requerimiento->fecha_requerimiento))}}</td></tr>
                         <tr><td>NURI</td><td>{{$requerimiento->nuri_requerimiento}}</td></tr>
-                        <tr><td>Descripción</td><td>{{$requerimiento->descripcion_requerimiento}}</td></tr>
+                        <tr><td>Descripción</td><td>{{strip_tags($requerimiento->descripcion_requerimiento)}}</td></tr>
                    
                     </tbody>
             </table>
@@ -111,7 +111,7 @@
                     </thead> 
                     <tbody>
                         
-                        <tr><td>{{$requerimiento->trabajos_encarados}}</td></tr>
+                        <tr><td>{{strip_tags($requerimiento->trabajos_encarados)}}</td></tr>
                    
                     </tbody>
 
@@ -170,7 +170,7 @@
                     </thead> 
                     <tbody>
                         
-                        <tr><td>{{$requerimiento->trabajos_encarados}}</td></tr>
+                        <tr><td>{{strip_tags($requerimiento->trabajos_encarados)}}</td></tr>
                    
                     </tbody>
 

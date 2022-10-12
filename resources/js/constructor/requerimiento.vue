@@ -2,7 +2,7 @@
     <div>
         <div class="card">
             <div class="card-header ferdy-background-Primary-blak">
-                <h3 class="card-title">REGISTRO DE REQUERIMIENTO DE OBRA</h3>
+                <h3 class="card-title">REGISTRO DE SOLICITUD EN OBRA</h3>
                 <div class="card-tools">
                     <!--  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#doc_legales" @click="ModalCrear();">
                           Adicionar Planilla
@@ -26,7 +26,7 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
                                href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
-                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Requerimiento en Obra</h6>
+                               aria-selected="true" v-on:click="detectActiveTab('home')"><h6> Solicitud en Obra</h6>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -59,7 +59,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group" @input="descripcionRecursoGetbyType">
-                                            <label for="nombre">Tipo de Requerimiento:</label>
+                                            <label for="nombre">Tipo de Solicitud:</label>
                                             <div class="custom-control custom-radio">
                                                 <input class="custom-control-input" type="radio" id="customRadio1"
                                                        value="1" v-model="jsonData.tipo_requerimiento_id"
@@ -114,7 +114,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="fecha_aprobacion">Fecha de Requerimiento:</label>
+                                            <label for="fecha_aprobacion">Fecha de Solicitud:</label>
                                             <datepicker
                                                 :language="configFechas.es"
                                                 :placeholder="configFechas.placeholder"
@@ -160,7 +160,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="descripcion">Descripcion Requerimiento:</label>
+                                    <label for="descripcion">Descripcion Solicitud:</label>
                                     <vue-editor
                                         placeholder="Ingresar Descripcion en detalle del Requerimiento"
                                         v-model="jsonData.descripcion_requerimiento"
@@ -244,7 +244,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="nombre">Plazo Ejecucion</label>
+                                        <label for="nombre">Meses Requeridos</label>
                                         <input type="text" class="form-control" name="plazo"
                                                placeholder="dias de ejecucion"
                                                v-model="jsonData.tiempo_total_recurso">
