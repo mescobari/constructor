@@ -74,15 +74,17 @@
                             </template>
                             <template slot="acciones" slot-scope="props">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-primary"
+                                    <button type="button" class="btn btn-outline-primary"  title="Descargar Documento de Respaldo" 
                                             @click="downloadRequerimiento(props.row)"><span><i
                                         class="far fa-file"></i> </span></button>
+
                                     <a :href="'ver_requerimientos/'+props.row.id" target="_blank"
                                        rel="noopener noreferrer">
-                                        <button type="button" class="btn btn-outline-success ml-1"><span><i
+                                        <button type="button" class="btn btn-outline-success ml-1" title="Ver solicitud"><span><i
                                             class="far fa-file-pdf"></i></span></button>
                                     </a>
-                                    <button type="button" class="btn btn-outline-danger ml-1"
+
+                                    <button type="button" class="btn btn-outline-danger ml-1"  title="Borrar solicitud"
                                             @click="preguntarModalAlertaConfirmacionEliminar(props.row.id);"><span><i
                                         class="fa fa-trash-alt"></i></span></button>
                                 </div>
@@ -216,11 +218,17 @@ export default {
                     filter: {type: "simple", placeholder: "Fecha",},
                     sort: true,
                 },
-                {label: "Nuri", name: "nuri_requerimiento", filter: {type: "simple", placeholder: "Nuri"}, sort: true,},
+                {
+                    label: "Nuri",
+                    name: "nuri_requerimiento", 
+                    filter: {type: "simple", placeholder: "Nuri"}, sort: true,
+                    row_text_alignment: "text-left",
+                },
                 {
                     label: "Descripcion Requerimiento",
                     name: "descripcion_requerimiento",
                     filter: {type: "simple", placeholder: "Descripcion Requerimiento"},
+                    row_text_alignment: "text-left",
                 },
                 {label: "Acciones", name: "acciones", sort: false,},
             ],
@@ -251,7 +259,11 @@ export default {
             ]
 
             let currentReq = getRequerimientos.filter((item) => item.document_id === this.jsonData.proyectos.id);
-            currentReq.map((item) => { item.tipo_requerimiento_id = tipoRequerimientos[item.tipo_requerimiento_id-1].nombre });
+            currentReq.map((item) => { 
+                item.tipo_requerimiento_id = tipoRequerimientos[item.tipo_requerimiento_id-1].nombre 
+                item.fecha_requerimiento =item.fecha_requerimiento.split('-').reverse().join('-');
+                item.descripcion_requerimiento = item.descripcion_requerimiento.replace(/(<([^>]+)>)/gi, "");
+            });
             this.rows = currentReq
             console.log('REQUERIMIENTOS', currentReq);
         },
@@ -265,7 +277,7 @@ export default {
                 titulo: "Mensajes del Sistema",//titulo del mensaje
                 contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
                 contenidoCuerpo: "La acción es irreversible",//contenido del mensaje
-                contenidoPie: "¿Esta seguro de eliminar el registro?",//contenido del mensaje
+                contenidoPie: "¿Esta seguro de eliminar el registro?" + id,//contenido del mensaje
                 tipo: "ferdy-background-Primary-blak",//color danger warnin etc para header de modal
                 tituloBotonUno: "SI", //texto de primer boton el de true
                 tituloBotonDos: "NO", //texto segundo bocton del de false

@@ -533,8 +533,10 @@ class PlanillaController extends Controller
         $relacion->save();
 
 
-
-
+        // debemos actualizar el estado en planilla
+        $actEstado = Planilla::findOrFail($request->planilla_id);
+        $actEstado->estado_planilla =1;
+        $actEstado->save();
 
 
         

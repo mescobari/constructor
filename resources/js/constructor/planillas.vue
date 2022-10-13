@@ -76,14 +76,16 @@
 
                             <template slot="acciones" slot-scope="props">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-primary ml-1" data-toggle="modal" data-target="#planillaCSV" @click="planillaCSV(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
+                                    <button v-if="props.row.estado_planilla==0" type="button" class="btn btn-outline-primary ml-1" data-toggle="modal" data-target="#planillaCSV" 
+                                    @click="planillaCSV(props.row);" title="Cargar Planilla"><span><i class="fa fa-user-edit"></i></span></button>
                                    
                                     <a :href="'ver_planilla/'+props.row.id" target="_blank" rel="noopener noreferrer">
-                                    <button type="button" class="btn btn-outline-success ml-1" ><span><i class="far fa-file-pdf"></i></span></button>
+                                    <button  v-if="props.row.estado_planilla==1"  type="button" class="btn btn-outline-success ml-1"  title="Ver Planilla"><span><i class="far fa-file-pdf"></i></span></button>
                                     </a>
 
-                                    <button type="button" class="btn btn-outline-warning ml-1" @click="editar(props.row);"><span><i class="fa fa-user-edit"></i></span></button>
-                                    <button type="button" class="btn btn-outline-danger ml-1" @click="eliminar(props.row.id);"><span><i class="fa fa-trash-alt"></i></span></button>                
+                                    <button type="button" class="btn btn-outline-warning ml-1" @click="editar(props.row);" title="Editar Planilla"><span><i class="fa fa-user-edit"></i></span></button>
+                                    <button type="button" class="btn btn-outline-danger ml-1" 
+                                    @click="eliminar(props.row);" title="Borrar Planilla"><span><i class="fa fa-trash-alt"></i></span></button>                
                                 </div>
                             </template>
                         </vue-bootstrap4-table>
@@ -166,7 +168,7 @@
                             <button type="button" class="btn btn-primary" data-dismiss="modal" v-if="cargar==true"
                             @click="ver_planilla();">Seleccionar</button>
 
-                            <button type="button" class="btn btn-danger" data-dismiss="modal" v-if="cargar==false">Cerrar</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" id="cerrarCSV" v-if="cargar==false">Cerrar</button>
                        
                     </div>
                 </div>
@@ -368,7 +370,8 @@
             </div>
         </div> 
 <!-- ///////////   FIN modal para crear y modificar planillas //////////-->  
-       
+
+
        <configuraciones :configuracionCofinanciador="datosEnviarConfiguracion" @enviaConfiguracionHijoAPadre="funcionRespuestaConfig" ref="RecuperaConfig"></configuraciones>        
     </div>
 </template>
@@ -390,7 +393,7 @@ export default {
             guardar_bottom:false,
             cargar:true,
             tituloDocLegalesModal:'',
-
+            mandarMensajesAlerta: {},
             combo_tipos_documentos:[],
             combo_instituciones:[],
             combo_cofinanciadores:[],
@@ -436,8 +439,18 @@ export default {
                 },
                 { label: "Fecha",      name: "fecha_planilla",         filter: { type: "simple", placeholder: "Fecha", }, sort: true,  },
                 { label: "Numero",     name: "numero_planilla",              filter: { type: "simple", placeholder: "Numero" }, sort: true,     },
-                { label: "Nuri",       name: "nuri_planilla",            filter: { type: "simple", placeholder: "Nuri" },         },
-                { label: "Referencia", name: "referencia1",       filter: { type: "simple", placeholder: "Referencia" },   },
+                { 
+                    label: "Nuri",
+                    name: "nuri_planilla",
+                    filter: { type: "simple", placeholder: "Nuri" },
+                    row_text_alignment: "text-left",
+                },
+                { 
+                    label: "Referencia",
+                    name: "referencia1",
+                    filter: { type: "simple", placeholder: "Referencia" }, 
+                    row_text_alignment: "text-left",
+                 },
                 { label: "Respaldo",   name: "path_planilla",    filter: { type: "simple", placeholder: "Respaldo" },       },
                 { label: "Total BS.",
                   name: "total_planilla1",
@@ -490,6 +503,7 @@ export default {
                 //$('#modifica3').attr('checked','checked');
                 console.log('no puede cargar otra planilla que no se ala inicial desahabilitar todo');
                 this.cargar=false;
+
             }else {
                 this.cargar=true; 
 
@@ -518,7 +532,6 @@ export default {
             const path=uploadFile.data;
             
             
-
             
             var data = {
                 "path" : uploadFile.data,
@@ -544,7 +557,11 @@ export default {
                 rowMensaje.innerHTML = '<div class="alert alert-success fade show" role="alert" >La planilla'
                     + this.cargarData.tipo + ' fue cargada satisfactoriamente</div>';
                 this.cargar=false;
+
+                this.ver_planilla();
+
                 
+
             } else {
                 
                 var span = document.getElementById("csvPath");
@@ -686,9 +703,65 @@ export default {
             this.limpiar_formulario();
             document.getElementById("cerrarModal").click();
         },
-        async eliminar(){
+        async eliminar(data={}){
+
+            console.log('=======Estamos en eliminar ==================');
+            console.log(data);
+            // desplegamos advertencia
+
+            var answer = window.confirm("Confirma Eliminar la Planilla? "+ data.numero_planilla +' de fecha '+ data.fecha_planilla);
+            if (answer) {
+                //some code
+            }
+            else {
+                //some code
+            }
+
+
 
         },
+
+
+        preguntarModalAlertaConfirmacionEliminar(id) {
+
+            console.log('=======Estamos en eliminar ==================');
+            console.log(data);
+
+            this.mandarMensajesAlerta = {
+                titulo: "Mensajes del Sistema",//titulo del mensaje
+                contenidoCabecera: "Este es un mensaje de advertencia",//contenido del mensaje
+                contenidoCuerpo: "La acción es irreversible",//contenido del mensaje
+                contenidoPie: "¿Esta seguro de eliminar el registro?",//contenido del mensaje
+                tipo: "ferdy-background-Primary-blak",//color danger warnin etc para header de modal
+                tituloBotonUno: "SI", //texto de primer boton el de true
+                tituloBotonDos: "NO", //texto segundo bocton del de false
+                respuesta: false,
+            };
+            this.id_eliminacion = id;
+            this.$refs.abrirAlerta.abrirAlerta(this.id_eliminacion);
+        },
+
+
+
+
+        respuestaModalAlertaConfirmacion(datos) {
+            console.log('==== respuestaModalAlertaConfirmacion===============');
+            console.log('eliminando', datos.respuesta);
+            /*if (datos.respuesta === true) {
+                if (this.tabSelected === "home") {
+                    this.eliminar(this.id_eliminacion);
+
+                } else if (this.tabSelected === "profile") {
+                    this.eliminarItemRelacion(this.id_eliminacion);
+
+                } else if (this.tabSelected === "messages") {
+                    this.eliminarItemOtrosGastos(this.id_eliminacion);
+                }
+                console.log('ID DOC', this.tabSelected);
+                // this.eliminar(this.id_eliminacion);
+            }*/
+        },
+
         async seleccionar_cont_primario(){
             var respuesta = await axios.get('documents');
             const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
@@ -735,7 +808,7 @@ export default {
             });
 
             this.rows = planillas;
-            this.lista_documentos();
+            //this.lista_documentos();
          },
 
         
@@ -790,6 +863,7 @@ export default {
             this.tituloDocLegalesModal = "Formulario de Creación de Planillas";
            
         },
+       
         limpiar_formulario(){
             $('#modifica1').removeAttr('checked');
             $('#modifica2').removeAttr('checked');

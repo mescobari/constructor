@@ -38,7 +38,14 @@
                     </tbody>
             </table>
 
-            <h4>I.- REQUERIMIENTO EN OBRA</h4>
+
+            @if ($tipo_requerimiento != 'Llave en Mano')
+
+                <h4>I.- REQUERIMIENTO EN OBRA</h4>
+            @else
+                <h4>I.- SOLICITUD CONTRATO LLAVE EN MANO</h4>
+
+            @endif
             <table class="styled-table" >
                     <thead>
                         <tr>
@@ -57,51 +64,58 @@
                     </tbody>
             </table>
 
-            <h4>Detalle: Items Solicitados</h4>
-            <table class="styled-table" >
-                    <thead>
-                        <tr>
-                            <th ><b>Código</b></th>  
-                            <th width="30%"><b>Descripcion</b></th>
-                            <th ><b>Unidad</b></th>  
-                            <th><b>Cantidad</b></th>
+            @if ($tipo_requerimiento != 'Llave en Mano')   
+                <h4>Detalle: Items Solicitados</h4>
+                <table class="styled-table" >
+                        <thead>
+                            <tr>
+                                <th ><b>Código</b></th>  
+                                <th width="30%"><b>Descripcion</b></th>
+                                <th ><b>Unidad</b></th>  
+                                <th><b>Cantidad</b></th>
 
-                            <th ><b>Horas Req.</b></th>  
-                            <th><b>Dias Req.</b></th>
-                            <th ><b>Plazo Ejecución</b></th>  
-                            <th><b>Prec. Referencial</b></th>
+                                <th ><b>Horas Req.</b></th>  
+                                <th><b>Dias Req.</b></th>
+                                <th ><b>Plazo Ejecución</b></th>  
+                                <th><b>Prec. Referencial</b></th>
 
 
-                        </tr>
-                    </thead> 
+                            </tr>
+                        </thead> 
 
-                    <tbody>
-                    @for ($i = 0; $i < count($requerimientos); $i++)          
+                        <tbody>
+                        @for ($i = 0; $i < count($requerimientos); $i++)          
+            
+                            <tr>
+                                <td>{{$requerimientos[$i]['codigo_recurso']}}</td>
+                                <td>{{$requerimientos[$i]['descripcion_recurso']}}</td>
+                                <td>{{$requerimientos[$i]['simbolo']}}</td>
+                                <td align="center">{{$requerimientos[$i]['cantidad_recurso']}}</td>
+                                <td align="center">{{$requerimientos[$i]['horas_recurso']}}</td>
+                                <td align="center">{{$requerimientos[$i]['dias_recurso']}}</td>
+                                <td align="center">{{$requerimientos[$i]['tiempo_total_recurso']}}</td>
+                                <td align="right">{{$requerimientos[$i]['precio_ref']}}</td>
+
+                                                            
+                            <tr>
+
+                        @endfor
+
+
+
+
+                        </tbody>
+                </table>
+
+                <div class='page-break'></div>
+                
+                <h4>II.- TRABAJOS A SER ENCARADOS</h4>
            
-                        <tr>
-                            <td>{{$requerimientos[$i]['codigo_recurso']}}</td>
-                            <td>{{$requerimientos[$i]['descripcion_recurso']}}</td>
-                            <td>{{$requerimientos[$i]['simbolo']}}</td>
-                            <td align="center">{{$requerimientos[$i]['cantidad_recurso']}}</td>
-                            <td align="center">{{$requerimientos[$i]['horas_recurso']}}</td>
-                            <td align="center">{{$requerimientos[$i]['dias_recurso']}}</td>
-                            <td align="center">{{$requerimientos[$i]['tiempo_total_recurso']}}</td>
-                            <td align="right">{{$requerimientos[$i]['precio_ref']}}</td>
-
-                                                        
-                        <tr>
-
-                    @endfor
+            @endif
 
 
+           
 
-
-                    </tbody>
-            </table>
-
-            <div class='page-break'></div>
-
-            <h4>II.- TRABAJOS A SER ENCARADOS</h4>
             <table class="styled-table" >
                     <thead>
                         <tr>
@@ -116,7 +130,17 @@
                     </tbody>
 
             </table>
-            <h4>Detalle: Relacion con itemes del contrato principal</h4>
+           
+
+
+            @if ($tipo_requerimiento != 'Llave en Mano')
+
+                <h4>Detalle: Relacion con itemes del contrato principal</h4>
+            @else
+                <h4>Detalle: Items a ser contratados</h4>
+
+            @endif
+
             <table class="styled-table" >
                     <thead>
                         <tr>
@@ -129,7 +153,14 @@
                             <th><b>Por Ejecutar</b></th>
                             <th ><b>Avance Req.</b></th>  
                             <th><b>Pre. Unit.</b></th>
-                            <th><b>Por Facturar</b></th>
+                            <th><b>
+                                @if ($tipo_requerimiento != 'Llave en Mano')
+                                    Por Facturar
+                                @else
+                                    Precio Referencial
+                                @endif
+                                                        
+                             </b></th>
 
                         </tr>
                     </thead> 
@@ -159,59 +190,59 @@
                     </tbody>
             </table>
 
+            @if ($tipo_requerimiento != 'Llave en Mano')   
+                <h4>III.- GASTOS GENERALES</h4>
+                <table class="styled-table" >
+                        <thead>
+                            <tr>
+                                <th ><b>Descripcion</b></th>  
 
-            <h4>III.- GASTOS GENERALES</h4>
-            <table class="styled-table" >
-                    <thead>
-                        <tr>
-                            <th ><b>Descripcion</b></th>  
+                                </tr>
+                        </thead> 
+                        <tbody>
+                            
+                            <tr><td>{{strip_tags($requerimiento->trabajos_encarados)}}</td></tr>
+                    
+                        </tbody>
+
+                </table>
+                <h4>Detalle: Gastos Generales -Otros Gastos </h4>
+                <table class="styled-table" >
+                        <thead>
+                            <tr>
+                                <th ><b>Código</b></th>  
+                                <th width="20%"><b>Descripcion</b></th>
+                                <th ><b>Unidad</b></th>  
+                                <th><b>Cantidad</b></th>
+                                <th><b>Prec. Unit.</b></th>
+                                <th ><b>Prec. Total</b></th>  
+                                <th width="20%"><b>Justificación</b></th>
 
                             </tr>
-                    </thead> 
-                    <tbody>
-                        
-                        <tr><td>{{strip_tags($requerimiento->trabajos_encarados)}}</td></tr>
-                   
-                    </tbody>
+                        </thead> 
 
-            </table>
-            <h4>Detalle: Gastos Generales -Otros Gastos </h4>
-            <table class="styled-table" >
-                    <thead>
-                        <tr>
-                            <th ><b>Código</b></th>  
-                            <th width="20%"><b>Descripcion</b></th>
-                            <th ><b>Unidad</b></th>  
-                            <th><b>Cantidad</b></th>
-                            <th><b>Prec. Unit.</b></th>
-                            <th ><b>Prec. Total</b></th>  
-                            <th width="20%"><b>Justificación</b></th>
+                        <tbody>
+                        @for ($i = 0; $i < count($req_otros); $i++)          
+            
+                            <tr>
+                                <td>{{$req_otros[$i]['codigo_recurso']}}</td>
+                                <td>{{$req_otros[$i]['descripcion_recurso']}}</td>
+                                <td align="center">{{$req_otros[$i]['simbolo']}}</td>
+                                <td align="right">{{$req_otros[$i]['cantidad_otros']}}</td>
+                                <td align="right">{{$req_otros[$i]['monto_otros']}}</td>
+                                <td align="right">{{$req_otros[$i]['total_otros']}}</td>
+                                <td>{{$req_otros[$i]['explicar_otros']}}</td>
+                                                            
+                            <tr>
 
-                        </tr>
-                    </thead> 
-
-                    <tbody>
-                    @for ($i = 0; $i < count($req_otros); $i++)          
-           
-                        <tr>
-                            <td>{{$req_otros[$i]['codigo_recurso']}}</td>
-                            <td>{{$req_otros[$i]['descripcion_recurso']}}</td>
-                            <td align="center">{{$req_otros[$i]['simbolo']}}</td>
-                            <td align="right">{{$req_otros[$i]['cantidad_otros']}}</td>
-                            <td align="right">{{$req_otros[$i]['monto_otros']}}</td>
-                            <td align="right">{{$req_otros[$i]['total_otros']}}</td>
-                            <td>{{$req_otros[$i]['explicar_otros']}}</td>
-                                                        
-                        <tr>
-
-                    @endfor
+                        @endfor
 
 
 
 
-                    </tbody>
-            </table>
-
+                        </tbody>
+                </table>
+            @endif   
 
 
 

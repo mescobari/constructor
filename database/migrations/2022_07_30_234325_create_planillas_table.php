@@ -18,7 +18,7 @@ class CreatePlanillasTable extends Migration
             $table->unsignedBigInteger('contrato_id');//es un contrato principal o subcontrato
             $table->unsignedBigInteger('tipo_planilla_id');//1.- inicial/principal, 2. modificacion, 3. avance
             $table->date('fecha_planilla');
-            $table->integer('numero_planilla');
+            $table->string('numero_planilla');
             $table->string('nuri_planilla')->nullable();
             $table->text('referencia');
             $table->string('path_planilla')->nullable();
@@ -28,7 +28,7 @@ class CreatePlanillasTable extends Migration
             $table->float('retencion_planilla',12,2)->nullable();// retencion 7% del anticipo solo en avance
             // este registro debe estar asociado a un documento si es que es planil principal o modificacion.
 
-
+            $table->integer('estado_planilla')->default(0);
 
            
            
