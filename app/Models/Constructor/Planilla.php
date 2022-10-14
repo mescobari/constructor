@@ -10,7 +10,7 @@ class Planilla extends Model
 {
     use HasFactory;
     protected $fillable = ['tipo_planilla_id', 'fecha_planilla', 'contrato_id','numero_planilla', 'nuri_planilla',
-     'referencia', 'path_planilla', 'total_planilla','anticipo_planilla', 'retencion_planilla' ];
+     'referencia', 'path_planilla', 'total_planilla','anticipo_planilla', 'retencion_planilla', 'estado_planilla' ];
 
 	protected $table = 'planillas';
 
@@ -112,6 +112,68 @@ class Planilla extends Model
     $obj = json_decode($avance, true);
 
     return $obj;
+
+    }
+
+    public function getAvanceFinaciero($contrato_id)
+    {
+
+         // getanticipo
+         $anti = DB::table('proceder_ordenes')->where('document_id',$contrato_id)->select('fecha_orden_proceder', 'anticipo')->first();
+         $obj = json_decode($anti, true);
+         $anti = json_decode($obj, true);
+
+
+
+        // llamar a getPlanila
+        $plani= Planilla::where('contrato_id', $contrato_id)->get();
+
+        $obj = json_decode($plani, true);
+
+        //armamos la debe, haber saldo
+
+        for($i = 0; $i < count( $obj); $i++) {
+
+            $items[$i]['fecha']=date("d-m-Y", strtotime($obj[$i]['fecha_planilla']));
+           
+            $items[$i]['id']=$obj[$i]['id'];
+            $items[$i]['tipo_planilla_id']=$obj[$i]['tipo_planilla_id'];
+          
+            $items[$i]['numero_planilla']=$obj[$i]['numero_planilla'];
+            $items[$i]['nuri_planilla']=$obj[$i]['nuri_planilla'];
+            $items[$i]['referencia']=$obj[$i]['referencia'];
+            $items[$i]['total_planilla']=$obj[$i]['total_planilla'];
+            $items[$i]['anticipo_planilla']=$obj[$i]['anticipo_planilla'];
+            $items[$i]['retencion_planilla']=$obj[$i]['retencion_planilla'];
+            $items[$i]['estado_planilla']=$obj[$i]['anticipo_planilla'];  
+
+            
+            if ($obj[$i]['tipo_planilla_id']==1 ) {
+
+                $items[$i]['si_contrato']=$obj[$i]['total_planilla'];
+                $items[$i]['total_planilla']=0;
+                $items[$i]['saldo_contrato']= 0;
+
+                $items[$i]['si_anticipo']=$anti[0]['anticipo'];
+                $items[$i]['anticipo_planilla']=0;
+
+
+                $items[$i]['si_retencion']=0;
+                $items[$i]['retencion_planilla']=0;
+
+                        
+
+              }
+
+           
+           
+           
+        }
+
+
+
+        return $plani;
+
 
     }
 

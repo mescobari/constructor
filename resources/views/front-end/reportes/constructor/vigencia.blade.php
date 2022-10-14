@@ -27,14 +27,15 @@
                      <tr><td>Tipo de Documento:</td><td>{{$docs_modificatorios[0]['tipo_doc_nombre']}}</td></tr>
                      <tr><td>codigo</td><td>{{$docs_modificatorios[0]['codigo']}}</td></tr>
                      <tr><td>nombre</td><td>{{$docs_modificatorios[0]['nombre']}}</td></tr>
-                     <tr><td>objeto</td><td>{{$docs_modificatorios[0]['objeto']}}</td></tr>
+                     <tr><td>objeto</td><td>{{strip_tags($docs_modificatorios[0]['objeto'])}}</td></tr>
                      <tr><td>contratante</td><td>{{$docs_modificatorios[0]['contratante']}} - ({{$docs_modificatorios[0]['contratante_sigla']}})</td></tr>
                      <tr><td>contratado</td><td>{{$docs_modificatorios[0]['contratado']}} - ({{$docs_modificatorios[0]['contratado_sigla']}})</td></tr>                     
                      <tr><td>fecha_firma</td><td>{{ date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_firma']))}}</td></tr>
                      <tr><td>modifica</td><td>{{$docs_modificatorios[0]['que_modifica']}}</td></tr>
-                     <tr><td>monto_bs</td><td> {{number_format($docs_modificatorios[0]['monto_bs'],2,",",".")}}</td></tr>
+                     <tr><td>monto_bs</td><td> Bs. {{number_format($docs_modificatorios[0]['monto_bs'],2,",",".")}}</td></tr>
                      <tr><td>duracion_dias</td><td>{{number_format($docs_modificatorios[0]['duracion_dias'],0,",",".")}}</td></tr>
                      <tr><td>fecha_orden_proceder</td><td>{{date("d-m-Y",strtotime($docs_modificatorios[0]['fecha_orden_proceder']))}}</td></tr>
+                     <tr><td>Anticipo</td><td>Bs. {{number_format($docs_modificatorios[0]['anticipo'],2,",",".")}}</td></tr>
                      </tbody>
             </table>
 
@@ -91,7 +92,8 @@
             left: 20px;
             margin-right: 40px;
             margin-bottom: 10px;
-            position: relative;  
+            position: relative; 
+            
         }
         .page-break{ 
            
@@ -164,6 +166,7 @@
             font-family: sans-serif; 
             min-width: 450px; 
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
+            
         }
 
         .styled-table thead tr { 
@@ -185,6 +188,7 @@
         .styled-table tbody tr:last-of-type { 
             border-bottom: 1px solid #009879; 
         }
+
 
 
     </style>

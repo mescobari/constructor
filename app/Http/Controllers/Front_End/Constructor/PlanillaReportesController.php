@@ -243,6 +243,74 @@ public function ver_requerimientos(Request $request, $id){
 
 /////******FIN *************plazos_documentos************************************************ */  
 
+/////****************ver ficha********************************************************** */ 
+
+public function ver_ficha(Request $request, $id){
+    $contrato_id=$id;
+    $docs= new Document;
+    $plani= new Planilla;
+
+    $documento = $docs->getDocumento($contrato_id );
+    $docs_modificatorios= $docs->getModificacion($contrato_id);
+
+    /*
+    / Avance financiero obtenemos de planilla
+    /----------------------------------------------------------------------------------------*/
+
+    $planilla= $plani->getAvanceFinaciero($contrato_id);
+
+
+
+
+
+
+    //datos para la cabecera del reportedel reporte
+    $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
+    $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
+    $siglas = "EL CONSTRUCTOR";
+    $documento_codigo = $documento->codigo;// codigo del contrato
+    $fecha_hora_emision = date('d-m-Y h:i:s a', time());
+    //$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
+    $nombre_reporte=  'VIGENCIA - PLAZOS FECHA ESTIMADA DE CONCLUSION';
+    $documento_nombre= $documento->objeto;
+    $documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
+    $documento_monto= number_format($documento->monto_bs,2,",",".");
+
+
+    /* cargamos la vista  
+
+    $pdf = PDF::loadView('front-end.reportes.constructor.fichaProyecto', [
+        'link_img'=>'img/sistema-front-end/logo-pdf.png',
+        'titulo_grande' => $titulo_grande,
+        'nombre_institucion' => $nombre_institucion,
+        'siglas' => $siglas,
+        'documento_codigo' => $documento_codigo,
+        'fecha_hora_emision' => $fecha_hora_emision,
+        'nombre_reporte' => $nombre_reporte,
+        'documento_nombre' => $documento_nombre,
+        'documento_firma' => $documento_firma,
+        'documento_monto' => $documento_monto,
+        'docs_modificatorios' => $docs_modificatorios,
+
+    ]);
+    $pdf->setPaper('letter', 'landscape');
+    return $pdf->stream('reporte_ficha_proyecto.pdf');
+
+*/
+     return $planilla;
+
+
+
+}
+
+/////******FIN *************ver ficha************************************************ */  
+
+
+
+
+
+
+
     public function planilla_individual(Request $request, $id){
         //$planilla = Planilla::where('id', $id)->first();
         $documento = DB::table('planilla_documents')

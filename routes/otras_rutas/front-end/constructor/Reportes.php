@@ -8,6 +8,7 @@
 
         Route::get('ver_lista_docs/{id}', 'PlanillaReportesController@lista_documentos')->name('ver_lista_docs');
         Route::get('ver_plazos/{id}', 'PlanillaReportesController@plazos_documentos')->name('ver_plazos');
+        Route::get('ver_ficha/{id}', 'PlanillaReportesController@ver_ficha')->name('ver_ficha');
         
         Route::get('ver_planilla/{id}', 'PlanillaReportesController@planilla_individual')->name('planilla_individual');
         Route::get('ver_pla_vigente/{id}', 'PlanillaReportesController@planilla_vigente')->name('ver_pla_vigente');

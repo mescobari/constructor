@@ -17,6 +17,7 @@ class CreateProcederOrdenesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('document_id');
             $table->date('fecha_orden_proceder');
+            $table->float('anticipo',12,2)->nullable();
             $table->text('desc_orden_proceder');
             $table->string('path_orden_proceder')->nullable();
             $table->timestamps();

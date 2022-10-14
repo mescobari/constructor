@@ -104,6 +104,7 @@ class document extends Model
         $items[0]['contratado']=$documento->contratado->nombre;
         $items[0]['contratado_sigla']=$documento->contratado->sigla;
         $items[0]['fecha_orden_proceder']=$documento->ordenProceder->fecha_orden_proceder;
+        $items[0]['anticipo']=$documento->ordenProceder->anticipo;
         $dias= $items[0]['duracion_dias'];
         $items[0]['fecha_estimada']=date("d-m-Y",strtotime($items[0]['fecha_orden_proceder']."+ ".$dias." days"));
 

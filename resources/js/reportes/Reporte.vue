@@ -70,19 +70,36 @@
                     </div>
                      <div class="col-lg-3 col-6">
                         <div class="small-box bg-danger">
-                        <div class="inner">
-                            <br><br>
-                            <!-- <h3>65</h3> -->
-                            <h4>Vigencia</h4>
-                        </div>
-                        <div class="icon">
-                            <i class="far fa-star"></i>
-                        </div>
-                        <a :href="'ver_plazos/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
+                            <div class="inner">
+                                <br><br>
+                                <!-- <h3>65</h3> -->
+                                <h4>Vigencia</h4>
+                            </div>
+                            <div class="icon">
+                                <i class="far fa-star"></i>
+                            </div>
+                             <a :href="'ver_plazos/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-warning">
+
+                            <div class="inner">
+                                <br><br>
+                                <h4>Ficha Proyecto</h4>
+                            </div>
+
+                            <div class="icon">
+                                <i class="far fa-star"></i>
+                            </div>
+                             <a :href="'ver_ficha/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">
+                                Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
+                        
+
+
+
+
+
                          </div>
                     </div>
                     <div class="col-lg-3 col-6">
