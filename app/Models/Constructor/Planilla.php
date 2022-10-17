@@ -119,11 +119,16 @@ class Planilla extends Model
     {
 
          // getanticipo
-         $anti = DB::table('proceder_ordenes')->where('document_id',$contrato_id)->select('fecha_orden_proceder', 'anticipo')->first();
-         $obj = json_decode($anti, true);
-         $anti = json_decode($obj, true);
-
-
+         $anti = DB::table('proceder_ordenes')
+         ->where('document_id',$contrato_id)
+         ->select('fecha_orden_proceder', 'anticipo')->first();
+         
+         $fecha_orden_proceder=$anti->fecha_orden_proceder;
+         $anticipo=$anti->anticipo;
+         
+         //$obj = json_decode($anti, true);
+        // $anti = json_decode($obj, true);
+        
 
         // llamar a getPlanila
         $plani= Planilla::where('contrato_id', $contrato_id)->get();
@@ -134,45 +139,73 @@ class Planilla extends Model
 
         for($i = 0; $i < count( $obj); $i++) {
 
-            $items[$i]['fecha']=date("d-m-Y", strtotime($obj[$i]['fecha_planilla']));
-           
-            $items[$i]['id']=$obj[$i]['id'];
-            $items[$i]['tipo_planilla_id']=$obj[$i]['tipo_planilla_id'];
-          
+            $items[$i]['fecha']=$obj[$i]['fecha_planilla'];
+            $items[$i]['f_fecha']=date("d-m-Y", strtotime($obj[$i]['fecha_planilla']));
             $items[$i]['numero_planilla']=$obj[$i]['numero_planilla'];
-            $items[$i]['nuri_planilla']=$obj[$i]['nuri_planilla'];
-            $items[$i]['referencia']=$obj[$i]['referencia'];
+
+            switch ($obj[$i]['tipo_planilla_id']) {
+                case 1:
+                    $items[$i]['tipo']= "Saldo Inicial";
+                    break;
+                case 2:
+                    $items[$i]['tipo']= "Modificacion";
+                    break;
+                case 3:
+                    $items[$i]['tipo']= "Avance";
+                    break;
+                default:
+                    $items[$i]['tipo']= "-";
+            }
+
+
+
             $items[$i]['total_planilla']=$obj[$i]['total_planilla'];
             $items[$i]['anticipo_planilla']=$obj[$i]['anticipo_planilla'];
-            $items[$i]['retencion_planilla']=$obj[$i]['retencion_planilla'];
-            $items[$i]['estado_planilla']=$obj[$i]['anticipo_planilla'];  
-
+            $items[$i]['retencion_planilla']= $obj[$i]['retencion_planilla'];
             
+            // ponemo los numeros en formato
+            $items[$i]['f_total_planilla']=   number_format( $items[$i]['total_planilla'],2,",",".");
+            $items[$i]['f_anticipo_planilla']=  number_format( $items[$i]['anticipo_planilla'],2,",",".");
+            $items[$i]['f_retencion_planilla']=  number_format($items[$i]['retencion_planilla'],2,",",".");
+
+           
             if ($obj[$i]['tipo_planilla_id']==1 ) {
 
-                $items[$i]['si_contrato']=$obj[$i]['total_planilla'];
-                $items[$i]['total_planilla']=0;
-                $items[$i]['saldo_contrato']= 0;
-
-                $items[$i]['si_anticipo']=$anti[0]['anticipo'];
-                $items[$i]['anticipo_planilla']=0;
-
-
-                $items[$i]['si_retencion']=0;
-                $items[$i]['retencion_planilla']=0;
-
-                        
-
+                $items[$i]['total_planilla']=$obj[$i]['total_planilla'];
+                $items[$i]['anticipo_planilla']=$anticipo;
+                $items[$i]['retencion_planilla']= 0;
+            
               }
+//calculamos saldo
+            if ($i==0 ) {
+                
+                $items[$i]['s_contrato']=  $items[$i]['total_planilla'];
+                $items[$i]['s_anticipo']=  $items[$i]['anticipo_planilla'];
+                $items[$i]['s_retencion']=0;
+                $items[$i]['avance']=0;
+                $items[$i]['avAcumulado']=0;
 
-           
-           
+            } else  { 
+                
+                $items[$i]['s_contrato']= $items[$i-1]['s_contrato']-( $items[$i]['total_planilla']);
+                $items[$i]['s_anticipo']= $items[$i-1]['s_anticipo']-( $items[$i]['anticipo_planilla']);
+                $items[$i]['s_retencion']=$items[$i-1]['s_retencion']+( $items[$i]['retencion_planilla']);
+                $items[$i]['avance']= number_format(1-($items[$i]['s_contrato']/$items[$i-1]['s_contrato']),4,",",".");
+                $items[$i]['avAcumulado']= number_format(1-($items[$i]['s_contrato']/$items[0]['s_contrato']),4,",",".");
+            }
+
+
+            $items[$i]['f_s_contrato']= number_format($items[$i]['s_contrato'],2,",",".");
+            $items[$i]['f_s_anticipo']= number_format($items[$i]['s_anticipo'],2,",",".");
+            $items[$i]['f_s_retencion']=number_format($items[$i]['s_retencion'],2,",",".");
+
+                     
            
         }
 
 
 
-        return $plani;
+        return $items;
 
 
     }

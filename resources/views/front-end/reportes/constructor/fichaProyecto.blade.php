@@ -89,37 +89,53 @@
                 <table class="styled-table" >
                             <thead>
                                     <tr>
-                                        <th  width="30%"><b>codigo - Descripcion</b></th>  
-                                        <th><b>Monto Bs.</b></th>
-                                        <th><b>Monto Vigente Bs.</b></th>
-                                        <th><b>Plazo (Dias)</b></th>
-                                        <th><b>Plazo Vigente (Dias)</b></th>
-                                        <th><b>Fecha Conclusion*</b></th>
+                                        <th rowspan="2"><b>Fecha</b></th>  
+                                        <th rowspan="2"><b>Movimiento</b></th>
+                                        <th colspan="2"><b>Contrato</b></th>
+                                        <th colspan="2"><b>Avance</b></th>
+                                        <th colspan="2"><b>Anticipo</b></th>
+                                        <th colspan="2"><b>retencion</b></th>
                                     </tr>
+                                    <tr>
+                                        
+                                        <th ><b>Movimiento</b></th>
+                                        <th ><b>Saldo</b></th>
+                                        <th ><b>Periodo%</b></th>
+                                        <th ><b>Acumulado%</b></th>
+                                        <th ><b>Movimiento</b></th>
+                                        <th ><b>Saldo</b></th>
+                                        <th ><b>Movimiento</b></th>
+                                        <th ><b>Saldo</b></th>
+                                    </tr>
+
                                 </thead> 
 
                                 <tbody>
 
 
-                        @for ($i = 0; $i < count($docs_modificatorios); $i++)
+                        @for ($i = 0; $i < count($avFinan); $i++)
                         
                         
                                     <tr>
-                                    <td>{{$docs_modificatorios[$i]['tipo_doc_nombre']}}-
-                                        {{$docs_modificatorios[$i]['codigo']}}
-                                        
-                                    </td>
+                                    <td>{{$avFinan[$i]['f_fecha']}}</td>
+                                    <td>{{$avFinan[$i]['numero_planilla']}} - {{$avFinan[$i]['tipo']}}</td>
 
-                                    <td align="right"> {{number_format($docs_modificatorios[$i]['monto_bs'],2,",",".")}}</td>
-                                    <td align="right">{{number_format($docs_modificatorios[$i]['monto_vigente'],2,",",".")}}</td>
-                                    <td align="center">{{number_format($docs_modificatorios[$i]['duracion_dias'],0,",",".")}}</td>
-                                    <td align="center">{{number_format($docs_modificatorios[$i]['plazo_vigente'],0,",",".")}}</td>
-                                    <td align="center">{{$docs_modificatorios[$i]['fecha_estimada']}}</td>
+                                    <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_total_planilla']}}</td>
+                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_contrato']}}</td>
+                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['avance']}}%</td>
+                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['avAcumulado']}}%</td>
+
+                                    <td align="right"> {{$avFinan[$i]['f_anticipo_planilla']}}</td>
+                                    <td align="right">{{$avFinan[$i]['f_s_anticipo']}}</td>
+
+                                    <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_retencion_planilla']}}</td>
+                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_retencion']}}</td>
                                     
                                     <tr>
                                     @endfor
                                 </tbody>
-                </table>
+                
+                   </table>
 
 
 

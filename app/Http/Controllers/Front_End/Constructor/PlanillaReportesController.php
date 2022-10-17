@@ -257,12 +257,7 @@ public function ver_ficha(Request $request, $id){
     / Avance financiero obtenemos de planilla
     /----------------------------------------------------------------------------------------*/
 
-    $planilla= $plani->getAvanceFinaciero($contrato_id);
-
-
-
-
-
+    $avFinan= $plani->getAvanceFinaciero($contrato_id);
 
     //datos para la cabecera del reportedel reporte
     $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
@@ -277,7 +272,7 @@ public function ver_ficha(Request $request, $id){
     $documento_monto= number_format($documento->monto_bs,2,",",".");
 
 
-    /* cargamos la vista  
+    /* cargamos la vista  */
 
     $pdf = PDF::loadView('front-end.reportes.constructor.fichaProyecto', [
         'link_img'=>'img/sistema-front-end/logo-pdf.png',
@@ -291,13 +286,14 @@ public function ver_ficha(Request $request, $id){
         'documento_firma' => $documento_firma,
         'documento_monto' => $documento_monto,
         'docs_modificatorios' => $docs_modificatorios,
+        'avFinan' => $avFinan,
 
     ]);
     $pdf->setPaper('letter', 'landscape');
     return $pdf->stream('reporte_ficha_proyecto.pdf');
 
-*/
-     return $planilla;
+
+    // return $planilla;
 
 
 
