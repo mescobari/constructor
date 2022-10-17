@@ -259,6 +259,8 @@ public function ver_ficha(Request $request, $id){
 
     $avFinan= $plani->getAvanceFinaciero($contrato_id);
 
+    $avFisico=$plani->getAvanceFisico($contrato_id);
+
     //datos para la cabecera del reportedel reporte
     $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";
     $nombre_institucion = "Empresa Estratégica Boliviana de Construcción y Conservación de Infraestructura Civil";
@@ -272,7 +274,7 @@ public function ver_ficha(Request $request, $id){
     $documento_monto= number_format($documento->monto_bs,2,",",".");
 
 
-    /* cargamos la vista  */
+    /* cargamos la vista  
 
     $pdf = PDF::loadView('front-end.reportes.constructor.fichaProyecto', [
         'link_img'=>'img/sistema-front-end/logo-pdf.png',
@@ -287,13 +289,13 @@ public function ver_ficha(Request $request, $id){
         'documento_monto' => $documento_monto,
         'docs_modificatorios' => $docs_modificatorios,
         'avFinan' => $avFinan,
-
+        'avFisico' => $avFisico,
     ]);
     $pdf->setPaper('letter', 'landscape');
     return $pdf->stream('reporte_ficha_proyecto.pdf');
 
-
-    // return $planilla;
+*/
+    return $avFisico;
 
 
 
@@ -1052,10 +1054,13 @@ $principal_nombre=$docs_modificatorios[0]['nombre'];
         $documento = DB::table('planilla_documents')
         ->join('documents', 'planilla_documents.document_id', '=', 'documents.id')
         ->join('document_types', 'documents.document_types_id', '=', 'document_types.id')
-        ->select('documents.*', 'document_types.nombre as tipo_nombre' )
-        ->where('planilla_documents.planilla_id', $id)
+        ->join('planillas', 'planilla_documents.planilla_id', '=', 'planillas.id')
+        ->select('documents.*', 'document_types.nombre as tipo_nombre', 'planilla_documents.planilla_id' )
+        ->where('planillas.tipo_planilla_id', 1)
+        ->where('planilla_documents.document_id', $id)
         ->first();
 
+        $planilla_id=$documento->planilla_id;
         $padre=$documento->padre;
         if ($padre != 0) {
             $documento_padre = DB::table('planilla_documents')
@@ -1074,13 +1079,16 @@ $principal_nombre=$docs_modificatorios[0]['nombre'];
         ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
         ->leftjoin('unidades', 'planilla_items.unidad_id', '=', 'unidades.id')
         ->select('planillas.*', 'planilla_movimientos.*', 'planilla_items.*','unidades.simbolo' )
-        ->where('planillas.id', $id)
+        ->where('planillas.id', $planilla_id)
         ->get();
+
+       
+
 
         $suma_grupos = DB::table('planilla_movimientos')
         ->leftjoin('planilla_items', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
         ->select( 'planilla_items.padre',DB::raw('sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as precio_total') )
-        ->where('planilla_movimientos.planilla_id', $id)
+        ->where('planilla_movimientos.planilla_id', $planilla_id)
         ->groupBy('planilla_items.padre')
         ->get();
 
@@ -1189,9 +1197,9 @@ $principal_firma=date("d-m-Y", strtotime($documento_padre->fecha_firma));
 $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 
 // otros datos para el cuerpo
+ /*
 
-
- /* cargamos la vista   */
+ cargamos la vista  */
 
         $pdf = PDF::loadView('front-end.reportes.constructor.avance', [
             'link_img'=>'img/sistema-front-end/logo-pdf.png',
@@ -1224,8 +1232,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
         $pdf->setPaper('letter', 'landscape');
         return $pdf->stream('reporte_ficha_proyecto.pdf');
 
-
-      //return  $avance;
+ 
+      return  $planilla;
     }
 
 

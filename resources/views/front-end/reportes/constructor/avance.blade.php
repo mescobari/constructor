@@ -120,7 +120,7 @@
             </table>  
         </div>
         <div class="contenido">
-            <table class="styled-table1" >
+            <table class="styled-table" >
             <thead>
                     <tr align="center">
                         <th colspan="7"><b>PLANILLAS DE AVANCE DE OBRAS EMITIDAS</b></th>  

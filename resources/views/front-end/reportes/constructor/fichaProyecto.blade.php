@@ -91,13 +91,14 @@
                                     <tr>
                                         <th rowspan="2"><b>Fecha</b></th>  
                                         <th rowspan="2"><b>Movimiento</b></th>
-                                        <th colspan="2"><b>Contrato</b></th>
+                                        <th colspan="3"><b>Contrato</b></th>
                                         <th colspan="2"><b>Avance</b></th>
                                         <th colspan="2"><b>Anticipo</b></th>
                                         <th colspan="2"><b>retencion</b></th>
                                     </tr>
                                     <tr>
                                         
+                                        <th ><b>Vigente</b></th>    
                                         <th ><b>Movimiento</b></th>
                                         <th ><b>Saldo</b></th>
                                         <th ><b>Periodo%</b></th>
@@ -115,11 +116,16 @@
 
                         @for ($i = 0; $i < count($avFinan); $i++)
                         
-                        
+                            @if ($avFinan[$i]['total_planilla']!=0)
+
+                           
+                            @php   $letra = "#FF0000"; @endphp
+
                                     <tr>
                                     <td>{{$avFinan[$i]['f_fecha']}}</td>
                                     <td>{{$avFinan[$i]['numero_planilla']}} - {{$avFinan[$i]['tipo']}}</td>
 
+                                    <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_vigente']}}</td>
                                     <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_total_planilla']}}</td>
                                     <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_contrato']}}</td>
                                     <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['avance']}}%</td>
@@ -132,7 +138,9 @@
                                     <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_retencion']}}</td>
                                     
                                     <tr>
-                                    @endfor
+                            @endif            
+
+                         @endfor
                                 </tbody>
                 
                    </table>
