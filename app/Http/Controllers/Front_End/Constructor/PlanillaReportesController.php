@@ -259,7 +259,7 @@ public function ver_ficha(Request $request, $id){
 
     $avFinan= $plani->getAvanceFinaciero($contrato_id);
 
-    $avFisico=$plani->getAvanceFisico($contrato_id);
+    $avFisico=$plani->getAvanceFisicoComponentes($contrato_id);
 
     //datos para la cabecera del reportedel reporte
     $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";

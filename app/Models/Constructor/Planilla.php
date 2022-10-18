@@ -259,21 +259,75 @@ class Planilla extends Model
 
     }
 
-    public function getAvanceFisico($contrato_id)
+    public function getAvanceFisicoComponentes($contrato_id)
     {
 
-        // seleccionamos todos lo que tiene contrato_d como padre y que se un documento de modificacion
+        // seleccionamos todos lo que tiene contrato_d como padre y que se un documento de modificacion de dnero esas modifican planilla
         // SELECT * FROM `documents` WHERE `document_types_id` = 5 AND `padre` = $contrato_id 
         //AND (`modifica` LIKE '%2%' or `modifica` LIKE '%3%') ORDER  BY fecha_firma DESC LIMIT  1;
 
      
-        $planilla_documentos = DB::select('SELECT * FROM documents WHERE document_types_id = 5 AND padre = '.$contrato_id.' AND (modifica LIKE "%2%" or modifica LIKE "%3%") ORDER  BY fecha_firma DESC LIMIT  1');
-        foreach ($planilla_documentos as $json) {
-            $pla_vig_id =$json->id;
+        $vigente = DB::select('SELECT * FROM documents WHERE document_types_id = 5 AND padre = '.$contrato_id.' AND (modifica LIKE "%2%" or modifica LIKE "%3%") ORDER  BY fecha_firma DESC LIMIT  1');
+        foreach ($vigente as $json) {
+            $doc_vig_id =$json->id;
+        }
+        $pla_vigente= DB::table('planilla_documents')->where('document_id',  $doc_vig_id )->first();
+        $pla_vig_id= $pla_vigente->planilla_id;
+
+
+        // obtenemos la planilla vigente 
+        //SELECT i.id, contrato_id, i.tipo, i.padre, i.item_codigo, i.item_descripcion, u.simbolo FROM planilla_items i, unidades u WHERE u.id=i.unidad_id and i.contrato_id=24 order by i.item_codigo;
+
+
+       /*---------------------------------------------------------------------------------------------------------------------
+        Obtenemos la planilla: $planilla_id y $contrato_id
+        SELECT i.id, contrato_id, i.tipo, i.padre, i.item_codigo, i.item_descripcion, u.simbolo, m.cantidad, m.precio_unitario, (m.cantidad*m.precio_unitario) as total 
+        FROM planilla_items i, unidades u, planilla_movimientos m 
+        WHERE u.id=i.unidad_id and i.id=m.planilla_item_id and i.contrato_id=24 and m.planilla_id=91
+        order by i.item_codigo;
+        -------------------------------------------------------------------------------------------------------*/
+       // $pla_vig_id=91;
+
+        $vigenteTotalComponente= DB::table('planilla_items')
+        ->join('planilla_movimientos', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->where('planilla_items.contrato_id', $contrato_id)
+        ->where('planilla_movimientos.planilla_id', $pla_vig_id)
+        ->selectRaw('planilla_items.padre, sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as total')
+        ->groupBy('planilla_items.padre')
+        ->orderBy('planilla_items.padre')
+        ->get();
+
+        $i=0;
+        foreach ($vigenteTotalComponente as $json) {
+            $i++;
+            $vigenteA[$i]['padre']=$json->padre;
+            $vigenteA[$i]['total']=$json->total;
         }
 
 
-        return  $pla_vig_id;
+
+
+        $componentes = DB::select('SELECT id, item_codigo, item_descripcion FROM planilla_items WHERE  contrato_id='.$contrato_id.' and tipo="G";');
+        $i=0;
+                  
+        foreach ($componentes as $json) {
+            $i++;
+            $items[$i]['id']=$json->id;
+            $items[$i]['item_codigo']=$json->item_codigo;
+            $items[$i]['item_descripcion']=$json->item_descripcion;
+        }
+
+        $items[0]['id']=0;
+        $items[0]['item_codigo']='-';
+        $items[0]['item_descripcion']='Total Proyecto';
+
+        for($i = 1; $i < count( $vigenteA); $i++) {
+            $padre=$vigenteA[$i]['padre'];
+
+
+        }
+
+        return  $vigenteA;
 
     }
 
