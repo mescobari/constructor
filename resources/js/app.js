@@ -53,6 +53,7 @@ Vue.component('formulacionPoa', require('./registroProyectos/PlanificacionFormul
 Vue.component('poaCollapse', require('./components/poaCollapse.vue').default);
 
 Vue.component('reportes', require('./reportes/Reporte.vue').default);
+Vue.component('graficos', require('./reportes/Graficos.vue').default);
 Vue.component('responsable', require('./registroProyectos/IdentificacionResponsable.vue').default);
 Vue.component('reportesDocumentosLegales', require('./reportes/IndexReportesDocumentosLegales.vue').default);
 

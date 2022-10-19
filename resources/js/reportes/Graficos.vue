@@ -2,7 +2,7 @@
     <div>        
         <div class="card">
             <div class="card-header ferdy-background-Primary-blak">
-                <h3 class="card-title">Reportes Seguimiento Fisico</h3>
+                <h3 class="card-title">Tablero de Control</h3>
                 <div class="card-tools">
                     <!-- <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#intervencion" @click="ModalCrear();">
                         Crear Cofinanciador
@@ -18,7 +18,7 @@
                     <div class="row">
                         <div class="col-md-12">          
                             <div class="form-group">
-                                <label for="codsisin">Seleccione Contrato:</label>
+                                <label for="codsisin">Seleccione Contrato: {{contrato_id}}</label>
                                 <v-select label="nombre" :options="proyectos" v-model="proyecto" placeholder="Selecione un contrato">
                                     <span slot="no-options">No hay datos para cargar</span>
                                 </v-select>
@@ -160,7 +160,7 @@
                         <div class="icon">
                             <i class="far fa-copy"></i>
                         </div>
-                        <a :href="'ver_gra_fisico/'+proyecto.id"  class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
+                        <a :href="'ver_gra_fisico/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
@@ -195,6 +195,7 @@
 
 <script>
 export default {
+    props : ['contrato_id'],
     data(){
         return{            
             proyectos:[],
