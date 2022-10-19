@@ -286,7 +286,7 @@ class Planilla extends Model
         WHERE u.id=i.unidad_id and i.id=m.planilla_item_id and i.contrato_id=24 and m.planilla_id=91
         order by i.item_codigo;
         -------------------------------------------------------------------------------------------------------*/
-       // $pla_vig_id=91;
+      
 
         $vigenteTotalComponente= DB::table('planilla_items')
         ->join('planilla_movimientos', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
@@ -309,6 +309,9 @@ class Planilla extends Model
 
         $componentes = DB::select('SELECT id, item_codigo, item_descripcion FROM planilla_items WHERE  contrato_id='.$contrato_id.' and tipo="G";');
         $i=0;
+        $items[0]['id']=0;
+        $items[0]['item_codigo']='-';
+        $items[0]['item_descripcion']='Total Proyecto';
                   
         foreach ($componentes as $json) {
             $i++;
@@ -317,17 +320,81 @@ class Planilla extends Model
             $items[$i]['item_descripcion']=$json->item_descripcion;
         }
 
-        $items[0]['id']=0;
-        $items[0]['item_codigo']='-';
-        $items[0]['item_descripcion']='Total Proyecto';
+      
 
-        for($i = 1; $i < count( $vigenteA); $i++) {
-            $padre=$vigenteA[$i]['padre'];
+        $item_id = array_column($vigenteA, 'padre'); //del array bidimensional solo sacamos la columna que en la que queremos buscar
+        $sumVigente=0;
+        for($i = 1; $i < count( $items); $i++) {
+            $padre=$items[$i]['id'];
+            // buscamos padre en items y le ponemos el total
+            $clave = array_search( $padre, $item_id); // buscamos en nuestra columna, podemos hacer lo mismo reemplasando item_id por su comando
+            $items[$clave]['vigente']= $vigenteA[$clave+1]['total'];
+            $sumVigente=$sumVigente+ $items[$clave]['vigente'];
+            $items[$clave]['f_vigente']= number_format($items[$clave]['vigente'],2,",",".");
+
+        }
+        $items[0]['vigente']= $sumVigente;
+        $items[0]['f_vigente']=number_format($items[0]['vigente'],2,",",".");
+
+        /*----------------------------------------------------------------------------------------------------
+        / Calculamos el acumulado y otro valores $acumuladoTotalComponente
+        /----------------------------------------------------------------------------------------------------*/
+
+
+        $acumuladoTotalComponente= DB::table('planilla_items')
+        ->join('planilla_movimientos', 'planilla_movimientos.planilla_item_id', '=', 'planilla_items.id')
+        ->join('planillas', 'planillas.id', '=', 'planilla_movimientos.planilla_id')
+        ->where('planilla_items.contrato_id', $contrato_id)
+        ->where('planillas.tipo_planilla_id', '3')
+        ->selectRaw('planilla_items.padre, sum(planilla_movimientos.cantidad*planilla_movimientos.precio_unitario) as total')
+        ->groupBy('planilla_items.padre')
+        ->orderBy('planilla_items.padre')
+        ->get();
+
+        $i=0;
+        foreach ($acumuladoTotalComponente as $json) {
+            $i++;
+            $acumuladoA[$i]['padre']=$json->padre;
+            $acumuladoA[$i]['total']=$json->total;
+        }
+
+        $sumAcumulado=0;
+        for($i = 1; $i < count( $items); $i++) {
+            $padre=$items[$i]['id'];
+            // buscamos padre en items y le ponemos el total
+            $clave = array_search( $padre, $item_id); // buscamos en nuestra columna, podemos hacer lo mismo reemplasando item_id por su comando
+            $items[$clave]['acumulado']= $acumuladoA[$clave+1]['total'];
+            $sumAcumulado=$sumAcumulado+ $items[$clave]['acumulado'];
+            $items[$clave]['f_acumulado']= number_format($items[$clave]['acumulado'],2,",",".");
+
+            $items[$clave]['saldo']=$items[$clave]['vigente']- $items[$clave]['acumulado'];
+            $items[$clave]['f_saldo']= number_format($items[$clave]['saldo'],2,",",".");
+
+            $items[$clave]['porcentaje']=($items[$clave]['acumulado']/ $items[$clave]['vigente'])*100;
+            $items[$clave]['f_porcentaje']= number_format($items[$clave]['porcentaje'],2,",",".");
 
 
         }
+        $items[0]['acumulado']= $sumAcumulado;
+        $items[0]['f_acumulado']=number_format($items[0]['acumulado'],2,",",".");
 
-        return  $vigenteA;
+        $items[0]['saldo']= $items[0]['vigente']- $items[0]['acumulado'];
+        $items[0]['f_saldo']=number_format($items[0]['saldo'],2,",",".");
+
+        $items[0]['porcentaje']=($items[0]['acumulado']/ $items[0]['vigente'])*100;
+         $items[0]['f_porcentaje']= number_format($items[0]['porcentaje'],2,",",".");
+
+/*--------------------------------------------------------------------------------------------------------------
+/ dump($acumuladoA);
+dump($item_id);
+dump($items);
+*/
+
+
+
+
+
+        return  $items;
 
     }
 

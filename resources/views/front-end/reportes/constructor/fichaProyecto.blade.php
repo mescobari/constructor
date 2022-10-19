@@ -153,7 +153,42 @@
           <h4>III.- Avance Fisico </h4>
 
 
+          <table class="styled-table" >
+                            <thead>
+                                    <tr>
+                                        <th ><b>Codigo</b></th>  
+                                        <th ><b>Componente</b></th>
+                                        <th ><b>Vigente</b></th>
+                                        <th ><b>Avance Acumulado</b></th>
+                                        <th ><b>Saldo</b></th>
+                                        <th ><b>% Avance</b></th>
+                                    </tr>
+                                   
+                                </thead> 
 
+                                <tbody>
+
+
+                        @for ($i = 0; $i < count($avFisico); $i++)
+                        
+                           
+
+                                    <tr>
+                                    <td>{{$avFisico[$i]['item_codigo']}}</td>
+                                    <td>{{$avFisico[$i]['item_descripcion']}} </td>
+
+                                    <td align="right"> {{$avFisico[$i]['f_vigente']}}</td>
+                                    <td align="right" > {{$avFisico[$i]['f_acumulado']}}</td>
+                                    <td align="right" >{{$avFisico[$i]['f_saldo']}}</td>
+                                    <td align="right" >{{$avFisico[$i]['f_porcentaje']}}%</td>
+                                   
+                                    <tr>
+                                     
+
+                         @endfor
+                                </tbody>
+                
+                   </table>
 
 
 
