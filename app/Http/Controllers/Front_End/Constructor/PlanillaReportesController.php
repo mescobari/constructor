@@ -1240,9 +1240,12 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 ///************************************************************************************ */
     public function graficos_ejecucion(Request $request, $id){
 ///************************************************************************************ */
+$proyecto=document::find($id, ['id', 'nombre']);
+$nombre =$proyecto->nombre;
 
 
-    return view('front-end.reportes.graficos',['contrato_id' => $id]);
+
+    return view('front-end.reportes.graficos',['contrato_id' => $id,'proyecto' => $nombre ]);
 
 
       //return  json_encode($salida);

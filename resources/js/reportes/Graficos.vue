@@ -11,30 +11,12 @@
             </div>
             <br>
             <div class="card-body">                 
-                <div class="container p-3 border rounded mb-3">
-
- 
-
-                    <div class="row">
-                        <div class="col-md-12">          
-                            <div class="form-group">
-                                <label for="codsisin">Seleccione Contrato: {{contrato_id}}</label>
-                                <v-select label="nombre" :options="proyectos" v-model="proyecto" placeholder="Selecione un contrato">
-                                    <span slot="no-options">No hay datos para cargar</span>
-                                </v-select>
-                            </div>
-                        </div>
-                       
-                    </div>
-                </div>
-
-
-<hr>
+               
 
                 <div class="row">
                     <div class="col-md-12">
                         <center>
-                             <h3>  {{ proyecto.nombre }}</h3>
+                             <h3>  {{ proyecto }}</h3>
                         </center>
                     </div>
                 </div>
@@ -44,7 +26,7 @@
 
             <div class="card card-primary shadow">
               <div class="card-header">
-                <h3 class="card-title">Contratos y Movimientos</h3>
+                <h3 class="card-title">Avance Finaciero</h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
@@ -55,55 +37,9 @@
               <!-- /.card-header -->
               <div class="card-body">
                  <div class="row">
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-info">
-                        <div class="inner">
-                            <br><br>
-                            <h4>Lista de Documentos</h4>
-                            
-                        </div>
-                        <div class="icon">
-                            <i class="far fa-flag"></i>
-                        </div>
-                        <a :href="'ver_lista_docs/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                     <div class="col-lg-3 col-6">
+                    <div class="col-lg-12 col-6">
                         <div class="small-box bg-danger">
-                            <div class="inner">
-                                <br><br>
-                                <!-- <h3>65</h3> -->
-                                <h4>Vigencia</h4>
-                            </div>
-                            <div class="icon">
-                                <i class="far fa-star"></i>
-                            </div>
-                             <a :href="'ver_plazos/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-warning">
-
-                            <div class="inner">
-                                <br><br>
-                                <h4>Ficha Proyecto</h4>
-                            </div>
-
-                            <div class="icon">
-                                <i class="far fa-star"></i>
-                            </div>
-                             <a :href="'ver_ficha/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">
-                                Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
-                        
-
-
-
-
-
-                         </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-danger">
+                            Aqui pondremos el grafico
                         </div>
                     </div>
                 </div>
@@ -115,7 +51,7 @@
 
         <div class="card card-success shadow">
               <div class="card-header">
-                <h3 class="card-title">Seguimiento Fisico - Planillas</h3>
+                <h3 class="card-title">Avance Fisico</h3>
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
                   </button>
@@ -124,56 +60,11 @@
               <!-- /.card-header -->
               <div class="card-body">
                 <div class="row">
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-info">
-                        <div class="inner">
-                            <br><br>
-                            <h4>Planilla Vigente</h4>
-                           
-                        </div>
-                        <div class="icon">
-                            <i class="far fa-envelope"></i>
-                        </div>
-                        <a :href="'ver_pla_vigente/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-success">
-                        <div class="inner">
-                            <br><br>
-                            <!-- <h3>53<sup style="font-size: 20px">%</sup></h3> -->
-                            <h4>Ejecucion Fisica</h4>
-                        </div>
-                        <div class="icon">
-                            <i class="far fa-flag"></i>
-                        </div>
-                        <a :href="'ver_pla_fisico/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-warning">
-                        <div class="inner">
-                            <br>
-                            <!-- <h3>44</h3> -->
-                            <h4>Indicadores Ejecucion Fisica</h4>
-                        </div>
-                        <div class="icon">
-                            <i class="far fa-copy"></i>
-                        </div>
-                        <a :href="'ver_gra_fisico/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
+                    
+                    <div class="col-lg-12 col-6">
                         <div class="small-box bg-danger">
-                        <div class="inner">
-                            <br>
-                            <!-- <h3>65</h3> -->
-                            <h4>Repositorio de Documentos</h4>
-                        </div>
-                        <div class="icon">
-                            <i class="far fa-star"></i>
-                        </div>
-                        <a :href="'lista_respaldos/'+proyecto.id" target="_blank" class="small-box-footer" v-if="proyecto.id">Ir a reporte <i class="fas fa-arrow-circle-right"></i></a>
+                        
+                       Aqui el avance fisico
                         </div>
                     </div>
                 </div>
@@ -195,7 +86,7 @@
 
 <script>
 export default {
-    props : ['contrato_id'],
+    props : ['contrato_id', 'proyecto'],
     data(){
         return{            
             proyectos:[],
