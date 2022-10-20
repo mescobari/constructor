@@ -26,7 +26,7 @@
 
             <div class="card card-primary shadow">
               <div class="card-header">
-                <h3 class="card-title">Avance Finaciero</h3>
+                <h3 class="card-title">Avance Financiero</h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
@@ -40,6 +40,17 @@
                     <div class="col-lg-12 col-6">
                         <div class="small-box bg-danger">
                             Aqui pondremos el grafico
+                            <Bar
+                                :chart-options="chartOptions"
+                                :chart-data="chartData"
+                                :chart-id="chartId"
+                                :dataset-id-key="datasetIdKey"
+                                :plugins="plugins"
+                                :css-classes="cssClasses"
+                                :styles="styles"
+                                :width="width"
+                                :height="height"
+                            />
                         </div>
                     </div>
                 </div>
@@ -85,30 +96,53 @@
 </template>
 
 <script>
+import {Chart} from 'Chart.js';
 export default {
-    props : ['contrato_id', 'proyecto'],
-    data(){
-        return{            
-            proyectos:[],
-            proyecto:{},
-        }
+    props :  ['contrato_id', 'proyecto'],
+    name: 'BarChart',
+  components: { Bar },
+  props: {
+   
+    chartId: {
+      type: String,
+      default: 'bar-chart'
     },
-    methods:{        
-        async busca_proyectos(){
-            //var respuesta = await axios.get('proyectos_de_institucion_reporte');
-            //this.proyectos = respuesta.data;
-            var respuesta = await axios.get('documents');
-            console.log('===============');
-            console.log(respuesta.data);
-            const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
-            this.proyectos = principales;
-
-
-        }
+    datasetIdKey: {
+      type: String,
+      default: 'label'
     },
-    created(){
-        this.busca_proyectos();
+    width: {
+      type: Number,
+      default: 400
     },
+    height: {
+      type: Number,
+      default: 400
+    },
+    cssClasses: {
+      default: '',
+      type: String
+    },
+    styles: {
+      type: Object,
+      default: () => {}
+    },
+    plugins: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  data() {
+    return {
+      chartData: {
+        labels: [ 'January', 'February', 'March' ],
+        datasets: [ { data: [40, 20, 12] } ]
+      },
+      chartOptions: {
+        responsive: true
+      }
+    }
+  }
 }
 </script>
 
