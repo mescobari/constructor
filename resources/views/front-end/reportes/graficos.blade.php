@@ -7,5 +7,8 @@
 @endsection
 @section('content')
 
-<graficos :contrato_id="{{json_encode($contrato_id)}}" :proyecto="{{json_encode($proyecto)}}" ></graficos>
+<graficos 
+    :contrato_id="{{json_encode($contrato_id)}}" 
+    :proyecto="{{json_encode($proyecto)}}" 
+    ></graficos>
 @endsection

@@ -16,7 +16,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <center>
-                             <h3>  {{ proyecto }}</h3>
+                             <h3>  {{ proyecto  }}</h3>
                         </center>
                     </div>
                 </div>
@@ -38,8 +38,7 @@
               <div class="card-body">
                  <div class="row">
                     <div class="col-lg-12 col-6">
-                        <div class="small-box bg-danger">
-                            Aqui pondremos el grafico
+                        <div class="small-box">
                             <Bar
                                 :chart-options="chartOptions"
                                 :chart-data="chartData"
@@ -103,11 +102,23 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 
 export default {
-    props :  ['contrato_id', 'proyecto'],
+   // props :  ['contrato_id', 'proyecto'],
+   
+
     name: 'BarChart',
     components: { Bar },
     props: {
-    
+        
+       
+        contrato_id: {
+        type: String,
+        default: '24'
+        },
+        proyecto: {
+        type: String,
+        default: ''
+        },
+
         chartId: {
         type: String,
         default: 'bar-chart'
@@ -139,15 +150,24 @@ export default {
     },
     data() {
         return {
-        chartData: {
-            labels: [ 'January', 'February', 'March' ],
-            datasets: [ { data: [40, 20, 12] } ]
-        },
-        chartOptions: {
-            responsive: true
+            chartData: {
+                labels: [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio' ],
+                datasets: [ { data: [40, 20, 12,20,30, 40] } ]
+            },
+            chartOptions: {
+                responsive: true
+            }, 
         }
-        }
-    }
+    },
+    created() {
+        console.log('aqui estamos creando ' +this.proyecto);
+    },
+    mounted() {
+        console.log('aqui estamos montando ' +this.proyecto);
+    },
+    
+
+    
 }
 </script>
 
