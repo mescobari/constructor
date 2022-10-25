@@ -159,8 +159,22 @@ export default {
             }, 
         }
     },
+    methods:{        
+        async avance_finaciero(contrato_id){
+           
+            console.log('======estoy avance_finaciero=========');
+            var respuesta = await axios.get('../gra_financiero/'+contrato_id);
+           
+            console.log(respuesta.data);
+            //const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
+            //this.proyectos = principales;
+
+
+        }
+    },
     created() {
-        console.log('aqui estamos creando ' +this.proyecto);
+        console.log('====================== creando ' +this.contrato_id);
+        this.avance_finaciero(this.contrato_id);
     },
     mounted() {
         console.log('aqui estamos montando ' +this.proyecto);

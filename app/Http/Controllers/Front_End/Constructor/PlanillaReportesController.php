@@ -243,6 +243,9 @@ public function ver_requerimientos(Request $request, $id){
 
 /////******FIN *************plazos_documentos************************************************ */  
 
+
+
+
 /////****************ver ficha********************************************************** */ 
 
 public function ver_ficha(Request $request, $id){
@@ -1240,8 +1243,8 @@ $principal_monto= number_format($documento_padre->monto_bs,2,",",".");
 ///************************************************************************************ */
     public function graficos_ejecucion(Request $request, $id){
 ///************************************************************************************ */
-$proyecto=document::find($id, ['id', 'nombre']);
-$nombre =$proyecto->nombre;
+    $proyecto=document::find($id, ['id', 'nombre']);
+    $nombre =$proyecto->nombre;
 
 
 
@@ -1251,15 +1254,15 @@ $nombre =$proyecto->nombre;
       //return  json_encode($salida);
     }
 
-
-
-
-
-
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
- 
+    public function avance_financiero($contrato_id){
+        $plani= new Planilla;
+        $avFinan= $plani->getAvanceFinaciero($contrato_id);
+        return $avFinan;
+    }
+
  
 
 }
