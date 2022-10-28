@@ -50,6 +50,8 @@
                                 :width="width"
                                 :height="height"
                             />
+
+                            
                         </div>
                     </div>
                 </div>
@@ -151,8 +153,12 @@ export default {
     data() {
         return {
             chartData: {
-                labels: [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio' ],
-                datasets: [ { data: [40, 20, 12,20,30, 40] } ]
+                labels: [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio' ], //https://www.adictosaltrabajo.com/2022/07/01/como-anadir-graficos-en-tu-web-con-chart-js/
+                datasets: [ { 
+                    label: 'Avance finaciero',
+                    backgroundColor: ['#FC2525', '#BA55D3', '#9932CC','#9400D3','#8A2BE2', '#8B008B'],
+                    data:  [2.98, 0.491, 0.744, 0.084, 0.037, 0.079, 0.009, 0.017, 0.252, 2.177, 1.747, 1.487, 0.818, 3, 3.5, 2.5]
+                } ]
             },
             chartOptions: {
                 responsive: true
@@ -163,10 +169,30 @@ export default {
         async avance_finaciero(contrato_id){
            
             console.log('======estoy avance_finaciero=========');
-            var respuesta = await axios.get('../gra_financiero/'+contrato_id);
-           
+            var respuesta = await axios.get('../gra_financiero/'+contrato_id);           
             console.log(respuesta.data);
-            //const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
+         
+            //vamos a filtrar solo los de avance [ 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis' ]
+            const avance=respuesta.data.filter((item)=> item.tipo =='Avance' )
+            const fecha =[];
+            const valores =[];
+
+            avance.forEach((item) => {
+                fecha.push(item.f_fecha);
+                valores.push(+item.avance.replace(/,/g, '.')); //convertir string en numero, cambiando , por .
+                //valores.push(item.avance);
+                });
+
+            console.log(fecha);
+
+            this.chartData.labels=fecha;
+            this.chartData.datasets.data=valores;
+           
+
+            console.log( this.chartData.datasets.data);
+
+
+            
             //this.proyectos = principales;
 
 
@@ -174,10 +200,13 @@ export default {
     },
     created() {
         console.log('====================== creando ' +this.contrato_id);
-        this.avance_finaciero(this.contrato_id);
+       
     },
     mounted() {
+        this.avance_finaciero(this.contrato_id);
         console.log('aqui estamos montando ' +this.proyecto);
+       
+
     },
     
 

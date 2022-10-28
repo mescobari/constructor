@@ -271,7 +271,7 @@ public function ver_ficha(Request $request, $id){
     $documento_codigo = $documento->codigo;// codigo del contrato
     $fecha_hora_emision = date('d-m-Y h:i:s a', time());
     //$nombre_reporte=  strtoupper($salida[0]['tipo_planilla_id']);
-    $nombre_reporte=  'VIGENCIA - PLAZOS FECHA ESTIMADA DE CONCLUSION';
+    $nombre_reporte=  'FICHA DE PROYECTO';
     $documento_nombre= $documento->objeto;
     $documento_firma=date("d-m-Y", strtotime($documento->fecha_firma));
     $documento_monto= number_format($documento->monto_bs,2,",",".");
