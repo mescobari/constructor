@@ -221,7 +221,7 @@ export default {
 
             avance.forEach((item) => {
                 fecha.push(item.f_fecha);
-                valores.push(+item.avance.replace(/,/g, '.')); //convertir string en numero, cambiando , por .
+                valores.push(+item.f_avance.replace(/,/g, '.')); //convertir string en numero, cambiando , por .
                 //valores.push(item.avance);
                 //valores.push(item.avance);
             });

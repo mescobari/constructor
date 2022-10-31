@@ -169,12 +169,7 @@ class Planilla extends Model
             $items[$i]['f_anticipo_planilla']=  number_format( $items[$i]['anticipo_planilla'],2,",",".");
             $items[$i]['f_retencion_planilla']=  number_format($items[$i]['retencion_planilla'],2,",",".");
 
-
-          
-
-
-
-           
+                     
             if ($obj[$i]['tipo_planilla_id']==1 ) {
 
                 $items[$i]['total_planilla']=$obj[$i]['total_planilla'];
@@ -190,7 +185,9 @@ class Planilla extends Model
                 $items[$i]['s_anticipo']=  $items[$i]['anticipo_planilla'];
                 $items[$i]['s_retencion']=0;
                 $items[$i]['avance']=0;
-                $items[$i]['avAcumulado']=0;
+                $items[$i]['avAcumulado']=$items[$i]['avance'];
+
+
                $actualVigente=$i;
 
             } else  { 
@@ -225,20 +222,23 @@ class Planilla extends Model
                 $items[$i]['s_anticipo']= $items[$i-1]['s_anticipo']-( $items[$i]['anticipo_planilla']);
                 $items[$i]['s_retencion']=$items[$i-1]['s_retencion']+( $items[$i]['retencion_planilla']);
 
-                $items[$i]['avance']= (($obj[$i]['tipo_planilla_id']==2 ) and ($actualVigente!=0 ) ) ?
+                $items[$i]['avance']= (($obj[$i]['tipo_planilla_id']==2 ) and ($actualVigente!=0 ) ) ?                 
+                   ($items[$i]['total_planilla']/$items[$actualVigente]['vigente']) :
+                        ($items[$i]['total_planilla']/$items[$actualVigente]['vigente'])*100 ;
                 
-                 
-                    number_format(($items[$i]['total_planilla']/$items[$i-1]['s_contrato']),3,",",".") :
-                        number_format((1-($items[$i]['s_contrato']/$items[$i-1]['s_contrato']))*100,3,",",".") ;
+                $items[$i]['avAcumulado'] =  $items[$i]['avance']+$items[$i-1]['avAcumulado'];
 
 
+               
 
-                $items[$i]['avAcumulado']= number_format((1-($items[$i]['s_contrato']/$items[$actualVigente]['s_contrato']))*100,2,",",".");
+                //$items[$i]['avAcumulado']= number_format((1-($items[$i]['s_contrato']/$items[$actualVigente]['s_contrato']))*100,2,",",".");
+               
             }
 
 
 
-
+            $items[$i]['f_avance']= number_format($items[$i]['avance'],2,",",".");
+            $items[$i]['f_avAcumulado']= number_format($items[$i]['avAcumulado'],2,",",".");
            
 
 

@@ -128,8 +128,8 @@
                                     <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_vigente']}}</td>
                                     <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_total_planilla']}}</td>
                                     <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_contrato']}}</td>
-                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['avance']}}%</td>
-                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['avAcumulado']}}%</td>
+                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_avance']}}%</td>
+                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_avAcumulado']}}%</td>
 
                                     <td align="right"> {{$avFinan[$i]['f_anticipo_planilla']}}</td>
                                     <td align="right">{{$avFinan[$i]['f_s_anticipo']}}</td>
