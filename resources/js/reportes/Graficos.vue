@@ -157,7 +157,9 @@ export default {
                 datasets: [ { 
                     label: 'Avance finaciero',
                     backgroundColor: ['#FC2525', '#BA55D3', '#9932CC','#9400D3','#8A2BE2', '#8B008B'],
-                    data:  [2.98, 0.491, 0.744, 0.084, 0.037, 0.079, 0.009, 0.017, 0.252, 2.177, 1.747, 1.487, 0.818, 3, 3.5, 2.5]
+                    // [2.98, 0.491, 0.744, 0.084, 0.037, 0.079, 0.009, 0.017, 0.252, 2.177, 1.747, 1.487, 0.818, 3, 3.5, 2.5]
+                    //data: [2.98, 0.491, 0.744, 0.084, 0.037, 0.079, 0.009, 0.017, 0.252, 2.177, 1.747, 1.487, 0.818, 3, 3.5, 2.5]
+                    data:[],
                 } ]
             },
             chartOptions: {
@@ -165,6 +167,7 @@ export default {
             }, 
         }
     },
+  
     methods:{        
         async avance_finaciero(contrato_id){
            
@@ -179,9 +182,10 @@ export default {
 
             avance.forEach((item) => {
                 fecha.push(item.f_fecha);
-                valores.push(+item.avance.replace(/,/g, '.')); //convertir string en numero, cambiando , por .
+                //valores.push(+item.avance.replace(/,/g, '.')); //convertir string en numero, cambiando , por .
                 //valores.push(item.avance);
-                });
+                valores.push(parseFloat(item.avance));
+            });
 
             console.log(fecha);
 
@@ -198,14 +202,39 @@ export default {
 
         }
     },
-    created() {
+    /*created() {
         console.log('====================== creando ' +this.contrato_id);
-       
-    },
-    mounted() {
         this.avance_finaciero(this.contrato_id);
-        console.log('aqui estamos montando ' +this.proyecto);
-       
+    },*/
+   async mounted() {
+        
+        console.log('aqsssui estamos montando ' +this.proyecto);
+        //this.avance_finaciero(this.contrato_id);
+        try{
+        var respuesta = await axios.get('../gra_financiero/'+this.contrato_id);           
+            console.log(respuesta.data);
+         
+            //vamos a filtrar solo los de avance [ 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis' ]
+            const avance=respuesta.data.filter((item)=> item.tipo =='Avance' )
+            const fecha =[];
+            const valores =[];
+
+            avance.forEach((item) => {
+                fecha.push(item.f_fecha);
+                valores.push(+item.avance.replace(/,/g, '.')); //convertir string en numero, cambiando , por .
+                //valores.push(item.avance);
+                //valores.push(item.avance);
+            });
+
+            console.log(valores);
+
+            this.chartData.labels=fecha;
+            this.chartData.datasets[0].data=valores;
+        }catch(e){
+            console.log("error",e);
+        }
+
+
 
     },
     
