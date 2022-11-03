@@ -60,8 +60,10 @@ return [
 
         'constructor' => [
             'driver' => 'local',
-            'root' => storage_path('app/constructor'),
+           // 'root' => storage_path('app/constructor'),
+            'root' => public_path('constructor'),
             'url' => env('APP_URL').'/constructor',
+            
             'visibility' => 'public',
         ],
 

@@ -588,7 +588,7 @@ export default {
              this.jsonData.fecha1 = fecha.getFullYear() + "-" + (fecha.getMonth()+1) + "-" + fecha.getDate();
              this.jsonData.document_id = this.jsonData.documento.id;
              this.jsonData.accion = accion; 
-             console.log('======Guardar ante de mandar al back end=============');
+             console.log('======Guardar antes de mandar al back end=============');
                 let datos_jsonData = new FormData();
                 for(let key in this.jsonData){                
                     datos_jsonData.append(key, this.jsonData[key]);
@@ -791,24 +791,21 @@ export default {
                 }
 
                 planilla.fecha_planilla = planilla.fecha_planilla.split('-').reverse().join('-');
-
-
-                
-
-               //nfObject = new Intl.NumberFormat('en-US');
-              // planilla.total_planilla1= nfObject.format(planilla.total_planilla); 
-                              
+                             
               planilla.total_planilla1=planilla.total_planilla.toLocaleString('en-US');
               planilla.referencia1=planilla.referencia.replace(/<[^>]*>?/gm, '');
 
-              const arch=planilla.path_planilla.split('/');
-             const arch_nombre=arch[1].substring(7);
+              //const arch=planilla.path_planilla.split('/');
+            // const arch_nombre=arch[1].substring(7);
+
+             const arch_nombre=planilla.path_planilla;
+
               planilla.arch_nombre=arch_nombre;
                 return planilla;
             });
 
             this.rows = planillas;
-            //this.lista_documentos();
+            this.lista_documentos();
          },
 
         
@@ -849,7 +846,7 @@ export default {
         async lista_documentos(){
            
             var respuesta = await axios.get('documents');
-            
+           
             const docFilter = respuesta.data.filter(docf => (docf.padre == this.jsonData.proyectos.id || docf.id == this.jsonData.proyectos.id));
            console.log('===============lista_documentos: docFilter===========================');
            console.log(docFilter);

@@ -34,9 +34,11 @@ class DocumentController extends Controller
     {
         //verificar para que contratos esta habilitado el usuario
         $users_id = auth()->user()->id;
+       
         if ($users_id > 2) {
             // obtenemo ahora el funcionario_id
             $funcionario_id = Funcionario::find($users_id)->id;
+           
             // ahora debemos encontrar el id del responsable, un funcionario puede estar asignado a mas de un proyecto.
             $resp = Responsables::select('documents_id')->where('funcionario_id', '=', $funcionario_id)->get()->toarray();
 
