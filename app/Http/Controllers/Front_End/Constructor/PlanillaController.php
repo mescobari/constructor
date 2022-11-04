@@ -676,7 +676,7 @@ class PlanillaController extends Controller
            // $archivo_guardado = $files->storeAs( '', $nombre_archivo, 'constructor'); // graba en el raiz del dico constructor asi no me sale construcor constructor.
 
            $path= asset(Storage::disk('constructor')->url($archivo_guardado));
-           
+           //substr("Hello world",6);
            //$archivo_guardado = $archivo_original->storeAs($path, $file_full_name, 'drive' );
 
             //dd($path);
