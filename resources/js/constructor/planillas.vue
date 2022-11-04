@@ -69,7 +69,7 @@
                            
 
                             <template slot="path_planilla" slot-scope="props">
-                                <a :href="props.row.path_planilla" target="_blank" title="Ver el archivo digital">
+                                <a :href="props.row.path_planilla" target="_blank" title="Ver el archivo digital" class="btn btn-outline-primary btn-sm">
                                      {{props.row.arch_nombre}}
                                 </a>                    
                             </template>
@@ -798,9 +798,9 @@ export default {
               //const arch=planilla.path_planilla.split('/');
             // const arch_nombre=arch[1].substring(7);
 
-             const arch_nombre=planilla.path_planilla;
+             const arch_nombre=planilla.path_planilla.split('/')
+             planilla.arch_nombre=arch_nombre[arch_nombre.length - 1];
 
-              planilla.arch_nombre=arch_nombre;
                 return planilla;
             });
 
