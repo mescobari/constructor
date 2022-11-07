@@ -81,14 +81,15 @@
                                     data-toggle="modal"
                                     data-target="#orden"
                                     v-if="(props.row.document_types_id === 1 || props.row.document_types_id === 2)"
-                                    v-bind:disabled="props.row.fecha_orden_proceder !== null"
                                     @click="openModalOrden(props.row)">
                                 <span><i class="fas fa-upload"></i> </span></button>
-                            <button type="button" class="btn btn-outline-success ml-1"
-                                    v-if="props.row.path_contrato!==''"
-                                    @click="downloadDocument(props.row)"><span><i
-                                class="far fa-file-pdf"></i> </span></button>
-                            <!--                            </a>-->
+                           
+
+                                <a :href="props.row.path_contrato" target="_blank" title="Ver el archivo digital" class="btn btn-outline-success ml-1">
+                                    <span><i class="far fa-file-pdf"></i> </span>
+                                </a> 
+
+                            
                             <button type="button" class="btn btn-outline-warning ml-1" data-toggle="modal"
                                     data-target="#contrato" @click="editarModal(props.row);"><span><i
                                 class="fa fa-user-edit"></i></span></button>
@@ -228,16 +229,7 @@
                                             </v-select>
                                         </div>
                                     </div>
-                                    <!--                                    <div class="col-md-6">-->
-                                    <!--                                        <div class="form-group">-->
-                                    <!--                                            <label for="unidades_ejecutoras">Unidad Ejecutora:</label>-->
-                                    <!--                                            <v-select label="nombre" :options="unidades_ejecutoras"-->
-                                    <!--                                                      v-model="jsonData.unidad_ejecutora_id"-->
-                                    <!--                                                      placeholder="Selecione una opción">-->
-                                    <!--                                                <span slot="no-options">No hay data para cargar</span>-->
-                                    <!--                                            </v-select>-->
-                                    <!--                                        </div>-->
-                                    <!--                                    </div>-->
+                                   
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -305,14 +297,16 @@
                                            class="bg-primary"
                                            style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
                                         <span id="contenido_documento_res_aprobacion"><i
-                                            class="fas fa-download fa-1x"></i><br> <span> {{
-                                                configFile.contenidoDefault
-                                            }}</span></span>
+                                            class="fas fa-download fa-1x"></i><br> 
+                                            <span> 
+                                                {{configFile.contenidoDefault}}
+                                            </span>
+                                        </span>
                                         <button type="button" class="close" id="closeDoc" v-if="configFile.cerrar"
                                                 @click="borrar_file();"><span>&times;</span></button>
                                     </label>
                                     <input type="file" multiple class="form-control" id="documento_res_aprobacion"
-                                           @change="cargar_file" style="display:none">
+                                    accept=".pdf, .jpg, .png" @change="cargar_file" style="display:none">
                                 </div>
                             </div>
                         </div>
@@ -348,24 +342,33 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="fecha-firma">Fecha de Orden:</label>
-                                <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
-                                            :calendar-class="configFechas.nombreClaseParaModal"
-                                            :input-class="configFechas.nombreClaseParaInput"
-                                            :monday-first="true"
-                                            :clear-button="true"
-                                            :clear-button-icon="configFechas.IconoBotonBorrar"
-                                            :calendar-button="true"
-                                            :calendar-button-icon="configFechas.IconoBotonAbrir"
-                                            calendar-button-icon-content=""
-                                            :format="configFechas.format"
-                                            :full-month-name="true" :bootstrap-styling="true"
-                                            :disabled-dates="configFechas.disabledDates"
-                                            :typeable="configFechas.typeable"
-                                            v-model="jsonData.fecha_orden_proceder">
-                                </datepicker>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="fecha-firma">Fecha de Orden:</label>
+                                    <datepicker :language="configFechas.es" :placeholder="configFechas.placeholder"
+                                                :calendar-class="configFechas.nombreClaseParaModal"
+                                                :input-class="configFechas.nombreClaseParaInput"
+                                                :monday-first="true"
+                                                :clear-button="true"
+                                                :clear-button-icon="configFechas.IconoBotonBorrar"
+                                                :calendar-button="true"
+                                                :calendar-button-icon="configFechas.IconoBotonAbrir"
+                                                calendar-button-icon-content=""
+                                                :format="configFechas.format"
+                                                :full-month-name="true" :bootstrap-styling="true"
+                                                :disabled-dates="configFechas.disabledDates"
+                                                :typeable="configFechas.typeable"
+                                                v-model="jsonData.fecha_orden_proceder">
+                                    </datepicker>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group col-md-6">
+                                    <label for="monto_bs">Monto anticipado en Bolivianos:</label>
+                                    <input type="number" class="form-control" name="anticipo" id="anticipo"
+                                            placeholder="Ingresar Monto" v-model="jsonData.anticipo">
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -381,10 +384,10 @@
                             <label for="documento_res_aprobacion" id="label_documento_res_aprobacion"
                                    class="bg-primary"
                                    style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
-                                        <span id="contenido_documento_res_aprobacion"><i
-                                            class="fas fa-download fa-1x"></i><br> <span> {{
-                                                configFile.contenidoDefault
-                                            }}</span></span>
+                                        <span id="contenido_documento_res_aprobacion">
+                                            <i class="fas fa-download fa-1x"></i><br> 
+                                            <span> {{ configFile.contenidoDefault}}</span>
+                                        </span>
                                 <button type="button" class="close" id="closeOr" v-if="configFile.cerrar"
                                         @click="borrar_file();"><span>&times;</span></button>
                             </label>
@@ -447,6 +450,7 @@ export default {
             configFile: {
                 cerrar: false,
                 contenidoDefault: "DOCUMENTOS",
+                contenidoDefault1: "ORDEN DE PROCEDER",
                 defaultProceder: "Orden Proceder"
             },
             mandarMensajesAlerta: {},
@@ -544,12 +548,8 @@ export default {
             columns: [
                 {
                     label: "#",
-                    name: "id",
-                    filter: {
-                        type: "simple",
-                        placeholder: "#",
-                    },
-                    sort: true,
+                    name: "index",
+                    
                     uniqueId: true,
                 },
                 {
@@ -560,6 +560,7 @@ export default {
                         placeholder: "Nombre",
                     },
                     sort: true,
+                    row_text_alignment: "text-left",
                 },
                 {
                     label: "Tipo de Documento",
@@ -581,12 +582,13 @@ export default {
                 },
                 {
                     label: "Monto Bs.",
-                    name: "monto_bs",
+                    name: "f_monto_bs",
                     sort: false,
                     filter: {
                         type: "simple",
                         placeholder: "Monto",
                     },
+                    row_text_alignment: "text-right",
                 },
                 {
                     label: "Duracion Dias",
@@ -605,6 +607,16 @@ export default {
                         type: "simple",
                         placeholder: "Dias",
                     },
+                },
+                {
+                    label: "Anticipo",
+                    name: "anticipo",
+                    sort: false,
+                    filter: {
+                        type: "simple",
+                        placeholder: "Monto",
+                    },
+                    row_text_alignment: "text-right",
                 },
                 {
                     label: "Acciones",
@@ -689,6 +701,7 @@ export default {
     },
     methods: {
         openModalOrden(data = {}) {
+            console.log('===Estamos en openModalOrden ======');
             this.jsonData.document_id = data.id;
             this.tituloIntervencionModal = data.nombre;
             console.log(data);
@@ -713,13 +726,35 @@ export default {
         },
         async saveOrdenProceder() {
             let jsonData = new FormData();
+            console.log('==saveOrdenProceder PRIMERO');
+            for(let key in this.jsonData){                
+                jsonData.append(key, this.jsonData[key]);
+                    console.log(key, this.jsonData[key]);
+                }
+
             jsonData.append('document_id', this.jsonData.document_id);
             const fecha = new Date(this.jsonData.fecha_orden_proceder);
             jsonData.append('fecha_orden_proceder', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
+            jsonData.append('anticipo', this.jsonData.anticipo);
             jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
             jsonData.append('files', this.jsonData.files);
+
+            console.log('==saveOrdenProceder SEGUNDO');
+
+            for(let key in this.jsonData){                
+                     console.log(key, this.jsonData[key]);
+                }
+
             const uploadFile = await axios.post('upload_orden_file', jsonData)
             console.log('SAVE ORDEN', uploadFile.data);
+
+            console.log('==saveOrdenProceder TERCERO');
+
+            for(let key in this.jsonData){                
+                     console.log(key, this.jsonData[key]);
+                }
+
+
 
             document.getElementById("closeModal").click();
             document.getElementById("closeOr").click();
@@ -826,18 +861,24 @@ export default {
             }
         },
         async listar(){
+            console.log('=========ESTOY EN LISTAR ============')
             const respuesta = await axios.get('get_ordenes_proceder');
+            console.log('=========RESPUESTA.DATA ============');
+            console.log(respuesta.data);
 
             const docFilter = respuesta.data.filter(docf => (docf.padre == this.jsonData.proyectos.id || docf.id == this.jsonData.proyectos.id));
-           
+            console.log('=========docFilter ============');
+            console.log(docFilter);
 
-            const getDocumentTypes = (await axios.get('documentos_legaleses')).data;
-
-           
-            const documentsResult = docFilter.map(documento => {
+            const getDocumentTypes = (await axios.get('documentos_legaleses')).data; //trae documents_type all() para q??
+                      
+            const documentsResult = docFilter.map((documento, index) => {
+                documento.index = index+1;
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
-                documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].nombre;
-                //documento.tipo_documento = contratos.find(contrato => contrato.id === documento.document_types_id).nombre
+                documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].sigla;
+                documento.f_monto_bs= documento.monto_bs.toLocaleString('en-US');                
+                documento.anticipo= (documento.anticipo != null) ? documento.anticipo.toLocaleString('en-US'):0;
+                documento.fecha_orden_proceder = (documento.fecha_orden_proceder != null) ? documento.fecha_orden_proceder.split('-').reverse().join('-'):'-';
                 return documento;
             });
 
@@ -1016,7 +1057,10 @@ export default {
 
             this.jsonData.files = data.files;
             this.jsonData.path_contrato = data.path_contrato;
-            //set data to v-select contratante_id
+
+            const arch_nombre=data.path_contrato.split('/')
+            this.configFile.contenidoDefault= arch_nombre[arch_nombre.length - 1];
+           
             for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
                 if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
                     this.jsonData.contratante_id = response_institucion_contratante_contratadora.data[i];
@@ -1223,27 +1267,7 @@ export default {
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';
             this.reiniciar_file('#label_documento_res_aprobacion', ['bg-primary', 'bg-success'], ['bg-success'], '#contenido_documento_res_aprobacion', [nombre_file]);
         },
-        async calcular_moneda(tipo_local) {//tipo_cambio_bs_sus
-            var respuesta = await axios.get('tipo_cambio_bs_sus');
-            console.log(respuesta.data);
-            if (respuesta.data == "") {
-                alert("No se tiene registrado el tipo de cambio para hoy");
-            } else {
-                if (tipo_local == 'BS') {//como guarda en bs cargamos al de dolar
-                    var valor = "";
-                    console.log("aqui");
-                    var valor = this.jsonData.monto_aprobado_bs / respuesta.data.valor_compra;
-                    valor = valor.toFixed(2);
-                    this.jsonData.monto_aprobado_dolares = valor;
-                } else {//como guarda en dolar cargamos al de bs
-                    var valor = "";
-                    var valor = this.jsonData.monto_aprobado_dolares * respuesta.data.valor_venta;
-                    valor = valor.toFixed(2);
-                    this.jsonData.monto_aprobado_bs = valor;
-
-                }
-            }
-        },
+       
         async seleccionar_cont_primario(){
             var respuesta = await axios.get('documents');
             const principales=respuesta.data.filter((item)=> item.document_types_id===1 )

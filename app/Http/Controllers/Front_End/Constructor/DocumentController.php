@@ -79,12 +79,14 @@ class DocumentController extends Controller
         $path = "";
         if ($request->hasFile('files')) {
 //            $extension = $request->file('files')->getClientOriginalExtension();
-            $nombre_carpeta = "/constructor/documentos";
+            $nombre_carpeta = "/constructor";
 //            $path = $nombre_carpeta . '/' . $nombre_archivo;
 //            $files = storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
             $files = $request->file('files');
             $nombre_archivo = $request->padre . '-' . $request->document_types_id . '-' . $_FILES['files']['name'];
-            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+
+            $archivo_guardado = $files->storeAs($nombre_carpeta, $nombre_archivo, 'constructor');
+            $path= asset(Storage::disk('constructor')->url($archivo_guardado));
         };
 //        $objetostrip = strip_tags($request->objeto);
         return document::create([
@@ -253,7 +255,7 @@ class DocumentController extends Controller
     {
         $ordenes=DB::table('documents')
             ->leftjoin('proceder_ordenes', 'documents.id','=', 'proceder_ordenes.document_id')
-            ->select('documents.*','proceder_ordenes.fecha_orden_proceder')
+            ->select('documents.*','proceder_ordenes.fecha_orden_proceder','proceder_ordenes.anticipo')
             ->get();
         return $ordenes;
     }
@@ -263,9 +265,12 @@ class DocumentController extends Controller
         if($request->hasFile('files')){
 
             $files = request()->file('files');
-            $nombre_carpeta = "constructor/ordenes_proceder";
+            $nombre_carpeta = "/constructor";
             $nombre_archivo = $_FILES['files']['name'];
-            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+           // $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+
+            $archivo_guardado = $files->storeAs($nombre_carpeta, $nombre_archivo, 'constructor');
+            $path= asset(Storage::disk('constructor')->url($archivo_guardado));
         }
 //        return OrdenesProceder::create([
 //            'document_id' => $request->document_id,
@@ -276,6 +281,7 @@ class DocumentController extends Controller
         $ordenProceder = new OrdenesProceder();
         $ordenProceder->document_id = $request->document_id;
         $ordenProceder->fecha_orden_proceder = $request->fecha_orden_proceder;
+        $ordenProceder->anticipo = $request->anticipo;
         $ordenProceder->desc_orden_proceder = $request->desc_orden_proceder;
         $ordenProceder->path_orden_proceder = $path;
         $ordenProceder->save();
