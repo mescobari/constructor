@@ -255,35 +255,44 @@ class DocumentController extends Controller
     {
         $ordenes=DB::table('documents')
             ->leftjoin('proceder_ordenes', 'documents.id','=', 'proceder_ordenes.document_id')
-            ->select('documents.*','proceder_ordenes.fecha_orden_proceder','proceder_ordenes.anticipo')
+            ->select('documents.*','proceder_ordenes.fecha_orden_proceder','proceder_ordenes.anticipo','proceder_ordenes.desc_orden_proceder','proceder_ordenes.path_orden_proceder','proceder_ordenes.id as proceder_id')
             ->get();
         return $ordenes;
     }
 
     public function uploadOrdenFile(Request $request)
     {
+       $path='';
+
         if($request->hasFile('files')){
 
             $files = request()->file('files');
             $nombre_carpeta = "/constructor";
             $nombre_archivo = $_FILES['files']['name'];
-           // $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
-
             $archivo_guardado = $files->storeAs($nombre_carpeta, $nombre_archivo, 'constructor');
             $path= asset(Storage::disk('constructor')->url($archivo_guardado));
+        } else {
+            $path = $request->path_orden_proceder;
         }
-//        return OrdenesProceder::create([
-//            'document_id' => $request->document_id,
-//            'fecha_orden_proceder' => $request->fecha_orden_proceder,
-//            'desc_orden_proceder' => $request->desc_orden_proceder,
-//            'path_orden_proceder' => $path,
-//        ]);
-        $ordenProceder = new OrdenesProceder();
+
+        if($request->proceder_id >0){
+            // caso de update
+            $ordenProceder = OrdenesProceder::find($request->proceder_id);
+        } else {
+            $ordenProceder = new OrdenesProceder();
+        } 
+
         $ordenProceder->document_id = $request->document_id;
         $ordenProceder->fecha_orden_proceder = $request->fecha_orden_proceder;
         $ordenProceder->anticipo = $request->anticipo;
         $ordenProceder->desc_orden_proceder = $request->desc_orden_proceder;
         $ordenProceder->path_orden_proceder = $path;
+
         $ordenProceder->save();
+
     }
+        
+
+
+    
 }

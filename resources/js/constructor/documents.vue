@@ -386,7 +386,7 @@
                                    style="font-size: 14px; font-weight: 600; color: #fff; display: inline-block; transition: all .5s; cursor: pointer; padding: 10px 15px !important; width: 100%; text-align: center; border-radius: 7px;">
                                         <span id="contenido_documento_res_aprobacion">
                                             <i class="fas fa-download fa-1x"></i><br> 
-                                            <span> {{ configFile.contenidoDefault}}</span>
+                                            <span> {{ configFile.contenidoDefault1}}</span>
                                         </span>
                                 <button type="button" class="close" id="closeOr" v-if="configFile.cerrar"
                                         @click="borrar_file();"><span>&times;</span></button>
@@ -542,7 +542,8 @@ export default {
                 fecha_orden_proceder: null,
                 desc_orden_proceder: null,
                 path_orden_proceder: null,
-
+                anticipo: 0,
+                proceder_id: 0,
             },
             rows: [],
             columns: [
@@ -601,7 +602,7 @@ export default {
                 },
                 {
                     label: "Orden Proceder",
-                    name: "fecha_orden_proceder",
+                    name: "f_fecha_orden_proceder",
                     sort: false,
                     filter: {
                         type: "simple",
@@ -610,7 +611,7 @@ export default {
                 },
                 {
                     label: "Anticipo",
-                    name: "anticipo",
+                    name: "f_anticipo",
                     sort: false,
                     filter: {
                         type: "simple",
@@ -702,9 +703,24 @@ export default {
     methods: {
         openModalOrden(data = {}) {
             console.log('===Estamos en openModalOrden ======');
+            console.log(data);
             this.jsonData.document_id = data.id;
             this.tituloIntervencionModal = data.nombre;
-            console.log(data);
+            //this.jsonData.fecha_orden_proceder = data.fecha_orden_proceder;
+
+            //la fecha un dia mas
+            const fecha =new Date(data.fecha_orden_proceder);
+            this.jsonData.fecha_orden_proceder = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate()+1);
+
+            this.jsonData.anticipo = data.anticipo;
+            this.jsonData.desc_orden_proceder = data.desc_orden_proceder;
+
+            this.jsonData.proceder_id = data.proceder_id;
+            this.jsonData.path_orden_proceder = data.path_orden_proceder;
+
+            const arch_nombre=data.path_orden_proceder.split('/');
+            this.configFile.contenidoDefault1 = arch_nombre[arch_nombre.length - 1];
+           
         },
         async saveOrdenProceder2() {
             const document_id = this.jsonData.document_id;
@@ -717,6 +733,9 @@ export default {
                 'document_id': document_id,
                 'fecha_orden_proceder': fecha_orden_proceder,
                 'desc_orden_proceder': desc_orden_proceder,
+                'anticipo': this.jsonData.anticipo,
+                'proceder_id': this.jsonData.proceder_id,
+                'path_orden_proceder': this.jsonData.path_orden_proceder,
                 'files': files
             }
 
@@ -737,6 +756,7 @@ export default {
             jsonData.append('fecha_orden_proceder', fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate());
             jsonData.append('anticipo', this.jsonData.anticipo);
             jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
+            jsonData.append('path_orden_proceder', this.jsonData.path_orden_proceder);
             jsonData.append('files', this.jsonData.files);
 
             console.log('==saveOrdenProceder SEGUNDO');
@@ -877,8 +897,9 @@ export default {
                 documento.fecha_firma = documento.fecha_firma.split('-').reverse().join('-');
                 documento.tipo_documento = getDocumentTypes[documento.document_types_id - 1].sigla;
                 documento.f_monto_bs= documento.monto_bs.toLocaleString('en-US');                
-                documento.anticipo= (documento.anticipo != null) ? documento.anticipo.toLocaleString('en-US'):0;
-                documento.fecha_orden_proceder = (documento.fecha_orden_proceder != null) ? documento.fecha_orden_proceder.split('-').reverse().join('-'):'-';
+                documento.f_anticipo= (documento.anticipo != null) ? documento.anticipo.toLocaleString('en-US'):0;
+                documento.f_fecha_orden_proceder = (documento.fecha_orden_proceder != null) ? documento.fecha_orden_proceder.split('-').reverse().join('-'):'-';
+               
                 return documento;
             });
 
