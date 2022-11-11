@@ -299,7 +299,7 @@
                                         <span id="contenido_documento_res_aprobacion"><i
                                             class="fas fa-download fa-1x"></i><br> 
                                             <span> 
-                                                {{configFile.contenidoDefault}}
+                                                {{ configFile.contenidoDefault}}
                                             </span>
                                         </span>
                                         <button type="button" class="close" id="closeDoc" v-if="configFile.cerrar"

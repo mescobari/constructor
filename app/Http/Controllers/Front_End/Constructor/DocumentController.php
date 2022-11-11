@@ -270,7 +270,10 @@ class DocumentController extends Controller
             $nombre_carpeta = "/constructor";
             $nombre_archivo = $_FILES['files']['name'];
             $archivo_guardado = $files->storeAs($nombre_carpeta, $nombre_archivo, 'constructor');
-            $path= asset(Storage::disk('constructor')->url($archivo_guardado));
+           // $path= asset(Storage::disk('constructor')->url($archivo_guardado));
+            //env('APP_URL').
+            $path=  env('APP_URL').(Storage::disk('constructor')->url($archivo_guardado));
+            
         } else {
             $path = $request->path_orden_proceder;
         }
