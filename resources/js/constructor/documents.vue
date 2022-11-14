@@ -720,7 +720,7 @@ export default {
 
             const arch_nombre=data.path_orden_proceder.split('/');
             this.configFile.contenidoDefault1 = arch_nombre[arch_nombre.length - 1];
-           
+            
         },
         async saveOrdenProceder2() {
             const document_id = this.jsonData.document_id;
@@ -758,6 +758,8 @@ export default {
             jsonData.append('desc_orden_proceder', this.jsonData.desc_orden_proceder);
             jsonData.append('path_orden_proceder', this.jsonData.path_orden_proceder);
             jsonData.append('files', this.jsonData.files);
+            
+           
 
             console.log('==saveOrdenProceder SEGUNDO');
 
@@ -1081,6 +1083,7 @@ export default {
 
             const arch_nombre=data.path_contrato.split('/')
             this.configFile.contenidoDefault= arch_nombre[arch_nombre.length - 1];
+            this.configFile.contenidoDefault1= arch_nombre[arch_nombre.length - 1];
            
             for (let i = 0; i < response_institucion_contratante_contratadora.data.length; i++) {
                 if (data.contratante_id === response_institucion_contratante_contratadora.data[i].id) {
@@ -1283,6 +1286,7 @@ export default {
                 //     console.log(key2);
                 //     console.log(boucle[key2]);
                 // }
+                this.configFile.contenidoDefault1=nombre_file;
             }
             this.configFile.cerrar = true;
             nombre_file = '<i class="fas fa-cloud-upload-alt"></i><br><span> ' + nombre_file + '</span>';

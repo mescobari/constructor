@@ -83,7 +83,8 @@ class DocumentController extends Controller
 //            $path = $nombre_carpeta . '/' . $nombre_archivo;
 //            $files = storeAs('documentos/' . $nombre_carpeta, $nombre_archivo);
             $files = $request->file('files');
-            $nombre_archivo = $request->padre . '-' . $request->document_types_id . '-' . $_FILES['files']['name'];
+            $nombre_archivo = ($request->padre==0) ? $request->id . '-' . $request->document_types_id . '-' . $_FILES['files']['name']:
+            $request->padre . '-' . $request->document_types_id . '-' . $_FILES['files']['name'];
 
             $archivo_guardado = $files->storeAs($nombre_carpeta, $nombre_archivo, 'constructor');
             $path= asset(Storage::disk('constructor')->url($archivo_guardado));
@@ -144,8 +145,10 @@ class DocumentController extends Controller
         $documentId = document::findOrFail($id);
         if ($request->hasFile('files')) {
             $files = $request->file('files');
-            $nombre_carpeta = "/constructor/documentos";
-            $nombre_archivo = $request->document_types_id . '-' . $_FILES['files']['name'];
+            $nombre_carpeta = "/constructor";
+            $nombre_archivo = ($request->padre==0) ? $request->id . '-' . $request->document_types_id . '-' . $_FILES['files']['name']:
+            $request->padre . '-' . $request->document_types_id . '-' . $_FILES['files']['name'];
+
             $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
             $documentId->path_contrato = $path;
         }
@@ -210,9 +213,15 @@ class DocumentController extends Controller
         $files = "";
         if ($request->hasFile('files')) {
             $files = $request->file('files');
-            $nombre_carpeta = "constructor/documentos";
-            $nombre_archivo = $request->document_types_id . '-' . $_FILES['files']['name'];
-            $path = $files->storeAs($nombre_carpeta, $nombre_archivo);
+            $nombre_carpeta = "/constructor";
+            //$nombre_archivo = $request->document_types_id . '-' . $_FILES['files']['name'];
+
+            $nombre_archivo = ($request->padre==0) ? $request->id . '-' . $request->document_types_id . '-' . $_FILES['files']['name']:
+            $request->padre . '-' . $request->document_types_id . '-' . $_FILES['files']['name'];
+
+            $archivo_guardado = $files->storeAs($nombre_carpeta, $nombre_archivo, 'constructor');
+            $path=  Storage::disk('constructor')->url($archivo_guardado);
+
         } else {
             $path = $documentId->path_contrato;
         }
@@ -268,11 +277,14 @@ class DocumentController extends Controller
 
             $files = request()->file('files');
             $nombre_carpeta = "/constructor";
-            $nombre_archivo = $_FILES['files']['name'];
+            //$nombre_archivo = $_FILES['files']['name'];
+            $nombre_archivo = $request->document_id . '-OP-' . $_FILES['files']['name'];
+
             $archivo_guardado = $files->storeAs($nombre_carpeta, $nombre_archivo, 'constructor');
            // $path= asset(Storage::disk('constructor')->url($archivo_guardado));
-            //env('APP_URL').
-            $path=  env('APP_URL').(Storage::disk('constructor')->url($archivo_guardado));
+            
+           // $path=  env('APP_URL').(Storage::disk('constructor')->url($archivo_guardado));
+            $path=  Storage::disk('constructor')->url($archivo_guardado);
             
         } else {
             $path = $request->path_orden_proceder;
