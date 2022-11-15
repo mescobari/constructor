@@ -1,0 +1,29 @@
+id;nombre;simbolo;descripcion
+1;Decimetro cubico;DM3;Decimetro cubico
+2;Global;GLB;Global
+3;Hombres dia;H*D;Hombres dia
+4;Hectareas;HA;Hectareas
+5;Hectareas;HAS;Hectareas
+6;Horas hombre;H-H;Horas hombre
+7;Kilogramos;KG;Kilogramos
+8;Litros;L;Litros
+9;Metros Cuadrados;M2;Metros Cuadrados
+10;Metro cuadrado por metro;M2M;Metro cuadrado por metro
+11;Metro cubico;M3;Metro cubico
+12;metro cubico kilometro;M3K;metro cubico kilometro
+13;mes;MES;mes
+14;metro lineal;ML;metro lineal
+15;Plantines;PLN;Plantines
+16;Pieza;PZA;Pieza
+17;Talleres;TLL;Talleres
+18;Toneladas;TON;Toneladas
+19;Tramo;TRM;Tramo
+20;Unidad;UND;Unidad
+21;Vehiculos mes;V*M;Vehiculos mes
+22;Juego;JGO;"ANCLAJE PARA 12 T 1/2"" juego"
+23;Persona;PER;Persona
+24;Libra;lb;Libra
+25;Kilogramo kilometro;KGK;Kilogramo kilometro
+26;Galon;GAL;Galon
+27;Porcentaje;POR;Porcentaje
+28;Alquiler metro cuadrado por mes;M2*M;Alquiler metro cuadrado por mes

@@ -671,7 +671,7 @@ class PlanillaController extends Controller
 
            $archivo_guardado = $files->storeAs( $nombre_carpeta, $nombre_archivo, 'constructor');
 
-           $path= asset(Storage::disk('constructor')->url($archivo_guardado));
+           $path=Storage::disk('constructor')->url($archivo_guardado);
            
 
         } else {
@@ -782,9 +782,14 @@ class PlanillaController extends Controller
      * @param  \App\Models\Constructor\Planilla  $planilla
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Planilla $planilla)
+    public function destroy($id)
     {
-        //
+        // vamos a borrar el el registro con $id
+        //$plaDoc = Planilla::find($id);
+        $plaDoc = PlanillaDocument::where("planilla_id","=",$id)->delete();
+        $plaDoc = Planilla::where("id","=",$id)->delete();
+        return $plaDoc;
+
     }
 
 }

@@ -648,6 +648,11 @@ export default {
             this.jsonData.documento = this.documentos.find(element => element.id == data.contrato_id);
            
             this. jsonData.referencia =data.referencia;
+
+            this. jsonData.total_planilla =data.total_planilla;
+            this. jsonData.anticipo_planilla =data.anticipo_planilla;
+            this. jsonData.retencion_planilla =data.retencion_planilla;
+
             //const arch=data.path_planilla.split('/');
             this.configFile.contenidoDefault = data.path_planilla ;
             
@@ -711,12 +716,16 @@ export default {
 
             var answer = window.confirm("Confirma Eliminar la Planilla? "+ data.numero_planilla +' de fecha '+ data.fecha_planilla);
             if (answer) {
-                //some code
+                
+                console.log('aqui codigo para borrae  '+data.id);
+                var respuesta = await axios.delete('planillas/'+data.id);
+                console.log('voviendo de borrar  '+respuesta.data);
+
             }
             else {
-                //some code
+                console.log('no hago nada  '+data.id);
             }
-
+            this.ver_planilla();
 
 
         },
