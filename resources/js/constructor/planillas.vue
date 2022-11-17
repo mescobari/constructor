@@ -807,8 +807,10 @@ export default {
               //const arch=planilla.path_planilla.split('/');
             // const arch_nombre=arch[1].substring(7);
 
-             const arch_nombre=planilla.path_planilla.split('/')
-             planilla.arch_nombre=arch_nombre[arch_nombre.length - 1];
+                if (planilla.path_planilla!=null) {
+                    const arch_nombre=planilla.path_planilla.split('/')
+                    planilla.arch_nombre=arch_nombre[arch_nombre.length - 1];
+                }
 
                 return planilla;
             });
