@@ -556,9 +556,15 @@ export default {
                 
                 rowMensaje.innerHTML = '<div class="alert alert-success fade show" role="alert" >La planilla'
                     + this.cargarData.tipo + ' fue cargada satisfactoriamente</div>';
-                this.cargar=false;
+                
 
-                this.ver_planilla();
+                    console.log(rowMensaje.innerHTML);
+
+                this.cargar=false;
+                //setTimeout( this.ver_planilla(), 3000);
+                //document.getElementById("cerrarCSV").click();
+                console.log('========yendo a ver_planilla========');
+                await this.ver_planilla();
 
                 
 

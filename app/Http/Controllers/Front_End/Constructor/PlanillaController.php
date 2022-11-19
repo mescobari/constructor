@@ -92,19 +92,23 @@ class PlanillaController extends Controller
             $delimitador=",";
             $linea1 = fgetcsv($openfile);
             // veamos si el separador es , o ;
-            $separador=explode(",",$linea1[0] ); 
+           // $separador=explode(",",$linea1 ); 
 
+            $nueve=count($linea1);
+           
+           
 
-          
-
-            if(count($separador)>1 ){
+            if($nueve>1 ){
                 $delimitador=",";
-
+                $separador=$linea1;
             } else {
                 $separador=explode(";",$linea1[0] ); 
                 $delimitador=";";
-                
+               
             }
+
+                  
+
             $contador=0;
             if(count($separador) == 9 ){
 
@@ -132,11 +136,11 @@ class PlanillaController extends Controller
           
 
           if($contador==9){
-            $mensaje = "Todo bien El archivo tiene " .count($separador). " columnas  y el delimitador es ". $delimitador;
+            $mensaje = "Todo bien El archivo tiene " .count($separador). " columnas, los nombres de las columnas coinciden  y el delimitador es ". $delimitador;
             return $delimitador;
 
           } else {
-            $mensaje = "El archivo tiene " .count($separador). " columnas  en lugar de 9 y el delimitador es ". $delimitador;
+            $mensaje = "El archivo tiene " .count($separador). " columnas  y no cinciden los nombres de las columnas y el delimitador es ". $delimitador;
             return $mensaje;
             }
          
@@ -362,7 +366,10 @@ class PlanillaController extends Controller
                 $relacion->planilla_id=$request->planilla_id;
                 $relacion->save();
 
-
+                // debemos actualizar el estado en planilla
+                $actEstado = Planilla::findOrFail($request->planilla_id);
+                $actEstado->estado_planilla =1;
+                $actEstado->save();
             
                  // aqui cierra para planilla inicial
         }
@@ -446,7 +453,10 @@ class PlanillaController extends Controller
                 $relacion->save();
 
 
-
+                // debemos actualizar el estado en planilla
+                $actEstado = Planilla::findOrFail($request->planilla_id);
+                $actEstado->estado_planilla =1;
+                $actEstado->save();
 
 
 
