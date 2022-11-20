@@ -807,7 +807,15 @@ export default {
 
                 planilla.fecha_planilla = planilla.fecha_planilla.split('-').reverse().join('-');
                              
-              planilla.total_planilla1=planilla.total_planilla.toLocaleString('en-US');
+             
+
+              if (planilla.total_planilla!=null) {
+                     planilla.total_planilla1=planilla.total_planilla.toLocaleString('en-US');
+                } else {
+                    planilla.total_planilla1=planilla.total_planilla;
+                 }
+
+
               if (planilla.referencia!=null) {
                 planilla.referencia1=planilla.referencia.replace(/<[^>]*>?/gm, '');
                 } else {
