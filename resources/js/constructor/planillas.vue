@@ -808,8 +808,11 @@ export default {
                 planilla.fecha_planilla = planilla.fecha_planilla.split('-').reverse().join('-');
                              
               planilla.total_planilla1=planilla.total_planilla.toLocaleString('en-US');
-              planilla.referencia1=planilla.referencia.replace(/<[^>]*>?/gm, '');
-
+              if (planilla.referencia!=null) {
+                planilla.referencia1=planilla.referencia.replace(/<[^>]*>?/gm, '');
+                } else {
+                    planilla.referencia1=planilla.referencia;
+                 }
               //const arch=planilla.path_planilla.split('/');
             // const arch_nombre=arch[1].substring(7);
 
