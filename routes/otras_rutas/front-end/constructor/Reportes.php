@@ -20,5 +20,13 @@
         Route::get('ver_requerimientos/{id}', 'PlanillaReportesController@ver_requerimientos')->name('ver_requerimientos');
         
 
+        /* Repositorio de documentos*/
+        Route::get('ver_repositorio', 'RepositorioController@inicio')->name('ver_repositorio');
+        Route::resource('repositorio', 'RepositorioController');
+        
+
+
+
+
     });     
 ?>

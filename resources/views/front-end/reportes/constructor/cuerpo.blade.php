@@ -117,7 +117,7 @@
                    
                     switch ($nombre_reporte) {
                         case "PLANILLA INICIAL":
-                            $inicial=25;
+                            $inicial=18;
                             break;
                         case "PLANILLA MODIFICATORIA":
                             $inicial=15;
@@ -139,7 +139,8 @@
                 @endfor
                 @php   $t[$tablas]=$filas; @endphp
         </div>   
-            
+      
+
         @for ($j = 0; $j < $tablas; $j++)
        
             <div class="contenido">

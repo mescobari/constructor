@@ -53,6 +53,8 @@ Vue.component('formulacionPoa', require('./registroProyectos/PlanificacionFormul
 Vue.component('poaCollapse', require('./components/poaCollapse.vue').default);
 
 Vue.component('reportes', require('./reportes/Reporte.vue').default);
+Vue.component('repositorio', require('./reportes/Repositorio.vue').default);
+
 Vue.component('graficos', require('./reportes/Graficos.vue').default);
 Vue.component('responsable', require('./registroProyectos/IdentificacionResponsable.vue').default);
 Vue.component('reportesDocumentosLegales', require('./reportes/IndexReportesDocumentosLegales.vue').default);
@@ -60,6 +62,7 @@ Vue.component('reportesDocumentosLegales', require('./reportes/IndexReportesDocu
 Vue.component('suscripcionPoa', require('./registroProyectos/PlanificacionSuscripcionPoa.vue').default);
 Vue.component('seguimientoFinanciero', require('./registroProyectos/SeguimientoFinanciero.vue').default);
 Vue.component('seguimientoFisico', require('./registroProyectos/SeguimientoFisico.vue').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
