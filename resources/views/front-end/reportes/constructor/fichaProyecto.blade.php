@@ -113,34 +113,39 @@
 
                                 <tbody>
 
-
-                        @for ($i = 0; $i < count($avFinan); $i++)
                         
-                            @if ($avFinan[$i]['total_planilla']!=0)
 
-                           
-                            @php   $letra = "#FF0000"; @endphp
+                            @for ($i = 0; $i < count($avFinan); $i++)
+                                                    
+                                @if ($avFinan[$i]['total_planilla']!=0)
 
-                                    <tr>
-                                    <td>{{$avFinan[$i]['f_fecha']}}</td>
-                                    <td>{{$avFinan[$i]['numero_planilla']}} - {{$avFinan[$i]['tipo']}}</td>
+                            
+                                @php   $letra = "#FF0000"; @endphp
 
-                                    <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_vigente']}}</td>
-                                    <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_total_planilla']}}</td>
-                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_contrato']}}</td>
-                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_avance']}}%</td>
-                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_avAcumulado']}}%</td>
+                                        <tr>
+                                        <td>{{$avFinan[$i]['f_fecha']}}</td>
+                                        <td>{{$avFinan[$i]['numero_planilla']}} - {{$avFinan[$i]['tipo']}}</td>
 
-                                    <td align="right"> {{$avFinan[$i]['f_anticipo_planilla']}}</td>
-                                    <td align="right">{{$avFinan[$i]['f_s_anticipo']}}</td>
+                                        <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_vigente']}}</td>
+                                        <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_total_planilla']}}</td>
+                                        <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_contrato']}}</td>
+                                        <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_avance']}}%</td>
+                                        <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_avAcumulado']}}%</td>
 
-                                    <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_retencion_planilla']}}</td>
-                                    <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_retencion']}}</td>
-                                    
-                                    <tr>
-                            @endif            
+                                        <td align="right"> {{$avFinan[$i]['f_anticipo_planilla']}}</td>
+                                        <td align="right">{{$avFinan[$i]['f_s_anticipo']}}</td>
 
-                         @endfor
+                                        <td align="right" bgcolor="#f3f3f3"> {{$avFinan[$i]['f_retencion_planilla']}}</td>
+                                        <td align="right" bgcolor="#f3f3f3">{{$avFinan[$i]['f_s_retencion']}}</td>
+                                        
+                                        </tr>
+                                @endif            
+
+                            @endfor
+
+                        
+
+
                                 </tbody>
                 
                    </table>
@@ -168,10 +173,8 @@
 
                                 <tbody>
 
-
-                        @for ($i = 0; $i < count($avFisico); $i++)
-                        
-                           
+                        @if (gettype($avFisico)!='string')
+                                @for ($i = 0; $i < count($avFisico); $i++)
 
                                     <tr>
                                     <td>{{$avFisico[$i]['item_codigo']}}</td>
@@ -182,10 +185,14 @@
                                     <td align="right" >{{$avFisico[$i]['f_saldo']}}</td>
                                     <td align="right" >{{$avFisico[$i]['f_porcentaje']}}%</td>
                                    
-                                    <tr>
-                                     
+                                    </tr>
+                             @endfor
+                         @else
+                             <tr> <td>{{$avFisico}}</td></tr>
+                         @endif
 
-                         @endfor
+
+
                                 </tbody>
                 
                    </table>

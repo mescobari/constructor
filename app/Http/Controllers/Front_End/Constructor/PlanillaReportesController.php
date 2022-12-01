@@ -262,7 +262,23 @@ public function ver_ficha(Request $request, $id){
 
     $avFinan= $plani->getAvanceFinaciero($contrato_id);
 
-    $avFisico=$plani->getAvanceFisicoComponentes($contrato_id);
+    //antes de enviar debemos ver si tiene planila de avance fisico
+    $existeAvance= DB::table('planillas') ->join('planilla_movimientos', 'planilla_movimientos.planilla_id', '=', 'planillas.id')
+    ->where('planillas.contrato_id', $contrato_id)->where('planillas.tipo_planilla_id', '3')->get();
+   
+   
+
+    if (count($existeAvance)>0){
+
+        $avFisico=$plani->getAvanceFisicoComponentes($contrato_id);
+    } else {
+        
+        $avFisico='No hay planillas de Avance Registradas';
+    }
+
+       
+
+
 
     //datos para la cabecera del reportedel reporte
     $titulo_grande = "SISTEMA DE SEGUIMIENTO A PROYECTOS";

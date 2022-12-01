@@ -222,9 +222,15 @@ class Planilla extends Model
                 $items[$i]['s_anticipo']= $items[$i-1]['s_anticipo']-( $items[$i]['anticipo_planilla']);
                 $items[$i]['s_retencion']=$items[$i-1]['s_retencion']+( $items[$i]['retencion_planilla']);
 
-                $items[$i]['avance']= (($obj[$i]['tipo_planilla_id']==2 ) and ($actualVigente!=0 ) ) ?                 
-                   ($items[$i]['total_planilla']/$items[$actualVigente]['vigente']) :
-                        ($items[$i]['total_planilla']/$items[$actualVigente]['vigente'])*100 ;
+                if ($items[$actualVigente]['vigente']!=0 ) {
+                    $items[$i]['avance']= (($obj[$i]['tipo_planilla_id']==2 ) and ($actualVigente!=0 ) ) ?                 
+                    ($items[$i]['total_planilla']/$items[$actualVigente]['vigente']) :
+                            ($items[$i]['total_planilla']/$items[$actualVigente]['vigente'])*100 ;
+
+                } else {
+                    $items[$i]['avance']=0;
+
+                }
                 
                 $items[$i]['avAcumulado'] =  $items[$i]['avance']+$items[$i-1]['avAcumulado'];
 
