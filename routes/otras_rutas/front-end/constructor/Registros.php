@@ -72,6 +72,18 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::get('avance_ejec_ini', 'AvanceEjecucionController@inicio')->name('avance_ejec');
 
 
+    Route::get('avan', 'AvanController@index')->name('avan')->middleware(['auth','usuario_activo','permiso_admin']);
+    Route::get('avan/crear', 'AvanController@crear')->name('crear_avan')->middleware(['auth','usuario_activo','permiso_admin']);
+    Route::post('avan', 'AvanController@guardar')->name('guardar_avan')->middleware(['auth','usuario_activo','permiso_admin']);
+    Route::get('avan/{id}/editar', 'AvanController@editar')->name('editar_avan')->middleware(['auth','usuario_activo','permiso_admin']);
+    Route::post('avan_actializar', 'AvanController@actualizar')->name('actualizar_avan')->middleware(['auth','usuario_activo','permiso_admin']);
+    Route::get('avan/{id}/eliminar', 'AvanController@eliminar')->name('eliminar_avan')->middleware(['auth','usuario_activo','permiso_admin']);
+    Route::post('avan/guardar-orden', 'AvanController@guardarOrden')->name('guardar_orden')->middleware(['auth','usuario_activo','permiso_admin']);
+
+
+
+
+
     
     /*Route::apiResource('intervenciones', IntervencionesController::class);
     Route::post('intervenciones_mod', 'IntervencionesController@update')->name('intervenciones_mod');
