@@ -31,7 +31,7 @@ class AvanController extends Controller
      */
     public function crear()
     {
-        return view('back-end.admin.menu.crear');
+        return view('Front-end.constructor.crearEstructura');
     }
 
     /**
@@ -56,11 +56,11 @@ class AvanController extends Controller
         $request['user_create'] = auth()->user()->id;
         $request['estado'] = $estado;
 
-        Menu::create($request->all());
+        Estructura::create($request->all());
 
-        $menus = Menu::getMenu();
+        $menus = Estructura::getMenu();
         // return view('back-end.admin.menu.index', compact('menus'));
-        return redirect()->route('crear_menu')->with('mensaje', 'Menú creado con exito');
+        return redirect()->route('crear_avan')->with('mensaje', 'Concepto creado con exito');
     }
     /**
      * Show the form for editing the specified resource.
@@ -70,8 +70,8 @@ class AvanController extends Controller
      */
     public function editar($id)
     {
-        $data = Menu::findOrFail($id);
-        return view('back-end.admin.menu.editar', compact('data'));
+        $data = Estructura::findOrFail($id);
+        return view('Front-end.constructor.editarEstructura', compact('data'));
     }
 
     /**
@@ -88,13 +88,13 @@ class AvanController extends Controller
         }else{
             $request['estado'] = 'DES';
         }
-        $menu = Menu::select('id_permission')->where('id', $request->id_menu)->first();
+        $menu = Estructura::select('id_permission')->where('id', $request->id_menu)->first();
         // $permiso = Permission::where('id', $menu->id_permission)->first();
         Permission::findOrFail($menu->id_permission)->update([
             'descripcion'=> '(' . strtoupper($request->nombre) . '), ' . $request->descripcion . ", para el Menú",
         ]);
         Menu::findOrFail($request->id_menu)->update($request->all());
-        return redirect()->route('menu')->with('mensaje', 'Menú actualizado con exito');
+        return redirect()->route('avan')->with('mensaje', 'Estructura actualizado con exito');
     }
 
     /**
@@ -105,15 +105,15 @@ class AvanController extends Controller
      */
     public function eliminar($id)
     {
-        Menu::destroy($id);
-        return redirect()->route('menu')->with('mensaje', 'Menú eliminado con exito');
+        Estructura::destroy($id);
+        return redirect()->route('avan')->with('mensaje', 'Concepto eliminado con exito');
     }
 
     public function guardarOrden(Request $request)
     {
         // return ($request->menu);
         if ($request->ajax()) {
-            $menu = new Menu;
+            $menu = new Estructura;
             $menu->guardarOrden($request->menu);
             return response()->json(['respuesta' => 'ok']);
         } else {

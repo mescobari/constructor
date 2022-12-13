@@ -23,8 +23,8 @@ Menú
             <div class="card-header {{$sistemas_ferchos_color_cabeceras_formulario}}">
                 <h3 class="card-title">Estructura de Obra</h3>
                 <div class="card-tools">
-                    <a href="{{route('crear_menu')}}" class="btn btn-outline-secondary btn-sm">
-                        <i class="fa fa-fw fa-plus-circle"></i> Crear menú
+                    <a href="{{route('crear_avan')}}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fa fa-fw fa-plus-circle"></i> Crear Concepto
                     </a>
                 </div>
             </div>
@@ -36,7 +36,7 @@ Menú
                             @if ($item["id_padre"] != 0)
                                 @break
                             @endif
-                            @include("back-end.admin.menu.menu-item",["item" => $item])
+                            @include("Front-end.constructor.avan-item",["item" => $item])
                         @endforeach
                     </ol>
                 </div>
