@@ -24,17 +24,7 @@ Menú
                 <h3 class="card-title">Estructura de Obra</h3>
                 <div class="card-tools">
                     <a href="{{route('crear_avan')}}" class="btn btn-outline-secondary btn-sm">
-<<<<<<< Updated upstream
-
                         <i class="fa fa-fw fa-plus-circle"></i> Crear Item
-
-=======
-<<<<<<< HEAD
-                        <i class="fa fa-fw fa-plus-circle"></i> Crear Item
-=======
-                        <i class="fa fa-fw fa-plus-circle"></i> Crear Concepto
->>>>>>> 61f74d70ffc68bd2551ad0db3734c341186835ea
->>>>>>> Stashed changes
                     </a>
                 </div>
             </div>
@@ -46,17 +36,7 @@ Menú
                             @if ($item["id_padre"] != 0)
                                 @break
                             @endif
-<<<<<<< Updated upstream
-
                             @include("back-end.admin.avan.avan-item",["item" => $item])
-
-=======
-<<<<<<< HEAD
-                            @include("back-end.admin.avan.avan-item",["item" => $item])
-=======
-                            @include("Front-end.constructor.avan-item",["item" => $item])
->>>>>>> 61f74d70ffc68bd2551ad0db3734c341186835ea
->>>>>>> Stashed changes
                         @endforeach
                     </ol>
                 </div>
