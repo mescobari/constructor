@@ -74,6 +74,8 @@ class Estructura extends Model
 
     public static function getMenu($front = false, $tipo = false)
     {
+        
+        
         $menus = new Estructura();        
         $padres = $menus->getPadres($front);
         $padres2 = [];

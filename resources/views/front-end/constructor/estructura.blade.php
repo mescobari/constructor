@@ -28,6 +28,9 @@ Menú
                     </a>
                 </div>
             </div>
+
+           
+
             <div class="card-body">
                 @csrf
                 <div class="dd" id="nestable">
@@ -36,7 +39,9 @@ Menú
                             @if ($item["id_padre"] != 0)
                                 @break
                             @endif
-                            @include("back-end.admin.avan.avan-item",["item" => $item])
+                            @if ($item["contrato_id"] == 17)
+                                @include("back-end.admin.avan.avan-item",["item" => $item])
+                            @endif
                         @endforeach
                     </ol>
                 </div>
