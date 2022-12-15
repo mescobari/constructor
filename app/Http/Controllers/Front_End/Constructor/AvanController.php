@@ -31,9 +31,17 @@ class AvanController extends Controller
      */
     public function crear()
     {
+<<<<<<< Updated upstream
 
         return view('back-end.admin.avan.crear');
 
+=======
+<<<<<<< HEAD
+        return view('back-end.admin.avan.crear');
+=======
+        return view('Front-end.constructor.crearEstructura');
+>>>>>>> 61f74d70ffc68bd2551ad0db3734c341186835ea
+>>>>>>> Stashed changes
     }
 
     /**
@@ -62,9 +70,17 @@ class AvanController extends Controller
 
         $menus = Estructura::getMenu();
         // return view('back-end.admin.menu.index', compact('menus'));
+<<<<<<< Updated upstream
 
         return redirect()->route('crear_avan')->with('mensaje', 'Item creado con exito');
 
+=======
+<<<<<<< HEAD
+        return redirect()->route('crear_avan')->with('mensaje', 'Item creado con exito');
+=======
+        return redirect()->route('crear_avan')->with('mensaje', 'Concepto creado con exito');
+>>>>>>> 61f74d70ffc68bd2551ad0db3734c341186835ea
+>>>>>>> Stashed changes
     }
     /**
      * Show the form for editing the specified resource.
@@ -75,9 +91,17 @@ class AvanController extends Controller
     public function editar($id)
     {
         $data = Estructura::findOrFail($id);
+<<<<<<< Updated upstream
 
         return view('back-end.admin.avan.editar', compact('data'));
 
+=======
+<<<<<<< HEAD
+        return view('back-end.admin.avan.editar', compact('data'));
+=======
+        return view('Front-end.constructor.editarEstructura', compact('data'));
+>>>>>>> 61f74d70ffc68bd2551ad0db3734c341186835ea
+>>>>>>> Stashed changes
     }
 
     /**
@@ -99,10 +123,20 @@ class AvanController extends Controller
         Permission::findOrFail($menu->id_permission)->update([
             'descripcion'=> '(' . strtoupper($request->nombre) . '), ' . $request->descripcion . ", para la Estructura",
         ]);
+<<<<<<< Updated upstream
 
         Estructura::findOrFail($request->id_menu)->update($request->all());
         return redirect()->route('avan')->with('mensaje', 'Estructura actualizada con exito');
 
+=======
+<<<<<<< HEAD
+        Estructura::findOrFail($request->id_menu)->update($request->all());
+        return redirect()->route('avan')->with('mensaje', 'Estructura actualizada con exito');
+=======
+        Menu::findOrFail($request->id_menu)->update($request->all());
+        return redirect()->route('avan')->with('mensaje', 'Estructura actualizado con exito');
+>>>>>>> 61f74d70ffc68bd2551ad0db3734c341186835ea
+>>>>>>> Stashed changes
     }
 
     /**
@@ -114,9 +148,17 @@ class AvanController extends Controller
     public function eliminar($id)
     {
         Estructura::destroy($id);
+<<<<<<< Updated upstream
 
         return redirect()->route('avan')->with('mensaje', 'Item eliminado con exito');
 
+=======
+<<<<<<< HEAD
+        return redirect()->route('avan')->with('mensaje', 'Item eliminado con exito');
+=======
+        return redirect()->route('avan')->with('mensaje', 'Concepto eliminado con exito');
+>>>>>>> 61f74d70ffc68bd2551ad0db3734c341186835ea
+>>>>>>> Stashed changes
     }
 
     public function guardarOrden(Request $request)
