@@ -12,7 +12,7 @@ Menú
 @endsection
 
 @section("scripts")
-<script src="{{asset("assets/ferdy/pages/scripts/admin/menu/index.js")}}" type="text/javascript"></script>
+<script src="{{asset("assets/ferdy/pages/scripts/admin/avan/index.js")}}" type="text/javascript"></script>
 @endsection
 
 @section('content')
@@ -24,7 +24,9 @@ Menú
                 <h3 class="card-title">Estructura de Obra</h3>
                 <div class="card-tools">
                     <a href="{{route('crear_avan')}}" class="btn btn-outline-secondary btn-sm">
-                        <i class="fa fa-fw fa-plus-circle"></i> Crear Concepto
+
+                        <i class="fa fa-fw fa-plus-circle"></i> Crear Item
+
                     </a>
                 </div>
             </div>
@@ -36,7 +38,9 @@ Menú
                             @if ($item["id_padre"] != 0)
                                 @break
                             @endif
-                            @include("Front-end.constructor.avan-item",["item" => $item])
+
+                            @include("back-end.admin.avan.avan-item",["item" => $item])
+
                         @endforeach
                     </ol>
                 </div>

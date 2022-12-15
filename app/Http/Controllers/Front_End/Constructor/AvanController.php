@@ -31,7 +31,9 @@ class AvanController extends Controller
      */
     public function crear()
     {
-        return view('Front-end.constructor.crearEstructura');
+
+        return view('back-end.admin.avan.crear');
+
     }
 
     /**
@@ -60,7 +62,9 @@ class AvanController extends Controller
 
         $menus = Estructura::getMenu();
         // return view('back-end.admin.menu.index', compact('menus'));
-        return redirect()->route('crear_avan')->with('mensaje', 'Concepto creado con exito');
+
+        return redirect()->route('crear_avan')->with('mensaje', 'Item creado con exito');
+
     }
     /**
      * Show the form for editing the specified resource.
@@ -71,7 +75,9 @@ class AvanController extends Controller
     public function editar($id)
     {
         $data = Estructura::findOrFail($id);
-        return view('Front-end.constructor.editarEstructura', compact('data'));
+
+        return view('back-end.admin.avan.editar', compact('data'));
+
     }
 
     /**
@@ -91,10 +97,12 @@ class AvanController extends Controller
         $menu = Estructura::select('id_permission')->where('id', $request->id_menu)->first();
         // $permiso = Permission::where('id', $menu->id_permission)->first();
         Permission::findOrFail($menu->id_permission)->update([
-            'descripcion'=> '(' . strtoupper($request->nombre) . '), ' . $request->descripcion . ", para el Menú",
+            'descripcion'=> '(' . strtoupper($request->nombre) . '), ' . $request->descripcion . ", para la Estructura",
         ]);
-        Menu::findOrFail($request->id_menu)->update($request->all());
-        return redirect()->route('avan')->with('mensaje', 'Estructura actualizado con exito');
+
+        Estructura::findOrFail($request->id_menu)->update($request->all());
+        return redirect()->route('avan')->with('mensaje', 'Estructura actualizada con exito');
+
     }
 
     /**
@@ -106,7 +114,9 @@ class AvanController extends Controller
     public function eliminar($id)
     {
         Estructura::destroy($id);
-        return redirect()->route('avan')->with('mensaje', 'Concepto eliminado con exito');
+
+        return redirect()->route('avan')->with('mensaje', 'Item eliminado con exito');
+
     }
 
     public function guardarOrden(Request $request)
@@ -115,7 +125,7 @@ class AvanController extends Controller
         if ($request->ajax()) {
             $menu = new Estructura;
             $menu->guardarOrden($request->menu);
-            return response()->json(['respuesta' => 'ok']);
+            return response()->json(['respuesta' => 'ok en teoria']);
         } else {
             abort(404);
         }
