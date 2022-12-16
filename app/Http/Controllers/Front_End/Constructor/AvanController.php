@@ -20,6 +20,12 @@ class AvanController extends Controller
     public function index()
     {
         session(['actividad_menu' => '2']);
+
+       // var respuesta = await axios.get('documents');
+        //const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
+      
+
+
         $menus = Estructura::getMenu(true, false);
         return view('Front-end.constructor.estructura', compact('menus'));
     }
