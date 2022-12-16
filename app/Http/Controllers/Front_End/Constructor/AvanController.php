@@ -5,10 +5,17 @@ namespace App\Http\Controllers\Front_End\Constructor;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\BackEnd\administracion\menu\Menu;
+
 use App\Models\Constructor\Estructura;
+use App\Models\Constructor\Document;
+use App\Models\FrontEnd\usuarios\Funcionario;
+use App\Models\Responsables;
+
 use App\Http\Requests\ValidacionMenu;
 use App\Http\Requests\ValidacionMenuActualizar;
 use Spatie\Permission\Models\Permission;
+
+
 
 class AvanController extends Controller
 {
@@ -21,13 +28,23 @@ class AvanController extends Controller
     {
         session(['actividad_menu' => '2']);
 
-       // var respuesta = await axios.get('documents');
-        //const principales=respuesta.data.filter((item)=> item.document_types_id===1 )
-      
+        $users_id = auth()->user()->id;
+       
+        if ($users_id > 2) {
+            // obtenemo ahora el funcionario_id
+            $funcionario_id = Funcionario::find($users_id)->id;
+           
+            // ahora debemos encontrar el id del responsable, un funcionario puede estar asignado a mas de un proyecto.
+            $resp = Responsables::select('documents_id')->where('funcionario_id', '=', $funcionario_id)->get()->toarray();
 
+            $contratos= document::whereIn('id', $resp) ->orWhereIn('padre', $resp)->get();
+        } else {
+            $contratos= document::all();
+        }
+        
 
         $menus = Estructura::getMenu(true, false);
-        return view('Front-end.constructor.estructura', compact('menus'));
+        return view('Front-end.constructor.estructura', compact('menus', 'contratos'));
     }
 
     /**

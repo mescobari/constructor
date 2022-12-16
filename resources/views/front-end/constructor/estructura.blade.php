@@ -39,15 +39,18 @@ Menú
                         <div class="col-8">
                             <div class="form-group">
                                 <label>Seleccione Contrato</label>
-                                <select class="form-control select2bs4" style="width: 100%;">
-                                    <option selected="selected">Alabama</option>
-                                    <option>Alaska</option>
-                                    <option>California</option>
-                                    <option>Delaware</option>
-                                    <option>Tennessee</option>
-                                    <option>Texas</option>
-                                    <option>Washington</option>
+
+                                <select id="contrato" name="contrato" onchange="ShowSelected();" class="form-control select2bs4" style="width: 100%;">
+                                    <option selected="selected">Seleccionar</option>
+                                    
+                                    @foreach ($contratos as $contrato)
+                                        @if ($contrato->padre ==0)
+                                            <option value="{{$contrato->id}}">{{$contrato->nombre}}</option>
+                                        @endif
+                                    @endforeach
+
                                 </select>
+                            
                             </div>
                         </div>
                         <div class="col-2"></div>
@@ -58,7 +61,7 @@ Menú
 
                 @csrf
                 <div class="dd" id="nestable">
-                    <ol class="dd-list">
+                    <ol class="dd-list" >
                         @foreach ($menus as $key => $item)
                             @if ($item["id_padre"] != 0)
                                 @break
@@ -75,3 +78,29 @@ Menú
 </div>
 
 @endsection
+
+
+<script type="text/javascript">
+    function ShowSelected()
+    {
+        /* Para obtener el valor */
+        var cod = document.getElementById("contrato").value;
+        console.log(cod);
+        const est = document.getElementById("nestable");
+        let arbol =  ' <ol class="dd-list" > \@@foreach ($menus as $key => $item)  \@@if ($item["id_padre"] != 0) \@@break \@@endif  \@@if ($item["contrato_id"] == '+ cod 
+        +') \@@include("back-end.admin.avan.avan-item",["item" => $item])   \@@endif \@@endforeach </ol>';
+
+         
+        est.innerHTML = arbol;
+
+
+
+         console.log(est.innerHTML);
+
+
+        /* Para obtener el texto */
+        var combo = document.getElementById("contrato");
+        var selected = combo.options[combo.selectedIndex].text;
+        console.log(selected);
+    }
+</script>

@@ -17,6 +17,7 @@ class Estructura extends Model
     protected $fillable = 
     [
         'id', 
+        'contrato_id',
         'nombre', 
         'descripcion', 
         'link_url', 
