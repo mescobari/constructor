@@ -42,10 +42,33 @@ class AvanController extends Controller
             $contratos= document::all();
         }
         
+        $contrato_id = session('contrato_id');
+
+        if(isset( $contrato_id)){
+            $menus = Estructura::getMenu(true, false);
+            return view('Front-end.constructor.estructura', compact('menus', 'contrato_id'));
+        }else{
+            return view('Front-end.constructor.selectContrato', compact('contratos'));
+        }
+       
+       
+
+
+
+
+    }
+
+    public function estructura($contrato_id)
+    {
+
+        // tambien debemos obtener el nombre  del contrato
+        session(['contrato_id' => $contrato_id]);
 
         $menus = Estructura::getMenu(true, false);
-        return view('Front-end.constructor.estructura', compact('menus', 'contratos'));
+        return view('Front-end.constructor.estructura', compact('menus', 'contrato_id'));
+
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -54,7 +77,8 @@ class AvanController extends Controller
      */
     public function crear()
     {
-        return view('back-end.admin.avan.crear');
+        $contrato_id = session('contrato_id');
+        return view('back-end.admin.avan.crear', compact('contrato_id'));
     }
 
     /**

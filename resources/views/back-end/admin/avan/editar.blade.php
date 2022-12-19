@@ -17,7 +17,7 @@
             <div class="card-header {{$sistemas_ferchos_color_cabeceras_formulario}}">
                 <h3 class="card-title">Editar Item de obra</h3>
                 <div class="card-tools">
-                    <a href="{{route('avan')}}" class="btn btn-outline-info btn-sm">
+                    <a href="select_estructura/24" class="btn btn-outline-info btn-sm">
                         <i class="fa fa-fw fa-reply-all"></i> Volver a Estructura
                     </a>
                 </div>

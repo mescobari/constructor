@@ -81,6 +81,8 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::post('avan/guardar-orden', 'AvanController@guardarOrden')->name('guardar_orden')->middleware(['auth','usuario_activo','permiso_admin']);
 
 
+    Route::get('select_estructura/{id}', 'AvanController@estructura')->name('select_estructura')->middleware(['auth','usuario_activo','permiso_admin']);
+
 
 
 
