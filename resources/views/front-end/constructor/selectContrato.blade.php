@@ -68,13 +68,31 @@ Menú
         /* Para obtener el valor */
         var cod = document.getElementById("contrato").value;
         console.log(cod);
+
+        var ruta = "ses_contrato/"+cod
+        
+        $.ajax({
+            type: 'GET',  // Envío con método POST
+            url: ruta,   // Fichero destino (el PHP que trata los datos)
+            dataType: "JSON",           
+            }).done(function( msg ) {  // Función que se ejecuta si todo ha ido bien
+                 $("#consola").html(msg);  // Escribimos en el div consola el mensaje devuelto
+            }).fail(function (jqXHR, textStatus, errorThrown){ // Función que se ejecuta si algo ha ido mal
+            // Mostramos en consola el mensaje con el error que se ha producido
+            $("#consola").html("The following error occured: "+ textStatus +" "+ errorThrown); 
+        });
+        
+        
         
         const est = document.getElementById("botonAqui");
+
+
+
         
         //let btnEst =  ' <ol class="dd-list" > \@@foreach ($menus as $key => $item)  \@@if ($item["id_padre"] != 0) \@@break \@@endif  \@@if ($item["contrato_id"] == '+ cod 
         //+') \@@include("back-end.admin.avan.avan-item",["item" => $item])   \@@endif \@@endforeach </ol>';
 
-        let btnEst = '<div class="p-4 mx-auto" style="width: 400px;"><a class="btn btn-danger btn-lg" href="select_estructura/'+cod+'" role="button">Ver Estructura</a></div>'
+        let btnEst = '<div class="p-4 mx-auto" style="width: 400px;"><a class="btn btn-danger btn-lg" href="avan" role="button">Ver Estructura</a></div>'
          
         est.innerHTML = btnEst;
 

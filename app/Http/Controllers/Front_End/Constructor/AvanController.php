@@ -28,6 +28,19 @@ class AvanController extends Controller
     {
         session(['actividad_menu' => '2']);
 
+       
+        
+        $contrato_id = session('contrato_id');
+        $nombre = Document::find($contrato_id)->nombre;
+        session(['nombre' => $nombre]);
+        $menus = Estructura::getMenu(true, false);
+        return view('Front-end.constructor.estructura', compact('menus', 'contrato_id', 'nombre'));
+        
+      
+    }
+
+    public function estructura()
+    {
         $users_id = auth()->user()->id;
        
         if ($users_id > 2) {
@@ -41,31 +54,23 @@ class AvanController extends Controller
         } else {
             $contratos= document::all();
         }
-        
-        $contrato_id = session('contrato_id');
 
-        if(isset( $contrato_id)){
-            $menus = Estructura::getMenu(true, false);
-            return view('Front-end.constructor.estructura', compact('menus', 'contrato_id'));
-        }else{
-            return view('Front-end.constructor.selectContrato', compact('contratos'));
-        }
-       
-       
+        // tambien debemos obtener el nombre  del contrato
+        //session(['contrato_id' => $contrato_id]);
 
-
-
+        return view('Front-end.constructor.selectContrato', compact('contratos'));
 
     }
 
-    public function estructura($contrato_id)
+    public function sescontrato($contrato_id)
     {
+        
 
         // tambien debemos obtener el nombre  del contrato
         session(['contrato_id' => $contrato_id]);
+       
 
-        $menus = Estructura::getMenu(true, false);
-        return view('Front-end.constructor.estructura', compact('menus', 'contrato_id'));
+        return 'ok lo logramos  '. $contrato_id;
 
     }
 
@@ -77,8 +82,9 @@ class AvanController extends Controller
      */
     public function crear()
     {
-        $contrato_id = session('contrato_id');
-        return view('back-end.admin.avan.crear', compact('contrato_id'));
+        $nombre = session('nombre');
+
+        return view('back-end.admin.avan.crear', compact('nombre'));
     }
 
     /**
@@ -94,14 +100,17 @@ class AvanController extends Controller
         }else{
             $estado = 'DES';
         }
-        $permiso = Permission::create([
-            'name'=>str_replace(" ", "_", strtolower($request->nombre) . "_permiso_menu"),
+       /* $permiso = Permission::create([
+            'name'=>str_replace(" ", "_", strtolower($request->nombre) . "_permiso_avan"),
             'guard_name'=>'web',
             'descripcion'=> '(' . strtoupper($request->nombre) . '), ' . $request->descripcion . ", para el Menú",
         ]);
-        $request['id_permission'] = $permiso->id;
+
+        $request['id_permission'] = $permiso->id;*/
+
         $request['user_create'] = auth()->user()->id;
         $request['estado'] = $estado;
+        $request['contrato_id'] = session('contrato_id');
 
         Estructura::create($request->all());
 

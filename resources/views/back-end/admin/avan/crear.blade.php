@@ -15,7 +15,7 @@
         @include('back-end.includes.mensaje')
         <div class="card">
             <div class="card-header {{$sistemas_ferchos_color_cabeceras_formulario}}">
-                <h3 class="card-title">Crear Item Estructura de Obra {{$contrato_id}}</h3>
+                <h3 class="card-title">Crear Item Estructura de Obra: {{$nombre}}</h3>
                 <div class="card-tools">
                     <a href="{{route('avan')}}" class="btn btn-outline-info btn-sm">
                         <i class="fa fa-fw fa-reply-all"></i> Volver a la Estructura
