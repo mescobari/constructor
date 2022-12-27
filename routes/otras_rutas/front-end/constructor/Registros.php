@@ -76,7 +76,7 @@ Route::group(['prefix' => 'paginas', 'namespace' => 'Front_End\Constructor'], fu
     Route::get('avan/crear', 'AvanController@crear')->name('crear_avan');
     Route::post('avan', 'AvanController@guardar')->name('guardar_avan');
     Route::get('avan/{id}/editar', 'AvanController@editar')->name('editar_avan');
-    Route::post('avan_actializar', 'AvanController@actualizar')->name('actualizar_avan');
+    Route::post('avan_actualizar', 'AvanController@actualizar')->name('actualizar_avan');
     Route::get('avan/{id}/eliminar', 'AvanController@eliminar')->name('eliminar_avan');
     Route::post('avan/guardar-orden', 'AvanController@guardarOrden')->name('guardar_orden');
 

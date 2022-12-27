@@ -12,7 +12,7 @@ use App\Models\FrontEnd\usuarios\Funcionario;
 use App\Models\Responsables;
 
 use App\Http\Requests\ValidacionMenu;
-use App\Http\Requests\ValidacionMenuActualizar;
+use App\Http\Requests\ValidacionAvanActualizar;
 use Spatie\Permission\Models\Permission;
 
 
@@ -137,7 +137,7 @@ class AvanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function actualizar(ValidacionMenuActualizar $request )
+    public function actualizar(ValidacionAvanActualizar $request )
     {
         if(isset($request->estado)){
             $request['estado'] = 'ACT';
